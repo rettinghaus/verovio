@@ -108,9 +108,9 @@ namespace vrv {
 #define DEFAULT_LEFT_MARGIN_BEATRPT 2.0
 #define DEFAULT_LEFT_MARGIN_CHORD 1.0
 #define DEFAULT_LEFT_MARGIN_CLEF 0.5
-#define DEFAULT_LEFT_MARGIN_KEYSIG 0.5
-#define DEFAULT_LEFT_MARGIN_MENSUR 0.5
-#define DEFAULT_LEFT_MARGIN_METERSIG 0.5
+#define DEFAULT_LEFT_MARGIN_KEYSIG 1.0
+#define DEFAULT_LEFT_MARGIN_MENSUR 1.0
+#define DEFAULT_LEFT_MARGIN_METERSIG 1.0
 #define DEFAULT_LEFT_MARGIN_MREST DEFAULT_LEFT_MARGIN_DEFAULT
 #define DEFAULT_LEFT_MARGIN_MRPT2 DEFAULT_LEFT_MARGIN_DEFAULT
 #define DEFAULT_LEFT_MARGIN_MULTIREST DEFAULT_RIGHT_MARGIN_DEFAULT
@@ -131,9 +131,9 @@ namespace vrv {
 #define DEFAULT_RIGHT_MARGIN_BEATRPT DEFAULT_RIGHT_MARGIN_DEFAULT
 #define DEFAULT_RIGHT_MARGIN_CHORD 0.0
 #define DEFAULT_RIGHT_MARGIN_CLEF 1.0
-#define DEFAULT_RIGHT_MARGIN_KEYSIG 1.5
-#define DEFAULT_RIGHT_MARGIN_MENSUR 1.5
-#define DEFAULT_RIGHT_MARGIN_METERSIG 1.5
+#define DEFAULT_RIGHT_MARGIN_KEYSIG 1.0
+#define DEFAULT_RIGHT_MARGIN_MENSUR 1.0
+#define DEFAULT_RIGHT_MARGIN_METERSIG 1.0
 #define DEFAULT_RIGHT_MARGIN_MREST 0.0
 #define DEFAULT_RIGHT_MARGIN_MRPT2 0.0
 #define DEFAULT_RIGHT_MARGIN_MULTIREST 0.0
@@ -174,21 +174,21 @@ namespace vrv {
 
 /* Style parameters for mensural notation */
 // Ratios of mensural notehead, accidental, aug. dot size to CMN for the same staff size
-#define TEMP_MNOTEHEAD_SIZE_FACTOR 0.55
-#define TEMP_MACCID_SIZE_FACTOR 0.65
-#define TEMP_MAUGDOT_SIZE_FACTOR 0.60
+#define TEMP_MNOTEHEAD_SIZE_FACTOR 1.0
+#define TEMP_MACCID_SIZE_FACTOR 1.0
+#define TEMP_MAUGDOT_SIZE_FACTOR 1.0
 // Width of the minima diamond relative to its height
-#define TEMP_MINIMA_WIDTH_FACTOR 0.60
+#define TEMP_MINIMA_WIDTH_FACTOR 1.0
 // Size of mensuration sign circle relative to space between staff lines
 #define MSIGN_CIRCLE_DIAM 1.7
 // Vertical position of center of mensuration sign as distance below top of the staff
 #define MSIGN_STAFFLINES_BELOW_TOP 2.0
 // Size of dot inside mensuration signs relative to space between staff lines
-#define MSIGN_DOT_DIAM 0.5
+#define MSIGN_DOT_DIAM 0.4
 // Relative size of figures in proportions
-#define PROPRT_SIZE_FACTOR 0.5
+#define PROPRT_SIZE_FACTOR 1.0
 // Linewidth for staff lines in mensural notation, rel. to "normal" width of staff lines */
-#define MENSURAL_LINEWIDTH_FACTOR 0.5
+#define MENSURAL_LINEWIDTH_FACTOR 1.0
 
 /**
  * This class contains the document default environment variables.

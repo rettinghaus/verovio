@@ -19,6 +19,7 @@
 #include "staff.h"
 #include "textelement.h"
 #include "verse.h"
+#include "vrv.h"
 
 namespace vrv {
 
@@ -49,11 +50,21 @@ void Syl::Reset()
     m_drawingVerse = 1;
 }
 
-void Syl::AddTextElement(TextElement *element)
+void Syl::AddChild(Object *child)
 {
-    assert(dynamic_cast<TextElement *>(element) || dynamic_cast<EditorialElement *>(element));
-    element->SetParent(this);
-    m_children.push_back(element);
+    if (child->IsTextElement()) {
+        assert(dynamic_cast<TextElement *>(child));
+    }
+    else if (child->IsEditorialElement()) {
+        assert(dynamic_cast<EditorialElement *>(child));
+    }
+    else {
+        LogError("Adding '%s' to a '%s'", child->GetClassName().c_str(), this->GetClassName().c_str());
+        assert(false);
+    }
+
+    child->SetParent(this);
+    m_children.push_back(child);
     Modify();
 }
 
@@ -82,7 +93,11 @@ int Syl::PrepareLyrics(FunctorParams *functorParams)
         }
         // The previous syl was a underscore -> the previous but one was the end
         else if (params->m_currentSyl->GetCon() == sylLog_CON_u) {
-            params->m_currentSyl->SetEnd(params->m_lastButOneNote);
+            if (params->m_currentSyl->GetStart() == params->m_lastButOneNote)
+                LogWarning("Syllable with underline extender under one single note '%s'",
+                    params->m_currentSyl->GetStart()->GetUuid().c_str());
+            else
+                params->m_currentSyl->SetEnd(params->m_lastButOneNote);
         }
     }
 
