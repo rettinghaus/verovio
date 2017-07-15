@@ -98,7 +98,10 @@ public:
 private:
     //
 public:
-    //
+    /**
+    * Store the dur.default value from scoreDef.
+    */
+    static data_DURATION m_durDefault;
 private:
 };
 
