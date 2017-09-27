@@ -27,7 +27,7 @@ namespace vrv {
 // Static members with some default values
 //----------------------------------------------------------------------------
 
-data_DURATION DurationInterface::m_durDefault = DURATION_NONE;
+data_DURATION DurationInterface::s_durDefault = DURATION_NONE;
 
 //----------------------------------------------------------------------------
 // DurationInterface
@@ -148,7 +148,9 @@ bool DurationInterface::IsLastInBeam(LayerElement *noteOrRest)
 
 int DurationInterface::GetActualDur() const
 {
-    if (!this->HasDur()) return m_durDefault;
+    LogWarning("%d", DurationInterface::s_durDefault);
+
+    if (!this->HasDur()) return DurationInterface::s_durDefault;
     // maxima (-1) is a mensural only value
     else if (this->GetDur() == DURATION_maxima) return DUR_MX;
     return (this->GetDur() & DUR_MENSURAL_MASK);

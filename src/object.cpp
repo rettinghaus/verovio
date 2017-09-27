@@ -998,6 +998,7 @@ int Object::SetCurrentScoreDef(FunctorParams *functorParams)
         // Replace the current scoreDef with the new one, including its content (staffDef) - this also sets
         // m_setAsDrawing to true so it will then be taken into account at the next measure
         params->m_upcomingScoreDef->ReplaceDrawingValues(scoreDef);
+        DurationInterface::s_durDefault = scoreDef->GetDurDefault();
         return FUNCTOR_CONTINUE;
     }
 
