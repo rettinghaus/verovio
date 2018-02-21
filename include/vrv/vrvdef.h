@@ -59,15 +59,18 @@ enum ClassId {
     LABEL,
     LABELABBR,
     LAYER,
+    MDIV,
     MEASURE,
     MEASURE_ALIGNER,
     MENSUR_ATTR,
     METERSIG_ATTR,
     PAGE,
+    PAGES,
     SCORE,
     STAFF,
     STAFF_ALIGNMENT,
     STAFFGRP,
+    SVG,
     SYSTEM,
     SYSTEM_ALIGNER,
     SYSTEM_ALIGNMENT,
@@ -92,6 +95,13 @@ enum ClassId {
     SUPPLIED,
     UNCLEAR,
     EDITORIAL_ELEMENT_max,
+    // Ids for RunningElement child classes
+    RUNNING_ELEMENT,
+    PGFOOT,
+    PGFOOT2,
+    PGHEAD,
+    PGHEAD2,
+    RUNNING_ELEMENT_max,
     // Ids for SystemElement child classes
     SYSTEM_ELEMENT,
     BOUNDARY_END,
@@ -104,6 +114,7 @@ enum ClassId {
     // Ids for ControlElement child classes
     CONTROL_ELEMENT,
     ANCHORED_TEXT,
+    ARPEG,
     BREATH,
     DIR,
     DYNAM,
@@ -129,6 +140,7 @@ enum ClassId {
     BARLINE_ATTR_RIGHT,
     BEAM,
     BEATRPT,
+    BRACKET,
     BTREM,
     CHORD,
     CLEF,
@@ -147,6 +159,7 @@ enum ClassId {
     MULTIREST,
     MULTIRPT,
     NOTE,
+    TUPLET_NUM,
     PROPORT,
     REST,
     SPACE,
@@ -163,13 +176,17 @@ enum ClassId {
     SCOREDEF_ELEMENT_max,
     // Ids for TextElement child classes
     TEXT_ELEMENT,
+    FIG,
     FIGURE,
+    LB,
+    NUM,
     REND,
     TEXT,
     TEXT_ELEMENT_max,
     //
     BBOX_DEVICE_CONTEXT,
     SVG_DEVICE_CONTEXT,
+    CUSTOM_DEVICE_CONTEXT,
     //
     UNSPECIFIED
 };
@@ -180,9 +197,11 @@ enum ClassId {
  */
 enum InterfaceId {
     INTERFACE,
+    INTERFACE_AREA_POS,
     INTERFACE_BOUNDARY,
     INTERFACE_DURATION,
     INTERFACE_PITCH,
+    INTERFACE_PLIST,
     INTERFACE_POSITION,
     INTERFACE_SCOREDEF,
     INTERFACE_TEXT_DIR,
@@ -195,6 +214,7 @@ enum InterfaceId {
 //----------------------------------------------------------------------------
 
 class Alignment;
+class Arpeg;
 class AttComparison;
 class BeamElementCoord;
 class BoundingBox;
@@ -203,8 +223,11 @@ class LayerElement;
 class LedgerLine;
 class Note;
 class Object;
+class PlistInterface;
 class Point;
 class Staff;
+class Option;
+class TextElement;
 class TimePointInterface;
 class TimeSpanningInterface;
 
@@ -218,7 +241,11 @@ typedef std::vector<Note *> ChordCluster;
 
 typedef std::vector<std::tuple<Alignment *, Alignment *, int> > ArrayOfAdjustmentTuples;
 
+typedef std::vector<std::tuple<Alignment *, Arpeg *, int, bool> > ArrayOfAligmentArpegTuples;
+
 typedef std::vector<BeamElementCoord *> ArrayOfBeamElementCoords;
+
+typedef std::vector<std::pair<PlistInterface *, std::string> > ArrayOfInterfaceUuidPairs;
 
 typedef std::vector<std::pair<LayerElement *, Point> > ArrayOfLayerElementPointPairs;
 
@@ -234,14 +261,17 @@ typedef std::vector<BoundingBox *> ArrayOfBoundingBoxes;
 
 typedef std::vector<LedgerLine> ArrayOfLedgerLines;
 
+typedef std::vector<TextElement *> ArrayOfTextElements;
+
 typedef std::map<Staff *, std::list<int> > MapOfDotLocs;
+
+typedef std::map<std::string, Option *> MapOfStrOptions;
 
 //----------------------------------------------------------------------------
 // Global defines
 //----------------------------------------------------------------------------
 
 #define DEFINITION_FACTOR 10
-#define PARAM_DENOMINATOR 10
 
 #define isIn(x, a, b) (((x) >= std::min((a), (b))) && ((x) <= std::max((a), (b))))
 
@@ -314,8 +344,15 @@ enum EditorialLevel {
     EDITORIAL_LAYER,
     EDITORIAL_NOTE,
     EDITORIAL_TEXT,
-    EDITORIAL_FB
+    EDITORIAL_FB,
+    EDITORIAL_RUNNING,
 };
+
+//----------------------------------------------------------------------------
+// Visibility for editorial and mdiv elements
+//----------------------------------------------------------------------------
+
+enum VisibilityType { Hidden = 0, Visible };
 
 //----------------------------------------------------------------------------
 // The used SMuFL glyph anchors
@@ -356,6 +393,22 @@ enum { DRAWING_GRP_NONE = 0, DRAWING_GRP_VERSE, DRAWING_GRP_HARM, DRAWING_GRP_OT
 //----------------------------------------------------------------------------
 
 enum ArticPartType { ARTIC_PART_INSIDE = 0, ARTIC_PART_OUTSIDE };
+
+//----------------------------------------------------------------------------
+// Layout positions (3 x 3 grid)
+//----------------------------------------------------------------------------
+
+enum {
+    POSITION_LEFT = 0,
+    POSITION_CENTER,
+    POSITION_RIGHT,
+};
+
+enum {
+    POSITION_TOP = 0,
+    POSITION_MIDDLE = 3,
+    POSITION_BOTTOM = 6,
+};
 
 //----------------------------------------------------------------------------
 // Legacy Wolfgang defines

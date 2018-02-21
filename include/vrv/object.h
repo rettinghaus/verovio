@@ -123,6 +123,10 @@ public:
     {
         return (this->GetClassId() > LAYER_ELEMENT && this->GetClassId() < LAYER_ELEMENT_max);
     }
+    bool IsRunningElement() const
+    {
+        return (this->GetClassId() > RUNNING_ELEMENT && this->GetClassId() < RUNNING_ELEMENT_max);
+    }
     bool IsScoreDefElement() const
     {
         return (this->GetClassId() > SCOREDEF_ELEMENT && this->GetClassId() < SCOREDEF_ELEMENT_max);
@@ -152,6 +156,7 @@ public:
 
     virtual DurationInterface *GetDurationInterface() { return NULL; }
     virtual PitchInterface *GetPitchInterface() { return NULL; }
+    virtual PlistInterface *GetPlistInterface() { return NULL; }
     virtual PositionInterface *GetPositionInterface() { return NULL; }
     virtual ScoreDefInterface *GetScoreDefInterface() { return NULL; }
     virtual StemmedDrawingInterface *GetStemmedDrawingInterface() { return NULL; }
@@ -190,6 +195,12 @@ public:
     void MoveChildrenFrom(Object *sourceParent, int idx = -1, bool allowTypeChange = false);
 
     /**
+     * Replace the currentChild with the replacingChild.
+     * The currentChild is not deleted by the methods.
+     */
+    void ReplaceChild(Object *currentChild, Object *replacingChild);
+
+    /**
      * Move an object to another parent.
      * The object is relinquished from its current parent - see Object::Relinquish
      */
@@ -200,9 +211,23 @@ public:
      * The method has to be overridden.
      */
     virtual Object *Clone() const;
+    
+    /**
+     * Indicate whereas children have to be copied in copy / assignment constructors.
+     * This is true by default but can be overriden (e.g., for Staff, Layer)
+     */
+    virtual bool CopyChildren() const { return true; }
+    
+    /**
+     * Reset pointers after a copy and assignment constructor call.
+     * This methods has to be called expicitly when overriden because it is not called from the constructors.
+     * Do not forget to call base-class equivalent whenever applicable (e.g, with more than one hierarchy level).
+     */
+    virtual void CopyReset() {};
 
     std::string GetUuid() const { return m_uuid; }
     void SetUuid(std::string uuid);
+    void SwapUuid(Object *other);
     void ResetUuid();
     static void SeedUuid(unsigned int seed = 0);
 
@@ -213,7 +238,7 @@ public:
     /**
      * @name Children count, with or without a ClassId.
      * Used for classes with several types of children.
-     * The method with a ClassId only searches at the first level.
+     * The methods count at the first level.
      */
     ///@{
     int GetChildCount() const { return (int)m_children.size(); }
@@ -241,11 +266,12 @@ public:
      * GetFirst returns the first element child of the specified type.
      * Its position and the specified type are stored and used of accessing next elements
      * The methods returns NULL when no child is found or when the end is reached.
-     * Always call GetFirst before calling GetNext
+     * Always call GetFirst before calling GetNext() or call GetNext(child)
      */
     ///@{
     Object *GetFirst(const ClassId classId = UNSPECIFIED);
     Object *GetNext();
+    Object *GetNext(Object *child, const ClassId classId = UNSPECIFIED);
     ///@}
 
     /**
@@ -347,11 +373,18 @@ public:
         AttComparison *attComparison, int deepness = UNLIMITED_DEPTH, bool direction = FORWARD);
 
     /**
-     * Return all the object matching the AttComparison functor
+     * Return all the objects matching the AttComparison functor
      * Deepness allow to limit the depth search (EditorialElements are not count)
      */
     void FindAllChildByAttComparison(ArrayOfObjects *objects, AttComparison *attComparison,
         int deepness = UNLIMITED_DEPTH, bool direction = FORWARD, bool clear = true);
+
+    /**
+     * Return all the objects matching the AttComparison functor and being between start and end in the tree.
+     * The start and end objects are included in the result set.
+     */
+    void FindAllChildBetween(
+        ArrayOfObjects *objects, AttComparison *attComparison, Object *start, Object *end, bool clear = true);
 
     /**
      * Give up ownership of the child at the idx position (NULL if not found)
@@ -369,6 +402,11 @@ public:
      * This has to be used when children are moved but then the parent is not deleted.
      */
     void ClearRelinquishedChildren();
+
+    /**
+     * Clear the children vector and delete all the objects.
+     */
+    void ClearChildren();
 
     /**
      * Remove and delete the child.
@@ -462,9 +500,14 @@ public:
     virtual int FindExtremeByAttComparison(FunctorParams *functorParams);
 
     /**
-     * Find a all Object with a AttComparison functor.
+     * Find a all Object with an AttComparison functor.
      */
     virtual int FindAllByAttComparison(FunctorParams *functorParams);
+
+    /**
+     * Find a all Object between a start and end Object and with an AttComparison functor.
+     */
+    virtual int FindAllBetween(FunctorParams *functorParams);
 
     /**
      * Look if the time / duration passed as parameter overlap with a space in the alignment references
@@ -495,6 +538,24 @@ public:
     ///@{
     virtual int ConvertToPageBased(FunctorParams *) { return FUNCTOR_CONTINUE; }
     virtual int ConvertToPageBasedEnd(FunctorParams *) { return FUNCTOR_CONTINUE; }
+    ///@}
+    
+    /**
+    * Convert mensural MEI into cast-off (measure) segments looking at the barLine objects.
+     * Segment positions occur where a barLine is set on all staves.
+     */
+    ///@{
+    virtual int ConvertToCastOffMensural(FunctorParams *functorParams);
+    virtual int ConvertToUnCastOffMensural(FunctorParams *) { return FUNCTOR_CONTINUE; }
+    ///@}
+
+    /**
+     * Convert analytical markup (@fermata, @tie) to elements.
+     * See Doc::ConvertAnalyticalMarkupDoc
+     */
+    ///@{
+    virtual int ConvertAnalyticalMarkup(FunctorParams *) { return FUNCTOR_CONTINUE; }
+    virtual int ConvertAnalyticalMarkupEnd(FunctorParams *) { return FUNCTOR_CONTINUE; }
     ///@}
 
     /**
@@ -562,6 +623,13 @@ public:
      * Set the drawing dot positions, including for chords.
      */
     virtual int CalcDots(FunctorParams *) { return FUNCTOR_CONTINUE; }
+
+    /**
+     */
+    ///@{
+    virtual int AdjustArpeg(FunctorParams *) { return FUNCTOR_CONTINUE; }
+    virtual int AdjustArpegEnd(FunctorParams *) { return FUNCTOR_CONTINUE; }
+    ///@}
 
     /**
      * Adjust the position the outside articulations.
@@ -755,6 +823,13 @@ public:
     virtual int PrepareProcessingLists(FunctorParams *) { return FUNCTOR_CONTINUE; }
 
     /**
+     * Match elements of @plist.
+     */
+    ///@{
+    virtual int PreparePlist(FunctorParams *functorParams);
+    ///@}
+
+    /**
      * Match start for TimePointingInterface elements (such as fermata or harm).
      */
     ///@{
@@ -780,17 +855,6 @@ public:
     ///@{
     virtual int PrepareTimestamps(FunctorParams *) { return FUNCTOR_CONTINUE; }
     virtual int PrepareTimestampsEnd(FunctorParams *) { return FUNCTOR_CONTINUE; }
-    ///@}
-
-    /**
-     * Process Chord and Note for matching @tie by processing by Layer and by looking
-     * at the Pname and Oct.
-     * At the end, processes Chord and Note for matching @tie by processing by Layer; resets the
-     * Chord pointer to NULL at the end of a chord.
-     */
-    ///@{
-    virtual int PrepareTieAttr(FunctorParams *) { return FUNCTOR_CONTINUE; }
-    virtual int PrepareTieAttrEnd(FunctorParams *) { return FUNCTOR_CONTINUE; }
     ///@}
 
     /**
@@ -939,11 +1003,7 @@ public:
     ///@}
 
 protected:
-    /**
-     * Clear the children vector and delete all the objects.
-     */
-    void ClearChildren();
-
+    //
 private:
     /**
      * Method for generating the uuid.
@@ -1080,7 +1140,7 @@ public:
      * If not, it updates the list and also calls FilterList.
      * Because this is an interface, we need to pass the object - not the best design.
      */
-    ListOfObjects *GetList(Object *node);
+    const ListOfObjects *GetList(Object *node);
 
 private:
     mutable ListOfObjects m_list;

@@ -167,6 +167,11 @@ public:
      */
     virtual int HorizontalSpaceForDuration(
         double intervalTime, int maxActualDur, double spacingLinear, double spacingNonLinear);
+    
+    /**
+     * Return true if the alignment contains at least one reference with staffN
+     */
+    bool HasAlignmentReference(int staffN);
 
     //----------//
     // Functors //
@@ -183,6 +188,11 @@ public:
      * Special case of functor redirected from Measure.
      */
     virtual int JustifyX(FunctorParams *functorParams);
+
+    /**
+     * See Object::AdjustArpeg
+     */
+    virtual int AdjustArpeg(FunctorParams *functorParams);
 
     /**
      * See Object::AdjustGraceXPos

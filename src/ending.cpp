@@ -27,21 +27,21 @@ namespace vrv {
 // Ending
 //----------------------------------------------------------------------------
 
-Ending::Ending() : SystemElement("ending-"), BoundaryStartInterface(), AttNNumberLike()
+Ending::Ending() : SystemElement("ending-"), BoundaryStartInterface(), AttLineRend(), AttNNumberLike()
 {
+    RegisterAttClass(ATT_LINEREND);
     RegisterAttClass(ATT_NINTEGER);
 
     Reset();
 }
 
-Ending::~Ending()
-{
-}
+Ending::~Ending() {}
 
 void Ending::Reset()
 {
     SystemElement::Reset();
     BoundaryStartInterface::Reset();
+    ResetLineRend();
     ResetNNumberLike();
 }
 
@@ -49,6 +49,9 @@ void Ending::AddChild(Object *child)
 {
     if (child->Is(MEASURE)) {
         assert(dynamic_cast<Measure *>(child));
+    }
+    else if (child->Is(SCOREDEF)) {
+        assert(dynamic_cast<ScoreDef *>(child));
     }
     else if (child->IsSystemElement()) {
         assert(dynamic_cast<SystemElement *>(child));
@@ -117,7 +120,7 @@ int Ending::ResetDrawing(FunctorParams *functorParams)
     this->BoundaryStartInterface::InterfaceResetDrawing(functorParams);
 
     return FUNCTOR_CONTINUE;
-};
+}
 
 int Ending::CastOffSystems(FunctorParams *functorParams)
 {

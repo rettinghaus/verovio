@@ -27,12 +27,15 @@
 #include "io.h"
 #include "keysig.h"
 #include "layer.h"
+#include "mdiv.h"
 #include "measure.h"
 #include "mensur.h"
 #include "metersig.h"
 #include "note.h"
 #include "page.h"
+#include "plistinterface.h"
 #include "staff.h"
+#include "staffdef.h"
 #include "system.h"
 #include "tempo.h"
 #include "text.h"
@@ -80,17 +83,24 @@ Object::Object(const Object &object) : BoundingBox(object)
     m_interfaces = object.m_interfaces;
     m_isReferencObject = object.m_isReferencObject;
     m_isModified = true;
-    // For now do now copy them
+    this->GenerateUuid();
+    // For now do not copy them
     // m_uuid = object.m_uuid;
     // m_unsupported = object.m_unsupported;
+    
+    if (!object.CopyChildren()) {
+        return;
+    }
 
     int i;
     for (i = 0; i < (int)object.m_children.size(); i++) {
         Object *current = object.m_children.at(i);
         Object *copy = current->Clone();
-        copy->Modify();
-        copy->SetParent(this);
-        m_children.push_back(copy);
+        if (copy) {
+            copy->Modify();
+            copy->SetParent(this);
+            m_children.push_back(copy);
+        }
     }
 }
 
@@ -106,17 +116,20 @@ Object &Object::operator=(const Object &object)
         m_interfaces = object.m_interfaces;
         m_isReferencObject = object.m_isReferencObject;
         m_isModified = true;
+        this->GenerateUuid();
         // For now do now copy them
         // m_uuid = object.m_uuid;
         // m_unsupported = object.m_unsupported;
 
-        int i;
-        for (i = 0; i < (int)object.m_children.size(); i++) {
-            Object *current = object.m_children.at(i);
-            Object *copy = current->Clone();
-            copy->Modify();
-            copy->SetParent(this);
-            m_children.push_back(copy);
+        if (object.CopyChildren()) {
+            int i;
+            for (i = 0; i < (int)object.m_children.size(); i++) {
+                Object *current = object.m_children.at(i);
+                Object *copy = current->Clone();
+                copy->Modify();
+                copy->SetParent(this);
+                m_children.push_back(copy);
+            }
         }
     }
     return *this;
@@ -144,7 +157,7 @@ ClassId Object::GetClassId() const
     // we should always have the method overridden
     assert(false);
     return OBJECT;
-};
+}
 
 void Object::SetAsReferenceObject()
 {
@@ -157,7 +170,7 @@ void Object::Reset()
 {
     ClearChildren();
     ResetBoundingBox();
-};
+}
 
 void Object::RegisterInterface(std::vector<AttClassId> *attClasses, InterfaceId interfaceId)
 {
@@ -198,6 +211,18 @@ void Object::MoveChildrenFrom(Object *sourceParent, int idx, bool allowTypeChang
     }
 }
 
+void Object::ReplaceChild(Object *currentChild, Object *replacingChild)
+{
+    assert(this->GetChildIndex(currentChild) != -1);
+    assert(this->GetChildIndex(replacingChild) == -1);
+
+    int idx = this->GetChildIndex(currentChild);
+    currentChild->ResetParent();
+    m_children.at(idx) = replacingChild;
+    replacingChild->SetParent(this);
+    this->Modify();
+}
+
 void Object::MoveItselfTo(Object *targetParent)
 {
     assert(targetParent);
@@ -212,7 +237,15 @@ void Object::MoveItselfTo(Object *targetParent)
 void Object::SetUuid(std::string uuid)
 {
     m_uuid = uuid;
-};
+}
+    
+void Object::SwapUuid(Object *other)
+{
+    assert(other);
+    std::string swapUuid = this->GetUuid();
+    this->SetUuid(other->GetUuid());
+    other->SetUuid(swapUuid);
+}
 
 void Object::ClearChildren()
 {
@@ -282,6 +315,14 @@ Object *Object::GetNext()
     m_iteratorCurrent++;
     m_iteratorCurrent = std::find_if(m_iteratorCurrent, m_iteratorEnd, ObjectComparison(m_iteratorElementType));
     return (m_iteratorCurrent == m_iteratorEnd) ? NULL : *m_iteratorCurrent;
+}
+    
+Object *Object::GetNext(Object *child, const ClassId classId)
+{
+    m_iteratorElementType = classId;
+    m_iteratorEnd = m_children.end();
+    m_iteratorCurrent = std::find(m_children.begin(), m_iteratorEnd, child);
+    return (m_iteratorCurrent == m_iteratorEnd) ? NULL : this->GetNext();
 }
 
 Object *Object::GetLast() const
@@ -400,6 +441,17 @@ void Object::FindAllChildByAttComparison(
     Functor findAllByAttComparison(&Object::FindAllByAttComparison);
     FindAllByAttComparisonParams findAllByAttComparisonParams(attComparison, objects);
     this->Process(&findAllByAttComparison, &findAllByAttComparisonParams, NULL, NULL, deepness, direction);
+}
+
+void Object::FindAllChildBetween(
+    ArrayOfObjects *objects, AttComparison *attComparison, Object *start, Object *end, bool clear)
+{
+    assert(objects);
+    if (clear) objects->clear();
+
+    Functor findAllBetween(&Object::FindAllBetween);
+    FindAllBetweenParams findAllBetweenParams(attComparison, objects, start, end);
+    this->Process(&findAllBetween, &findAllBetweenParams);
 }
 
 Object *Object::GetChild(int idx) const
@@ -574,11 +626,20 @@ void Object::Process(Functor *functor, FunctorParams *functorParams, Functor *en
     }
 
     bool processChildren = true;
-    if (functor->m_visibleOnly && this->IsEditorialElement()) {
-        EditorialElement *editorialElement = dynamic_cast<EditorialElement *>(this);
-        assert(editorialElement);
-        if (editorialElement->m_visibility == Hidden) {
-            processChildren = false;
+    if (functor->m_visibleOnly) {
+        if (this->IsEditorialElement()) {
+            EditorialElement *editorialElement = dynamic_cast<EditorialElement *>(this);
+            assert(editorialElement);
+            if (editorialElement->m_visibility == Hidden) {
+                processChildren = false;
+            }
+        }
+        else if (this->Is(MDIV)) {
+            Mdiv *mdiv = dynamic_cast<Mdiv *>(this);
+            assert(mdiv);
+            if (mdiv->m_visibility == Hidden) {
+                processChildren = false;
+            }
         }
     }
 
@@ -691,7 +752,7 @@ void ObjectListInterface::ResetList(Object *node)
     this->FilterList(&m_list);
 }
 
-ListOfObjects *ObjectListInterface::GetList(Object *node)
+const ListOfObjects *ObjectListInterface::GetList(Object *node)
 {
     ResetList(node);
     return &m_list;
@@ -772,8 +833,8 @@ std::wstring TextListInterface::GetText(Object *node)
 {
     // alternatively we could cache the concatString in the interface and instantiate it in FilterList
     std::wstring concatText;
-    ListOfObjects *childList = this->GetList(node); // make sure it's initialized
-    for (ListOfObjects::iterator it = childList->begin(); it != childList->end(); it++) {
+    const ListOfObjects *childList = this->GetList(node); // make sure it's initialized
+    for (ListOfObjects::const_iterator it = childList->begin(); it != childList->end(); it++) {
         Text *text = dynamic_cast<Text *>(*it);
         assert(text);
         concatText += text->GetText();
@@ -784,7 +845,6 @@ std::wstring TextListInterface::GetText(Object *node)
 void TextListInterface::FilterList(ListOfObjects *childList)
 {
     ListOfObjects::iterator iter = childList->begin();
-
     while (iter != childList->end()) {
         if (!(*iter)->Is(TEXT)) {
             // remove anything that is not an LayerElement (e.g. Verse, Syl, etc)
@@ -896,6 +956,74 @@ int Object::FindAllByAttComparison(FunctorParams *functorParams)
         params->m_elements->push_back(this);
     }
     // continue until the end
+    return FUNCTOR_CONTINUE;
+}
+
+int Object::FindAllBetween(FunctorParams *functorParams)
+{
+    FindAllBetweenParams *params = dynamic_cast<FindAllBetweenParams *>(functorParams);
+    assert(params);
+
+    // We are reaching the start of the range
+    if (params->m_start == this) {
+        // Setting the start to NULL indicates that we are in the range
+        params->m_start = NULL;
+    }
+    // We have not reached the start yet
+    else if (params->m_start) {
+        return FUNCTOR_CONTINUE;
+    }
+
+    // evaluate by applying the AttComparison operator()
+    if ((*params->m_attComparison)(this)) {
+        params->m_elements->push_back(this);
+    }
+
+    // We have reached the end of the range
+    if (params->m_end == this) {
+        return FUNCTOR_STOP;
+    }
+
+    // continue until the end
+    return FUNCTOR_CONTINUE;
+}
+
+int Object::ConvertToCastOffMensural(FunctorParams *functorParams)
+{
+    ConvertToCastOffMensuralParams *params = dynamic_cast<ConvertToCastOffMensuralParams *>(functorParams);
+    assert(params);
+
+    assert(m_parent);
+    // We want to move only the children of the layer of any type (notes, editorial elements, etc)
+    if (this->m_parent->Is(LAYER)) {
+        assert(params->m_targetLayer);
+        this->MoveItselfTo(params->m_targetLayer);
+        // Do not precess children because we move the full sub-tree
+        return FUNCTOR_SIBLINGS;
+    }
+
+    return FUNCTOR_CONTINUE;
+}
+    
+int Object::PreparePlist(FunctorParams *functorParams)
+{
+    PreparePlistParams *params = dynamic_cast<PreparePlistParams *>(functorParams);
+    assert(params);
+
+    if (params->m_fillList && this->HasInterface(INTERFACE_PLIST)) {
+        PlistInterface *interface = this->GetPlistInterface();
+        assert(interface);
+        return interface->InterfacePreparePlist(functorParams, this);
+    }
+
+    std::string uuid = this->GetUuid();
+    auto i = std::find_if(params->m_interfaceUuidPairs.begin(), params->m_interfaceUuidPairs.end(),
+        [uuid](std::pair<PlistInterface *, std::string> pair) { return (pair.second == uuid); });
+    if (i != params->m_interfaceUuidPairs.end()) {
+        i->first->SetRef(this);
+        params->m_interfaceUuidPairs.erase(i);
+    }
+
     return FUNCTOR_CONTINUE;
 }
 
@@ -1066,7 +1194,7 @@ int Object::GetAlignmentLeftRight(FunctorParams *functorParams)
 
     if (!this->IsLayerElement()) return FUNCTOR_CONTINUE;
 
-    if (!this->HasUpdatedBB() || this->HasEmptyBB()) return FUNCTOR_CONTINUE;
+    if (!this->HasSelfBB() || this->HasEmptyBB()) return FUNCTOR_CONTINUE;
 
     int refLeft = this->GetSelfLeft();
     if (params->m_minLeft > refLeft) params->m_minLeft = refLeft;
@@ -1099,7 +1227,10 @@ int Object::SetOverflowBBoxes(FunctorParams *functorParams)
         assert(currentLayer);
         // set scoreDef attr
         if (currentLayer->GetStaffDefClef()) {
-            currentLayer->GetStaffDefClef()->SetOverflowBBoxes(params);
+            // Ignore system scoreDef clefs - clefs changes withing a staff are still taken into account
+            if (currentLayer->GetStaffDefClef()->GetScoreDefRole() != SYSTEM_SCOREDEF) {
+                currentLayer->GetStaffDefClef()->SetOverflowBBoxes(params);
+            }
         }
         if (currentLayer->GetStaffDefKeySig()) {
             currentLayer->GetStaffDefKeySig()->SetOverflowBBoxes(params);
@@ -1134,7 +1265,7 @@ int Object::SetOverflowBBoxes(FunctorParams *functorParams)
         return FUNCTOR_CONTINUE;
     }
 
-    if (!this->HasUpdatedBB()) {
+    if (!this->HasSelfBB()) {
         // if nothing was drawn, do not take it into account
         return FUNCTOR_CONTINUE;
     }

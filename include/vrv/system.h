@@ -90,7 +90,7 @@ public:
      */
     int GetSystemIdx() const { return Object::GetIdx(); }
 
-    void SetCurrentFloatingPositioner(int staffN, FloatingObject *object, Object *objectX, Object *objectY);
+    bool SetCurrentFloatingPositioner(int staffN, FloatingObject *object, Object *objectX, Object *objectY);
 
     /**
      * @name Setter and getter of the drawing scoreDef
@@ -99,6 +99,12 @@ public:
     ScoreDef *GetDrawingScoreDef() const { return m_drawingScoreDef; }
     void SetDrawingScoreDef(ScoreDef *drawingScoreDef);
     ///@}
+
+    /**
+     * Check if the notes between the start and end have mixed drawing stem directions.
+     * The start and end element are expected to be on the same staff and same layer.
+     */
+    bool HasMixedDrawingStemDir(LayerElement *start, LayerElement *end);
 
     //----------//
     // Functors //

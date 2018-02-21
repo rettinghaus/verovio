@@ -109,10 +109,14 @@ public:
      */
     virtual int CalcStem(FunctorParams *functorParams);
 
+    /**
+     * See Object::ResetDrawing
+     */
+    virtual int ResetDrawing(FunctorParams *functorParams);
+
 protected:
     /**
-     * Filter the list for a specific class.
-     * For example, keep only notes in Beam
+     * Filter the flat list and keep only Note and Chords elements.
      * This also initializes the m_beamElementCoords vector
      */
     virtual void FilterList(ListOfObjects *childList);

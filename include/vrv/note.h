@@ -78,8 +78,11 @@ public:
     }
     ///@}
 
-    /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    /**
+     * Override the method since alignment is required.
+     * For notes we want not to align notes within a ligature (except first and last)
+     */
+    virtual bool HasToBeAligned() const;
 
     /**
      * Add an element (a verse or an accid) to a note.
@@ -92,9 +95,6 @@ public:
      */
     ///@{
     Accid *GetDrawingAccid();
-    void ResetDrawingTieAttr();
-    void SetDrawingTieAttr();
-    Tie *GetDrawingTieAttr() const { return m_drawingTieAttr; }
     ///@}
 
     /**
@@ -138,11 +138,6 @@ public:
     ///}
 
     /**
-     * Get the drawing radius of the note head taking into accound the note duration
-     */
-    int GetDrawingRadius(Doc *doc, int staffSize, bool isCueSize) const;
-
-    /**
      * Returns a single integer representing pitch and octave.
      */
     int GetDiatonicPitch() const { return this->GetPname() + (int)this->GetOct() * 7; }
@@ -152,14 +147,19 @@ public:
      * If necessary look at the glyph anchor (if any).
      */
     ///@{
-    virtual Point GetStemUpSE(Doc *doc, int staffSize, bool graceSize);
-    virtual Point GetStemDownNW(Doc *doc, int staffSize, bool graceSize);
+    virtual Point GetStemUpSE(Doc *doc, int staffSize, bool isCueSize);
+    virtual Point GetStemDownNW(Doc *doc, int staffSize, bool isCueSize);
     ///@}
 
     /**
      * Return the SMuFL code for a mensural note looking at the staff notation type, the coloration and the duration
      */
     wchar_t GetMensuralSmuflNoteHead();
+
+    /**
+     * Check if a note or its parent chord are visible
+     */
+    bool IsVisible();
 
     /**
      * MIDI timing information
@@ -181,6 +181,11 @@ public:
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * See Object::ConvertAnalyticalMarkup
+     */
+    virtual int ConvertAnalyticalMarkup(FunctorParams *functorParams);
 
     /**
      * See Object::CalcStem
@@ -208,11 +213,6 @@ public:
     virtual int PrepareLayerElementParts(FunctorParams *functorParams);
 
     /**
-     * See Object::PrepareTieAttr
-     */
-    virtual int PrepareTieAttr(FunctorParams *functorParams);
-
-    /**
      * See Object::PrepareLyrics
      */
     virtual int PrepareLyrics(FunctorParams *functorParams);
@@ -221,11 +221,6 @@ public:
      * See Object::PreparePointersByLayer
      */
     virtual int PreparePointersByLayer(FunctorParams *functorParams);
-
-    /**
-     * See Object::FillStaffCurrentTimeSpanning
-     */
-    virtual int FillStaffCurrentTimeSpanning(FunctorParams *functorParams);
 
     /**
      * See Object::ResetDrawing
@@ -252,13 +247,6 @@ private:
 public:
     //
 private:
-    /**
-     * Tie attributes are represented a pointers to Tie objects.
-     * There is one pointer for the initial attribute (TIE_i or TIE_m).
-     * The note with the initial attribute owns the Tie object and takes care of deleting it
-     */
-    Tie *m_drawingTieAttr;
-
     /**
      * The drawing location of the note
      */

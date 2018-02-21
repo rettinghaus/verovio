@@ -16,6 +16,7 @@
 
 #include "attcomparison.h"
 #include "beam.h"
+#include "btrem.h"
 #include "chord.h"
 #include "clef.h"
 #include "dir.h"
@@ -23,16 +24,19 @@
 #include "dynam.h"
 #include "fb.h"
 #include "fermata.h"
+#include "ftrem.h"
 #include "hairpin.h"
 #include "harm.h"
 #include "label.h"
 #include "layer.h"
+#include "mdiv.h"
 #include "measure.h"
 #include "mordent.h"
 #include "mrest.h"
 #include "note.h"
 #include "octave.h"
 #include "pedal.h"
+#include "rend.h"
 #include "rest.h"
 #include "rpt.h"
 #include "score.h"
@@ -40,6 +44,8 @@
 #include "slur.h"
 #include "space.h"
 #include "staff.h"
+#include "staffdef.h"
+#include "staffgrp.h"
 #include "syl.h"
 #include "tempo.h"
 #include "text.h"
@@ -61,13 +67,12 @@ MusicXmlInput::MusicXmlInput(Doc *doc, std::string filename) : FileInputStream(d
     m_filename = filename;
 }
 
-MusicXmlInput::~MusicXmlInput()
-{
-}
+MusicXmlInput::~MusicXmlInput() {}
 
 bool MusicXmlInput::ImportFile()
 {
     try {
+        m_doc->Reset();
         m_doc->SetType(Raw);
         pugi::xml_document xmlDoc;
         pugi::xml_parse_result result = xmlDoc.load_file(m_filename.c_str());
@@ -86,6 +91,7 @@ bool MusicXmlInput::ImportFile()
 bool MusicXmlInput::ImportString(std::string const &musicxml)
 {
     try {
+        m_doc->Reset();
         m_doc->SetType(Raw);
         pugi::xml_document xmlDoc;
         xmlDoc.load(musicxml.c_str());
@@ -420,7 +426,13 @@ bool MusicXmlInput::ReadMusicXml(pugi::xml_node root)
 
     ReadMusicXmlTitle(root);
 
-    Score *score = m_doc->CreateScoreBuffer();
+    // The mdiv
+    Mdiv *mdiv = new Mdiv();
+    mdiv->m_visibility = Visible;
+    m_doc->AddChild(mdiv);
+    // The score
+    Score *score = new Score();
+    mdiv->AddChild(score);
     // the section
     Section *section = new Section();
     score->AddChild(section);
@@ -473,8 +485,9 @@ bool MusicXmlInput::ReadMusicXml(pugi::xml_node root)
                     partId.c_str());
                 continue;
             }
-            std::string partName = GetContentOfChild(xpathNode.node(), "part-name");
-            std::string partAbbr = GetContentOfChild(xpathNode.node(), "part-abbreviation");
+            // part-name should be revised, as soon MEI can suppress labels
+            std::string partName = GetContentOfChild(xpathNode.node(), "part-name[not(@print-object='no')]");
+            std::string partAbbr = GetContentOfChild(xpathNode.node(), "part-abbreviation[not(@print-object='no')]");
             // create the staffDef(s)
             StaffGrp *partStaffGrp = new StaffGrp();
             int nbStaves = ReadMusicXmlPartAttributesAsStaffDef(partFirstMeasure.node(), partStaffGrp, staffOffset);
@@ -1250,25 +1263,37 @@ void MusicXmlInput::ReadMusicXmlHarmony(pugi::xml_node node, Measure *measure, s
 
     std::string placeStr = GetAttributeValue(node, "placement");
     std::string typeStr = GetAttributeValue(node, "type");
+    int durOffset = 0;
 
     std::string harmText = GetContentOfChild(node, "root/root-step");
     pugi::xpath_node alter = node.select_single_node("root/root-alter");
-    if (alter) {
-        if (GetContent(alter.node()) == "-1")
-            harmText = harmText + "♭";
-        else if (GetContent(alter.node()) == "0")
-            harmText = harmText + "♮";
-        else if (GetContent(alter.node()) == "1")
-            harmText = harmText + "♯";
-    }
+    harmText += ConvertAlterToSymbol(GetContent(alter.node()));
     pugi::xpath_node kind = node.select_single_node("kind");
-    if (kind) harmText = harmText + GetAttributeValue(kind.node(), "text").c_str();
+    if (kind) {
+        harmText = harmText + GetAttributeValue(kind.node(), "text").c_str();
+        if (HasAttributeWithValue(kind.node(), "use-symbols", "yes"))
+            harmText = harmText + ConvertKindToSymbol(GetContent(kind.node()));
+    }
+    pugi::xpath_node degree = node.select_single_node("degree");
+    if (degree) {
+        pugi::xpath_node alter = node.select_single_node("degree/degree-alter");
+        harmText += ConvertAlterToSymbol(GetContent(alter.node())) + GetContentOfChild(node, "degree/degree-value");
+    }
+    pugi::xpath_node bass = node.select_single_node("bass");
+    if (bass) {
+        harmText += "/" + GetContentOfChild(node, "bass/bass-step");
+        pugi::xpath_node alter = node.select_single_node("bass/bass-alter");
+        harmText += ConvertAlterToSymbol(GetContent(alter.node()));
+    }
     Harm *harm = new Harm();
     Text *text = new Text();
     if (!placeStr.empty()) harm->SetPlace(harm->AttPlacement::StrToStaffrel(placeStr.c_str()));
     if (!typeStr.empty()) harm->SetType(typeStr.c_str());
     text->SetText(UTF8to16(harmText));
     harm->AddChild(text);
+    pugi::xpath_node offset = node.select_single_node("offset");
+    if (offset) durOffset = offset.node().text().as_int();
+    harm->SetTstamp((double)(m_durTotal + durOffset) * (double)m_meterCount / (double)(4 * m_ppq) + 1.0);
     m_controlElements.push_back(std::make_pair(measureNum, harm));
     m_harmStack.push_back(harm);
 }
@@ -1303,8 +1328,8 @@ void MusicXmlInput::ReadMusicXmlNote(pugi::xml_node node, Measure *measure, std:
 
     pugi::xpath_node notations = node.select_single_node("notations[not(@print-object='no')]");
 
-    bool cue = false;
-    if (node.select_single_node("cue") || node.select_single_node("type[@size='cue']")) cue = true;
+    // bool cue = false;
+    // if (node.select_single_node("cue") || node.select_single_node("type[@size='cue']")) cue = true;
 
     // duration string and dots
     std::string typeStr = GetContentOfChild(node, "type");
@@ -1813,7 +1838,6 @@ void MusicXmlInput::ReadMusicXmlNote(pugi::xml_node node, Measure *measure, std:
         std::vector<Harm *>::iterator iter;
         for (iter = m_harmStack.begin(); iter != m_harmStack.end(); iter++) {
             (*iter)->SetStaff(staff->AttNInteger::StrToXsdPositiveIntegerList(std::to_string(staff->GetN())));
-            (*iter)->SetStartid(m_ID);
         }
         m_harmStack.clear();
     }
@@ -2029,6 +2053,34 @@ tupletVis_NUMFORMAT MusicXmlInput::ConvertTupletNumberValue(std::string value)
         return tupletVis_NUMFORMAT_ratio;
     else
         return tupletVis_NUMFORMAT_NONE;
+}
+
+std::string MusicXmlInput::ConvertAlterToSymbol(std::string value)
+{
+    if (value == "-1")
+        return "♭";
+    else if (value == "0")
+        return "♮";
+    else if (value == "1")
+        return "♯";
+    else
+        return "";
+}
+
+std::string MusicXmlInput::ConvertKindToSymbol(std::string value)
+{
+    if (value.find("major") != std::string::npos)
+        return "△";
+    else if (value.find("minor") != std::string::npos)
+        return "-";
+    else if (value.find("augmented") != std::string::npos)
+        return "+";
+    else if (value.find("diminished") != std::string::npos)
+        return "°";
+    else if (value.find("half-diminished") != std::string::npos)
+        return "ø";
+    else
+        return "";
 }
 
 } // namespace vrv

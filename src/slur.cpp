@@ -35,9 +35,7 @@ Slur::Slur() : ControlElement("slur-"), TimeSpanningInterface(), AttColor(), Att
     Reset();
 }
 
-Slur::~Slur()
-{
-}
+Slur::~Slur() {}
 
 void Slur::Reset()
 {
@@ -45,6 +43,8 @@ void Slur::Reset()
     TimeSpanningInterface::Reset();
     ResetColor();
     ResetCurvature();
+
+    m_drawingCurvedir = curvature_CURVEDIR_NONE;
 }
 
 void Slur::GetCrossStaffOverflows(
@@ -97,6 +97,20 @@ void Slur::GetCrossStaffOverflows(
 
     if (startStaff && (startStaff->GetN() > alignment->GetStaff()->GetN())) skipBelow = true;
     if (endStaff && (endStaff->GetN() > alignment->GetStaff()->GetN())) skipBelow = true;
+}
+
+//----------------------------------------------------------------------------
+// Functors methods
+//----------------------------------------------------------------------------
+
+int Slur::ResetDrawing(FunctorParams *functorParams)
+{
+    // Call parent one too
+    ControlElement::ResetDrawing(functorParams);
+
+    m_drawingCurvedir = curvature_CURVEDIR_NONE;
+
+    return FUNCTOR_CONTINUE;
 }
 
 } // namespace vrv

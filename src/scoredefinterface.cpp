@@ -56,9 +56,7 @@ ScoreDefInterface::ScoreDefInterface()
     Reset();
 }
 
-ScoreDefInterface::~ScoreDefInterface()
-{
-}
+ScoreDefInterface::~ScoreDefInterface() {}
 
 void ScoreDefInterface::Reset()
 {

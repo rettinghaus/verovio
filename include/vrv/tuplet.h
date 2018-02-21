@@ -46,10 +46,18 @@ public:
      */
     virtual void AddChild(Object *object);
 
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * See Object::ResetDrawing
+     */
+    virtual int ResetDrawing(FunctorParams *functorParams);
+
 protected:
     /**
-     * Filter the list for a specific class.
-     * For example, keep only notes in Beam
+     * Filter the flat list and keep only Note elements.
      */
     virtual void FilterList(ListOfObjects *childList);
 

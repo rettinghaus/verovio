@@ -14,6 +14,7 @@
 
 //----------------------------------------------------------------------------
 
+#include "arpeg.h"
 #include "attcomparison.h"
 #include "doc.h"
 #include "floatingobject.h"
@@ -21,9 +22,10 @@
 #include "layer.h"
 #include "measure.h"
 #include "note.h"
+#include "options.h"
 #include "smufl.h"
 #include "staff.h"
-#include "style.h"
+#include "staffdef.h"
 #include "timestamp.h"
 #include "vrv.h"
 
@@ -38,9 +40,7 @@ HorizontalAligner::HorizontalAligner() : Object()
     Reset();
 }
 
-HorizontalAligner::~HorizontalAligner()
-{
-}
+HorizontalAligner::~HorizontalAligner() {}
 
 void HorizontalAligner::Reset()
 {
@@ -101,9 +101,7 @@ MeasureAligner::MeasureAligner() : HorizontalAligner()
     Reset();
 }
 
-MeasureAligner::~MeasureAligner()
-{
-}
+MeasureAligner::~MeasureAligner() {}
 
 void MeasureAligner::Reset()
 {
@@ -273,7 +271,7 @@ void MeasureAligner::AdjustGraceNoteSpacing(Doc *doc, Alignment *alignment, int 
     // If not, move the aligments accordingly
     int left = alignment->GetGraceAligner()->GetGraceGroupLeft(staffN);
     // We also set artificially the margin with the previous note
-    if (left != -VRV_UNSET) left -= doc->GetLeftMargin(NOTE) * doc->GetDrawingUnit(100) / PARAM_DENOMINATOR;
+    if (left != -VRV_UNSET) left -= doc->GetLeftMargin(NOTE) * doc->GetDrawingUnit(100);
     if (left < maxRight) {
         int spacing = (maxRight - left);
         ArrayOfAdjustmentTuples boundaries{ std::make_tuple(rightAlignment, alignment, spacing) };
@@ -290,9 +288,7 @@ GraceAligner::GraceAligner() : HorizontalAligner()
     Reset();
 }
 
-GraceAligner::~GraceAligner()
-{
-}
+GraceAligner::~GraceAligner() {}
 
 void GraceAligner::Reset()
 {
@@ -459,6 +455,12 @@ void Alignment::AddChild(Object *child)
     m_children.push_back(child);
     Modify();
 }
+    
+bool Alignment::HasAlignmentReference(int staffN)
+{
+    AttNIntegerComparison matchStaff(ALIGNMENT_REFERENCE, staffN);
+    return (this->FindChildByAttComparison(&matchStaff, 1) != NULL);
+}
 
 AlignmentReference *Alignment::GetAlignmentReference(int staffN)
 {
@@ -604,9 +606,7 @@ AlignmentReference::AlignmentReference(int staffN) : Object(), AttNInteger()
     this->SetN(staffN);
 }
 
-AlignmentReference::~AlignmentReference()
-{
-}
+AlignmentReference::~AlignmentReference() {}
 
 void AlignmentReference::Reset()
 {
@@ -667,9 +667,7 @@ TimestampAligner::TimestampAligner() : Object()
     Reset();
 }
 
-TimestampAligner::~TimestampAligner()
-{
-}
+TimestampAligner::~TimestampAligner() {}
 
 void TimestampAligner::Reset()
 {
@@ -739,6 +737,57 @@ int MeasureAligner::JustifyX(FunctorParams *functorParams)
     return FUNCTOR_CONTINUE;
 }
 
+int Alignment::AdjustArpeg(FunctorParams *functorParams)
+{
+    AdjustArpegParams *params = dynamic_cast<AdjustArpegParams *>(functorParams);
+    assert(params);
+
+    // An array of Alignment / Arpeg / staffN / bool (for indicating if we have reached the aligment yet)
+    ArrayOfAligmentArpegTuples::iterator iter = params->m_alignmentArpegTuples.begin();
+
+    while (iter != params->m_alignmentArpegTuples.end()) {
+        // We are reaching the alignment to which an arpeg points to (i.e, the topNote one)
+        if (std::get<0>(*iter) == this) {
+            std::get<3>(*iter) = true;
+            iter++;
+            continue;
+        }
+        // We have not reached the alignment of the arpeg, just continue (backwards)
+        else if (std::get<3>(*iter) == false) {
+            iter++;
+            continue;
+        }
+        // We are now in an alignment preceeding an arpeg - check for overlap
+        int minLeft, maxRight;
+        this->GetLeftRight(std::get<2>(*iter), minLeft, maxRight);
+
+        // Nothing for the staff we are looking at, we also need to check with barlines
+        if (maxRight == VRV_UNSET) {
+            this->GetLeftRight(-1, minLeft, maxRight);
+        }
+
+        // Nothing, just continue
+        if (maxRight == VRV_UNSET) {
+            iter++;
+            continue;
+        }
+
+        int overlap = maxRight - std::get<1>(*iter)->GetCurrentFloatingPositioner()->GetSelfLeft();
+        // HARDCODED
+        overlap += params->m_doc->GetDrawingUnit(100) / 2;
+        // LogDebug("maxRight %d, %d %d", maxRight, std::get<2>(*iter), overlap);
+        if (overlap > 0) {
+            ArrayOfAdjustmentTuples boundaries{ std::make_tuple(this, std::get<0>(*iter), overlap) };
+            params->m_measureAligner->AdjustProportionally(boundaries);
+        }
+
+        // We can remove it from the list
+        iter = params->m_alignmentArpegTuples.erase(iter);
+    }
+
+    return FUNCTOR_CONTINUE;
+}
+
 int Alignment::AdjustGraceXPos(FunctorParams *functorParams)
 {
     AdjustGraceXPosParams *params = dynamic_cast<AdjustGraceXPosParams *>(functorParams);
@@ -773,8 +822,7 @@ int Alignment::AdjustGraceXPos(FunctorParams *functorParams)
                 int minLeft, maxRight;
                 params->m_rightDefaultAlignment->GetLeftRight(*iter, minLeft, maxRight);
                 if (minLeft != -VRV_UNSET)
-                    graceMaxPos = minLeft
-                        - params->m_doc->GetLeftMargin(NOTE) * params->m_doc->GetDrawingUnit(75) / PARAM_DENOMINATOR;
+                    graceMaxPos = minLeft - params->m_doc->GetLeftMargin(NOTE) * params->m_doc->GetDrawingUnit(75);
             }
             // This happens when grace notes are at the end of a measure before a barline
             else {
@@ -783,8 +831,7 @@ int Alignment::AdjustGraceXPos(FunctorParams *functorParams)
                 // staffN -1 is barline
                 measureAligner->GetRightBarLineAlignment()->GetLeftRight(BARLINE_REFERENCES, minLeft, maxRight);
                 if (minLeft != -VRV_UNSET)
-                    graceMaxPos = minLeft
-                        - params->m_doc->GetLeftMargin(NOTE) * params->m_doc->GetDrawingUnit(75) / PARAM_DENOMINATOR;
+                    graceMaxPos = minLeft - params->m_doc->GetLeftMargin(NOTE) * params->m_doc->GetDrawingUnit(75);
             }
 
             params->m_graceMaxPos = graceMaxPos;
@@ -908,7 +955,8 @@ int Alignment::SetAlignmentXPos(FunctorParams *functorParams)
 
     if (intervalTime > 0.0) {
         intervalXRel = HorizontalSpaceForDuration(intervalTime, params->m_longestActualDur,
-            params->m_doc->GetSpacingLinear(), params->m_doc->GetSpacingNonLinear());
+            params->m_doc->GetOptions()->m_spacingLinear.GetValue(),
+            params->m_doc->GetOptions()->m_spacingNonLinear.GetValue());
         // LogDebug("SetAlignmentXPos: intervalTime=%.2f intervalXRel=%d", intervalTime, intervalXRel);
     }
 
