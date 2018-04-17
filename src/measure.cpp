@@ -9,6 +9,7 @@
 
 //----------------------------------------------------------------------------
 
+#include <algorithm>
 #include <assert.h>
 #include <math.h>
 
@@ -21,6 +22,7 @@
 #include "editorial.h"
 #include "ending.h"
 #include "functorparams.h"
+#include "hairpin.h"
 #include "page.h"
 #include "staff.h"
 #include "staffdef.h"
@@ -169,7 +171,7 @@ void Measure::AddChildBack(Object *child)
         m_children.push_back(child);
     }
     else {
-        for (auto it = m_children.begin(); it != m_children.end(); it++) {
+        for (auto it = m_children.begin(); it != m_children.end(); ++it) {
             if (!(*it)->Is(STAFF)) {
                 m_children.insert(it, child);
                 break;
@@ -290,13 +292,13 @@ std::vector<Staff *> Measure::GetFirstStaffGrpStaves(ScoreDef *scoreDef)
     scoreDef->FindAllChildByAttComparison(&staffGrps, &matchType);
 
     // Then the @n of each first staffDef
-    for (staffGrpIter = staffGrps.begin(); staffGrpIter != staffGrps.end(); staffGrpIter++) {
+    for (staffGrpIter = staffGrps.begin(); staffGrpIter != staffGrps.end(); ++staffGrpIter) {
         StaffDef *staffDef = dynamic_cast<StaffDef *>((*staffGrpIter)->GetFirst(STAFFDEF));
         if (staffDef) staffList.push_back(staffDef->GetN());
     }
 
     // Get the corresponding staves in the measure
-    for (iter = staffList.begin(); iter != staffList.end(); iter++) {
+    for (iter = staffList.begin(); iter != staffList.end(); ++iter) {
         AttNIntegerComparison matchN(STAFF, *iter);
         Staff *staff = dynamic_cast<Staff *>(this->FindChildByAttComparison(&matchN, 1));
         if (!staff) {
@@ -315,7 +317,7 @@ int Measure::EnclosesTime(int time) const
     int timeDuration = int(
         m_measureAligner.GetRightAlignment()->GetTime() * DURATION_4 / DUR_MAX * 60.0 / m_currentTempo * 1000.0 + 0.5);
     std::vector<int>::const_iterator iter;
-    for (iter = m_realTimeOffsetMilliseconds.begin(); iter != m_realTimeOffsetMilliseconds.end(); iter++) {
+    for (iter = m_realTimeOffsetMilliseconds.begin(); iter != m_realTimeOffsetMilliseconds.end(); ++iter) {
         if ((time >= *iter) && (time <= *iter + timeDuration)) return repeat;
         repeat++;
     }
@@ -392,7 +394,7 @@ int Measure::ConvertAnalyticalMarkupEnd(FunctorParams *functorParams)
     assert(params);
 
     ArrayOfObjects::iterator iter;
-    for (iter = params->m_controlEvents.begin(); iter != params->m_controlEvents.end(); iter++) {
+    for (iter = params->m_controlEvents.begin(); iter != params->m_controlEvents.end(); ++iter) {
         this->AddChild(*iter);
     }
 
@@ -411,50 +413,51 @@ int Measure::ConvertToPageBased(FunctorParams *functorParams)
 
     return FUNCTOR_SIBLINGS;
 }
-    
+
 int Measure::ConvertToCastOffMensural(FunctorParams *functorParams)
 {
     ConvertToCastOffMensuralParams *params = dynamic_cast<ConvertToCastOffMensuralParams *>(functorParams);
     assert(params);
-    
+
     // We are processing by staff/layer from the call below - we obviously do not want to loop...
     if (params->m_targetMeasure) {
         return FUNCTOR_CONTINUE;
     }
-    
+
     bool convertToMeasured = params->m_doc->GetOptions()->m_mensuralToMeasure.GetValue();
-    
+
     assert(params->m_targetSystem);
     assert(params->m_layerTree);
-    
+
     // Create a temporary subsystem for receiving the measure segments
     System targetSubSystem;
     params->m_targetSubSystem = &targetSubSystem;
-    
-    // Create the first measure segment - problem: we are dropping the section element - we should create a score-based MEI file instead
+
+    // Create the first measure segment - problem: we are dropping the section element - we should create a score-based
+    // MEI file instead
     Measure *measure = new Measure(convertToMeasured);
     if (convertToMeasured) {
         measure->SetN(StringFormat("%d", params->m_segmentTotal + 1));
     }
     params->m_targetSubSystem->AddChild(measure);
-    
+
     std::vector<AttComparison *> filters;
     // Now we can process by layer and move their content to (measure) segments
-    for (auto const& staves: params->m_layerTree->child) {
-        for (auto const& layers: staves.second.child) {
+    for (auto const &staves : params->m_layerTree->child) {
+        for (auto const &layers : staves.second.child) {
             // Create ad comparison object for each type / @n
             AttNIntegerComparison matchStaff(STAFF, staves.first);
             AttNIntegerComparison matchLayer(LAYER, layers.first);
             filters = { &matchStaff, &matchLayer };
-            
+
             params->m_segmentIdx = 1;
             params->m_targetMeasure = measure;
-            
+
             Functor convertToCastOffMensural(&Object::ConvertToCastOffMensural);
             this->Process(&convertToCastOffMensural, params, NULL, &filters);
         }
     }
-    
+
     params->m_targetMeasure = NULL;
     params->m_targetSubSystem = NULL;
     params->m_segmentTotal = targetSubSystem.GetChildCount();
@@ -463,22 +466,22 @@ int Measure::ConvertToCastOffMensural(FunctorParams *functorParams)
 
     return FUNCTOR_SIBLINGS;
 }
-    
+
 int Measure::ConvertToUnCastOffMensural(FunctorParams *functorParams)
 {
     ConvertToUnCastOffMensuralParams *params = dynamic_cast<ConvertToUnCastOffMensuralParams *>(functorParams);
     assert(params);
-    
+
     if (params->m_contentMeasure == NULL) {
         params->m_contentMeasure = this;
     }
     else if (params->m_addSegmentsToDelete) {
         params->m_segmentsToDelete.push_back(this);
     }
-    
+
     return FUNCTOR_CONTINUE;
 }
-    
+
 int Measure::Save(FunctorParams *functorParams)
 {
     if (this->IsMeasuredMusic())
@@ -607,7 +610,7 @@ int Measure::AdjustLayers(FunctorParams *functorParams)
 
     std::vector<int>::iterator iter;
     std::vector<AttComparison *> filters;
-    for (iter = params->m_staffNs.begin(); iter != params->m_staffNs.end(); iter++) {
+    for (iter = params->m_staffNs.begin(); iter != params->m_staffNs.end(); ++iter) {
         filters.clear();
         // Create ad comparison object for each type / @n
         std::vector<int> ns;
@@ -641,11 +644,25 @@ int Measure::AdjustGraceXPos(FunctorParams *functorParams)
     assert(params);
 
     m_measureAligner.PushAlignmentsRight();
-
     params->m_rightDefaultAlignment = NULL;
-
+    
     // We process it backward because we want to get the rightDefaultAlignment
     m_measureAligner.Process(params->m_functor, params, params->m_functorEnd, NULL, UNLIMITED_DEPTH, BACKWARD);
+    
+    // We need to process the staves in the reverse order
+    std::vector<int> staffNs = params->m_staffNs;
+    std::vector<int> staffNsReversed;
+    staffNsReversed.resize(staffNs.size());
+    std::reverse_copy(staffNs.begin(), staffNs.end(), staffNsReversed.begin());
+    
+    m_measureAligner.PushAlignmentsRight();
+    params->m_rightDefaultAlignment = NULL;
+    
+    params->m_staffNs = staffNsReversed;
+    m_measureAligner.Process(params->m_functor, params, params->m_functorEnd, NULL, UNLIMITED_DEPTH, BACKWARD);
+    
+    // Put params back
+    params->m_staffNs = staffNs;
 
     return FUNCTOR_SIBLINGS;
 }
@@ -661,7 +678,7 @@ int Measure::AdjustXPos(FunctorParams *functorParams)
 
     std::vector<int>::iterator iter;
     std::vector<AttComparison *> filters;
-    for (iter = params->m_staffNs.begin(); iter != params->m_staffNs.end(); iter++) {
+    for (iter = params->m_staffNs.begin(); iter != params->m_staffNs.end(); ++iter) {
         params->m_minPos = 0;
         params->m_upcomingMinPos = VRV_UNSET;
         params->m_cumulatedXShift = 0;
@@ -791,7 +808,7 @@ int Measure::CastOffSystems(FunctorParams *functorParams)
 
     // First add all pendings objects
     ArrayOfObjects::iterator iter;
-    for (iter = params->m_pendingObjects.begin(); iter != params->m_pendingObjects.end(); iter++) {
+    for (iter = params->m_pendingObjects.begin(); iter != params->m_pendingObjects.end(); ++iter) {
         params->m_currentSystem->AddChild(*iter);
     }
     params->m_pendingObjects.clear();
@@ -833,7 +850,7 @@ int Measure::FillStaffCurrentTimeSpanningEnd(FunctorParams *functorParams)
             iter = params->m_timeSpanningElements.erase(iter);
         }
         else {
-            iter++;
+            ++iter;
         }
     }
     return FUNCTOR_CONTINUE;
@@ -845,7 +862,7 @@ int Measure::PrepareBoundaries(FunctorParams *functorParams)
     assert(params);
 
     std::vector<BoundaryStartInterface *>::iterator iter;
-    for (iter = params->m_startBoundaries.begin(); iter != params->m_startBoundaries.end(); iter++) {
+    for (iter = params->m_startBoundaries.begin(); iter != params->m_startBoundaries.end(); ++iter) {
         (*iter)->SetMeasure(this);
     }
     params->m_startBoundaries.clear();
@@ -877,9 +894,30 @@ int Measure::PrepareFloatingGrps(FunctorParams *functorParams)
     assert(params);
 
     if (params->m_previousEnding) {
-        // We have a measure in between endings and the previous one was group, so we need to increase the grpId
-        if (params->m_previousEnding->GetDrawingGrpId() > DRAWING_GRP_NONE) params->m_drawingGrpId++;
+        // We have a measure in between endings and the previous one was group, just reset pointer to NULL
         params->m_previousEnding = NULL;
+    }
+
+    return FUNCTOR_CONTINUE;
+}
+
+int Measure::PrepareFloatingGrpsEnd(FunctorParams *functorParams)
+{
+    PrepareFloatingGrpsParams *params = dynamic_cast<PrepareFloatingGrpsParams *>(functorParams);
+    assert(params);
+
+    params->m_dynams.clear();
+
+    std::vector<Hairpin *>::iterator iter = params->m_hairpins.begin();
+    while (iter != params->m_hairpins.end()) {
+        assert((*iter)->GetEnd());
+        Measure *measureEnd = dynamic_cast<Measure *>((*iter)->GetEnd()->GetFirstParent(MEASURE));
+        if (measureEnd == this) {
+            iter = params->m_hairpins.erase(iter);
+        }
+        else {
+            ++iter;
+        }
     }
 
     return FUNCTOR_CONTINUE;
@@ -910,16 +948,14 @@ int Measure::PrepareTimeSpanningEnd(FunctorParams *functorParams)
 
     ArrayOfSpanningInterClassIdPairs::iterator iter = params->m_timeSpanningInterfaces.begin();
     while (iter != params->m_timeSpanningInterfaces.end()) {
-        // At the end of the measure (going backward) we remove element for which we do not need to match the end
-        // (for
-        // now). Eventually, we could consider them, for example if we want to display their spanning or for
-        // improved
+        // At the end of the measure (going backward) we remove element for which we do not need to match the end (for
+        // now). Eventually, we could consider them, for example if we want to display their spanning or for improved
         // midi output
         if ((iter->second == DIR) || (iter->second == DYNAM) || (iter->second == HARM)) {
             iter = params->m_timeSpanningInterfaces.erase(iter);
         }
         else {
-            iter++;
+            ++iter;
         }
     }
 
@@ -982,7 +1018,7 @@ int Measure::PrepareTimestampsEnd(FunctorParams *functorParams)
         // we have not reached the correct end measure yet
         else {
             (*iter).second.first--;
-            iter++;
+            ++iter;
         }
     }
 
@@ -1031,6 +1067,17 @@ int Measure::CalcMaxMeasureDuration(FunctorParams *functorParams)
     Tempo *tempo = dynamic_cast<Tempo *>(this->FindChildByType(TEMPO));
     if (tempo && tempo->HasMidiBpm()) {
         params->m_currentTempo = tempo->GetMidiBpm();
+    }
+    else if (tempo && tempo->HasMm()) {
+        int mm = tempo->GetMm();
+        int mmUnit = 4;
+        if (tempo->HasMmUnit() && (tempo->GetMmUnit() > DURATION_breve)) {
+            mmUnit = pow(2, (int)tempo->GetMmUnit() - 2);
+        }
+        if (tempo->HasMmDots()) {
+            mmUnit = 2 * mmUnit - (mmUnit / pow(2, tempo->GetMmDots()));
+        }
+        params->m_currentTempo = int(mm * 4.0 / mmUnit + 0.5);
     }
     m_currentTempo = params->m_currentTempo;
 

@@ -298,6 +298,13 @@ Point Note::GetStemDownNW(Doc *doc, int staffSize, bool isCueSize)
 wchar_t Note::GetMensuralSmuflNoteHead()
 {
     assert(this->IsMensural());
+    
+    int drawingDur = this->GetDrawingDur();
+    
+    // No SMuFL code used for these values
+    if (drawingDur < DUR_1) {
+        return 0;
+    }
 
     Staff *staff = dynamic_cast<Staff *>(this->GetFirstParent(STAFF));
     assert(staff);
@@ -308,18 +315,21 @@ wchar_t Note::GetMensuralSmuflNoteHead()
         code = SMUFL_E93D_mensuralNoteheadSemiminimaWhite;
     }
     else {
-        int drawingDur = this->GetDrawingDur();
-        if (this->GetColored()) {
-            if (drawingDur == DUR_2)
-                code = SMUFL_E93D_mensuralNoteheadSemiminimaWhite;
-            else
+        if (this->GetColored() == BOOLEAN_true) {
+            if (drawingDur > DUR_2) {
                 code = SMUFL_E93C_mensuralNoteheadMinimaWhite;
+            }
+            else {
+                code = SMUFL_E93D_mensuralNoteheadSemiminimaWhite;
+            }
         }
         else {
-            if (drawingDur == DUR_2)
-                code = SMUFL_E93C_mensuralNoteheadMinimaWhite;
-            else
+            if (drawingDur > DUR_2) {
                 code = SMUFL_E93D_mensuralNoteheadSemiminimaWhite;
+            }
+            else {
+                code = SMUFL_E93C_mensuralNoteheadMinimaWhite;
+            }
         }
     }
     return code;
@@ -433,7 +443,7 @@ int Note::ConvertAnalyticalMarkup(FunctorParams *functorParams)
             // we are done for this note
             break;
         }
-        iter++;
+        ++iter;
     }
 
     if ((check->GetTie() == TIE_m) || (check->GetTie() == TIE_i)) {
@@ -621,7 +631,8 @@ int Note::CalcDots(FunctorParams *functorParams)
         assert(dots);
 
         // Stem up, shorter than 4th and not in beam
-        if ((this->GetDots() != 0) && (params->m_chordStemDir == STEMDIRECTION_up) && (this->GetDrawingDur() > DUR_4) && !this->IsInBeam()) {
+        if ((this->GetDots() != 0) && (params->m_chordStemDir == STEMDIRECTION_up) && (this->GetDrawingDur() > DUR_4)
+            && !this->IsInBeam()) {
             // Shift according to the flag width if the top note is not flipped
             if ((this == chord->GetTopNote()) && !this->GetFlippedNotehead()) {
                 // HARDCODED
@@ -767,7 +778,8 @@ int Note::PrepareLayerElementParts(FunctorParams *functorParams)
 
     if (this->GetDots() > 0) {
         if (chord && (chord->GetDots() == this->GetDots())) {
-            LogWarning("Note '%s' with a @dots attribute with the same value as its chord parent", this->GetUuid().c_str());
+            LogWarning(
+                "Note '%s' with a @dots attribute with the same value as its chord parent", this->GetUuid().c_str());
         }
         if (!currentDots) {
             currentDots = new Dots();
@@ -803,6 +815,9 @@ int Note::PrepareLyrics(FunctorParams *functorParams)
 
 int Note::PreparePointersByLayer(FunctorParams *functorParams)
 {
+    // Call parent one too
+    LayerElement::PreparePointersByLayer(functorParams);
+    
     PreparePointersByLayerParams *params = dynamic_cast<PreparePointersByLayerParams *>(functorParams);
     assert(params);
 
@@ -899,7 +914,7 @@ int Note::GenerateMIDI(FunctorParams *functorParams)
     if (this->HasOctGes()) oct = this->GetOctGes();
 
     int pitch = midiBase + (oct + 1) * 12;
-    int channel = 0;
+    int channel = params->m_midiChannel;
     int velocity = 64;
 
     double starttime = params->m_totalTime + this->GetScoreTimeOnset();

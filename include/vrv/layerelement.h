@@ -169,7 +169,7 @@ public:
     //----------//
     // Functors //
     //----------//
-    
+
     /**
      * See Object::ResetHorizontalAlignment
      */
@@ -224,6 +224,11 @@ public:
     virtual int PrepareCrossStaff(FunctorParams *functorParams);
     virtual int PrepareCrossStaffEnd(FunctorParams *functorParams);
     ///@}
+    
+    /**
+     * See Object::PreparePointersByLayer
+     */
+    virtual int PreparePointersByLayer(FunctorParams *functorParams);
 
     /**
      * See Object::PrepareTimePointing

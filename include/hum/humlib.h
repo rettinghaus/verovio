@@ -1,7 +1,7 @@
 //
 // Programmer:    Craig Stuart Sapp <craig@ccrma.stanford.edu>
 // Creation Date: Sat Aug  8 12:24:49 PDT 2015
-// Last Modified: Fri Feb  2 21:58:15 PST 2018
+// Last Modified: Thu Mar  8 12:21:07 PST 2018
 // Filename:      humlib.h
 // URL:           https://github.com/craigsapp/humlib/blob/master/include/humlib.h
 // Syntax:        C++11
@@ -10,7 +10,7 @@
 // Description:   Include file for humlib library.
 //
 /*
-Copyright (c) 2015, 2016, 2017 Craig Stuart Sapp
+Copyright (c) 2015, 2016, 2017, 2018 Craig Stuart Sapp
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <cstring>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -3726,6 +3727,52 @@ class Tool_autostem : public HumTool {
 };
 
 
+class Tool_binroll : public HumTool {
+	public:
+		         Tool_binroll      (void);
+		        ~Tool_binroll      () {};
+
+		bool     run               (HumdrumFile& infile);
+		bool     run               (const string& indata, ostream& out);
+		bool     run               (HumdrumFile& infile, ostream& out);
+
+	protected:
+		void     processFile       (HumdrumFile& infile);
+		void     processStrand     (vector<vector<char>>& roll, HTp starting,
+		                            HTp ending);
+		void     printAnalysis     (HumdrumFile& infile,
+		                            vector<vector<char>>& roll);
+
+	private:
+		HumNum    m_duration;
+
+};
+
+
+class Tool_chord : public HumTool {
+	public:
+		         Tool_chord      (void);
+		        ~Tool_chord      () {};
+
+		bool     run               (HumdrumFile& infile);
+		bool     run               (const string& indata, ostream& out);
+		bool     run               (HumdrumFile& infile, ostream& out);
+
+	protected:
+		void     processFile       (HumdrumFile& infile, int direction);
+		void     processChord      (HTp tok, int direction);
+		void     initialize        (void);
+		void     minimizeChordPitches(vector<string>& notes, vector<pair<int,int>>& pitches);
+		void     maximizeChordPitches(vector<string>& notes, vector<pair<int,int>>& pitches);
+
+	private:
+		int       m_direction = 0;
+		int       m_spine     = -1;
+		int       m_primary   = 0;
+
+};
+
+
 class NoteNode {
    public:
 		int b40;         // base-40 pitch number or 0 if a rest, negative if tied
@@ -4809,6 +4856,7 @@ class Tool_musicxml2hum : public HumTool {
 		void insertSingleMeasure(HumdrumFile& outfile);
 		void cleanupMeasures   (HumdrumFile& outfile,
 		                        vector<HumdrumLine*> measures);
+		void processPrintElement(GridMeasure* outdata, xml_node element, HumNum timestamp);
 
 		void addClefLine       (GridMeasure* outdata, vector<vector<xml_node> >& clefs,
 		                        vector<MxmlPart>& partdata, HumNum nowtime);

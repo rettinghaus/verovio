@@ -3798,7 +3798,7 @@ AttMmTempo::~AttMmTempo()
 
 void AttMmTempo::ResetMmTempo()
 {
-    m_mm = "";
+    m_mm = 0;
     m_mmUnit = DURATION_NONE;
     m_mmDots = 0;
 }
@@ -3807,7 +3807,7 @@ bool AttMmTempo::ReadMmTempo(pugi::xml_node element)
 {
     bool hasAttribute = false;
     if (element.attribute("mm")) {
-        this->SetMm(StrToStr(element.attribute("mm").value()));
+        this->SetMm(StrToInt(element.attribute("mm").value()));
         element.remove_attribute("mm");
         hasAttribute = true;
     }
@@ -3828,7 +3828,7 @@ bool AttMmTempo::WriteMmTempo(pugi::xml_node element)
 {
     bool wroteAttribute = false;
     if (this->HasMm()) {
-        element.append_attribute("mm") = StrToStr(this->GetMm()).c_str();
+        element.append_attribute("mm") = IntToStr(this->GetMm()).c_str();
         wroteAttribute = true;
     }
     if (this->HasMmUnit()) {
@@ -3844,7 +3844,7 @@ bool AttMmTempo::WriteMmTempo(pugi::xml_node element)
 
 bool AttMmTempo::HasMm() const
 {
-    return (m_mm != "");
+    return (m_mm != 0);
 }
 
 bool AttMmTempo::HasMmUnit() const
@@ -7169,47 +7169,47 @@ bool AttVerticalAlign::HasValign() const
 /* include <attvalign> */
 
 //----------------------------------------------------------------------------
-// AttVerticalAlignment
+// AttVerticalGroup
 //----------------------------------------------------------------------------
 
-AttVerticalAlignment::AttVerticalAlignment() : Att()
+AttVerticalGroup::AttVerticalGroup() : Att()
 {
-    ResetVerticalAlignment();
+    ResetVerticalGroup();
 }
 
-AttVerticalAlignment::~AttVerticalAlignment()
+AttVerticalGroup::~AttVerticalGroup()
 {
 }
 
-void AttVerticalAlignment::ResetVerticalAlignment()
+void AttVerticalGroup::ResetVerticalGroup()
 {
-    m_vgrp = "";
+    m_vgrp = 0;
 }
 
-bool AttVerticalAlignment::ReadVerticalAlignment(pugi::xml_node element)
+bool AttVerticalGroup::ReadVerticalGroup(pugi::xml_node element)
 {
     bool hasAttribute = false;
     if (element.attribute("vgrp")) {
-        this->SetVgrp(StrToStr(element.attribute("vgrp").value()));
+        this->SetVgrp(StrToInt(element.attribute("vgrp").value()));
         element.remove_attribute("vgrp");
         hasAttribute = true;
     }
     return hasAttribute;
 }
 
-bool AttVerticalAlignment::WriteVerticalAlignment(pugi::xml_node element)
+bool AttVerticalGroup::WriteVerticalGroup(pugi::xml_node element)
 {
     bool wroteAttribute = false;
     if (this->HasVgrp()) {
-        element.append_attribute("vgrp") = StrToStr(this->GetVgrp()).c_str();
+        element.append_attribute("vgrp") = IntToStr(this->GetVgrp()).c_str();
         wroteAttribute = true;
     }
     return wroteAttribute;
 }
 
-bool AttVerticalAlignment::HasVgrp() const
+bool AttVerticalGroup::HasVgrp() const
 {
-    return (m_vgrp != "");
+    return (m_vgrp != 0);
 }
 
 /* include <attvgrp> */
@@ -8563,7 +8563,7 @@ bool Att::SetShared(Object *element, std::string attrType, std::string attrValue
         AttMmTempo *att = dynamic_cast<AttMmTempo *>(element);
         assert(att);
         if (attrType == "mm") {
-            att->SetMm(att->StrToStr(attrValue));
+            att->SetMm(att->StrToInt(attrValue));
             return true;
         }
         if (attrType == "mm.unit") {
@@ -9227,11 +9227,11 @@ bool Att::SetShared(Object *element, std::string attrType, std::string attrValue
             return true;
         }
     }
-    if (element->HasAttClass(ATT_VERTICALALIGNMENT)) {
-        AttVerticalAlignment *att = dynamic_cast<AttVerticalAlignment *>(element);
+    if (element->HasAttClass(ATT_VERTICALGROUP)) {
+        AttVerticalGroup *att = dynamic_cast<AttVerticalGroup *>(element);
         assert(att);
         if (attrType == "vgrp") {
-            att->SetVgrp(att->StrToStr(attrValue));
+            att->SetVgrp(att->StrToInt(attrValue));
             return true;
         }
     }
@@ -9965,7 +9965,7 @@ void Att::GetShared(const Object *element, ArrayOfStrAttr *attributes)
         const AttMmTempo *att = dynamic_cast<const AttMmTempo *>(element);
         assert(att);
         if (att->HasMm()) {
-            attributes->push_back(std::make_pair("mm", att->StrToStr(att->GetMm())));
+            attributes->push_back(std::make_pair("mm", att->IntToStr(att->GetMm())));
         }
         if (att->HasMmUnit()) {
             attributes->push_back(std::make_pair("mm.unit", att->DurationToStr(att->GetMmUnit())));
@@ -10517,11 +10517,11 @@ void Att::GetShared(const Object *element, ArrayOfStrAttr *attributes)
             attributes->push_back(std::make_pair("valign", att->VerticalalignmentToStr(att->GetValign())));
         }
     }
-    if (element->HasAttClass(ATT_VERTICALALIGNMENT)) {
-        const AttVerticalAlignment *att = dynamic_cast<const AttVerticalAlignment *>(element);
+    if (element->HasAttClass(ATT_VERTICALGROUP)) {
+        const AttVerticalGroup *att = dynamic_cast<const AttVerticalGroup *>(element);
         assert(att);
         if (att->HasVgrp()) {
-            attributes->push_back(std::make_pair("vgrp", att->StrToStr(att->GetVgrp())));
+            attributes->push_back(std::make_pair("vgrp", att->IntToStr(att->GetVgrp())));
         }
     }
     if (element->HasAttClass(ATT_VISIBILITY)) {

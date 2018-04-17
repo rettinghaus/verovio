@@ -133,7 +133,7 @@ void Chord::FilterList(ListOfObjects *childList)
 
     while (iter != childList->end()) {
         if ((*iter)->Is(NOTE))
-            iter++;
+            ++iter;
         else
             iter = childList->erase(iter);
     }
@@ -156,7 +156,7 @@ void Chord::FilterList(ListOfObjects *childList)
     int curPitch, lastPitch = lastNote->GetDiatonicPitch();
     ChordCluster *curCluster = NULL;
 
-    iter++;
+    ++iter;
 
     Layer *layer1 = NULL;
     Layer *layer2 = NULL;
@@ -181,7 +181,7 @@ void Chord::FilterList(ListOfObjects *childList)
         lastNote = curNote;
         lastPitch = curPitch;
 
-        iter++;
+        ++iter;
     }
 }
 
@@ -325,35 +325,35 @@ bool Chord::IsVisible()
     if (this->HasVisible()) {
         return this->GetVisible() == BOOLEAN_true;
     }
-    
+
     // if the chord doens't have it, see if all the children are invisible
     const ListOfObjects *notes = this->GetList(this);
     assert(notes);
-    
-    for (auto& iter : *notes) {
+
+    for (auto &iter : *notes) {
         Note *note = dynamic_cast<Note *>(iter);
         assert(note);
         if (!note->HasVisible() || note->GetVisible() == BOOLEAN_true) {
             return true;
         }
     }
-    
+
     return false;
 }
-    
+
 bool Chord::HasNoteWithDots()
 {
     const ListOfObjects *notes = this->GetList(this);
     assert(notes);
-    
-    for (auto& iter : *notes) {
+
+    for (auto &iter : *notes) {
         Note *note = dynamic_cast<Note *>(iter);
         assert(note);
         if (note->GetDots() > 0) {
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -504,10 +504,10 @@ int Chord::CalcDots(FunctorParams *functorParams)
     assert(this->GetTopNote());
     assert(this->GetBottomNote());
 
-    for (rit = notes->rbegin(); rit != notes->rend(); rit++) {
+    for (rit = notes->rbegin(); rit != notes->rend(); ++rit) {
         Note *note = dynamic_cast<Note *>(*rit);
         assert(note);
-        
+
         if (note->GetDots() == 0) {
             continue;
         }
@@ -610,7 +610,7 @@ int Chord::PrepareLayerElementParts(FunctorParams *functorParams)
 
     // Also set the drawing stem object (or NULL) to all child notes
     const ListOfObjects *childList = this->GetList(this); // make sure it's initialized
-    for (ListOfObjects::const_iterator it = childList->begin(); it != childList->end(); it++) {
+    for (ListOfObjects::const_iterator it = childList->begin(); it != childList->end(); ++it) {
         assert((*it)->Is(NOTE));
         Note *note = dynamic_cast<Note *>(*it);
         assert(note);
