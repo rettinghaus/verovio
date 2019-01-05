@@ -180,7 +180,7 @@ AttDurationGestural::~AttDurationGestural()
 void AttDurationGestural::ResetDurationGestural()
 {
     m_durGes = DURATION_NONE;
-    m_dotsGes = 0;
+    m_dotsGes = -1;
     m_durMetrical = 0.0;
     m_durPpq = 0;
     m_durReal = 0.0;
@@ -260,7 +260,7 @@ bool AttDurationGestural::HasDurGes() const
 
 bool AttDurationGestural::HasDotsGes() const
 {
-    return (m_dotsGes != 0);
+    return (m_dotsGes != -1);
 }
 
 bool AttDurationGestural::HasDurMetrical() const
@@ -286,6 +286,82 @@ bool AttDurationGestural::HasDurRecip() const
 /* include <attdur.recip> */
 
 //----------------------------------------------------------------------------
+// AttNcGes
+//----------------------------------------------------------------------------
+
+AttNcGes::AttNcGes() : Att()
+{
+    ResetNcGes();
+}
+
+AttNcGes::~AttNcGes()
+{
+}
+
+void AttNcGes::ResetNcGes()
+{
+    m_octGes = -127;
+    m_pnameGes = PITCHNAME_NONE;
+    m_pnum = 0;
+}
+
+bool AttNcGes::ReadNcGes(pugi::xml_node element)
+{
+    bool hasAttribute = false;
+    if (element.attribute("oct.ges")) {
+        this->SetOctGes(StrToOctave(element.attribute("oct.ges").value()));
+        element.remove_attribute("oct.ges");
+        hasAttribute = true;
+    }
+    if (element.attribute("pname.ges")) {
+        this->SetPnameGes(StrToPitchname(element.attribute("pname.ges").value()));
+        element.remove_attribute("pname.ges");
+        hasAttribute = true;
+    }
+    if (element.attribute("pnum")) {
+        this->SetPnum(StrToInt(element.attribute("pnum").value()));
+        element.remove_attribute("pnum");
+        hasAttribute = true;
+    }
+    return hasAttribute;
+}
+
+bool AttNcGes::WriteNcGes(pugi::xml_node element)
+{
+    bool wroteAttribute = false;
+    if (this->HasOctGes()) {
+        element.append_attribute("oct.ges") = OctaveToStr(this->GetOctGes()).c_str();
+        wroteAttribute = true;
+    }
+    if (this->HasPnameGes()) {
+        element.append_attribute("pname.ges") = PitchnameToStr(this->GetPnameGes()).c_str();
+        wroteAttribute = true;
+    }
+    if (this->HasPnum()) {
+        element.append_attribute("pnum") = IntToStr(this->GetPnum()).c_str();
+        wroteAttribute = true;
+    }
+    return wroteAttribute;
+}
+
+bool AttNcGes::HasOctGes() const
+{
+    return (m_octGes != -127);
+}
+
+bool AttNcGes::HasPnameGes() const
+{
+    return (m_pnameGes != PITCHNAME_NONE);
+}
+
+bool AttNcGes::HasPnum() const
+{
+    return (m_pnum != 0);
+}
+
+/* include <attpnum> */
+
+//----------------------------------------------------------------------------
 // AttNoteGes
 //----------------------------------------------------------------------------
 
@@ -301,7 +377,7 @@ AttNoteGes::~AttNoteGes()
 void AttNoteGes::ResetNoteGes()
 {
     m_extremis = noteGes_EXTREMIS_NONE;
-    m_octGes = 0;
+    m_octGes = -127;
     m_pnameGes = PITCHNAME_NONE;
     m_pnum = 0;
 }
@@ -315,7 +391,7 @@ bool AttNoteGes::ReadNoteGes(pugi::xml_node element)
         hasAttribute = true;
     }
     if (element.attribute("oct.ges")) {
-        this->SetOctGes(StrToInt(element.attribute("oct.ges").value()));
+        this->SetOctGes(StrToOctave(element.attribute("oct.ges").value()));
         element.remove_attribute("oct.ges");
         hasAttribute = true;
     }
@@ -340,7 +416,7 @@ bool AttNoteGes::WriteNoteGes(pugi::xml_node element)
         wroteAttribute = true;
     }
     if (this->HasOctGes()) {
-        element.append_attribute("oct.ges") = IntToStr(this->GetOctGes()).c_str();
+        element.append_attribute("oct.ges") = OctaveToStr(this->GetOctGes()).c_str();
         wroteAttribute = true;
     }
     if (this->HasPnameGes()) {
@@ -361,7 +437,7 @@ bool AttNoteGes::HasExtremis() const
 
 bool AttNoteGes::HasOctGes() const
 {
-    return (m_octGes != 0);
+    return (m_octGes != -127);
 }
 
 bool AttNoteGes::HasPnameGes() const
@@ -497,6 +573,67 @@ bool AttSectionGes::HasAttacca() const
 }
 
 /* include <attattacca> */
+
+//----------------------------------------------------------------------------
+// AttSoundLocation
+//----------------------------------------------------------------------------
+
+AttSoundLocation::AttSoundLocation() : Att()
+{
+    ResetSoundLocation();
+}
+
+AttSoundLocation::~AttSoundLocation()
+{
+}
+
+void AttSoundLocation::ResetSoundLocation()
+{
+    m_azimuth = 0.0;
+    m_elevation = 0.0;
+}
+
+bool AttSoundLocation::ReadSoundLocation(pugi::xml_node element)
+{
+    bool hasAttribute = false;
+    if (element.attribute("azimuth")) {
+        this->SetAzimuth(StrToDbl(element.attribute("azimuth").value()));
+        element.remove_attribute("azimuth");
+        hasAttribute = true;
+    }
+    if (element.attribute("elevation")) {
+        this->SetElevation(StrToDbl(element.attribute("elevation").value()));
+        element.remove_attribute("elevation");
+        hasAttribute = true;
+    }
+    return hasAttribute;
+}
+
+bool AttSoundLocation::WriteSoundLocation(pugi::xml_node element)
+{
+    bool wroteAttribute = false;
+    if (this->HasAzimuth()) {
+        element.append_attribute("azimuth") = DblToStr(this->GetAzimuth()).c_str();
+        wroteAttribute = true;
+    }
+    if (this->HasElevation()) {
+        element.append_attribute("elevation") = DblToStr(this->GetElevation()).c_str();
+        wroteAttribute = true;
+    }
+    return wroteAttribute;
+}
+
+bool AttSoundLocation::HasAzimuth() const
+{
+    return (m_azimuth != 0.0);
+}
+
+bool AttSoundLocation::HasElevation() const
+{
+    return (m_elevation != 0.0);
+}
+
+/* include <attelevation> */
 
 //----------------------------------------------------------------------------
 // AttTimestampGestural
@@ -674,6 +811,22 @@ bool Att::SetGestural(Object *element, std::string attrType, std::string attrVal
             return true;
         }
     }
+    if (element->HasAttClass(ATT_NCGES)) {
+        AttNcGes *att = dynamic_cast<AttNcGes *>(element);
+        assert(att);
+        if (attrType == "oct.ges") {
+            att->SetOctGes(att->StrToOctave(attrValue));
+            return true;
+        }
+        if (attrType == "pname.ges") {
+            att->SetPnameGes(att->StrToPitchname(attrValue));
+            return true;
+        }
+        if (attrType == "pnum") {
+            att->SetPnum(att->StrToInt(attrValue));
+            return true;
+        }
+    }
     if (element->HasAttClass(ATT_NOTEGES)) {
         AttNoteGes *att = dynamic_cast<AttNoteGes *>(element);
         assert(att);
@@ -682,7 +835,7 @@ bool Att::SetGestural(Object *element, std::string attrType, std::string attrVal
             return true;
         }
         if (attrType == "oct.ges") {
-            att->SetOctGes(att->StrToInt(attrValue));
+            att->SetOctGes(att->StrToOctave(attrValue));
             return true;
         }
         if (attrType == "pname.ges") {
@@ -715,6 +868,18 @@ bool Att::SetGestural(Object *element, std::string attrType, std::string attrVal
         assert(att);
         if (attrType == "attacca") {
             att->SetAttacca(att->StrToBoolean(attrValue));
+            return true;
+        }
+    }
+    if (element->HasAttClass(ATT_SOUNDLOCATION)) {
+        AttSoundLocation *att = dynamic_cast<AttSoundLocation *>(element);
+        assert(att);
+        if (attrType == "azimuth") {
+            att->SetAzimuth(att->StrToDbl(attrValue));
+            return true;
+        }
+        if (attrType == "elevation") {
+            att->SetElevation(att->StrToDbl(attrValue));
             return true;
         }
     }
@@ -791,6 +956,19 @@ void Att::GetGestural(const Object *element, ArrayOfStrAttr *attributes)
             attributes->push_back(std::make_pair("dur.recip", att->StrToStr(att->GetDurRecip())));
         }
     }
+    if (element->HasAttClass(ATT_NCGES)) {
+        const AttNcGes *att = dynamic_cast<const AttNcGes *>(element);
+        assert(att);
+        if (att->HasOctGes()) {
+            attributes->push_back(std::make_pair("oct.ges", att->OctaveToStr(att->GetOctGes())));
+        }
+        if (att->HasPnameGes()) {
+            attributes->push_back(std::make_pair("pname.ges", att->PitchnameToStr(att->GetPnameGes())));
+        }
+        if (att->HasPnum()) {
+            attributes->push_back(std::make_pair("pnum", att->IntToStr(att->GetPnum())));
+        }
+    }
     if (element->HasAttClass(ATT_NOTEGES)) {
         const AttNoteGes *att = dynamic_cast<const AttNoteGes *>(element);
         assert(att);
@@ -798,7 +976,7 @@ void Att::GetGestural(const Object *element, ArrayOfStrAttr *attributes)
             attributes->push_back(std::make_pair("extremis", att->NoteGesExtremisToStr(att->GetExtremis())));
         }
         if (att->HasOctGes()) {
-            attributes->push_back(std::make_pair("oct.ges", att->IntToStr(att->GetOctGes())));
+            attributes->push_back(std::make_pair("oct.ges", att->OctaveToStr(att->GetOctGes())));
         }
         if (att->HasPnameGes()) {
             attributes->push_back(std::make_pair("pname.ges", att->PitchnameToStr(att->GetPnameGes())));
@@ -825,6 +1003,16 @@ void Att::GetGestural(const Object *element, ArrayOfStrAttr *attributes)
         assert(att);
         if (att->HasAttacca()) {
             attributes->push_back(std::make_pair("attacca", att->BooleanToStr(att->GetAttacca())));
+        }
+    }
+    if (element->HasAttClass(ATT_SOUNDLOCATION)) {
+        const AttSoundLocation *att = dynamic_cast<const AttSoundLocation *>(element);
+        assert(att);
+        if (att->HasAzimuth()) {
+            attributes->push_back(std::make_pair("azimuth", att->DblToStr(att->GetAzimuth())));
+        }
+        if (att->HasElevation()) {
+            attributes->push_back(std::make_pair("elevation", att->DblToStr(att->GetElevation())));
         }
     }
     if (element->HasAttClass(ATT_TIMESTAMPGESTURAL)) {

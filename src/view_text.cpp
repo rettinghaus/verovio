@@ -17,6 +17,7 @@
 
 #include "devicecontext.h"
 #include "doc.h"
+#include "f.h"
 #include "fb.h"
 #include "fig.h"
 #include "lb.h"
@@ -25,6 +26,7 @@
 #include "rend.h"
 #include "smufl.h"
 #include "svg.h"
+#include "system.h"
 #include "text.h"
 #include "vrv.h"
 
@@ -42,16 +44,24 @@ void View::DrawF(DeviceContext *dc, F *f, TextDrawingParams &params)
     dc->StartTextGraphic(f, "", f->GetUuid());
 
     DrawTextChildren(dc, f, params);
+    
+    if (f->GetStart() && f->GetEnd()) {
+        System *currentSystem = dynamic_cast<System *>(f->GetFirstParent(SYSTEM));
+        // Postpone the drawing of the end of the system; this will call DrawFConnector
+        if (currentSystem) {
+            currentSystem->AddToDrawingList(f);
+        }
+    }
 
     dc->EndTextGraphic(f, this);
 }
 
-void View::DrawHarmString(DeviceContext *dc, int x, int y, std::wstring s)
+void View::DrawHarmString(DeviceContext *dc, TextDrawingParams &params, std::wstring s)
 {
     assert(dc);
 
-    int toDcX = ToDeviceContextX(x);
-    int toDcY = ToDeviceContextY(y);
+    int toDcX = ToDeviceContextX(params.m_x);
+    int toDcY = ToDeviceContextY(params.m_y);
 
     std::size_t prevPos = 0, pos;
     while ((pos = s.find_first_of(L"\u266D\u266E\u266F", prevPos)) != std::wstring::npos) {
@@ -99,6 +109,10 @@ void View::DrawHarmString(DeviceContext *dc, int x, int y, std::wstring s)
         std::wstring substr = s.substr(prevPos, std::wstring::npos);
         dc->DrawText(UTF16to8(substr), substr, toDcX, toDcY);
     }
+    
+    // Disable x for what is comming next as child of <f>
+    // The value is reset in DrawFb
+    params.m_x = VRV_UNSET;
 }
 
 void View::DrawTextElement(DeviceContext *dc, TextElement *element, TextDrawingParams &params)
@@ -144,11 +158,10 @@ void View::DrawLb(DeviceContext *dc, Lb *lb, TextDrawingParams &params)
     dc->StartTextGraphic(lb, "", lb->GetUuid());
 
     FontInfo *currentFont = dc->GetFont();
-    int descender = -m_doc->GetTextGlyphDescender(L'q', currentFont, false);
-    int height = m_doc->GetTextGlyphHeight(L'I', currentFont, false);
 
-    params.m_y -= ((descender + height) * 1.1);
+    params.m_y -= m_doc->GetTextLineHeight(currentFont, false);
     params.m_newLine = true;
+    params.m_laidOut = true;
 
     dc->EndTextGraphic(lb, this);
 }
@@ -211,7 +224,9 @@ void View::DrawRend(DeviceContext *dc, Rend *rend, TextDrawingParams &params)
                     case (FONTSIZETERM_xx_large): percent = 200; break;
                     case (FONTSIZETERM_x_large): percent = 150; break;
                     case (FONTSIZETERM_large): percent = 110; break;
+                    case (FONTSIZETERM_larger): percent = 110; break;
                     case (FONTSIZETERM_small): percent = 80; break;
+                    case (FONTSIZETERM_smaller): percent = 80; break;
                     case (FONTSIZETERM_x_small): percent = 60; break;
                     case (FONTSIZETERM_xx_small): percent = 50; break;
                     default: break;
@@ -256,7 +271,7 @@ void View::DrawText(DeviceContext *dc, Text *text, TextDrawingParams &params)
 
     // special case where we want to replace the '#' or 'b' with a VerovioText glyphs
     if (text->GetFirstParent(HARM)) {
-        DrawHarmString(dc, params.m_x, params.m_y, text->GetText());
+        DrawHarmString(dc, params, text->GetText());
     }
     // special case where we want to replace the '_' with a lyric connector
     // '_' are produce with the SibMEI plugin

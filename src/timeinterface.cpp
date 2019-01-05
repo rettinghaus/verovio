@@ -120,14 +120,16 @@ std::vector<Staff *> TimePointInterface::GetTstampStaves(Measure *measure)
     }
     for (iter = staffList.begin(); iter != staffList.end(); ++iter) {
         AttNIntegerComparison comparison(STAFF, *iter);
-        Staff *staff = dynamic_cast<Staff *>(measure->FindChildByAttComparison(&comparison, 1));
+        Staff *staff = dynamic_cast<Staff *>(measure->FindChildByComparison(&comparison, 1));
         if (!staff) {
             // LogDebug("Staff with @n '%d' not found in measure '%s'", *iter, measure->GetUuid().c_str());
             continue;
         }
+        if (!staff->DrawingIsVisible()) {
+            continue;
+        }
         staves.push_back(staff);
     }
-    if (staves.empty()) LogDebug("Empty @staff array");
     return staves;
 }
 
@@ -280,6 +282,7 @@ int TimeSpanningInterface::InterfacePrepareTimestamps(FunctorParams *functorPara
     }
 
     // We can now add the pair to our stack
+    params->m_timeSpanningInterfaces.push_back(std::make_pair(this, object->GetClassId()));
     params->m_tstamps.push_back(std::make_pair(object, data_MEASUREBEAT(this->GetTstamp2())));
 
     return TimePointInterface::InterfacePrepareTimestamps(params, object);

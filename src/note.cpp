@@ -104,6 +104,8 @@ void Note::Reset()
     m_realTimeOnsetMilliseconds = 0;
     m_realTimeOffsetMilliseconds = 0;
     m_scoreTimeTiedDuration = 0.0;
+
+    m_MIDIPitch = -1;
 }
 
 bool Note::HasToBeAligned() const
@@ -120,12 +122,12 @@ void Note::AddChild(Object *child)
     // additional verification for accid and artic - this will no be raised with editorial markup, though
     if (child->Is(ACCID)) {
         IsAttributeComparison isAttributeComparison(ACCID);
-        if (this->FindChildByAttComparison(&isAttributeComparison))
+        if (this->FindChildByComparison(&isAttributeComparison))
             LogWarning("Having both @accid or @accid.ges and <accid> child will cause problems");
     }
     else if (child->Is(ARTIC)) {
         IsAttributeComparison isAttributeComparison(ARTIC);
-        if (this->FindChildByAttComparison(&isAttributeComparison))
+        if (this->FindChildByComparison(&isAttributeComparison))
             LogWarning("Having both @artic and <artic> child will cause problems");
     }
 
@@ -298,9 +300,9 @@ Point Note::GetStemDownNW(Doc *doc, int staffSize, bool isCueSize)
 wchar_t Note::GetMensuralSmuflNoteHead()
 {
     assert(this->IsMensural());
-    
+
     int drawingDur = this->GetDrawingDur();
-    
+
     // No SMuFL code used for these values
     if (drawingDur < DUR_1) {
         return 0;
@@ -374,6 +376,11 @@ void Note::SetScoreTimeTiedDuration(double scoreTime)
     m_scoreTimeTiedDuration = scoreTime;
 }
 
+void Note::SetMIDIPitch(char pitch)
+{
+    m_MIDIPitch = pitch;
+}
+
 double Note::GetScoreTimeOnset()
 {
     return m_scoreTimeOnset;
@@ -402,6 +409,11 @@ double Note::GetScoreTimeTiedDuration()
 double Note::GetScoreTimeDuration()
 {
     return GetScoreTimeOffset() - GetScoreTimeOnset();
+}
+
+char Note::GetMIDIPitch()
+{
+    return m_MIDIPitch;
 }
 
 //----------------------------------------------------------------------------
@@ -817,7 +829,7 @@ int Note::PreparePointersByLayer(FunctorParams *functorParams)
 {
     // Call parent one too
     LayerElement::PreparePointersByLayer(functorParams);
-    
+
     PreparePointersByLayerParams *params = dynamic_cast<PreparePointersByLayerParams *>(functorParams);
     assert(params);
 
@@ -860,7 +872,7 @@ int Note::GenerateMIDI(FunctorParams *functorParams)
     }
 
     // For now just ignore grace notes
-    if (this->HasGrace()) {
+    if (this->IsGraceNote()) {
         return FUNCTOR_SIBLINGS;
     }
 
@@ -914,6 +926,7 @@ int Note::GenerateMIDI(FunctorParams *functorParams)
     if (this->HasOctGes()) oct = this->GetOctGes();
 
     int pitch = midiBase + (oct + 1) * 12;
+    this->SetMIDIPitch(pitch);
     int channel = params->m_midiChannel;
     int velocity = 64;
 

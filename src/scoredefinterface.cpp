@@ -35,6 +35,7 @@ ScoreDefInterface::ScoreDefInterface()
     , AttMeasureNumbers()
     , AttMensuralLog()
     , AttMensuralShared()
+    , AttMensuralVis()
     , AttMeterSigDefaultLog()
     , AttMeterSigDefaultVis()
     , AttMidiTempo()
@@ -50,6 +51,7 @@ ScoreDefInterface::ScoreDefInterface()
     RegisterInterfaceAttClass(ATT_MEASURENUMBERS);
     RegisterInterfaceAttClass(ATT_MENSURALLOG);
     RegisterInterfaceAttClass(ATT_MENSURALSHARED);
+    RegisterInterfaceAttClass(ATT_MENSURALVIS);
     RegisterInterfaceAttClass(ATT_METERSIGDEFAULTLOG);
     RegisterInterfaceAttClass(ATT_METERSIGDEFAULTVIS);
     RegisterInterfaceAttClass(ATT_MIDITEMPO);
@@ -72,6 +74,7 @@ void ScoreDefInterface::Reset()
     ResetMeasureNumbers();
     ResetMensuralLog();
     ResetMensuralShared();
+    ResetMensuralVis();
     ResetMeterSigDefaultLog();
     ResetMeterSigDefaultVis();
     ResetMidiTempo();

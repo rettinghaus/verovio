@@ -14,6 +14,7 @@
 
 //----------------------------------------------------------------------------
 
+#include "btrem.h"
 #include "doc.h"
 #include "editorial.h"
 #include "elementpart.h"
@@ -106,6 +107,7 @@ void BeamDrawingParams::CalcBeam(
 
     int yMax = 0, yMin = 0;
     int curY;
+    int nbRests = 0;
     // elementCount holds the last one
     for (i = 0; i < elementCount; ++i) {
 
@@ -136,18 +138,21 @@ void BeamDrawingParams::CalcBeam(
         }
         else {
             (*beamElementCoords).at(i)->m_y = (*beamElementCoords).at(i)->m_element->GetDrawingY();
-            
+
             curY = (*beamElementCoords).at(i)->m_element->GetDrawingY();
             (*beamElementCoords).at(i)->m_yTop = curY;
             (*beamElementCoords).at(i)->m_yBottom = curY;
+            nbRests++;
         }
     }
 
     /******************************************************************/
     // Set the stem direction
 
-    // yExtreme = (abs(high - verticalCenter) > abs(low - verticalCenter) ? high : low);
-    avgY /= elementCount;
+    // Only if not only rests. (Will produce non-sense output anyway)
+    if (elementCount != nbRests) {
+        avgY /= (elementCount - nbRests);
+    }
 
     // If we have one stem direction in the beam, then don't look at the layer
     // We probably do not want to call this if we have a cross-staff situation
@@ -258,7 +263,7 @@ void BeamDrawingParams::CalcBeam(
             // Here we need to take into account the bounding box of the rest
             continue;
         }
-        
+
         oldYPos = (*beamElementCoords).at(i)->m_yBeam;
         expectedY = this->m_startingY + verticalAdjustment
             + this->m_beamSlope * ((*beamElementCoords).at(i)->m_x - this->m_startingX);
@@ -279,6 +284,7 @@ void BeamDrawingParams::CalcBeam(
 
     // then check that the stem length reaches the center for the staff
     double minDistToCenter = -VRV_UNSET;
+    
     for (i = 0; i < elementCount; ++i) {
         if ((this->m_stemDir == STEMDIRECTION_up)
             && ((*beamElementCoords).at(i)->m_yBeam - verticalCenter < minDistToCenter)) {
@@ -333,9 +339,10 @@ void BeamDrawingParams::CalcBeam(
 // Beam
 //----------------------------------------------------------------------------
 
-Beam::Beam() : LayerElement("beam-"), ObjectListInterface(), AttColor()
+Beam::Beam() : LayerElement("beam-"), ObjectListInterface(), AttColor(), AttBeamedWith()
 {
     RegisterAttClass(ATT_COLOR);
+    RegisterAttClass(ATT_BEAMEDWITH);
 
     Reset();
 }
@@ -349,6 +356,7 @@ void Beam::Reset()
 {
     LayerElement::Reset();
     ResetColor();
+    ResetBeamedWith();
 
     ClearCoords();
 }
@@ -359,7 +367,7 @@ void Beam::AddChild(Object *child)
         assert(dynamic_cast<Beam *>(child));
     }
     else if (child->Is(BTREM)) {
-        assert(dynamic_cast<Chord *>(child));
+        assert(dynamic_cast<BTrem *>(child));
     }
     else if (child->Is(CHORD)) {
         assert(dynamic_cast<Chord *>(child));
