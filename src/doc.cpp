@@ -14,10 +14,10 @@
 
 //----------------------------------------------------------------------------
 
-#include "attcomparison.h"
 #include "barline.h"
 #include "beatrpt.h"
 #include "chord.h"
+#include "comparison.h"
 #include "functorparams.h"
 #include "glyph.h"
 #include "instrdef.h"
@@ -92,7 +92,7 @@ void Doc::Reset()
     m_drawingPage = NULL;
     m_currentScoreDefDone = false;
     m_drawingPreparationDone = false;
-    m_hasMidiTimemap = false;
+    m_MIDITimemapTempo = 0.0;
     m_hasAnalyticalMarkup = false;
     m_isMensuralMusicOnly = false;
 
@@ -100,7 +100,7 @@ void Doc::Reset()
 
     m_drawingSmuflFontSize = 0;
     m_drawingLyricFontSize = 0;
-    
+
     m_header.reset();
     m_front.reset();
     m_back.reset();
@@ -140,7 +140,7 @@ bool Doc::GenerateDocumentScoreDef()
     }
 
     ArrayOfObjects staves;
-    AttComparison matchType(STAFF);
+    ClassIdComparison matchType(STAFF);
     measure->FindAllChildByComparison(&staves, &matchType);
 
     if (staves.empty()) {
@@ -205,7 +205,7 @@ bool Doc::GenerateHeaderAndFooter()
 
 bool Doc::GenerateMeasureNumbers()
 {
-    AttComparison matchType(MEASURE);
+    ClassIdComparison matchType(MEASURE);
     ArrayOfObjects measures;
     ArrayOfObjects::iterator measureIter;
     this->FindAllChildByComparison(&measures, &matchType);
@@ -229,12 +229,12 @@ bool Doc::GenerateMeasureNumbers()
 
 bool Doc::HasMidiTimemap()
 {
-    return m_hasMidiTimemap;
+    return (m_MIDITimemapTempo == m_options->m_midiTempoAdjustment.GetValue());
 }
 
 void Doc::CalculateMidiTimemap()
 {
-    m_hasMidiTimemap = false;
+    m_MIDITimemapTempo = 0.0;
 
     // This happens if the document was never cast off (no-layout option in the toolkit)
     if (!m_drawingPage && GetPageCount() == 1) {
@@ -256,6 +256,7 @@ void Doc::CalculateMidiTimemap()
     // We first calculate the maximum duration of each measure
     CalcMaxMeasureDurationParams calcMaxMeasureDurationParams;
     calcMaxMeasureDurationParams.m_currentTempo = tempo;
+    calcMaxMeasureDurationParams.m_tempoAdjustment = m_options->m_midiTempoAdjustment.GetValue();
     Functor calcMaxMeasureDuration(&Object::CalcMaxMeasureDuration);
     this->Process(&calcMaxMeasureDuration, &calcMaxMeasureDurationParams);
 
@@ -269,7 +270,7 @@ void Doc::CalculateMidiTimemap()
     Functor resolveMIDITies(&Object::ResolveMIDITies);
     this->Process(&resolveMIDITies, NULL, NULL, NULL, UNLIMITED_DEPTH, BACKWARD);
 
-    m_hasMidiTimemap = true;
+    m_MIDITimemapTempo = m_options->m_midiTempoAdjustment.GetValue();
 }
 
 void Doc::ExportMIDI(smf::MidiFile *midiFile)
@@ -535,7 +536,8 @@ void Doc::PrepareDrawing()
         LogWarning("%d element(s) with a @next could match the target", prepareLinkingParams.m_nextUuidPairs.size());
     }
     if (!prepareLinkingParams.m_sameasUuidPairs.empty()) {
-        LogWarning("%d element(s) with a @sameas could match the target", prepareLinkingParams.m_sameasUuidPairs.size());
+        LogWarning(
+            "%d element(s) with a @sameas could match the target", prepareLinkingParams.m_sameasUuidPairs.size());
     }
 
     /************ Resolve @plist ************/
@@ -734,7 +736,8 @@ void Doc::SetCurrentScoreDefDoc(bool force)
 
     if (m_currentScoreDefDone) {
         Functor unsetCurrentScoreDef(&Object::UnsetCurrentScoreDef);
-        this->Process(&unsetCurrentScoreDef, NULL);
+        UnsetCurrentScoreDefParams unsetCurrentScoreDefParams(&unsetCurrentScoreDef);
+        this->Process(&unsetCurrentScoreDef, &unsetCurrentScoreDefParams);
     }
 
     ScoreDef upcomingScoreDef = m_scoreDef;
@@ -1152,8 +1155,7 @@ Pages *Doc::GetPages()
 int Doc::GetPageCount()
 {
     Pages *pages = this->GetPages();
-    assert(pages);
-    return pages->GetChildCount();
+    return ((pages) ? pages->GetChildCount() : 0);
 }
 
 int Doc::GetGlyphHeight(wchar_t code, int staffSize, bool graceSize) const
@@ -1259,12 +1261,12 @@ int Doc::GetTextGlyphDescender(wchar_t code, FontInfo *font, bool graceSize) con
     if (graceSize) y = y * this->m_options->m_graceFactor.GetValue();
     return y;
 }
-    
+
 int Doc::GetTextLineHeight(FontInfo *font, bool graceSize) const
 {
     int descender = -this->GetTextGlyphDescender(L'q', font, graceSize);
     int height = this->GetTextGlyphHeight(L'I', font, graceSize);
-    
+
     return ((descender + height) * 1.1);
 }
 
@@ -1409,11 +1411,13 @@ double Doc::GetRightMargin(const ClassId classId) const
 
 double Doc::GetBottomMargin(const ClassId classId) const
 {
+    if (classId == HARM) return m_options->m_bottomMarginHarm.GetValue();
     return m_options->m_defaultBottomMargin.GetValue();
 }
 
 double Doc::GetTopMargin(const ClassId classId) const
 {
+    if (classId == HARM) return m_options->m_topMarginHarm.GetValue();
     return m_options->m_defaultTopMargin.GetValue();
 }
 
@@ -1539,7 +1543,8 @@ int Doc::PrepareLyricsEnd(FunctorParams *functorParams)
         params->m_currentSyl->SetEnd(params->m_lastNote);
     }
     else if (m_options->m_openControlEvents.GetValue()) {
-        if ((params->m_currentSyl->GetWordpos() == sylLog_WORDPOS_i) || (params->m_currentSyl->GetWordpos() == sylLog_WORDPOS_m)) {
+        if ((params->m_currentSyl->GetWordpos() == sylLog_WORDPOS_i)
+            || (params->m_currentSyl->GetWordpos() == sylLog_WORDPOS_m)) {
             Measure *lastMeasure = dynamic_cast<Measure *>(this->FindChildByType(MEASURE, UNLIMITED_DEPTH, BACKWARD));
             assert(lastMeasure);
             params->m_currentSyl->SetEnd(lastMeasure->GetRightBarLine());
@@ -1553,16 +1558,16 @@ int Doc::PrepareTimestampsEnd(FunctorParams *functorParams)
 {
     PrepareTimestampsParams *params = dynamic_cast<PrepareTimestampsParams *>(functorParams);
     assert(params);
-    
+
     if (!m_options->m_openControlEvents.GetValue() || params->m_timeSpanningInterfaces.empty()) {
         return FUNCTOR_CONTINUE;
     }
-    
+
     Measure *lastMeasure = dynamic_cast<Measure *>(this->FindChildByType(MEASURE, UNLIMITED_DEPTH, BACKWARD));
     if (!lastMeasure) {
         return FUNCTOR_CONTINUE;
     }
-    
+
     for (auto &pair : params->m_timeSpanningInterfaces) {
         TimeSpanningInterface *interface = pair.first;
         assert(interface);
@@ -1570,8 +1575,8 @@ int Doc::PrepareTimestampsEnd(FunctorParams *functorParams)
             interface->SetEnd(lastMeasure->GetRightBarLine());
         }
     }
-    
+
     return FUNCTOR_CONTINUE;
 }
-    
+
 } // namespace vrv

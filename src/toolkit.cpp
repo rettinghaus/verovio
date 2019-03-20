@@ -13,9 +13,10 @@
 
 //----------------------------------------------------------------------------
 
-#include "attcomparison.h"
+#include "comparison.h"
 #include "custos.h"
 #include "functorparams.h"
+#include "ioabc.h"
 #include "iodarms.h"
 #include "iohumdrum.h"
 #include "iomei.h"
@@ -121,7 +122,10 @@ bool Toolkit::SetOutputFormat(std::string const &outformat)
 
 bool Toolkit::SetFormat(std::string const &informat)
 {
-    if (informat == "pae") {
+    if (informat == "abc") {
+        m_format = ABC;
+    }
+    else if (informat == "pae") {
         m_format = PAE;
     }
     else if (informat == "darms") {
@@ -149,7 +153,7 @@ bool Toolkit::SetFormat(std::string const &informat)
         m_format = AUTO;
     }
     else {
-        LogError("Input format can only be: mei, humdrum, pae, musicxml or darms");
+        LogError("Input format can only be: mei, humdrum, pae, abc, musicxml or darms");
         return false;
     }
     return true;
@@ -175,6 +179,9 @@ FileFormat Toolkit::IdentifyInputFormat(const std::string &data)
     }
     if (data[0] == '*' || data[0] == '!') {
         return HUMDRUM;
+    }
+    if (data[0] == 'X' || data[0] == '%') {
+        return ABC;
     }
     if ((unsigned char)data[0] == 0xff || (unsigned char)data[0] == 0xfe) {
         // Handle UTF-16 content here later.
@@ -317,8 +324,15 @@ bool Toolkit::LoadData(const std::string &data)
     if (inputFormat == AUTO) {
         inputFormat = IdentifyInputFormat(data);
     }
-
-    if (inputFormat == PAE) {
+    if (inputFormat == ABC) {
+#ifndef NO_ABC_SUPPORT
+        input = new AbcInput(&m_doc, "");
+#else
+        LogError("ABC import is not supported in this build.");
+        return false;
+#endif
+    }
+    else if (inputFormat == PAE) {
 #ifndef NO_PAE_SUPPORT
         input = new PaeInput(&m_doc, "");
 #else
@@ -522,6 +536,11 @@ bool Toolkit::LoadData(const std::string &data)
 
 std::string Toolkit::GetMEI(int pageNo, bool scoreBased)
 {
+    if (GetPageCount() == 0) {
+        LogWarning("No data loaded");
+        return "";
+    }
+
     // Page number is one-based - correct it to 0-based first
     pageNo--;
 
@@ -954,7 +973,8 @@ void Toolkit::ResetLogBuffer()
 
 void Toolkit::RedoLayout()
 {
-    if (m_doc.GetType() == Transcription) {
+    if ((GetPageCount() == 0) || (m_doc.GetType() == Transcription)) {
+        LogWarning("No data to re-layout");
         return;
     }
 
@@ -967,7 +987,7 @@ void Toolkit::RedoPagePitchPosLayout()
     Page *page = m_doc.GetDrawingPage();
 
     if (!page) {
-        LogError("No page to re-layout");
+        LogWarning("No page to re-layout");
         return;
     }
 
@@ -976,6 +996,11 @@ void Toolkit::RedoPagePitchPosLayout()
 
 bool Toolkit::RenderToDeviceContext(int pageNo, DeviceContext *deviceContext)
 {
+    if (pageNo > GetPageCount()) {
+        LogWarning("Page %d does not exist", pageNo);
+        return false;
+    }
+
     // Page number is one-based - correct it to 0-based first
     pageNo--;
 
@@ -1175,6 +1200,12 @@ int Toolkit::GetPageWithElement(const std::string &xmlId)
 int Toolkit::GetTimeForElement(const std::string &xmlId)
 {
     Object *element = m_doc.FindChildByUuid(xmlId);
+
+    if (!element) {
+        LogWarning("Element '%s' not found", xmlId.c_str());
+        return 0;
+    }
+
     int timeofElement = 0;
     if (element->Is(NOTE)) {
         if (!m_doc.HasMidiTimemap()) {
@@ -1197,9 +1228,14 @@ int Toolkit::GetTimeForElement(const std::string &xmlId)
 
 std::string Toolkit::GetMIDIValuesForElement(const std::string &xmlId)
 {
-    jsonxx::Object o;
-
     Object *element = m_doc.FindChildByUuid(xmlId);
+
+    if (!element) {
+        LogWarning("Element '%s' not found", xmlId.c_str());
+        return 0;
+    }
+
+    jsonxx::Object o;
     if (element->Is(NOTE)) {
         Note *note = dynamic_cast<Note *>(element);
         assert(note);
@@ -1317,7 +1353,7 @@ bool Toolkit::Drag(std::string elementId, int x, int y)
         int pitchDifference = round((double)y / (double)staff->m_drawingStaffSize);
 
         // Get components of neume
-        AttComparison ac(NC);
+        ClassIdComparison ac(NC);
         ArrayOfObjects objects;
         neume->FindAllChildByComparison(&objects, &ac);
 

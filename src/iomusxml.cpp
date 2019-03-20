@@ -14,12 +14,13 @@
 
 //----------------------------------------------------------------------------
 
-#include "attcomparison.h"
 #include "beam.h"
 #include "beatrpt.h"
+#include "breath.h"
 #include "btrem.h"
 #include "chord.h"
 #include "clef.h"
+#include "comparison.h"
 #include "dir.h"
 #include "doc.h"
 #include "dynam.h"
@@ -1400,7 +1401,7 @@ void MusicXmlInput::ReadMusicXmlNote(pugi::xml_node node, Measure *measure, std:
             FTrem *fTrem = new FTrem();
             AddLayerElement(layer, fTrem);
             m_elementStack.push_back(fTrem);
-            fTrem->SetSlash(tremolo.node().text().as_int());
+            fTrem->SetBeams(tremolo.node().text().as_int());
         }
     }
 
@@ -1475,6 +1476,9 @@ void MusicXmlInput::ReadMusicXmlNote(pugi::xml_node node, Measure *measure, std:
         element = note;
         note->SetVisible(ConvertWordToBool(node.append_attribute("print-object").as_string()));
         note->SetColor(node.attribute("color").as_string());
+        if (node.attribute("xml:id")) {
+            note->SetUuid(node.attribute("xml:id").as_string());
+        }
 
         // accidental
         pugi::xpath_node accidental = node.select_single_node("accidental");
@@ -1653,7 +1657,7 @@ void MusicXmlInput::ReadMusicXmlNote(pugi::xml_node node, Measure *measure, std:
             Artic *artic = new Artic();
             if (articulations.select_single_node("accent")) artics.push_back(ARTICULATION_acc);
             // Removed in MEI 4.0
-            //if (articulations.select_single_node("detached-legato")) artics.push_back(ARTICULATION_ten_stacc);
+            // if (articulations.select_single_node("detached-legato")) artics.push_back(ARTICULATION_ten_stacc);
             if (articulations.select_single_node("spiccato")) artics.push_back(ARTICULATION_spicc);
             if (articulations.select_single_node("staccatissimo")) artics.push_back(ARTICULATION_stacciss);
             if (articulations.select_single_node("staccato")) artics.push_back(ARTICULATION_stacc);
@@ -1689,6 +1693,17 @@ void MusicXmlInput::ReadMusicXmlNote(pugi::xml_node node, Measure *measure, std:
     }
 
     m_ID = "#" + element->GetUuid();
+
+    // breath marks
+    pugi::xpath_node xmlBreath = notations.node().select_single_node("articulations/breath-mark");
+    if (xmlBreath) {
+        Breath *breath = new Breath();
+        m_controlElements.push_back(std::make_pair(measureNum, breath));
+        breath->SetStaff(staff->AttNInteger::StrToXsdPositiveIntegerList(std::to_string(staff->GetN())));
+        breath->SetPlace(breath->AttPlacement::StrToStaffrel(xmlBreath.node().attribute("placement").as_string()));
+        breath->SetColor(xmlBreath.node().attribute("color").as_string());
+        breath->SetTstamp((double)(m_durTotal) * (double)m_meterUnit / (double)(4 * m_ppq) + 0.8);
+    }
 
     // Dynamics
     pugi::xpath_node xmlDynam = notations.node().select_single_node("dynamics");

@@ -1,8 +1,29 @@
 # Changelog
 
 ## [Unreleased]
+* Support for `@spacing` on `<staffDef>`
+* Support for `@sameas` on `<beam>`, `<chord>`, `<layer>`, `<note>`, `<rest>`, and `<tuplet>`
+* Support for editorial markup in `<label>` and `<labelAbbr>`
+* Support of ties and slurs starting or ending with timestamp (but not both)
+* Support for ABC notation import (@rettinghaus)
+* Avoid system optimisation when a tempo change occurs
+* Improved tuplets and support for additional attributes
+* Improved slur placement
+* Option for adjusting MIDI tempo output (--midi-tempo-adjustment)
+* Option for top/bottom margin `<harm>` (--top/bottom-margin-harm)
+* Option to use first footer / header for all pages (--use-pg-footer/header-for-all)
+* Embedding of Petaluma font (1.055) from Steinberg
+
+## [2.0.2] - 2019-02-06
+* Fix issue with <app> and multiple <mdiv>
+
+## [2.0.1] - 2019-02-04
+* Fix for Plaine & Easie empty beams
+
+## [2.0.0] - 2019-01-21
 ### Added
-* Support for extendering line in `<f>`
+* Support for `<bracketSpan>`
+* Support for extending line in `<f>`
 * Support for `@beam.with` on `<beam>`
 * Support for `@stem.pos` values "left" and "right" (@rettinghaus)
 * Support for dynamic silent staff hiding (implements `@optimize` on `<scoreDef>`)
