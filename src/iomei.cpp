@@ -1018,6 +1018,7 @@ void MeiOutput::WriteStaffDef(pugi::xml_node currentNode, StaffDef *staffDef)
     staffDef->WriteScalable(currentNode);
     staffDef->WriteStaffDefLog(currentNode);
     staffDef->WriteStaffDefVis(currentNode);
+    staffDef->WriteTimeBase(currentNode);
     staffDef->WriteTransposition(currentNode);
 }
 
@@ -2084,7 +2085,7 @@ bool MeiInput::ImportString(std::string const &mei)
         m_doc->Reset();
         m_doc->SetType(Raw);
         pugi::xml_document doc;
-        doc.load(mei.c_str(), pugi::parse_default & ~pugi::parse_eol);
+        doc.load_string(mei.c_str(), pugi::parse_default & ~pugi::parse_eol);
         pugi::xml_node root = doc.first_child();
         return ReadDoc(root);
     }
@@ -2476,7 +2477,7 @@ bool MeiInput::ReadDoc(pugi::xml_node root)
 
     std::string xPathQuery = m_doc->GetOptions()->m_mdivXPathQuery.GetValue();
     if (!xPathQuery.empty()) {
-        pugi::xpath_node selection = body.select_single_node(xPathQuery.c_str());
+        pugi::xpath_node selection = body.select_node(xPathQuery.c_str());
         if (selection) {
             m_selectedMdiv = selection.node();
         }
@@ -3256,6 +3257,7 @@ bool MeiInput::ReadStaffDef(Object *parent, pugi::xml_node staffDef)
     vrvStaffDef->ReadScalable(staffDef);
     vrvStaffDef->ReadStaffDefLog(staffDef);
     vrvStaffDef->ReadStaffDefVis(staffDef);
+    vrvStaffDef->ReadTimeBase(staffDef);
     vrvStaffDef->ReadTransposition(staffDef);
 
     if (!vrvStaffDef->HasN()) {
@@ -4849,8 +4851,8 @@ bool MeiInput::ReadAppChildren(Object *parent, pugi::xml_node parentNode, Editor
     std::vector<std::string> xPathQueries = m_doc->GetOptions()->m_appXPathQuery.GetValue();
     if (xPathQueries.size() > 0) {
         auto i = std::find_if(xPathQueries.begin(), xPathQueries.end(),
-            [parentNode](std::string &query) { return (parentNode.select_single_node(query.c_str())); });
-        if (i != xPathQueries.end()) selectedLemOrRdg = parentNode.select_single_node(i->c_str()).node();
+            [parentNode](std::string &query) { return (parentNode.select_node(query.c_str())); });
+        if (i != xPathQueries.end()) selectedLemOrRdg = parentNode.select_node(i->c_str()).node();
     }
 
     bool success = true;
@@ -4914,9 +4916,9 @@ bool MeiInput::ReadChoiceChildren(Object *parent, pugi::xml_node parentNode, Edi
     std::vector<std::string> xPathQueries = m_doc->GetOptions()->m_choiceXPathQuery.GetValue();
     if (xPathQueries.size() > 0) {
         auto i = std::find_if(xPathQueries.begin(), xPathQueries.end(),
-            [parentNode](std::string &query) { return (parentNode.select_single_node(query.c_str())); });
+            [parentNode](std::string &query) { return (parentNode.select_node(query.c_str())); });
         if (i != xPathQueries.end()) {
-            selectedChild = parentNode.select_single_node(i->c_str()).node();
+            selectedChild = parentNode.select_node(i->c_str()).node();
         }
     }
 
@@ -5143,9 +5145,9 @@ bool MeiInput::ReadSubstChildren(Object *parent, pugi::xml_node parentNode, Edit
     std::vector<std::string> xPathQueries = m_doc->GetOptions()->m_substXPathQuery.GetValue();
     if (xPathQueries.size() > 0) {
         auto i = std::find_if(xPathQueries.begin(), xPathQueries.end(),
-            [parentNode](std::string &query) { return (parentNode.select_single_node(query.c_str())); });
+            [parentNode](std::string &query) { return (parentNode.select_node(query.c_str())); });
         if (i != xPathQueries.end()) {
-            selectedChild = parentNode.select_single_node(i->c_str()).node();
+            selectedChild = parentNode.select_node(i->c_str()).node();
         }
     }
 

@@ -391,7 +391,7 @@ bool Toolkit::LoadData(const std::string &data)
         // This is the indirect converter from MusicXML to MEI using iohumdrum:
         hum::Tool_musicxml2hum converter;
         pugi::xml_document xmlfile;
-        xmlfile.load(data.c_str());
+        xmlfile.load_string(data.c_str());
         stringstream conversion;
         bool status = converter.convert(conversion, xmlfile);
         if (!status) {
@@ -421,7 +421,7 @@ bool Toolkit::LoadData(const std::string &data)
         // This is the indirect converter from MusicXML to MEI using iohumdrum:
         hum::Tool_mei2hum converter;
         pugi::xml_document xmlfile;
-        xmlfile.load(data.c_str());
+        xmlfile.load_string(data.c_str());
         stringstream conversion;
         bool status = converter.convert(conversion, xmlfile);
         if (!status) {
@@ -1040,6 +1040,11 @@ std::string Toolkit::RenderToSVG(int pageNo, bool xml_declaration)
 
     if (m_options->m_mmOutput.GetValue()) {
         svg.SetMMOutput(true);
+    }
+
+    // set the option to use viewbox on svg root
+    if (m_options->m_svgViewBox.GetValue()) {
+        svg.SetSvgViewBox(true);
     }
 
     // render the page
