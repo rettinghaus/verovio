@@ -782,17 +782,14 @@ void SvgDeviceContext::DrawText(const std::string &text, const std::wstring wtex
         = (m_currentNode.attribute("font-family")) ? m_currentNode.attribute("font-family").value() : "";
     std::string fontFaceName = m_fontStack.top()->GetFaceName();
 
-    pugi::xml_node textChild = AppendChild("tspan");
-    // We still add @xml::space (No: this seems to create problems with Safari)
-    // textChild.append_attribute("xml:space") = "preserve";
     // Set the @font-family only if it is not the same as in the parent node
     if (!fontFaceName.empty() && (fontFaceName != currentFaceName)) {
-        textChild.append_attribute("font-family") = m_fontStack.top()->GetFaceName().c_str();
+        m_currentNode.append_attribute("font-family") = m_fontStack.top()->GetFaceName().c_str();
         // Special case where we want to specifiy if the VerovioText font (woff) needs to be included in the output
         if (fontFaceName == "VerovioText") this->VrvTextFont();
     }
     if (m_fontStack.top()->GetPointSize() != 0) {
-        textChild.append_attribute("font-size") = StringFormat("%dpx", m_fontStack.top()->GetPointSize()).c_str();
+        //m_currentNode.append_attribute("font-size") = StringFormat("%dpx", m_fontStack.top()->GetPointSize()).c_str();
     }
     if (m_fontStack.top()->GetStyle() != FONTSTYLE_NONE) {
         if (m_fontStack.top()->GetStyle() == FONTSTYLE_italic) {
