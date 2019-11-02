@@ -52,6 +52,7 @@ Note::Note()
     , AttColoration()
     , AttCue()
     , AttGraced()
+    , AttMidiVelocity()
     , AttNoteAnlMensural()
     , AttStems()
     , AttStemsCmn()
@@ -66,6 +67,7 @@ Note::Note()
     RegisterAttClass(ATT_CUE);
     RegisterAttClass(ATT_GRACED);
     RegisterAttClass(ATT_NOTEANLMENSURAL);
+    RegisterAttClass(ATT_MIDIVELOCITY);
     RegisterAttClass(ATT_STEMS);
     RegisterAttClass(ATT_STEMSCMN);
     RegisterAttClass(ATT_TIEPRESENT);
@@ -88,6 +90,7 @@ void Note::Reset()
     ResetCue();
     ResetGraced();
     ResetNoteAnlMensural();
+    ResetMidiVelocity();
     ResetStems();
     ResetStemsCmn();
     ResetTiePresent();
@@ -112,7 +115,7 @@ bool Note::HasToBeAligned() const
 {
     if (!this->IsInLigature()) return true;
     Note *note = const_cast<Note *>(this);
-    Ligature *ligature = dynamic_cast<Ligature *>(note->GetFirstParent(LIGATURE));
+    Ligature *ligature = dynamic_cast<Ligature *>(note->GetFirstAncestor(LIGATURE));
     assert(ligature);
     return ((note == ligature->GetFirstNote()) || (note == ligature->GetLastNote()));
 }
@@ -122,12 +125,12 @@ void Note::AddChild(Object *child)
     // additional verification for accid and artic - this will no be raised with editorial markup, though
     if (child->Is(ACCID)) {
         IsAttributeComparison isAttributeComparison(ACCID);
-        if (this->FindChildByComparison(&isAttributeComparison))
+        if (this->FindDescendantByComparison(&isAttributeComparison))
             LogWarning("Having both @accid or @accid.ges and <accid> child will cause problems");
     }
     else if (child->Is(ARTIC)) {
         IsAttributeComparison isAttributeComparison(ARTIC);
-        if (this->FindChildByComparison(&isAttributeComparison))
+        if (this->FindDescendantByComparison(&isAttributeComparison))
             LogWarning("Having both @artic and <artic> child will cause problems");
     }
 
@@ -170,18 +173,18 @@ void Note::AddChild(Object *child)
 
 Accid *Note::GetDrawingAccid()
 {
-    Accid *accid = dynamic_cast<Accid *>(this->FindChildByType(ACCID));
+    Accid *accid = dynamic_cast<Accid *>(this->FindDescendantByType(ACCID));
     return accid;
 }
 
 Chord *Note::IsChordTone() const
 {
-    return dynamic_cast<Chord *>(this->GetFirstParent(CHORD, MAX_CHORD_DEPTH));
+    return dynamic_cast<Chord *>(this->GetFirstAncestor(CHORD, MAX_CHORD_DEPTH));
 }
 
 int Note::GetDrawingDur() const
 {
-    Chord *chordParent = dynamic_cast<Chord *>(this->GetFirstParent(CHORD, MAX_CHORD_DEPTH));
+    Chord *chordParent = dynamic_cast<Chord *>(this->GetFirstAncestor(CHORD, MAX_CHORD_DEPTH));
     if (chordParent && !this->HasDur()) {
         return chordParent->GetActualDur();
     }
@@ -308,7 +311,7 @@ wchar_t Note::GetMensuralSmuflNoteHead()
         return 0;
     }
 
-    Staff *staff = dynamic_cast<Staff *>(this->GetFirstParent(STAFF));
+    Staff *staff = dynamic_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
     bool mensural_black = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
 
@@ -505,18 +508,11 @@ int Note::CalcStem(FunctorParams *functorParams)
     params->m_interface = NULL;
     params->m_chordStemLength = 0;
 
-    // No stem
-    if (this->GetActualDur() < DUR_2) {
-        // Duration is longer than halfnote, there should be no stem
-        assert(!this->GetDrawingStem());
-        return FUNCTOR_SIBLINGS;
-    }
-
     Stem *stem = this->GetDrawingStem();
     assert(stem);
-    Staff *staff = dynamic_cast<Staff *>(this->GetFirstParent(STAFF));
+    Staff *staff = dynamic_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
-    Layer *layer = dynamic_cast<Layer *>(this->GetFirstParent(LAYER));
+    Layer *layer = dynamic_cast<Layer *>(this->GetFirstAncestor(LAYER));
     assert(layer);
 
     if (this->m_crossStaff) staff = this->m_crossStaff;
@@ -564,7 +560,7 @@ int Note::CalcChordNoteHeads(FunctorParams *functorParams)
     FunctorDocParams *params = dynamic_cast<FunctorDocParams *>(functorParams);
     assert(params);
 
-    Staff *staff = dynamic_cast<Staff *>(this->GetFirstParent(STAFF));
+    Staff *staff = dynamic_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
 
     // Nothing to do for notes that are not in a cluster
@@ -624,7 +620,7 @@ int Note::CalcDots(FunctorParams *functorParams)
         return FUNCTOR_SIBLINGS;
     }
 
-    Staff *staff = dynamic_cast<Staff *>(this->GetFirstParent(STAFF));
+    Staff *staff = dynamic_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
 
     if (this->m_crossStaff) staff = this->m_crossStaff;
@@ -654,7 +650,7 @@ int Note::CalcDots(FunctorParams *functorParams)
     }
     else if (this->GetDots() > 0) {
         // For single notes we need here to set the dot loc
-        dots = dynamic_cast<Dots *>(this->FindChildByType(DOTS, 1));
+        dots = dynamic_cast<Dots *>(this->FindDescendantByType(DOTS, 1));
         assert(dots);
         params->m_chordDrawingX = this->GetDrawingX();
 
@@ -693,7 +689,7 @@ int Note::CalcLedgerLines(FunctorParams *functorParams)
         return FUNCTOR_SIBLINGS;
     }
 
-    Staff *staff = dynamic_cast<Staff *>(this->GetFirstParent(STAFF));
+    Staff *staff = dynamic_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
 
     if (!this->IsVisible()) {
@@ -745,12 +741,12 @@ int Note::CalcLedgerLines(FunctorParams *functorParams)
 
 int Note::PrepareLayerElementParts(FunctorParams *functorParams)
 {
-    Stem *currentStem = dynamic_cast<Stem *>(this->FindChildByType(STEM, 1));
+    Stem *currentStem = dynamic_cast<Stem *>(this->FindDescendantByType(STEM, 1));
     Flag *currentFlag = NULL;
     Chord *chord = this->IsChordTone();
-    if (currentStem) currentFlag = dynamic_cast<Flag *>(currentStem->FindChildByType(FLAG, 1));
+    if (currentStem) currentFlag = dynamic_cast<Flag *>(currentStem->FindDescendantByType(FLAG, 1));
 
-    if ((this->GetActualDur() > DUR_1) && !this->IsChordTone() && !this->IsMensural()) {
+    if (!this->IsChordTone() && !this->IsMensural()) {
         if (!currentStem) {
             currentStem = new Stem();
             this->AddChild(currentStem);
@@ -758,6 +754,9 @@ int Note::PrepareLayerElementParts(FunctorParams *functorParams)
         currentStem->AttGraced::operator=(*this);
         currentStem->AttStems::operator=(*this);
         currentStem->AttStemsCmn::operator=(*this);
+        if (this->GetActualDur() < DUR_2) {
+            currentStem->IsVirtual(true);
+        }
     }
     // This will happen only if the duration has changed
     else if (currentStem) {
@@ -768,7 +767,8 @@ int Note::PrepareLayerElementParts(FunctorParams *functorParams)
         }
     }
 
-    if ((this->GetActualDur() > DUR_4) && !this->IsInBeam() && !this->IsChordTone() && !this->IsMensural()) {
+    if ((this->GetActualDur() > DUR_4) && !this->IsInBeam() && !this->IsInFTrem() && !this->IsChordTone()
+        && !this->IsMensural()) {
         // We should have a stem at this stage
         assert(currentStem);
         if (!currentFlag) {
@@ -786,7 +786,7 @@ int Note::PrepareLayerElementParts(FunctorParams *functorParams)
 
     /************ dots ***********/
 
-    Dots *currentDots = dynamic_cast<Dots *>(this->FindChildByType(DOTS, 1));
+    Dots *currentDots = dynamic_cast<Dots *>(this->FindDescendantByType(DOTS, 1));
 
     if (this->GetDots() > 0) {
         if (chord && (chord->GetDots() == this->GetDots())) {
@@ -866,21 +866,24 @@ int Note::GenerateMIDI(FunctorParams *functorParams)
     GenerateMIDIParams *params = dynamic_cast<GenerateMIDIParams *>(functorParams);
     assert(params);
 
+    Note *note = dynamic_cast<Note *>(this->ThisOrSameasAsLink());
+    assert(note);
+
     // If the note is a secondary tied note, then ignore it
-    if (this->GetScoreTimeTiedDuration() < 0.0) {
+    if (note->GetScoreTimeTiedDuration() < 0.0) {
         return FUNCTOR_SIBLINGS;
     }
 
     // For now just ignore grace notes
-    if (this->IsGraceNote()) {
+    if (note->IsGraceNote()) {
         return FUNCTOR_SIBLINGS;
     }
 
-    Accid *accid = this->GetDrawingAccid();
+    Accid *accid = note->GetDrawingAccid();
 
     // Create midi this
     int midiBase = 0;
-    data_PITCHNAME pname = this->GetPname();
+    data_PITCHNAME pname = note->GetPname();
     switch (pname) {
         case PITCHNAME_c: midiBase = 0; break;
         case PITCHNAME_d: midiBase = 2; break;
@@ -922,16 +925,18 @@ int Note::GenerateMIDI(FunctorParams *functorParams)
     // Adjustment for transposition intruments
     midiBase += params->m_transSemi;
 
-    int oct = this->GetOct();
-    if (this->HasOctGes()) oct = this->GetOctGes();
+    int oct = note->GetOct();
+    if (note->HasOctGes()) oct = note->GetOctGes();
 
     int pitch = midiBase + (oct + 1) * 12;
+    // We do store the MIDIPitch in the note even with a sameas
     this->SetMIDIPitch(pitch);
     int channel = params->m_midiChannel;
-    int velocity = 64;
+    int velocity = MIDI_VELOCITY;
+    if (note->HasVel()) velocity = note->GetVel();
 
-    double starttime = params->m_totalTime + this->GetScoreTimeOnset();
-    double stoptime = params->m_totalTime + this->GetScoreTimeOffset() + this->GetScoreTimeTiedDuration();
+    double starttime = params->m_totalTime + note->GetScoreTimeOnset();
+    double stoptime = params->m_totalTime + note->GetScoreTimeOffset() + note->GetScoreTimeTiedDuration();
 
     int tpq = params->m_midiFile->getTPQ();
 
@@ -946,11 +951,14 @@ int Note::GenerateTimemap(FunctorParams *functorParams)
     GenerateTimemapParams *params = dynamic_cast<GenerateTimemapParams *>(functorParams);
     assert(params);
 
-    int realTimeStart = params->m_realTimeOffsetMilliseconds + m_realTimeOnsetMilliseconds;
-    double scoreTimeStart = params->m_scoreTimeOffset + m_scoreTimeOnset;
+    Note *note = dynamic_cast<Note *>(this->ThisOrSameasAsLink());
+    assert(note);
 
-    int realTimeEnd = params->m_realTimeOffsetMilliseconds + m_realTimeOffsetMilliseconds;
-    double scoreTimeEnd = params->m_scoreTimeOffset + m_scoreTimeOffset;
+    int realTimeStart = params->m_realTimeOffsetMilliseconds + note->GetRealTimeOnsetMilliseconds();
+    double scoreTimeStart = params->m_scoreTimeOffset + note->GetScoreTimeOnset();
+
+    int realTimeEnd = params->m_realTimeOffsetMilliseconds + note->GetRealTimeOffsetMilliseconds();
+    double scoreTimeEnd = params->m_scoreTimeOffset + note->GetScoreTimeOffset();
 
     // Should check if value for realTimeStart already exists and if so, then
     // ensure that it is equal to scoreTimeStart:

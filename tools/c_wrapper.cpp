@@ -14,7 +14,7 @@ using namespace vrv;
 extern "C" {
 
 #include "c_wrapper.h"
-    
+
 /****************************************************************
  * Methods exported to use the Toolkit class
  ****************************************************************/
@@ -37,6 +37,7 @@ void *vrvToolkit_constructorResourcePath(const char* resourcePath)
 
 void vrvToolkit_destructor(Toolkit *tk)
 {
+    LogMessage("Deleting toolkit");
     delete tk;
 }
 
@@ -47,6 +48,12 @@ bool vrvToolkit_edit(Toolkit *tk, const char *editorAction)
         return false;
     }
     return true;
+}
+
+const char *vrvToolkit_editInfo(Toolkit *tk)
+{
+    tk->SetCString(tk->EditInfo());
+    return tk->GetCString();
 }
 
 const char *vrvToolkit_getAvailableOptions(Toolkit *tk)

@@ -9,6 +9,7 @@
 #define __VRV_LAYER_ELEMENT_H__
 
 #include "atts_shared.h"
+#include "facsimileinterface.h"
 #include "linkinginterface.h"
 #include "object.h"
 
@@ -30,7 +31,11 @@ class Staff;
  * This class is a base class for the Layer (<layer>) content.
  * It is not an abstract class but should not be instantiated directly.
  */
-class LayerElement : public Object, public LinkingInterface, public AttLabelled, public AttTyped {
+class LayerElement : public Object,
+                     public FacsimileInterface,
+                     public LinkingInterface,
+                     public AttLabelled,
+                     public AttTyped {
 public:
     /**
      * @name Constructors, destructors, reset and class name methods
@@ -45,14 +50,15 @@ public:
     ///@}
 
     /**
-     * Copy assignment for resetting pointers
+     * Overriding CloneReset() method to be called after copy / assignment calls.
      */
-    LayerElement &operator=(const LayerElement &element);
+    virtual void CloneReset();
 
     /**
      * @name Getter to interfaces
      */
     ///@{
+    virtual FacsimileInterface *GetFacsimileInterface() { return dynamic_cast<FacsimileInterface *>(this); }
     virtual LinkingInterface *GetLinkingInterface() { return dynamic_cast<LinkingInterface *>(this); }
     ///@}
 
@@ -63,10 +69,20 @@ public:
     virtual bool HasToBeAligned() const { return false; }
 
     /**
+     * Return true if the element is part of a scoreDef or staffDef
+     */
+    virtual bool IsScoreDefElement() const { return false; }
+
+    /**
      * Return true if the element is relative to the staff and not to its parent.
      * It typically set to true for syl or artic.
      */
     virtual bool IsRelativeToStaff() const { return false; }
+
+    /**
+     * Return itself or the resolved @sameas (if any)
+     */
+    LayerElement *ThisOrSameasAsLink();
 
     /**
      * @name Set and get the flag for indication whether it is a ScoreDef or StaffDef attribute.
@@ -285,12 +301,24 @@ public:
     ///@}
 
     /**
+     * @name See Object::GenerateMIDI
+     */
+    ///@{
+    virtual int GenerateMIDI(FunctorParams *functorParams);
+    ///@}
+
+    /**
+     * See Object::GenerateTimemap
+     */
+    virtual int GenerateTimemap(FunctorParams *functorParams);
+
+    /**
      * See Object::ResetDrawing
      */
     virtual int ResetDrawing(FunctorParams *);
 
 private:
-    int GetDrawingArticulationTopOrBottom(data_STAFFREL_basic place, ArticPartType type);
+    int GetDrawingArticulationTopOrBottom(data_STAFFREL place, ArticPartType type);
 
 public:
     /** Absolute position X. This is used for facsimile (transcription) encoding */

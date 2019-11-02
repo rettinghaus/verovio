@@ -71,7 +71,7 @@ void View::DrawBeam(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
     /******************************************************************/
     // initialization
 
-    const ListOfObjects *beamChildren = beam->GetList(beam);
+    const ArrayOfObjects *beamChildren = beam->GetList(beam);
 
     // Should we assert this at the beginning?
     if (beamChildren->empty()) {
@@ -302,13 +302,13 @@ void View::DrawFTrem(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
 
     // temporary variables
     int shiftY;
-    int fullBars, polygonHeight;
+    int polygonHeight;
     double dy1, dy2;
 
     /******************************************************************/
     // initialization
 
-    const ListOfObjects *fTremChildren = fTrem->GetList(fTrem);
+    const ArrayOfObjects *fTremChildren = fTrem->GetList(fTrem);
 
     // Should we assert this at the beginning?
     if (fTremChildren->empty()) {
@@ -357,10 +357,9 @@ void View::DrawFTrem(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
         }
     }
 
-    // Number of bars to draw - if we do not have changing values, draw
-    // the number of bars according to the shortestDur value. Otherwise draw
-    // only one bar and the others will be drawn separately.
-    fullBars = fTrem->GetBeams();
+    // Number of bars to draw
+    int fullBars = fTrem->GetBeams();
+    int floatingBars = fTrem->GetBeamsFloat();
 
     // Adjust the x position of the first and last element for taking into account the stem width
     firstElement->m_x -= (m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize)) / 2;
@@ -400,14 +399,26 @@ void View::DrawFTrem(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
         y2 += polygonHeight;
         y1 += dy1 * fTrem->m_drawingParams.m_beamWidthWhite;
         y2 += dy2 * fTrem->m_drawingParams.m_beamWidthWhite;
+    }
 
-        // shorten the bar after having drawn the first one (but the first one)
-        if ((j == 0) && (dur > DUR_1) && (dur != DUR_4)) {
-            x1 += space;
-            y1 += space * fTrem->m_drawingParams.m_beamSlope;
-            x2 -= space;
-            y2 -= space * fTrem->m_drawingParams.m_beamSlope;
-        }
+    // If we have no full bar but only floating bars, then move it inside
+    if (fullBars == 0) {
+        y1 += dy1 * fTrem->m_drawingParams.m_beamWidthWhite;
+        y2 += dy2 * fTrem->m_drawingParams.m_beamWidthWhite;
+    }
+
+    // shorten the bar after having drawn the first one (but the first one)
+    x1 += space;
+    y1 += space * fTrem->m_drawingParams.m_beamSlope;
+    x2 -= space;
+    y2 -= space * fTrem->m_drawingParams.m_beamSlope;
+
+    for (int j = 0; j < floatingBars; ++j) {
+        DrawObliquePolygon(dc, x1, y1, x2, y2, polygonHeight);
+        y1 += polygonHeight;
+        y2 += polygonHeight;
+        y1 += dy1 * fTrem->m_drawingParams.m_beamWidthWhite;
+        y2 += dy2 * fTrem->m_drawingParams.m_beamWidthWhite;
     }
 
     dc->EndGraphic(element, this);

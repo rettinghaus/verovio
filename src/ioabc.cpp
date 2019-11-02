@@ -95,7 +95,7 @@ bool AbcInput::ImportFile()
     return true;
 }
 
-bool AbcInput::ImportString(std::string const &abc)
+bool AbcInput::ImportString(const std::string &abc)
 {
     std::istringstream in_stream(abc);
     parseABC(in_stream);
@@ -129,127 +129,127 @@ void AbcInput::parseABC(std::istream &infile)
     }
     CreateHeader();
 
-    // read tune header
-    readInformationField('X', &abcLine[2]);
-    while (abcLine[0] != 'K' && !infile.eof()) {
-        std::getline(infile, abcLine);
-        ++m_lineNum;
-        readInformationField(abcLine[0], &abcLine[2]);
-    }
-    if (m_title.empty()) {
-        LogWarning("ABC input: Title field missing, creating empty title");
-        m_title.push_back(std::make_pair("", 0));
-    }
-    // add work entry to meiHead
-    CreateWorkEntry();
-
-    // create score
-    assert(m_mdiv != NULL);
-    Score *score = new Score();
-    m_mdiv->AddChild(score);
-
-    // create page head
-    PrintInformationFields();
-    StaffGrp *staffGrp = new StaffGrp();
-    m_doc->m_scoreDef.AddChild(staffGrp);
-    StaffDef *staffDef = new StaffDef();
-    staffDef->SetN(1);
-    staffDef->SetLines(m_stafflines);
-    staffDef->SetTransSemi(m_transpose);
-    staffGrp->AddChild(staffDef);
-    if (m_meter) {
-        m_doc->m_scoreDef.SetMeterCount(m_meter->GetCount());
-        m_doc->m_scoreDef.SetMeterUnit(m_meter->GetUnit());
-        m_doc->m_scoreDef.SetMeterSym(m_meter->GetSym());
-        delete m_meter;
-        m_meter = NULL;
-    }
-    // create section
-    Section *section = new Section();
-    // start with a new page
-    if (m_linebreak != '\0') {
-        Pb *pb = new Pb();
-        pb->SetUuid(StringFormat("abcLine%02d", m_lineNum + 1));
-        section->AddChild(pb);
-    }
-    // calculate default unit note length
-    if (m_durDefault == DURATION_NONE) {
-        CalcUnitNoteLength();
-    }
-
-    // read music code
-    m_layer = new Layer();
-    m_layer->SetN(1);
     while (!infile.eof()) {
-        std::getline(infile, abcLine);
-        ++m_lineNum;
-        if (std::string(abcLine).find_first_not_of(' ') == std::string::npos) {
-            // empty lines end tunes
-            break;
+        while (!(abcLine[0] == 'X' && abcLine[1] == ':') && !infile.eof()) {
+            std::getline(infile, abcLine);
+            ++m_lineNum;
         }
-        else if (abcLine[0] == 'X') {
-            LogDebug("ABC input: Reading only first tune in file");
-            break;
+        if (infile.eof()) break;
+
+        // read tune header
+        readInformationField('X', &abcLine[2]);
+        while (abcLine[0] != 'K' && !infile.eof()) {
+            std::getline(infile, abcLine);
+            ++m_lineNum;
+            readInformationField(abcLine[0], &abcLine[2]);
         }
-        else if (abcLine[0] == '%')
-            // skipping comments and stylesheet directives
-            continue;
-        else if (abcLine[1] == ':' && abcLine[0] != '|') {
-            if (abcLine[0] != 'K') {
-                readInformationField(abcLine[0], &abcLine[2]);
+        if (infile.eof()) break;
+        if (m_title.empty()) {
+            LogWarning("ABC input: Title field missing, creating empty title");
+            m_title.push_back(std::make_pair("", 0));
+        }
+        // add work entry to meiHead
+        CreateWorkEntry();
+
+        // create score
+        assert(m_mdiv != NULL);
+        Score *score = new Score();
+        if (!m_doc->m_scoreDef.GetFirst(STAFFGRP)) {
+            m_mdiv->AddChild(score);
+
+            // create page head
+            PrintInformationFields();
+            StaffGrp *staffGrp = new StaffGrp();
+            // create staff
+            StaffDef *staffDef = new StaffDef();
+            staffDef->SetN(1);
+            staffDef->SetLines(m_stafflines);
+            staffDef->SetTransSemi(m_transpose);
+            if (m_clef) {
+                staffDef->AddChild(m_clef);
+                m_clef = NULL;
+            }
+            staffGrp->AddChild(staffDef);
+            m_doc->m_scoreDef.AddChild(staffGrp);
+            if (m_key) {
+                m_doc->m_scoreDef.AddChild(m_key);
+                m_key = NULL;
+            }
+            if (m_meter) {
+                m_doc->m_scoreDef.AddChild(m_meter);
+                m_meter = NULL;
+            }
+        }
+
+        // create section
+        Section *section = new Section();
+        // start with a new page
+        if (m_linebreak != '\0') {
+            Pb *pb = new Pb();
+            pb->SetUuid(StringFormat("abcLine%02d", m_lineNum + 1));
+            section->AddChild(pb);
+        }
+        // calculate default unit note length
+        if (m_durDefault == DURATION_NONE) {
+            CalcUnitNoteLength();
+        }
+
+        // read music code
+        m_layer = new Layer();
+        m_layer->SetN(1);
+        while (!infile.eof()) {
+            std::getline(infile, abcLine);
+            ++m_lineNum;
+            if (std::string(abcLine).find_first_not_of(' ') == std::string::npos) {
+                // abc tunes are separated from each other by empty lines
+                break;
+            }
+            else if (abcLine[0] == '%')
+                // skipping comments and stylesheet directives
+                continue;
+            else if (abcLine[1] == ':' && abcLine[0] != '|') {
+                if (abcLine[0] != 'K') {
+                    readInformationField(abcLine[0], &abcLine[2]);
+                }
+                else {
+                    LogWarning("ABC input: Key changes not supported", abcLine[0]);
+                }
             }
             else {
-                LogWarning("ABC input: Key changes not supported", abcLine[0]);
+                readMusicCode(abcLine, section);
             }
         }
-        else {
-            readMusicCode(abcLine, section);
+
+        // add ornaments, ties, and slur
+        Layer *layer = NULL;
+        Measure *measure = NULL;
+        for (auto iter = m_controlElements.begin(); iter != m_controlElements.end(); ++iter) {
+            if (!measure || (layer && layer->GetUuid() != iter->first)) {
+                layer = dynamic_cast<Layer *>(section->FindDescendantByUuid(iter->first));
+            }
+            if (!layer) {
+                LogWarning("ABC input: Element '%s' could not be assigned to layer '%s'",
+                    iter->second->GetClassName().c_str(), iter->first.c_str());
+                delete iter->second;
+                continue;
+            }
+            measure = dynamic_cast<Measure *>(layer->GetFirstAncestor(MEASURE));
+            assert(measure);
+            measure->AddChild(iter->second);
         }
+
+        score->AddChild(section);
+
+        // only append first tune in file
+        if (!score->GetFirstAncestor(MDIV)) delete score;
     }
 
-    // add ornaments, ties, and slur
-    Layer *layer = NULL;
-    Measure *measure = NULL;
-    for (auto iter = m_controlElements.begin(); iter != m_controlElements.end(); ++iter) {
-        if (!measure || (layer->GetUuid() != iter->first)) {
-            layer = dynamic_cast<Layer *>(section->FindChildByUuid(iter->first));
-        }
-        if (!layer) {
-            LogWarning("ABC input: Element '%s' could not be assigned to layer '%s'",
-                iter->second->GetClassName().c_str(), iter->first.c_str());
-            continue;
-        }
-        measure = dynamic_cast<Measure *>(layer->GetFirstParent(MEASURE));
-        measure->AddChild(iter->second);
-    }
-
-    score->AddChild(section);
-
-    m_doc->ConvertToPageBasedDoc();
+    m_controlElements.clear();
     m_composer.clear();
     m_info.clear();
     m_title.clear();
 
-    /* check other tunes
-    while (!infile.eof()) {
-        infile.getline(abcLine, 10000);
-        ++m_lineNum;
-        if (abcLine[0] == 'X') {
-            readInformationField('X', &abcLine[2]);
-            while (abcLine[0] != 'K') {
-                infile.getline(abcLine, 10000);
-                ++m_lineNum;
-                readInformationField(abcLine[0], &abcLine[2]);
-            }
-            if (m_title.empty()) {
-                LogWarning("ABC input: Title field missing, creating empty title");
-                m_title.push_back(std::make_pair("", 0));
-            }
-            // add work entry to meiHead
-            CreateWorkEntry();
-        }
-    }
-    */
+    m_doc->ConvertToPageBasedDoc();
 }
 
 /**********************************
@@ -265,12 +265,12 @@ void AbcInput::parseABC(std::istream &infile)
  BARRENDITION_dbl        ||
  */
 
-int AbcInput::SetBarLine(std::string &musicCode, int i)
+int AbcInput::SetBarLine(const std::string &musicCode, int i)
 {
     data_BARRENDITION barLine = BARRENDITION_NONE;
     if (i >= 1 && musicCode.at(i - 1) == ':')
         barLine = BARRENDITION_rptend;
-    else if (i + 1 < musicCode.length()) {
+    else if (i + 1 < (int)musicCode.length()) {
         switch (musicCode.at(i + 1)) {
             case ':':
                 barLine = BARRENDITION_rptstart;
@@ -299,8 +299,8 @@ int AbcInput::SetBarLine(std::string &musicCode, int i)
 
 void AbcInput::CalcUnitNoteLength()
 {
-    if (!m_doc->m_scoreDef.HasMeterUnit()
-        || double(m_doc->m_scoreDef.GetMeterCount()) / double(m_doc->m_scoreDef.GetMeterUnit()) >= 0.75) {
+    MeterSig *meterSig = dynamic_cast<MeterSig *>(m_doc->m_scoreDef.FindDescendantByType(METERSIG));
+    if (!meterSig || !meterSig->HasUnit() || double(meterSig->GetCount()) / double(meterSig->GetUnit()) >= 0.75) {
         m_unitDur = 8;
         m_durDefault = DURATION_8;
         // m_doc->m_scoreDef.SetDurDefault(DURATION_8);
@@ -325,7 +325,7 @@ void AbcInput::AddBeam()
         for (auto iter = m_noteStack.begin(); iter != m_noteStack.end(); ++iter) {
             beam->AddChild(*iter);
         }
-        if (beam->FindChildByType(NOTE)) {
+        if (beam->FindDescendantByType(NOTE)) {
             m_layer->AddChild(beam);
         }
         else {
@@ -396,10 +396,10 @@ void AbcInput::AddFermata(LayerElement *element)
 
     Fermata *fermata = new Fermata();
     fermata->SetStartid("#" + element->GetUuid());
-    fermata->GetPlaceAlternate()->SetBasic(m_fermata);
+    fermata->SetPlace(m_fermata);
     m_controlElements.push_back(std::make_pair(m_layer->GetUuid(), fermata));
 
-    m_fermata = STAFFREL_basic_NONE;
+    m_fermata = STAFFREL_NONE;
 }
 
 void AbcInput::AddOrnaments(LayerElement *element)
@@ -510,9 +510,9 @@ void AbcInput::parseDecoration(std::string decorationString)
     else if (!strcmp(decorationString.c_str(), "emphasis"))
         m_artic.push_back(ARTICULATION_acc);
     else if (!strcmp(decorationString.c_str(), "fermata") || !strcmp(decorationString.c_str(), "H"))
-        m_fermata = STAFFREL_basic_above;
+        m_fermata = STAFFREL_above;
     else if (!strcmp(decorationString.c_str(), "invertedfermata"))
-        m_fermata = STAFFREL_basic_below;
+        m_fermata = STAFFREL_below;
     else if (!strcmp(decorationString.c_str(), "tenuto"))
         m_artic.push_back(ARTICULATION_ten);
     else if (!strcmp(decorationString.c_str(), "+"))
@@ -531,7 +531,7 @@ void AbcInput::parseDecoration(std::string decorationString)
         || !strcmp(decorationString.c_str(), "pp") || !strcmp(decorationString.c_str(), "p")
         || !strcmp(decorationString.c_str(), "mp") || !strcmp(decorationString.c_str(), "mf")
         || !strcmp(decorationString.c_str(), "f") || !strcmp(decorationString.c_str(), "ff")
-        || !strcmp(decorationString.c_str(), "ffff") || !strcmp(decorationString.c_str(), "ffff")
+        || !strcmp(decorationString.c_str(), "fff") || !strcmp(decorationString.c_str(), "ffff")
         || !strcmp(decorationString.c_str(), "sfz"))
         m_dynam.push_back(decorationString);
     else
@@ -570,13 +570,17 @@ void AbcInput::parseKey(std::string keyString)
     m_ID = "";
     short int accidNum = 0;
     data_MODE mode = MODE_NONE;
+    m_key = new KeySig();
+    m_key->IsAttribute(true);
+    m_clef = new Clef();
+    m_clef->IsAttribute(true);
     while (isspace(keyString[i])) ++i;
 
     // set key.pname
     if (pitch.find(keyString[i]) != std::string::npos) {
         accidNum = int(pitch.find(keyString[i])) - 1;
         keyString[i] = tolower(keyString[i]);
-        m_doc->m_scoreDef.SetKeyPname((m_doc->m_scoreDef).AttKeySigDefaultLog::StrToPitchname(keyString.substr(i, 1)));
+        m_key->SetPname(m_key->AttPitch::StrToPitchname(keyString.substr(i, 1)));
         ++i;
     }
     while (isspace(keyString[i])) ++i;
@@ -584,12 +588,12 @@ void AbcInput::parseKey(std::string keyString)
     // set key.accid
     switch (keyString[i]) {
         case '#':
-            m_doc->m_scoreDef.SetKeyAccid(ACCIDENTAL_GESTURAL_s);
+            m_key->SetAccid(ACCIDENTAL_WRITTEN_s);
             accidNum += 7;
             ++i;
             break;
         case 'b':
-            m_doc->m_scoreDef.SetKeyAccid(ACCIDENTAL_GESTURAL_f);
+            m_key->SetAccid(ACCIDENTAL_WRITTEN_f);
             accidNum -= 7;
             ++i;
             break;
@@ -597,7 +601,7 @@ void AbcInput::parseKey(std::string keyString)
     }
 
     // set key.mode
-    if (m_doc->m_scoreDef.HasKeyPname()) {
+    if (m_key->HasPname()) {
         // when no mode is indicated, major is assumed
         mode = MODE_major;
         while (isspace(keyString[i])) ++i;
@@ -644,7 +648,7 @@ void AbcInput::parseKey(std::string keyString)
             }
         }
     }
-    m_doc->m_scoreDef.SetKeyMode(mode);
+    m_key->SetMode(mode);
 
     // we need set @key.sig for correct rendering
     if (accidNum != 0) {
@@ -663,7 +667,8 @@ void AbcInput::parseKey(std::string keyString)
             keyPitchAlterAmount = 1;
         }
 
-        m_doc->m_scoreDef.SetKeySig((m_doc->m_scoreDef).AttKeySigDefaultLog::StrToKeysignature(keySig));
+        // m_doc->m_scoreDef.SetSig(keySig);
+        m_key->SetSig(m_key->AttKeySigLog::StrToKeysignature(keySig));
         keyPitchAlter = pitch.substr(posStart, posEnd);
     }
 
@@ -673,29 +678,30 @@ void AbcInput::parseKey(std::string keyString)
     // tenor: 4; bass: 4.
     // [+8 | -8] - draws '8' above or below the staff. The player will transpose the notes one octave higher or lower.
     if (keyString.find("alto") != std::string::npos) {
-        m_doc->m_scoreDef.SetClefShape(CLEFSHAPE_C);
+        m_clef->SetShape(CLEFSHAPE_C);
         i += 4;
-        m_doc->m_scoreDef.SetClefLine(3);
+        m_clef->SetLine(3);
     }
     else if (keyString.find("tenor") != std::string::npos) {
-        m_doc->m_scoreDef.SetClefShape(CLEFSHAPE_C);
+        m_clef->SetShape(CLEFSHAPE_C);
         i += 5;
-        m_doc->m_scoreDef.SetClefLine(4);
+        m_clef->SetLine(4);
     }
     else if (keyString.find("bass") != std::string::npos) {
-        m_doc->m_scoreDef.SetClefShape(CLEFSHAPE_F);
+        m_clef->SetShape(CLEFSHAPE_F);
         i += 4;
-        m_doc->m_scoreDef.SetClefLine(4);
+        m_clef->SetLine(4);
     }
     else if (keyString.find("perc") != std::string::npos) {
         LogWarning("ABC Input: Drum clef is not supported");
     }
     else if (keyString.find("none") != std::string::npos) {
         i += 4;
+        m_clef->SetShape(CLEFSHAPE_NONE);
     }
     else {
-        m_doc->m_scoreDef.SetClefShape(CLEFSHAPE_G);
-        m_doc->m_scoreDef.SetClefLine(2);
+        m_clef->SetShape(CLEFSHAPE_G);
+        m_clef->SetLine(2);
     }
 
     if (keyString.find("transpose=", i) != std::string::npos) {
@@ -796,6 +802,9 @@ void AbcInput::parseReferenceNumber(std::string referenceNumberString)
         m_mdiv->SetN(std::to_string(mdivNum));
     }
     m_doc->AddChild(m_mdiv);
+
+    // reset unit note length
+    m_durDefault = DURATION_NONE;
 
     // reset information fields
     m_composer.clear();
@@ -1002,7 +1011,7 @@ void AbcInput::readInformationField(char dataKey, std::string value)
 // parse abc music code
 //
 
-void AbcInput::readMusicCode(std::string &musicCode, Section *section)
+void AbcInput::readMusicCode(const std::string &musicCode, Section *section)
 {
     assert(section);
 
@@ -1012,7 +1021,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
     data_GRACE grace = GRACE_NONE;
     Chord *chord = NULL;
 
-    while (i < musicCode.length()) {
+    while (i < (int)musicCode.length()) {
         // eat the input...
 
         if (musicCode.at(i) == '`') {
@@ -1029,7 +1038,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
         }
 
         // endings
-        else if ((i + 2 < musicCode.length()) && musicCode.at(i) == '[' && isdigit(musicCode.at(i + 1))) {
+        else if ((i + 2 < (int)musicCode.length()) && musicCode.at(i) == '[' && isdigit(musicCode.at(i + 1))) {
             ++i;
             // Ending *ending = new Ending;
             // ending->SetN(musicCode.at(i));
@@ -1037,7 +1046,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
         }
 
         // inline fields
-        else if ((i + 2 < musicCode.length()) && musicCode.at(i) == '[' && musicCode.at(i + 2) == ':') {
+        else if ((i + 2 < (int)musicCode.length()) && musicCode.at(i) == '[' && musicCode.at(i + 2) == ':') {
             ++i;
             char dataKey = musicCode.at(i);
             ++i;
@@ -1079,7 +1088,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
         }
 
         // tuplets
-        else if ((i + 2 < musicCode.length()) && musicCode.at(i) == '(' && isdigit(musicCode.at(i + 1))) {
+        else if ((i + 2 < (int)musicCode.length()) && musicCode.at(i) == '(' && isdigit(musicCode.at(i + 1))) {
             LogWarning("ABC input: Tuplets not supported yet");
             // AddTuplet();
         }
@@ -1096,7 +1105,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
         }
 
         // chords
-        else if ((i + 2 < musicCode.length()) && musicCode.at(i) == '[' && musicCode.at(i + 1) != '|') {
+        else if ((i + 2 < (int)musicCode.length()) && musicCode.at(i) == '[' && musicCode.at(i + 1) != '|') {
             // start chord
             chord = new Chord();
 
@@ -1111,7 +1120,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
             }
 
             // add fermata
-            if (m_fermata != STAFFREL_basic_NONE) {
+            if (m_fermata != STAFFREL_NONE) {
                 AddFermata(chord);
             }
         }
@@ -1128,7 +1137,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
         }
 
         // grace notes
-        else if ((i + 2 < musicCode.length()) && ((musicCode.at(i) == '{') || (musicCode.at(i) == '}'))) {
+        else if ((i + 2 < (int)musicCode.length()) && ((musicCode.at(i) == '{') || (musicCode.at(i) == '}'))) {
             // !to be refined when graceGrp is added!
             // start grace group
             if (musicCode.at(i) == '{') {
@@ -1188,7 +1197,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
             note->SetPname(note->AttPitch::StrToPitchname(std::string(1, tolower(musicCode.at(i)))));
 
             // set octave
-            while (i + 1 < musicCode.length() && (musicCode.at(i + 1) == '\'' || musicCode.at(i + 1) == ',')) {
+            while (i + 1 < (int)musicCode.length() && (musicCode.at(i + 1) == '\'' || musicCode.at(i + 1) == ',')) {
                 if (musicCode.at(i + 1) == ',')
                     oct -= 1;
                 else
@@ -1205,24 +1214,24 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
                 dots = -m_broken;
                 m_broken = 0;
             }
-            while (i + 1 < musicCode.length() && isdigit(musicCode.at(i + 1))) {
+            while (i + 1 < (int)musicCode.length() && isdigit(musicCode.at(i + 1))) {
                 ++i;
                 numStr.push_back(musicCode.at(i));
             }
-            while (i + 1 < musicCode.length() && musicCode.at(i + 1) == '/') {
+            while (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '/') {
                 ++i;
                 numbase *= 2;
             }
-            while (i + 1 < musicCode.length() && isdigit(musicCode.at(i + 1))) {
+            while (i + 1 < (int)musicCode.length() && isdigit(musicCode.at(i + 1))) {
                 ++i;
                 numbaseStr.push_back(musicCode.at(i));
             }
-            while (i + 1 < musicCode.length() && musicCode.at(i + 1) == '>') {
+            while (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '>') {
                 ++i;
                 ++m_broken;
                 ++dots;
             }
-            while (i + 1 < musicCode.length() && musicCode.at(i + 1) == '<') {
+            while (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '<') {
                 ++i;
                 --m_broken;
             }
@@ -1257,7 +1266,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
             }
 
             // add fermata
-            if (m_fermata != STAFFREL_basic_NONE) {
+            if (m_fermata != STAFFREL_NONE) {
                 AddFermata(note);
             }
 
@@ -1320,19 +1329,19 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
             std::string numStr, numbaseStr;
             int dots = 0;
             int numbase = 1;
-            while (i + 1 < musicCode.length() && isdigit(musicCode.at(i + 1))) {
+            while (i + 1 < (int)musicCode.length() && isdigit(musicCode.at(i + 1))) {
                 ++i;
                 numStr.push_back(musicCode.at(i));
             }
-            while (i + 1 < musicCode.length() && musicCode.at(i + 1) == '/') {
+            while (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '/') {
                 ++i;
                 numbase *= 2;
             }
-            while (i + 1 < musicCode.length() && isdigit(musicCode.at(i + 1))) {
+            while (i + 1 < (int)musicCode.length() && isdigit(musicCode.at(i + 1))) {
                 ++i;
                 numbaseStr.push_back(musicCode.at(i));
             }
-            if (i + 1 < musicCode.length() && musicCode.at(i + 1) == '>') {
+            if (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '>') {
                 ++i;
                 LogWarning("ABC input: Broken rhythms not supported");
             }
@@ -1349,7 +1358,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
 
             // spaces cannot be beamed
             AddBeam();
-            m_noteStack.push_back(space);
+            m_layer->AddChild(space);
         }
 
         // padding
@@ -1364,7 +1373,7 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
             m_ID = rest->GetUuid();
 
             // add Fermata
-            if (m_fermata != STAFFREL_basic_NONE) {
+            if (m_fermata != STAFFREL_NONE) {
                 AddFermata(rest);
             }
 
@@ -1376,24 +1385,24 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
                 dots = -m_broken;
                 m_broken = 0;
             }
-            while (i + 1 < musicCode.length() && isdigit(musicCode.at(i + 1))) {
+            while (i + 1 < (int)musicCode.length() && isdigit(musicCode.at(i + 1))) {
                 ++i;
                 numStr.push_back(musicCode.at(i));
             }
-            while (i + 1 < musicCode.length() && musicCode.at(i + 1) == '/') {
+            while (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '/') {
                 ++i;
                 numbase *= 2;
             }
-            while (i + 1 < musicCode.length() && isdigit(musicCode.at(i + 1))) {
+            while (i + 1 < (int)musicCode.length() && isdigit(musicCode.at(i + 1))) {
                 ++i;
                 numbaseStr.push_back(musicCode.at(i));
             }
-            while (i + 1 < musicCode.length() && musicCode.at(i + 1) == '>') {
+            while (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '>') {
                 ++i;
                 ++m_broken;
                 ++dots;
             }
-            while (i + 1 < musicCode.length() && musicCode.at(i + 1) == '<') {
+            while (i + 1 < (int)musicCode.length() && musicCode.at(i + 1) == '<') {
                 ++i;
                 --m_broken;
             }
@@ -1421,14 +1430,14 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
 
             // rests cannot be beamed
             AddBeam();
-            m_noteStack.push_back(rest);
+            m_layer->AddChild(rest);
         }
 
         // multi-measure rests
         else if (musicCode.at(i) == 'Z') {
             MultiRest *multiRest = new MultiRest();
             std::string numString;
-            while (i + 1 < musicCode.length() && isdigit(musicCode.at(i + 1))) {
+            while (i + 1 < (int)musicCode.length() && isdigit(musicCode.at(i + 1))) {
                 numString.push_back(musicCode.at(i + 1));
                 ++i;
             }
@@ -1489,15 +1498,19 @@ void AbcInput::readMusicCode(std::string &musicCode, Section *section)
 
         ++i;
 
+        // check if there is a clef change
+        if (m_clef) {
+            m_noteStack.push_back(m_clef);
+            m_clef = NULL;
+        }
+
         // check if there is a change in meter
         if (m_meter) {
             // todo: apply meter changes to staves
             ScoreDef *scoreDef = new ScoreDef();
-            scoreDef->SetMeterCount(m_meter->GetCount());
-            scoreDef->SetMeterUnit(m_meter->GetUnit());
-            scoreDef->SetMeterSym(m_meter->GetSym());
+            m_meter->IsAttribute(true);
+            scoreDef->AddChild(m_meter);
             section->AddChild(scoreDef);
-            delete m_meter;
             m_meter = NULL;
         }
     }

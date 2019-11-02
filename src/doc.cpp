@@ -82,6 +82,7 @@ void Doc::Reset()
     Object::Reset();
 
     m_type = Raw;
+    m_notationType = NOTATIONTYPE_NONE;
     m_pageWidth = -1;
     m_pageHeight = -1;
     m_pageMarginBottom = 0;
@@ -133,7 +134,7 @@ void Doc::Refresh()
 
 bool Doc::GenerateDocumentScoreDef()
 {
-    Measure *measure = dynamic_cast<Measure *>(this->FindChildByType(MEASURE));
+    Measure *measure = dynamic_cast<Measure *>(this->FindDescendantByType(MEASURE));
     if (!measure) {
         LogError("No measure found for generating a scoreDef");
         return false;
@@ -141,7 +142,7 @@ bool Doc::GenerateDocumentScoreDef()
 
     ArrayOfObjects staves;
     ClassIdComparison matchType(STAFF);
-    measure->FindAllChildByComparison(&staves, &matchType);
+    measure->FindAllDescendantByComparison(&staves, &matchType);
 
     if (staves.empty()) {
         LogError("No staff found for generating a scoreDef");
@@ -169,7 +170,7 @@ bool Doc::GenerateDocumentScoreDef()
 
 bool Doc::GenerateHeaderAndFooter()
 {
-    if (m_scoreDef.FindChildByType(PGHEAD) || m_scoreDef.FindChildByType(PGFOOT)) {
+    if (m_scoreDef.FindDescendantByType(PGHEAD) || m_scoreDef.FindDescendantByType(PGFOOT)) {
         return false;
     }
 
@@ -208,12 +209,12 @@ bool Doc::GenerateMeasureNumbers()
     ClassIdComparison matchType(MEASURE);
     ArrayOfObjects measures;
     ArrayOfObjects::iterator measureIter;
-    this->FindAllChildByComparison(&measures, &matchType);
+    this->FindAllDescendantByComparison(&measures, &matchType);
 
     // run through all measures and generate missing mNum from attribute
     for (measureIter = measures.begin(); measureIter != measures.end(); ++measureIter) {
         Measure *measure = dynamic_cast<Measure *>(*measureIter);
-        if (measure->HasN() && !measure->FindChildByType(MNUM)) {
+        if (measure->HasN() && !measure->FindDescendantByType(MNUM)) {
             MNum *mnum = new MNum;
             Text *text = new Text;
             text->SetText(UTF8to16(measure->GetN()));
@@ -246,7 +247,7 @@ void Doc::CalculateMidiTimemap()
         page->LayOutHorizontally();
     }
 
-    int tempo = 120;
+    int tempo = MIDI_TEMPO;
 
     // Set tempo
     if (m_scoreDef.HasMidiBpm()) {
@@ -284,7 +285,7 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
         LogWarning("Calculation of MIDI timemap failed, not exporting MidiFile.");
     }
 
-    int tempo = 120;
+    int tempo = MIDI_TEMPO;
 
     // set MIDI tempo
     if (m_scoreDef.HasMidiBpm()) {
@@ -328,11 +329,11 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
                 midiFile->addTracks(addCount);
             }
             // set MIDI channel and instrument
-            InstrDef *instrdef = dynamic_cast<InstrDef *>(staffDef->FindChildByType(INSTRDEF, 1));
+            InstrDef *instrdef = dynamic_cast<InstrDef *>(staffDef->FindDescendantByType(INSTRDEF, 1));
             if (!instrdef) {
-                StaffGrp *staffGrp = dynamic_cast<StaffGrp *>(staffDef->GetFirstParent(STAFFGRP));
+                StaffGrp *staffGrp = dynamic_cast<StaffGrp *>(staffDef->GetFirstAncestor(STAFFGRP));
                 assert(staffGrp);
-                instrdef = dynamic_cast<InstrDef *>(staffGrp->FindChildByType(INSTRDEF, 1));
+                instrdef = dynamic_cast<InstrDef *>(staffGrp->FindDescendantByType(INSTRDEF, 1));
             }
             if (instrdef) {
                 if (instrdef->HasMidiChannel()) midiChannel = instrdef->GetMidiChannel();
@@ -340,20 +341,20 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
                     midiFile->addPatchChange(midiTrack, 0, midiChannel, instrdef->GetMidiInstrnum());
             }
             // set MIDI track name
-            Label *label = dynamic_cast<Label *>(staffDef->FindChildByType(LABEL, 1));
+            Label *label = dynamic_cast<Label *>(staffDef->FindDescendantByType(LABEL, 1));
             if (!label) {
-                StaffGrp *staffGrp = dynamic_cast<StaffGrp *>(staffDef->GetFirstParent(STAFFGRP));
+                StaffGrp *staffGrp = dynamic_cast<StaffGrp *>(staffDef->GetFirstAncestor(STAFFGRP));
                 assert(staffGrp);
-                label = dynamic_cast<Label *>(staffGrp->FindChildByType(LABEL, 1));
+                label = dynamic_cast<Label *>(staffGrp->FindDescendantByType(LABEL, 1));
             }
             if (label) {
                 std::string trackName = UTF16to8(label->GetText(label)).c_str();
                 if (!trackName.empty()) midiFile->addTrackName(midiTrack, 0, trackName);
             }
             // set MIDI time signature
-            if (this->m_scoreDef.HasMeterCount()) {
-                midiFile->addTimeSignature(
-                    midiTrack, 0, this->m_scoreDef.GetMeterCount(), this->m_scoreDef.GetMeterUnit());
+            MeterSig *meterSig = dynamic_cast<MeterSig *>(this->m_scoreDef.FindDescendantByType(METERSIG));
+            if (meterSig && meterSig->HasCount()) {
+                midiFile->addTimeSignature(midiTrack, 0, meterSig->GetCount(), meterSig->GetUnit());
             }
         }
 
@@ -365,12 +366,12 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
             filters.push_back(&matchStaff);
             filters.push_back(&matchLayer);
 
-            GenerateMIDIParams generateMIDIParams(midiFile);
+            Functor generateMIDI(&Object::GenerateMIDI);
+            GenerateMIDIParams generateMIDIParams(midiFile, &generateMIDI);
             generateMIDIParams.m_midiChannel = midiChannel;
             generateMIDIParams.m_midiTrack = midiTrack;
             generateMIDIParams.m_transSemi = transSemi;
             generateMIDIParams.m_currentTempo = tempo;
-            Functor generateMIDI(&Object::GenerateMIDI);
 
             // LogDebug("Exporting track %d ----------------", midiTrack);
             this->Process(&generateMIDI, &generateMIDIParams, NULL, &filters);
@@ -389,8 +390,8 @@ bool Doc::ExportTimemap(std::string &output)
         output = "";
         return false;
     }
-    GenerateTimemapParams generateTimemapParams;
     Functor generateTimemap(&Object::GenerateTimemap);
+    GenerateTimemapParams generateTimemapParams(&generateTimemap);
     this->Process(&generateTimemap, &generateTimemapParams);
 
     PrepareJsonTimemap(output, generateTimemapParams.realTimeToScoreTime, generateTimemapParams.realTimeToOnElements,
@@ -910,7 +911,7 @@ void Doc::CastOffEncodingDoc()
 
     contentPage->LayOutHorizontally();
 
-    System *contentSystem = dynamic_cast<System *>(contentPage->FindChildByType(SYSTEM));
+    System *contentSystem = dynamic_cast<System *>(contentPage->FindDescendantByType(SYSTEM));
     assert(contentSystem);
 
     // Detach the contentPage
@@ -970,6 +971,9 @@ void Doc::ConvertToCastOffMensuralDoc()
     // Do not convert transcription files
     if (this->GetType() == Transcription) return;
 
+    // Do not convert facs files
+    if (this->GetType() == Facs) return;
+
     // We are converting to measure music in a definitiv way
     if (this->GetOptions()->m_mensuralToMeasure.GetValue()) {
         m_isMensuralMusicOnly = false;
@@ -1026,7 +1030,7 @@ void Doc::ConvertToUnCastOffMensuralDoc()
     if (!m_isMensuralMusicOnly) return;
 
     // Do not convert transcription files
-    if (this->GetType() == Transcription) return;
+    if ((this->GetType() == Transcription) || (this->GetType() == Facs)) return;
 
     Pages *pages = this->GetPages();
     assert(pages);
@@ -1066,7 +1070,7 @@ void Doc::ConvertToUnCastOffMensuralDoc()
 
     Page *contentPage = this->SetDrawingPage(0);
     assert(contentPage);
-    System *contentSystem = dynamic_cast<System *>(contentPage->FindChildByType(SYSTEM));
+    System *contentSystem = dynamic_cast<System *>(contentPage->FindDescendantByType(SYSTEM));
     assert(contentSystem);
 
     // Detach the contentPage
@@ -1080,6 +1084,15 @@ void Doc::ConvertToUnCastOffMensuralDoc()
     // because idx will still be 0 but contentPage is dead!
     this->ResetDrawingPage();
     this->SetCurrentScoreDefDoc(true);
+}
+
+void Doc::ConvertScoreDefMarkupDoc(bool permanent)
+{
+    ConvertScoreDefMarkupParams convertScoreDefMarkupParams(permanent);
+    Functor convertScoreDefMarkup(&Object::ConvertScoreDefMarkup);
+
+    m_scoreDef.Process(&convertScoreDefMarkup, &convertScoreDefMarkupParams);
+    this->Process(&convertScoreDefMarkup, &convertScoreDefMarkupParams);
 }
 
 void Doc::ConvertAnalyticalMarkupDoc(bool permanent)
@@ -1144,12 +1157,12 @@ bool Doc::HasPage(int pageIdx)
 
 Score *Doc::GetScore()
 {
-    return dynamic_cast<Score *>(this->FindChildByType(SCORE));
+    return dynamic_cast<Score *>(this->FindDescendantByType(SCORE));
 }
 
 Pages *Doc::GetPages()
 {
-    return dynamic_cast<Pages *>(this->FindChildByType(PAGES));
+    return dynamic_cast<Pages *>(this->FindDescendantByType(PAGES));
 }
 
 int Doc::GetPageCount()
@@ -1249,6 +1262,18 @@ int Doc::GetTextGlyphWidth(wchar_t code, FontInfo *font, bool graceSize) const
     return w;
 }
 
+int Doc::GetTextGlyphAdvX(wchar_t code, FontInfo *font, bool graceSize) const
+{
+    assert(font);
+
+    Glyph *glyph = Resources::GetTextGlyph(code);
+    assert(glyph);
+    int advX = glyph->GetHorizAdvX();
+    advX = advX * font->GetPointSize() / glyph->GetUnitsPerEm();
+    if (graceSize) advX = advX * this->m_options->m_graceFactor.GetValue();
+    return advX;
+}
+
 int Doc::GetTextGlyphDescender(wchar_t code, FontInfo *font, bool graceSize) const
 {
     assert(font);
@@ -1267,7 +1292,10 @@ int Doc::GetTextLineHeight(FontInfo *font, bool graceSize) const
     int descender = -this->GetTextGlyphDescender(L'q', font, graceSize);
     int height = this->GetTextGlyphHeight(L'I', font, graceSize);
 
-    return ((descender + height) * 1.1);
+    int lineHeight = ((descender + height) * 1.1);
+    if (font->GetSupSubScript()) lineHeight /= SUPER_SCRIPT_FACTOR;
+
+    return lineHeight;
 }
 
 int Doc::GetDrawingUnit(int staffSize) const
@@ -1514,7 +1542,8 @@ int Doc::GetAdjustedDrawingPageHeight() const
 {
     assert(m_drawingPage);
 
-    if (this->GetType() == Transcription) return m_drawingPage->m_pageHeight / DEFINITION_FACTOR;
+    if ((this->GetType() == Transcription) || (this->GetType() == Facs))
+        return m_drawingPage->m_pageHeight / DEFINITION_FACTOR;
 
     int contentHeight = m_drawingPage->GetContentHeight();
     return (contentHeight + m_drawingPageMarginTop + m_drawingPageMarginBot) / DEFINITION_FACTOR;
@@ -1524,7 +1553,8 @@ int Doc::GetAdjustedDrawingPageWidth() const
 {
     assert(m_drawingPage);
 
-    if (this->GetType() == Transcription) return m_drawingPage->m_pageWidth / DEFINITION_FACTOR;
+    if ((this->GetType() == Transcription) || (this->GetType() == Facs))
+        return m_drawingPage->m_pageWidth / DEFINITION_FACTOR;
 
     int contentWidth = m_drawingPage->GetContentWidth();
     return (contentWidth + m_drawingPageMarginLeft + m_drawingPageMarginRight) / DEFINITION_FACTOR;
@@ -1538,14 +1568,17 @@ int Doc::PrepareLyricsEnd(FunctorParams *functorParams)
 {
     PrepareLyricsParams *params = dynamic_cast<PrepareLyricsParams *>(functorParams);
     assert(params);
-
-    if ((params->m_currentSyl && params->m_lastNote) && (params->m_currentSyl->GetStart() != params->m_lastNote)) {
+    if (!params->m_currentSyl) {
+        return FUNCTOR_STOP; // early return
+    }
+    if (params->m_lastNote && (params->m_currentSyl->GetStart() != params->m_lastNote)) {
         params->m_currentSyl->SetEnd(params->m_lastNote);
     }
     else if (m_options->m_openControlEvents.GetValue()) {
-        if ((params->m_currentSyl->GetWordpos() == sylLog_WORDPOS_i)
-            || (params->m_currentSyl->GetWordpos() == sylLog_WORDPOS_m)) {
-            Measure *lastMeasure = dynamic_cast<Measure *>(this->FindChildByType(MEASURE, UNLIMITED_DEPTH, BACKWARD));
+        sylLog_WORDPOS wordpos = params->m_currentSyl->GetWordpos();
+        if ((wordpos == sylLog_WORDPOS_i) || (wordpos == sylLog_WORDPOS_m)) {
+            Measure *lastMeasure
+                = dynamic_cast<Measure *>(this->FindDescendantByType(MEASURE, UNLIMITED_DEPTH, BACKWARD));
             assert(lastMeasure);
             params->m_currentSyl->SetEnd(lastMeasure->GetRightBarLine());
         }
@@ -1563,7 +1596,7 @@ int Doc::PrepareTimestampsEnd(FunctorParams *functorParams)
         return FUNCTOR_CONTINUE;
     }
 
-    Measure *lastMeasure = dynamic_cast<Measure *>(this->FindChildByType(MEASURE, UNLIMITED_DEPTH, BACKWARD));
+    Measure *lastMeasure = dynamic_cast<Measure *>(this->FindDescendantByType(MEASURE, UNLIMITED_DEPTH, BACKWARD));
     if (!lastMeasure) {
         return FUNCTOR_CONTINUE;
     }
