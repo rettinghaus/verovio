@@ -150,9 +150,9 @@ void View::DrawSystem(DeviceContext *dc, System *system)
     // draw system divider (from the second one) if scoreDef is optimized
     if ((system->GetIdx() > 0) && system->IsDrawingOptimized()) {
         int x1 = system->GetDrawingX() - m_doc->GetDrawingUnit(100) * 3;
-        int y1 = system->GetDrawingY() - m_doc->GetDrawingUnit(100) * 1;
+        int y1 = system->GetDrawingY() - m_doc->GetDrawingUnit(100);
         int x2 = system->GetDrawingX() + m_doc->GetDrawingUnit(100) * 3;
-        int y2 = system->GetDrawingY() + m_doc->GetDrawingUnit(100) * 2;
+        int y2 = system->GetDrawingY() + m_doc->GetDrawingUnit(100);
         dc->StartCustomGraphic("systemDivider left");
         DrawObliquePolygon(dc, x1, y1, x2, y2, m_doc->GetDrawingUnit(100) * 1.5);
         y1 += m_doc->GetDrawingUnit(100) * 2;
@@ -162,9 +162,9 @@ void View::DrawSystem(DeviceContext *dc, System *system)
     }
     if ((system->GetIdx() > 0) && system->IsDrawingOptimized()) {
         int x1 = system->GetDrawingX() + system->GetContentRight() - m_doc->GetDrawingUnit(100) * 6;
-        int y1 = system->GetDrawingY() - m_doc->GetDrawingUnit(100) * 1;
+        int y1 = system->GetDrawingY() - m_doc->GetDrawingUnit(100);
         int x2 = system->GetDrawingX() + system->GetContentRight();
-        int y2 = system->GetDrawingY() + m_doc->GetDrawingUnit(100) * 2;
+        int y2 = system->GetDrawingY() + m_doc->GetDrawingUnit(100);
         dc->StartCustomGraphic("systemDivider right");
         DrawObliquePolygon(dc, x1, y1, x2, y2, m_doc->GetDrawingUnit(100) * 1.5);
         y1 += m_doc->GetDrawingUnit(100) * 2;
