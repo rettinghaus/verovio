@@ -65,6 +65,8 @@ class OptionGrp;
 
 enum option_BREAKS { BREAKS_none = 0, BREAKS_auto, BREAKS_encoded };
 
+enum option_DIVIDER { DIVIDER_none = 0, DIVIDER_left, DIVIDER_right, DIVIDER_both };
+
 enum option_FOOTER { FOOTER_none = 0, FOOTER_auto, FOOTER_encoded };
 
 enum option_HEADER { HEADER_none = 0, HEADER_auto, HEADER_encoded };
@@ -107,6 +109,7 @@ public:
     static std::map<int, std::string> s_footer;
     static std::map<int, std::string> s_header;
     static std::map<int, std::string> s_measureNumber;
+    static std::map<int, std::string> s_systemDivider;
 
 protected:
     std::string m_title;
@@ -482,6 +485,7 @@ public:
     OptionInt m_pageWidth;
     OptionBool m_svgBoundingBoxes;
     OptionBool m_svgViewBox;
+    OptionIntMap m_systemDivider;
     OptionInt m_unit;
     OptionBool m_useFacsimile;
     OptionBool m_usePgFooterForAll;
