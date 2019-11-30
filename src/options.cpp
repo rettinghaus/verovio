@@ -32,7 +32,7 @@ std::map<int, std::string> Option::s_measureNumber
     = { { MEASURENUMBER_system, "system" }, { MEASURENUMBER_interval, "interval" } };
 
 std::map<int, std::string> Option::s_systemDivider
-    = { { DIVIDER_none, "none" }, { DIVIDER_left, "left" }, { DIVIDER_right, "right" } , { DIVIDER_both, "both" } };
+    = { { DIVIDER_none, "none" }, { DIVIDER_left, "left" }, { DIVIDER_right, "right" }, { DIVIDER_both, "both" } };
 
 //----------------------------------------------------------------------------
 // Option
