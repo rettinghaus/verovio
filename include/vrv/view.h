@@ -180,6 +180,7 @@ protected:
      */
     ///@{
     void DrawSystem(DeviceContext *dc, System *system);
+    void DrawSystemDivider(DeviceContext *dc, int x, int y, std::string position);
     void DrawSystemList(DeviceContext *dc, System *system, const ClassId classId);
     void DrawScoreDef(DeviceContext *dc, ScoreDef *scoreDef, Measure *measure, int x, BarLine *barLine = NULL,
         bool isLastMeasure = false);
