@@ -50,19 +50,19 @@ jobs:
     #################
     # tests builds on osx and on linux with g++
     - stage: build-c++
-      name: osx-xcode
+      name: osx-xcode-11.1
       os: osx
       osx_image: xcode11.1
       script:
         - cd tools
-        - cmake .
-        - make
-    - name: linux-g++-5
+        - cmake ../cmake
+        - make -j 8
+    - name: linux-g++
       os: linux
       script:
         - cd tools
-        - cmake .
-        - make
+        - cmake ../cmake
+        - make -j 8
 
     ################
     # PRECACHE STAGE

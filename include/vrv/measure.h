@@ -33,6 +33,7 @@ class TimestampAttr;
  * For internally simplication of processing, unmeasured music is contained in one single measure object
  */
 class Measure : public Object,
+                public AttBarring,
                 public AttMeasureLog,
                 public AttMeterConformanceBar,
                 public AttNNumberLike,
@@ -98,8 +99,8 @@ public:
     /**
      * @name Set and get the left and right barline types
      * This somehow conflicts with AttMeasureLog, which is transfered from and to the
-     * Barline object when reading and writing MEI. See MeiInput::ReadMeasure and
-     * MeiOutput::WriteMeasure
+     * Barline object when reading and writing MEI. See MEIInput::ReadMeasure and
+     * MEIOutput::WriteMeasure
      * Alternatively, we could keep them in sync here:
      * data_BARRENDITION GetDrawingLeftBarLine() { m_leftBarLine.SetRend(GetRight()); return m_leftBarLine.GetRend(); }
      * void SetLeftBarLineType(data_BARRENDITION type) { m_leftBarLine.SetRend(type); SetLeft(type); }
@@ -188,6 +189,12 @@ public:
     std::vector<Staff *> GetFirstStaffGrpStaves(ScoreDef *scoreDef);
 
     /**
+     * Return the top (first) visible staff in the measure (if any).
+     * Takes into account system optimization
+     */
+    Staff *GetTopVisibleStaff();
+
+    /**
      * Check if the measure encloses the given time (in millisecond)
      * Return the playing repeat time (1-based), 0 otherwise
      */
@@ -196,7 +203,7 @@ public:
     /**
      * Return the real time offset in millisecond for the repeat (1-based).
      */
-    int GetRealTimeOffsetMilliseconds(int repeat) const;
+    double GetRealTimeOffsetMilliseconds(int repeat) const;
 
     //----------//
     // Functors //
@@ -453,7 +460,7 @@ private:
      * Start time state variables.
      */
     std::vector<double> m_scoreTimeOffset;
-    std::vector<int> m_realTimeOffsetMilliseconds;
+    std::vector<double> m_realTimeOffsetMilliseconds;
     int m_currentTempo;
 };
 

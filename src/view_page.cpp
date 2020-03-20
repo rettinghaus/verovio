@@ -158,14 +158,49 @@ void View::DrawSystem(DeviceContext *dc, System *system)
             DrawSystemDivider(
                 dc, system->GetContentRight() - m_doc->GetDrawingUnit(100) * 3, system->GetDrawingY(), "right");
         }
+    Measure *firstMeasure = dynamic_cast<Measure *>(system->FindDescendantByType(MEASURE, 1));
+
+    // Draw system divider (from the second one) if scoreDef is optimized
+    if (firstMeasure && (m_options->m_systemDivider.GetValue() != SYSTEMDIVIDER_none)) {
+        if ((system->GetIdx() > 0) && system->IsDrawingOptimized()) {
+            int y = system->GetDrawingY();
+            Staff *staff = firstMeasure->GetTopVisibleStaff();
+            if (staff) {
+                // Place them just above the measure number - in very tight layout this can collision with
+                // the staff above. To be improved
+                y = staff->GetDrawingY() + 3.0 * m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
+            }
+            int x1 = system->GetDrawingX() - m_doc->GetDrawingUnit(100) * 3;
+            int x2 = system->GetDrawingX() + m_doc->GetDrawingUnit(100) * 3;
+            int y1 = y - m_doc->GetDrawingUnit(100) * 1;
+            int y2 = y + m_doc->GetDrawingUnit(100) * 3;
+            int y3 = y1 + m_doc->GetDrawingUnit(100) * 2;
+            int y4 = y2 + m_doc->GetDrawingUnit(100) * 2;
+            // left and left-right
+            dc->StartCustomGraphic("systemDivider");
+
+            DrawObliquePolygon(dc, x1, y1, x2, y2, m_doc->GetDrawingUnit(100) * 1.5);
+            DrawObliquePolygon(dc, x1, y3, x2, y4, m_doc->GetDrawingUnit(100) * 1.5);
+            if (m_options->m_systemDivider.GetValue() == SYSTEMDIVIDER_left_right) {
+                // Right divider is not taken into account in the layout calculation and can collision with the music
+                // content
+                Measure *lastMeasure = dynamic_cast<Measure *>(system->FindDescendantByType(MEASURE, 1, BACKWARD));
+                assert(lastMeasure);
+                int x4 = lastMeasure->GetDrawingX() + lastMeasure->GetRightBarLineRight();
+                int x3 = x4 - m_doc->GetDrawingUnit(100) * 6;
+                DrawObliquePolygon(dc, x3, y1, x4, y2, m_doc->GetDrawingUnit(100) * 1.5);
+                DrawObliquePolygon(dc, x3, y3, x4, y4, m_doc->GetDrawingUnit(100) * 1.5);
+            }
+
+            dc->EndCustomGraphic();
+        }
     }
 
     // first we need to clear the drawing list of postponed elements
     system->ResetDrawingList();
 
-    Measure *systemStart = dynamic_cast<Measure *>(system->FindDescendantByType(MEASURE));
-    if (systemStart) {
-        DrawScoreDef(dc, system->GetDrawingScoreDef(), systemStart, system->GetDrawingX(), NULL);
+    if (firstMeasure) {
+        DrawScoreDef(dc, system->GetDrawingScoreDef(), firstMeasure, system->GetDrawingX(), NULL);
     }
 
     DrawSystemChildren(dc, system, system);
@@ -349,20 +384,30 @@ void View::DrawStaffGrp(
 
     this->DrawLabels(dc, measure, system, staffGrp, xLabel, yLabel, abbreviations, 100, space);
 
-    // actually draw the line, the brace or the bracket
-    if (topStaffGrp && ((firstDef != lastDef) || (staffGrp->GetSymbol() != staffGroupingSym_SYMBOL_NONE))) {
+    // draw the system start bar line
+    if (topStaffGrp
+        && ((((firstDef != lastDef) || staffGrp->HasSymbol())
+                && (m_doc->m_scoreDef.GetSystemLeftline() != BOOLEAN_false))
+            || (m_doc->m_scoreDef.GetSystemLeftline() == BOOLEAN_true))) {
         DrawVerticalLine(dc, yTop, yBottom, x, barLineWidth);
     }
-    // this will need to be changed with the next version of MEI will line means additional thick line
+    // actually draw the line, the brace or the bracket
     if (staffGrp->GetSymbol() == staffGroupingSym_SYMBOL_line) {
-        DrawVerticalLine(dc, yTop, yBottom, x, barLineWidth);
+        DrawVerticalLine(dc, yTop, yBottom, x - 1.5 * m_doc->GetDrawingBeamWidth(staffSize, false),
+            m_doc->GetDrawingBeamWidth(staffSize, false));
+        x -= 2 * m_doc->GetDrawingBeamWidth(staffSize, false);
     }
     else if (staffGrp->GetSymbol() == staffGroupingSym_SYMBOL_brace) {
-        DrawBrace(dc, x, yTop, yBottom, last->m_drawingStaffSize);
+        DrawBrace(dc, x, yTop, yBottom, staffSize);
+        x -= 2 * m_doc->GetDrawingBeamWidth(staffSize, false);
     }
     else if (staffGrp->GetSymbol() == staffGroupingSym_SYMBOL_bracket) {
-        DrawBracket(dc, x, yTop, yBottom, last->m_drawingStaffSize);
-        x -= 2 * m_doc->GetDrawingBeamWidth(staffSize, false) - m_doc->GetDrawingBeamWhiteWidth(staffSize, false);
+        DrawBracket(dc, x, yTop, yBottom, staffSize);
+        x -= 2 * m_doc->GetDrawingBeamWidth(staffSize, false);
+    }
+    else if (staffGrp->GetSymbol() == staffGroupingSym_SYMBOL_bracketsq) {
+        DrawBracketsq(dc, x, yTop, yBottom, staffSize);
+        x -= m_doc->GetDrawingBeamWidth(staffSize, false) + 1.5 * m_doc->GetDrawingStaffLineWidth(staffSize);
     }
 
     // recursively draw the children
@@ -477,7 +522,7 @@ void View::DrawLabels(DeviceContext *dc, Measure *measure, System *system, Objec
     // keep the widest width for the system - careful: this can be the label OR labelAbbr
     system->SetDrawingLabelsWidth(graphic->GetContentX2() - graphic->GetContentX1() + space);
     // also store in the system the maximum width with abbreviations for justification
-    if (!abbreviations && (labelAbbrStr.length() > 0)) {
+    if (labelAbbr && !abbreviations && (labelAbbrStr.length() > 0)) {
         TextExtend extend;
         std::vector<std::wstring> lines;
         labelAbbr->GetTextLines(labelAbbr, lines);
@@ -497,19 +542,40 @@ void View::DrawBracket(DeviceContext *dc, int x, int y1, int y2, int staffSize)
 {
     assert(dc);
 
-    int x1, x2;
+    int x1, x2, offset;
 
     x2 = x - m_doc->GetDrawingBeamWidth(staffSize, false);
     x1 = x2 - m_doc->GetDrawingBeamWidth(staffSize, false);
+    offset = m_doc->GetDrawingStaffLineWidth(staffSize) / 2;
 
-    DrawSmuflCode(dc, x1, y1, SMUFL_E003_bracketTop, staffSize, false);
-    DrawSmuflCode(dc, x1, y2, SMUFL_E004_bracketBottom, staffSize, false);
+    dc->StartCustomGraphic("grpSym");
 
-    // adjust to top and bottom position so we make sure there is no white space between
-    // the glyphs and the line
-    y1 += m_doc->GetDrawingStemWidth(staffSize);
-    y2 -= m_doc->GetDrawingStemWidth(staffSize);
-    DrawFilledRectangle(dc, x1, y1, x2, y2);
+    DrawSmuflCode(dc, x1, y1 + offset, SMUFL_E003_bracketTop, staffSize, false);
+    DrawSmuflCode(dc, x1, y2 - offset, SMUFL_E004_bracketBottom, staffSize, false);
+
+    DrawFilledRectangle(dc, x1, y1 + 2 * offset, x2, y2 - 2 * offset);
+
+    dc->EndCustomGraphic();
+
+    return;
+}
+
+void View::DrawBracketsq(DeviceContext *dc, int x, int y1, int y2, int staffSize)
+{
+    assert(dc);
+
+    int offset;
+
+    x -= m_doc->GetDrawingBeamWidth(staffSize, false);
+    offset = m_doc->GetDrawingStaffLineWidth(staffSize) / 2;
+
+    dc->StartCustomGraphic("grpSym");
+
+    DrawFilledRectangle(dc, x - 3 * offset, y1 + offset, x + 3 * offset, y2 - offset);
+    DrawFilledRectangle(dc, x, y1 + offset, x + m_doc->GetDrawingBeamWidth(staffSize, false), y1 - offset);
+    DrawFilledRectangle(dc, x, y2 + offset, x + m_doc->GetDrawingBeamWidth(staffSize, false), y2 - offset);
+
+    dc->EndCustomGraphic();
 
     return;
 }
@@ -531,7 +597,7 @@ void View::DrawBrace(DeviceContext *dc, int x, int y1, int y2, int staffSize)
 
     int ymed, xdec, fact;
 
-    x -= m_doc->GetDrawingBeamWhiteWidth(staffSize, false); // distance entre barre et debut accolade
+    x -= m_doc->GetDrawingBeamWhiteWidth(staffSize, false); // distance between bar and start brace
 
     ymed = (y1 + y2) / 2;
     fact = m_doc->GetDrawingBeamWhiteWidth(staffSize, false) + m_doc->GetDrawingStemWidth(staffSize);
@@ -558,6 +624,8 @@ void View::DrawBrace(DeviceContext *dc, int x, int y1, int y2, int staffSize)
     bez2[1] = points[1];
     bez2[2] = points[2];
     bez2[3] = points[3];
+
+    dc->StartCustomGraphic("grpSym");
 
     dc->SetPen(m_currentColour, std::max(1, penWidth), AxSOLID);
     dc->SetBrush(m_currentColour, AxSOLID);
@@ -587,6 +655,8 @@ void View::DrawBrace(DeviceContext *dc, int x, int y1, int y2, int staffSize)
 
     dc->ResetPen();
     dc->ResetBrush();
+
+    dc->EndCustomGraphic();
 
     return;
 }
@@ -620,10 +690,20 @@ void View::DrawBarLines(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp,
                     LogDebug("Could not get staff (%d) while drawing staffGrp - DrawBarLines", childStaffDef->GetN());
                     continue;
                 }
-                int yTop = staff->GetDrawingY();
+                if (staff->GetVisible() == BOOLEAN_false) {
+                    continue;
+                }
                 // for the bottom position we need to take into account the number of lines and the staff size
                 int yBottom = staff->GetDrawingY()
                     - (childStaffDef->GetLines() - 1) * m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
+                if (measure->HasBarPlace()) {
+                    // bar.place counts upwards (note order).
+                    yBottom += measure->GetBarPlace() * m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
+                }
+                int yTop = staff->GetDrawingY();
+                if (measure->HasBarLen()) {
+                    yTop = yBottom + (measure->GetBarLen() * m_doc->GetDrawingUnit(staff->m_drawingStaffSize));
+                }
                 // Make sure barlines are visible with a single line
                 if (childStaffDef->GetLines() == 1) {
                     yTop += m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
@@ -897,18 +977,7 @@ void View::DrawMNum(DeviceContext *dc, MNum *mnum, Measure *measure)
     assert(measure);
     assert(mnum);
 
-    Staff *staff = NULL;
-    ArrayOfObjects staves;
-    ClassIdComparison matchType(STAFF);
-    measure->FindAllDescendantByComparison(&staves, &matchType, 1);
-    for (auto &child : staves) {
-        staff = dynamic_cast<Staff *>(child);
-        assert(staff);
-        if (staff->DrawingIsVisible()) {
-            break;
-        }
-        staff = NULL;
-    }
+    Staff *staff = measure->GetTopVisibleStaff();
     if (staff) {
 
         dc->StartGraphic(mnum, "", mnum->GetUuid());
@@ -1421,11 +1490,12 @@ void View::DrawSystemEditorialElement(DeviceContext *dc, EditorialElement *eleme
         DrawAnnot(dc, element);
         return;
     }
-    if (element->Is(APP))
-        assert((dynamic_cast<App *>(element))->GetLevel() == EDITORIAL_TOPLEVEL);
-    else if (element->Is(CHOICE))
-        assert((dynamic_cast<Choice *>(element))->GetLevel() == EDITORIAL_TOPLEVEL);
-
+    if (element->Is(APP)) {
+        assert(dynamic_cast<App *>(element) && (dynamic_cast<App *>(element)->GetLevel() == EDITORIAL_TOPLEVEL));
+    }
+    else if (element->Is(CHOICE)) {
+        assert(dynamic_cast<Choice *>(element) && (dynamic_cast<Choice *>(element)->GetLevel() == EDITORIAL_TOPLEVEL));
+    }
     std::string boundaryStart;
     if (element->IsBoundaryElement()) boundaryStart = "boundaryStart";
 
@@ -1444,10 +1514,12 @@ void View::DrawMeasureEditorialElement(DeviceContext *dc, EditorialElement *elem
         DrawAnnot(dc, element);
         return;
     }
-    if (element->Is(APP))
-        assert((dynamic_cast<App *>(element))->GetLevel() == EDITORIAL_MEASURE);
-    else if (element->Is(CHOICE))
-        assert((dynamic_cast<Choice *>(element))->GetLevel() == EDITORIAL_MEASURE);
+    if (element->Is(APP)) {
+        assert(dynamic_cast<App *>(element) && (dynamic_cast<App *>(element)->GetLevel() == EDITORIAL_MEASURE));
+    }
+    else if (element->Is(CHOICE)) {
+        assert(dynamic_cast<Choice *>(element) && (dynamic_cast<Choice *>(element)->GetLevel() == EDITORIAL_MEASURE));
+    }
 
     dc->StartGraphic(element, "", element->GetUuid());
     if (element->m_visibility == Visible) {
@@ -1463,10 +1535,12 @@ void View::DrawStaffEditorialElement(DeviceContext *dc, EditorialElement *elemen
         DrawAnnot(dc, element);
         return;
     }
-    if (element->Is(APP))
-        assert((dynamic_cast<App *>(element))->GetLevel() == EDITORIAL_STAFF);
-    else if (element->Is(CHOICE))
-        assert((dynamic_cast<Choice *>(element))->GetLevel() == EDITORIAL_STAFF);
+    if (element->Is(APP)) {
+        assert(dynamic_cast<App *>(element) && (dynamic_cast<App *>(element)->GetLevel() == EDITORIAL_STAFF));
+    }
+    else if (element->Is(CHOICE)) {
+        assert(dynamic_cast<Choice *>(element) && (dynamic_cast<Choice *>(element)->GetLevel() == EDITORIAL_STAFF));
+    }
 
     dc->StartGraphic(element, "", element->GetUuid());
     if (element->m_visibility == Visible) {
@@ -1483,10 +1557,12 @@ void View::DrawLayerEditorialElement(
         DrawAnnot(dc, element);
         return;
     }
-    if (element->Is(APP))
-        assert((dynamic_cast<App *>(element))->GetLevel() == EDITORIAL_LAYER);
-    else if (element->Is(CHOICE))
-        assert((dynamic_cast<Choice *>(element))->GetLevel() == EDITORIAL_LAYER);
+    if (element->Is(APP)) {
+        assert(dynamic_cast<App *>(element) && (dynamic_cast<App *>(element)->GetLevel() == EDITORIAL_LAYER));
+    }
+    else if (element->Is(CHOICE)) {
+        assert(dynamic_cast<Choice *>(element) && (dynamic_cast<Choice *>(element)->GetLevel() == EDITORIAL_LAYER));
+    }
 
     dc->StartGraphic(element, "", element->GetUuid());
     if (element->m_visibility == Visible) {
@@ -1502,10 +1578,12 @@ void View::DrawTextEditorialElement(DeviceContext *dc, EditorialElement *element
         DrawAnnot(dc, element, true);
         return;
     }
-    if (element->Is(APP))
-        assert((dynamic_cast<App *>(element))->GetLevel() == EDITORIAL_TEXT);
-    else if (element->Is(CHOICE))
-        assert((dynamic_cast<Choice *>(element))->GetLevel() == EDITORIAL_TEXT);
+    if (element->Is(APP)) {
+        assert(dynamic_cast<App *>(element) && (dynamic_cast<App *>(element)->GetLevel() == EDITORIAL_TEXT));
+    }
+    else if (element->Is(CHOICE)) {
+        assert(dynamic_cast<Choice *>(element) && (dynamic_cast<Choice *>(element)->GetLevel() == EDITORIAL_TEXT));
+    }
 
     dc->StartTextGraphic(element, "", element->GetUuid());
     if (element->m_visibility == Visible) {
@@ -1521,10 +1599,12 @@ void View::DrawFbEditorialElement(DeviceContext *dc, EditorialElement *element, 
         DrawAnnot(dc, element, true);
         return;
     }
-    if (element->Is(APP))
-        assert((dynamic_cast<App *>(element))->GetLevel() == EDITORIAL_FB);
-    else if (element->Is(CHOICE))
-        assert((dynamic_cast<Choice *>(element))->GetLevel() == EDITORIAL_FB);
+    if (element->Is(APP)) {
+        assert(dynamic_cast<App *>(element) && (dynamic_cast<App *>(element)->GetLevel() == EDITORIAL_FB));
+    }
+    else if (element->Is(CHOICE)) {
+        assert(dynamic_cast<Choice *>(element) && (dynamic_cast<Choice *>(element)->GetLevel() == EDITORIAL_FB));
+    }
 
     dc->StartTextGraphic(element, "", element->GetUuid());
     if (element->m_visibility == Visible) {
@@ -1540,10 +1620,12 @@ void View::DrawRunningEditorialElement(DeviceContext *dc, EditorialElement *elem
         DrawAnnot(dc, element, true);
         return;
     }
-    if (element->Is(APP))
-        assert((dynamic_cast<App *>(element))->GetLevel() == EDITORIAL_RUNNING);
-    else if (element->Is(CHOICE))
-        assert((dynamic_cast<Choice *>(element))->GetLevel() == EDITORIAL_RUNNING);
+    if (element->Is(APP)) {
+        assert(dynamic_cast<App *>(element) && (dynamic_cast<App *>(element)->GetLevel() == EDITORIAL_RUNNING));
+    }
+    else if (element->Is(CHOICE)) {
+        assert(dynamic_cast<Choice *>(element) && (dynamic_cast<Choice *>(element)->GetLevel() == EDITORIAL_RUNNING));
+    }
 
     dc->StartGraphic(element, "", element->GetUuid());
     if (element->m_visibility == Visible) {

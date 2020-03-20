@@ -12,6 +12,11 @@ if [ "${TRAVIS_BRANCH}" != "${BUILD_BRANCH}" ]; then
     exit 1
 fi
 
+if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+    echo "Will not build JavaScript toolkit for pull requests. Skipping it."
+    exit 0
+fi
+
 #####################
 # install emscripten
 #####################
@@ -24,6 +29,7 @@ git clone $EMSCRIPTEN_REPOSITORY $EMSCRIPTEN_DIRECTORY
 echo "Installing emscripten"
 cd $EMSCRIPTEN_DIRECTORY
 ./emsdk install latest
+./emsdk activate latest
 
 # Return to the root
 cd ..
@@ -54,8 +60,8 @@ cd ..
 #############
 cd ./tools
 
-cmake .
-make -j3
+cmake ../cmake
+make -j 8
 
 echo "Update the documentation of the option list"
 ./verovio -? > $OUTPUT_DIRECTORY/_includes/cli.txt

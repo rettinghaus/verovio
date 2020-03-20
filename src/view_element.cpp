@@ -416,7 +416,7 @@ void View::DrawBeatRpt(DeviceContext *dc, LayerElement *element, Layer *layer, S
     }
     else {
         DrawSmuflCode(dc, xSymbol, y, SMUFL_E101_noteheadSlashHorizontalEnds, staff->m_drawingStaffSize, false);
-        int additionalSlash = beatRpt->GetSlash() - BEATRPT_REND_8;
+        int additionalSlash = beatRpt->GetSlash() - BEATRPT_REND_1;
         int halfWidth
             = m_doc->GetGlyphWidth(SMUFL_E101_noteheadSlashHorizontalEnds, staff->m_drawingStaffSize, false) / 2;
         int i;
@@ -698,20 +698,13 @@ void View::DrawCustos(DeviceContext *dc, LayerElement *element, Layer *layer, St
     int sym = 0;
     // Select glyph to use for this custos
     switch (staff->m_drawingNotationType) {
-        case NOTATIONTYPE_mensural:
-            sym = SMUFL_EA02_mensuralCustosUp; // mensuralCustosUp
-            break;
         case NOTATIONTYPE_neume:
             sym = SMUFL_EA06_chantCustosStemUpPosMiddle; // chantCustosStemUpPosMiddle
             break;
-        default: break;
+        default:
+            sym = SMUFL_EA02_mensuralCustosUp; // mensuralCustosUp
+            break;
     }
-
-    // Calculate x and y position for custos graphic
-    Clef *clef = layer->GetClef(element);
-    int staffSize = m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
-    int staffLineNumber = staff->m_drawingLines;
-    int clefLine = clef->GetLine();
 
     int x, y;
     if (custos->HasFacs() && m_doc->GetType() == Facs) {
@@ -720,27 +713,13 @@ void View::DrawCustos(DeviceContext *dc, LayerElement *element, Layer *layer, St
     }
     else {
         x = element->GetDrawingX();
-        y = staff->GetDrawingY();
+        y = element->GetDrawingY();
+        // Because SMuFL does not have the origin correpsonding to the pitch as for notes, we need to correct it.
+        // This will remain approximate
+        y -= m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
     }
 
-    int clefY = y - (staffSize * (staffLineNumber - clefLine));
-    int pitchOffset;
-    int octaveOffset = (custos->GetOct() - 3) * ((staffSize / 2) * 7);
-
-    if (clef->GetShape() == CLEFSHAPE_C) {
-        pitchOffset = (custos->GetPname() - PITCHNAME_c) * (staffSize / 2);
-    }
-    else if (clef->GetShape() == CLEFSHAPE_F) {
-        pitchOffset = (custos->GetPname() - PITCHNAME_f) * (staffSize / 2);
-    }
-    else {
-        // This shouldn't happen
-        pitchOffset = 0;
-    }
-
-    int actualY = clefY + pitchOffset + octaveOffset;
-
-    DrawSmuflCode(dc, x, actualY, sym, staff->m_drawingStaffSize, false, true);
+    DrawSmuflCode(dc, x, y, sym, staff->m_drawingStaffSize, false, true);
 
     dc->EndGraphic(element, this);
 }
@@ -1038,7 +1017,7 @@ void View::DrawMeterSig(DeviceContext *dc, LayerElement *element, Layer *layer, 
     int y = staff->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * (staff->m_drawingLines - 1);
     int x = element->GetDrawingX();
 
-    if (meterSig->GetForm() == meterSigVis_FORM_invis) {
+    if (meterSig->GetForm() == METERFORM_invis) {
         // just skip
     }
     else if (meterSig->HasSym()) {
@@ -1049,7 +1028,7 @@ void View::DrawMeterSig(DeviceContext *dc, LayerElement *element, Layer *layer, 
             DrawSmuflCode(dc, x, y, SMUFL_E08B_timeSigCutCommon, staff->m_drawingStaffSize, false);
         }
     }
-    else if (meterSig->GetForm() == meterSigVis_FORM_num) {
+    else if (meterSig->GetForm() == METERFORM_num) {
         DrawMeterSigFigures(dc, x, y, meterSig->GetCount(), 0, staff);
     }
     else if (meterSig->HasCount()) {

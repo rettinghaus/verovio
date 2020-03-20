@@ -97,7 +97,7 @@ public:
      */
     ///@{
     void SetBrush(int colour, int opacity);
-    void SetPen(int colour, int width, int opacity, int dashLength = 0);
+    void SetPen(int colour, int width, int opacity, int dashLength = 0, int lineCap = 0);
     void SetFont(FontInfo *font);
     void ResetBrush();
     void ResetPen();
@@ -136,6 +136,7 @@ public:
      * @name Drawing methods
      */
     ///@{
+    virtual void DrawSimpleBezierPath(Point bezier[4]) = 0;
     virtual void DrawComplexBezierPath(Point bezier1[4], Point bezier2[4]) = 0;
     virtual void DrawCircle(int x, int y, int radius) = 0;
     virtual void DrawEllipse(int x, int y, int width, int height) = 0;
