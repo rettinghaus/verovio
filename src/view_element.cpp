@@ -40,6 +40,7 @@
 #include "mrest.h"
 #include "mrpt.h"
 #include "mrpt2.h"
+#include "mspace.h"
 #include "multirest.h"
 #include "multirpt.h"
 #include "neume.h"
@@ -153,6 +154,9 @@ void View::DrawLayerElement(DeviceContext *dc, LayerElement *element, Layer *lay
     else if (element->Is(MRPT2)) {
         DrawMRpt2(dc, element, layer, staff, measure);
     }
+    else if (element->Is(MSPACE)) {
+        DrawMSpace(dc, element, layer, staff, measure);
+    }
     else if (element->Is(MULTIREST)) {
         DrawMultiRest(dc, element, layer, staff, measure);
     }
@@ -263,7 +267,8 @@ void View::DrawAccid(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
         y += extend.m_descent + m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
     }
 
-    DrawSmuflString(dc, x, y, accidStr, true, staff->m_drawingStaffSize, accid->GetDrawingCueSize(), true);
+    DrawSmuflString(
+        dc, x, y, accidStr, HORIZONTALALIGNMENT_center, staff->m_drawingStaffSize, accid->GetDrawingCueSize(), true);
 
     dc->EndGraphic(element, this);
 }
@@ -589,9 +594,7 @@ void View::DrawClef(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
         x = element->GetDrawingX();
     }
     int sym = 0;
-    bool isMensural = (staff->m_drawingNotationType == NOTATIONTYPE_mensural
-        || staff->m_drawingNotationType == NOTATIONTYPE_mensural_white
-        || staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
+    bool isMensural = Att::IsMensuralType(staff->m_drawingNotationType);
     bool isNeume = staff->m_drawingNotationType == NOTATIONTYPE_neume;
 
     int shapeOctaveDis = Clef::ClefId(clef->GetShape(), 0, clef->GetDis(), clef->GetDisPlace());
@@ -972,7 +975,7 @@ void View::DrawKeySig(DeviceContext *dc, LayerElement *element, Layer *layer, St
         loc = PitchInterface::CalcLoc(pname, KeySig::GetOctave(accid, pname, c), clefLocOffset);
         y = staff->GetDrawingY() + staff->CalcPitchPosYRel(m_doc, loc);
 
-        DrawSmuflString(dc, x, y, accidStr, false, staff->m_drawingStaffSize, false);
+        DrawSmuflString(dc, x, y, accidStr, HORIZONTALALIGNMENT_left, staff->m_drawingStaffSize, false);
         TextExtend extend;
         dc->GetSmuflTextExtent(accidStr, &extend);
         x += extend.m_width + step;
@@ -1107,6 +1110,22 @@ void View::DrawMRpt2(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
     dc->EndGraphic(element, this);
 }
 
+void View::DrawMSpace(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure)
+{
+    assert(dc);
+    assert(element);
+    assert(layer);
+    assert(staff);
+    assert(measure);
+
+    // MSpace *mSpace = dynamic_cast<MSpace *>(element);
+    // assert(mSpace);
+
+    dc->StartGraphic(element, "", element->GetUuid());
+    // nothing to draw here
+    dc->EndGraphic(element, this);
+}
+
 void View::DrawMultiRest(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure)
 {
     assert(dc);
@@ -1181,7 +1200,7 @@ void View::DrawMultiRest(DeviceContext *dc, LayerElement *element, Layer *layer,
     start_offset = (x2 - x1 - extend.m_width) / 2; // calculate offset to center text
     int y = (staff->GetDrawingY() > y1) ? staff->GetDrawingY() + 3 * m_doc->GetDrawingUnit(staff->m_drawingStaffSize)
                                         : y1 + 3 * m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
-    DrawSmuflString(dc, x1 + start_offset, y, wtext, false);
+    DrawSmuflString(dc, x1 + start_offset, y, wtext, HORIZONTALALIGNMENT_left);
     dc->ResetFont();
 
     dc->EndGraphic(element, this);
@@ -1220,7 +1239,7 @@ void View::DrawNote(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
     Note *note = dynamic_cast<Note *>(element);
     assert(note);
 
-    if (note->IsMensural()) {
+    if (note->IsMensuralDur()) {
         DrawMensuralNote(dc, element, layer, staff, measure);
         return;
     }
@@ -1236,28 +1255,34 @@ void View::DrawNote(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
     drawingDur = note->GetDrawingDur();
     drawingDur = ((note->GetColored() == BOOLEAN_true) && drawingDur > DUR_1) ? (drawingDur + 1) : drawingDur;
 
-    /************** Noteheads: **************/
+    if (!(note->GetHeadVisible() == BOOLEAN_false)) {
+        /************** Noteheads: **************/
 
-    if (drawingDur < DUR_1) {
-        DrawMaximaToBrevis(dc, noteY, element, layer, staff);
-    }
-    // Whole notes
-    else if (drawingDur == DUR_1) {
-        if (note->GetColored() == BOOLEAN_true)
-            fontNo = SMUFL_E0FA_noteheadWholeFilled;
-        else
-            fontNo = SMUFL_E0A2_noteheadWhole;
+        if (drawingDur < DUR_1) {
+            DrawMaximaToBrevis(dc, noteY, element, layer, staff);
+        }
+        // Whole notes
+        else if (drawingDur == DUR_1) {
+            if (note->GetColored() == BOOLEAN_true) {
+                fontNo = SMUFL_E0FA_noteheadWholeFilled;
+            }
+            else {
+                fontNo = SMUFL_E0A2_noteheadWhole;
+            }
 
-        DrawSmuflCode(dc, noteX, noteY, fontNo, staff->m_drawingStaffSize, drawingCueSize, true);
-    }
-    // Other values
-    else {
-        if ((note->GetColored() == BOOLEAN_true) || drawingDur == DUR_2)
-            fontNo = SMUFL_E0A3_noteheadHalf;
-        else
-            fontNo = SMUFL_E0A4_noteheadBlack;
+            DrawSmuflCode(dc, noteX, noteY, fontNo, staff->m_drawingStaffSize, drawingCueSize, true);
+        }
+        // Other values
+        else {
+            if ((note->GetColored() == BOOLEAN_true) || drawingDur == DUR_2) {
+                fontNo = SMUFL_E0A3_noteheadHalf;
+            }
+            else {
+                fontNo = SMUFL_E0A4_noteheadBlack;
+            }
 
-        DrawSmuflCode(dc, noteX, noteY, fontNo, staff->m_drawingStaffSize, drawingCueSize, true);
+            DrawSmuflCode(dc, noteX, noteY, fontNo, staff->m_drawingStaffSize, drawingCueSize, true);
+        }
     }
 
     /************ Draw children (accidentals, etc) ************/
@@ -1276,7 +1301,7 @@ void View::DrawRest(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
     Rest *rest = dynamic_cast<Rest *>(element);
     assert(rest);
 
-    if (rest->IsMensural()) {
+    if (rest->IsMensuralDur()) {
         DrawMensuralRest(dc, element, layer, staff, measure);
         return;
     }
@@ -1503,13 +1528,13 @@ void View::DrawMeterSigFigures(DeviceContext *dc, int x, int y, int num, int den
     x += (extend.m_width / 2);
 
     if (den) {
-        DrawSmuflString(dc, x, y + m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize), timeSigCombNumerator, true,
-            staff->m_drawingStaffSize);
-        DrawSmuflString(dc, x, y - m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize), timeSigCombDenominator, true,
-            staff->m_drawingStaffSize);
+        DrawSmuflString(dc, x, y + m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize), timeSigCombNumerator,
+            HORIZONTALALIGNMENT_center, staff->m_drawingStaffSize);
+        DrawSmuflString(dc, x, y - m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize), timeSigCombDenominator,
+            HORIZONTALALIGNMENT_center, staff->m_drawingStaffSize);
     }
     else
-        DrawSmuflString(dc, x, y, timeSigCombNumerator, true, staff->m_drawingStaffSize);
+        DrawSmuflString(dc, x, y, timeSigCombNumerator, HORIZONTALALIGNMENT_center, staff->m_drawingStaffSize);
 
     dc->ResetFont();
 }

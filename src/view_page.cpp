@@ -147,19 +147,57 @@ void View::DrawSystem(DeviceContext *dc, System *system)
 
     dc->StartGraphic(system, "", system->GetUuid());
 
+<<<<<<<<< Temporary merge branch 1
     // draw system divider (from the second one) if scoreDef is optimized
     if ((system->GetIdx() > 0) && system->IsDrawingOptimized()) {
-        System *previousSystem = dynamic_cast<System>(<#expression#>);
-        if ((m_options->m_systemDivider.GetValue() == DIVIDER_left)
-            || (m_options->m_systemDivider.GetValue() == SYSTEMDIVIDER_left_right)) {
-            DrawSystemDivider(dc, system->GetDrawingX(), system->GetDrawingY(), "left");
+        int x1 = system->GetDrawingX() - m_doc->GetDrawingUnit(100) * 3;
+        int y1 = system->GetDrawingY() - m_doc->GetDrawingUnit(100) * 1;
+        int x2 = system->GetDrawingX() + m_doc->GetDrawingUnit(100) * 3;
+        int y2 = system->GetDrawingY() + m_doc->GetDrawingUnit(100) * 3;
+        dc->StartCustomGraphic("systemDivider");
+        DrawObliquePolygon(dc, x1, y1, x2, y2, m_doc->GetDrawingUnit(100) * 1.5);
+        y1 += m_doc->GetDrawingUnit(100) * 2;
+        y2 += m_doc->GetDrawingUnit(100) * 2;
+        DrawObliquePolygon(dc, x1, y1, x2, y2, m_doc->GetDrawingUnit(100) * 1.5);
+        dc->EndCustomGraphic();
+=========
+    Measure *firstMeasure = dynamic_cast<Measure *>(system->FindDescendantByType(MEASURE, 1));
+
+    // Draw system divider (from the second one) if scoreDef is optimized
+    if (firstMeasure && (m_options->m_systemDivider.GetValue() != SYSTEMDIVIDER_none)) {
+        if ((system->GetIdx() > 0) && system->IsDrawingOptimized()) {
+            int y = system->GetDrawingY();
+            Staff *staff = firstMeasure->GetTopVisibleStaff();
+            if (staff) {
+                // Place them just above the measure number - in very tight layout this can collision with
+                // the staff above. To be improved
+                y = staff->GetDrawingY() + 3.0 * m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
+            }
+            int x1 = system->GetDrawingX() - m_doc->GetDrawingUnit(100) * 3;
+            int x2 = system->GetDrawingX() + m_doc->GetDrawingUnit(100) * 3;
+            int y1 = y - m_doc->GetDrawingUnit(100) * 1;
+            int y2 = y + m_doc->GetDrawingUnit(100) * 3;
+            int y3 = y1 + m_doc->GetDrawingUnit(100) * 2;
+            int y4 = y2 + m_doc->GetDrawingUnit(100) * 2;
+            // left and left-right
+            dc->StartCustomGraphic("systemDivider");
+
+            DrawObliquePolygon(dc, x1, y1, x2, y2, m_doc->GetDrawingUnit(100) * 1.5);
+            DrawObliquePolygon(dc, x1, y3, x2, y4, m_doc->GetDrawingUnit(100) * 1.5);
+            if (m_options->m_systemDivider.GetValue() == SYSTEMDIVIDER_left_right) {
+                // Right divider is not taken into account in the layout calculation and can collision with the music
+                // content
+                Measure *lastMeasure = dynamic_cast<Measure *>(system->FindDescendantByType(MEASURE, 1, BACKWARD));
+                assert(lastMeasure);
+                int x4 = lastMeasure->GetDrawingX() + lastMeasure->GetRightBarLineRight();
+                int x3 = x4 - m_doc->GetDrawingUnit(100) * 6;
+                DrawObliquePolygon(dc, x3, y1, x4, y2, m_doc->GetDrawingUnit(100) * 1.5);
+                DrawObliquePolygon(dc, x3, y3, x4, y4, m_doc->GetDrawingUnit(100) * 1.5);
+            }
+
+            dc->EndCustomGraphic();
         }
-        if (m_options->m_systemDivider.GetValue() > DIVIDER_left) {
-            // Right divider is not taken into account in the layout calculation and may collide with the music content
-            int rightEnd = m_doc->m_drawingPageWidth - m_doc->m_drawingPageMarginLeft - m_doc->m_drawingPageMarginRight;
-            DrawSystemDivider(
-                dc, rightEnd - m_doc->GetDrawingUnit(100) * 3, system->GetDrawingY(), "right");
-        }
+>>>>>>>>> Temporary merge branch 2
     }
 
     // first we need to clear the drawing list of postponed elements
@@ -332,6 +370,10 @@ void View::DrawStaffGrp(
     // for the bottom position we need to take into account the number of lines and the staff size
     int yBottom
         = last->GetDrawingY() - (lastDef->GetLines() - 1) * m_doc->GetDrawingDoubleUnit(last->m_drawingStaffSize);
+    // adjust to single line staves
+    if (firstDef->GetLines() <= 1) yTop += m_doc->GetDrawingDoubleUnit(last->m_drawingStaffSize);
+    if (lastDef->GetLines() <= 1) yBottom -= m_doc->GetDrawingDoubleUnit(last->m_drawingStaffSize);
+
     int barLineWidth = m_doc->GetDrawingBarLineWidth(staffSize);
 
     // adjust the top and bottom according to staffline width
@@ -667,8 +709,8 @@ void View::DrawBarLines(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp,
                     yTop = yBottom + (measure->GetBarLen() * m_doc->GetDrawingUnit(staff->m_drawingStaffSize));
                 }
                 // Make sure barlines are visible with a single line
-                if (childStaffDef->GetLines() == 1) {
-                    yTop += m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
+                if (childStaffDef->GetLines() <= 1) {
+                    yTop = yBottom + m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
                     yBottom -= m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
                 }
                 DrawBarLine(dc, yTop, yBottom, barLine);

@@ -63,7 +63,7 @@ class OptionGrp;
 // Option defines
 //----------------------------------------------------------------------------
 
-enum option_BREAKS { BREAKS_none = 0, BREAKS_auto, BREAKS_encoded };
+enum option_BREAKS { BREAKS_none = 0, BREAKS_auto, BREAKS_line, BREAKS_encoded };
 
 enum option_DIVIDER { DIVIDER_none = 0, DIVIDER_left, DIVIDER_right, DIVIDER_both };
 

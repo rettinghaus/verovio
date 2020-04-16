@@ -161,7 +161,7 @@ public:
     /**
      * Return the drawing radius for notes and chords
      */
-    int GetDrawingRadius(Doc *doc);
+    int GetDrawingRadius(Doc *doc, bool isInLigature = false);
 
     /**
      * Alignment getter
@@ -326,10 +326,6 @@ private:
 public:
     /** Absolute position X. This is used for facsimile (transcription) encoding */
     int m_xAbs;
-    /**
-     * This stores a pointer to the corresponding BeamElementCoord(currentDur > DUR_4)
-     */
-    BeamElementCoord *m_beamElementCoord;
     /**
      * This stores a pointer to the cross-staff (if any) and the appropriate layer
      * See Object::PrepareCrossStaff

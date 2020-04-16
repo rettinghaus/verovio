@@ -71,6 +71,7 @@
 #include "mrest.h"
 #include "mrpt.h"
 #include "mrpt2.h"
+#include "mspace.h"
 #include "multirest.h"
 #include "multirpt.h"
 #include "nc.h"
@@ -531,6 +532,10 @@ bool MEIOutput::WriteObject(Object *object)
     else if (object->Is(MRPT2)) {
         m_currentNode = m_currentNode.append_child("mRpt2");
         WriteMRpt2(m_currentNode, dynamic_cast<MRpt2 *>(object));
+    }
+    else if (object->Is(MSPACE)) {
+        m_currentNode = m_currentNode.append_child("mspace");
+        WriteMSpace(m_currentNode, dynamic_cast<MSpace *>(object));
     }
     else if (object->Is(MULTIREST)) {
         m_currentNode = m_currentNode.append_child("multiRest");
@@ -1257,7 +1262,7 @@ void MEIOutput::WritePedal(pugi::xml_node currentNode, Pedal *pedal)
     pedal->WriteColor(currentNode);
     pedal->WritePedalLog(currentNode);
     pedal->WritePlacement(currentNode);
-    pedal->WriteVerticalGroup(currentNode);
+    // pedal->WriteVerticalGroup(currentNode);
 }
 
 void MEIOutput::WriteReh(pugi::xml_node currentNode, Reh *reh)
@@ -1329,6 +1334,9 @@ void MEIOutput::WriteTrill(pugi::xml_node currentNode, Trill *trill)
     WriteControlElement(currentNode, trill);
     WriteTimeSpanningInterface(currentNode, trill);
     trill->WriteColor(currentNode);
+    trill->WriteExtender(currentNode);
+    trill->WriteLineRend(currentNode);
+    trill->WriteNNumberLike(currentNode);
     trill->WriteOrnamentAccid(currentNode);
     trill->WritePlacement(currentNode);
 }
@@ -1659,6 +1667,13 @@ void MEIOutput::WriteMRpt2(pugi::xml_node currentNode, MRpt2 *mRpt2)
     WriteLayerElement(currentNode, mRpt2);
 }
 
+void MEIOutput::WriteMSpace(pugi::xml_node currentNode, MSpace *mSpace)
+{
+    assert(mSpace);
+
+    WriteLayerElement(currentNode, mSpace);
+}
+
 void MEIOutput::WriteMultiRest(pugi::xml_node currentNode, MultiRest *multiRest)
 {
     assert(multiRest);
@@ -1713,6 +1728,7 @@ void MEIOutput::WriteNote(pugi::xml_node currentNode, Note *note)
     note->WriteGraced(currentNode);
     note->WriteMidiVelocity(currentNode);
     note->WriteNoteAnlMensural(currentNode);
+    note->WriteNoteHeads(currentNode);
     note->WriteStems(currentNode);
     note->WriteStemsCmn(currentNode);
     note->WriteTiePresent(currentNode);
@@ -4083,6 +4099,9 @@ bool MEIInput::ReadTrill(Object *parent, pugi::xml_node trill)
 
     ReadTimeSpanningInterface(trill, vrvTrill);
     vrvTrill->ReadColor(trill);
+    vrvTrill->ReadExtender(trill);
+    vrvTrill->ReadLineRend(trill);
+    vrvTrill->ReadNNumberLike(trill);
     vrvTrill->ReadOrnamentAccid(trill);
     vrvTrill->ReadPlacement(trill);
 
@@ -4309,6 +4328,9 @@ bool MEIInput::ReadLayerChildren(Object *parent, pugi::xml_node parentNode, Obje
         }
         else if (elementName == "mRpt2") {
             success = ReadMRpt2(parent, xmlElement);
+        }
+        else if (elementName == "mSpace") {
+            success = ReadMSpace(parent, xmlElement);
         }
         else if (elementName == "multiRest") {
             success = ReadMultiRest(parent, xmlElement);
@@ -4706,6 +4728,16 @@ bool MEIInput::ReadMRpt2(Object *parent, pugi::xml_node mRpt2)
     return true;
 }
 
+bool MEIInput::ReadMSpace(Object *parent, pugi::xml_node mSpace)
+{
+    MSpace *vrvMSpace = new MSpace();
+    ReadLayerElement(mSpace, vrvMSpace);
+
+    parent->AddChild(vrvMSpace);
+    ReadUnsupportedAttr(mSpace, vrvMSpace);
+    return true;
+}
+
 bool MEIInput::ReadMultiRest(Object *parent, pugi::xml_node multiRest)
 {
     MultiRest *vrvMultiRest = new MultiRest();
@@ -4774,6 +4806,7 @@ bool MEIInput::ReadNote(Object *parent, pugi::xml_node note)
     vrvNote->ReadGraced(note);
     vrvNote->ReadMidiVelocity(note);
     vrvNote->ReadNoteAnlMensural(note);
+    vrvNote->ReadNoteHeads(note);
     vrvNote->ReadStems(note);
     vrvNote->ReadStemsCmn(note);
     vrvNote->ReadTiePresent(note);
