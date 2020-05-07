@@ -22,6 +22,10 @@
 #include "staff.h"
 #include "vrv.h"
 
+//----------------------------------------------------------------------------
+
+#include "MidiFile.h"
+
 namespace vrv {
 
 //----------------------------------------------------------------------------
@@ -73,8 +77,6 @@ void FTrem::AddChild(Object *child)
 const ArrayOfBeamElementCoords *FTrem::GetElementCoords()
 {
     this->GetList(this);
-
-    this->m_shortestDur = std::max(DUR_8, DUR_1 + this->GetBeams());
 
     return &m_beamElementCoords;
 }
@@ -198,6 +200,22 @@ int FTrem::ResetDrawing(FunctorParams *functorParams)
 
     // We want the list of the ObjectListInterface to be re-generated
     this->Modify();
+    return FUNCTOR_CONTINUE;
+}
+
+int FTrem::GenerateMIDI(FunctorParams *functorParams)
+{
+    GenerateMIDIParams *params = dynamic_cast<GenerateMIDIParams *>(functorParams);
+    assert(params);
+
+    FTrem *fTrem = dynamic_cast<FTrem *>(this);
+    assert(fTrem);
+
+    if (!fTrem->HasUnitdur())
+        return FUNCTOR_CONTINUE;
+    else
+        LogWarning("FTrem produces incorrect MIDI output");
+
     return FUNCTOR_CONTINUE;
 }
 

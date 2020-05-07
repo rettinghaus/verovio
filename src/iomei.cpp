@@ -49,6 +49,7 @@
 #include "fig.h"
 #include "ftrem.h"
 #include "functorparams.h"
+#include "gliss.h"
 #include "gracegrp.h"
 #include "hairpin.h"
 #include "halfmrpt.h"
@@ -493,6 +494,10 @@ bool MEIOutput::WriteObject(Object *object)
         m_currentNode = m_currentNode.append_child("fTrem");
         WriteFTrem(m_currentNode, dynamic_cast<FTrem *>(object));
     }
+    else if (object->Is(GLISS)) {
+        m_currentNode = m_currentNode.append_child("gliss");
+        WriteGliss(m_currentNode, dynamic_cast<Gliss *>(object));
+    }
     else if (object->Is(GRACEGRP)) {
         m_currentNode = m_currentNode.append_child("graceGrp");
         WriteGraceGrp(m_currentNode, dynamic_cast<GraceGrp *>(object));
@@ -534,7 +539,7 @@ bool MEIOutput::WriteObject(Object *object)
         WriteMRpt2(m_currentNode, dynamic_cast<MRpt2 *>(object));
     }
     else if (object->Is(MSPACE)) {
-        m_currentNode = m_currentNode.append_child("mspace");
+        m_currentNode = m_currentNode.append_child("mSpace");
         WriteMSpace(m_currentNode, dynamic_cast<MSpace *>(object));
     }
     else if (object->Is(MULTIREST)) {
@@ -1193,6 +1198,18 @@ void MEIOutput::WriteFermata(pugi::xml_node currentNode, Fermata *fermata)
     fermata->WritePlacement(currentNode);
 }
 
+void MEIOutput::WriteGliss(pugi::xml_node currentNode, Gliss *gliss)
+{
+    assert(gliss);
+
+    WriteControlElement(currentNode, gliss);
+    WriteTimeSpanningInterface(currentNode, gliss);
+    gliss->WriteColor(currentNode);
+    gliss->WriteLineRend(currentNode);
+    gliss->WriteLineRendBase(currentNode);
+    gliss->WriteNNumberLike(currentNode);
+}
+
 void MEIOutput::WriteHairpin(pugi::xml_node currentNode, Hairpin *hairpin)
 {
     assert(hairpin);
@@ -1261,6 +1278,7 @@ void MEIOutput::WritePedal(pugi::xml_node currentNode, Pedal *pedal)
     WriteTimePointInterface(currentNode, pedal);
     pedal->WriteColor(currentNode);
     pedal->WritePedalLog(currentNode);
+    pedal->WritePedalVis(currentNode);
     pedal->WritePlacement(currentNode);
     // pedal->WriteVerticalGroup(currentNode);
 }
@@ -3764,6 +3782,9 @@ bool MEIInput::ReadMeasureChildren(Object *parent, pugi::xml_node parentNode)
         else if (std::string(current.name()) == "fermata") {
             success = ReadFermata(parent, current);
         }
+        else if (std::string(current.name()) == "gliss") {
+            success = ReadGliss(parent, current);
+        }
         else if (std::string(current.name()) == "hairpin") {
             success = ReadHairpin(parent, current);
         }
@@ -3931,6 +3952,22 @@ bool MEIInput::ReadFermata(Object *parent, pugi::xml_node fermata)
     return true;
 }
 
+bool MEIInput::ReadGliss(Object *parent, pugi::xml_node gliss)
+{
+    Gliss *vrvGliss = new Gliss();
+    ReadControlElement(gliss, vrvGliss);
+
+    ReadTimeSpanningInterface(gliss, vrvGliss);
+    vrvGliss->ReadColor(gliss);
+    vrvGliss->ReadLineRend(gliss);
+    vrvGliss->ReadLineRendBase(gliss);
+    vrvGliss->ReadNNumberLike(gliss);
+
+    parent->AddChild(vrvGliss);
+    ReadUnsupportedAttr(gliss, vrvGliss);
+    return true;
+}
+
 bool MEIInput::ReadHairpin(Object *parent, pugi::xml_node hairpin)
 {
     Hairpin *vrvHairpin = new Hairpin();
@@ -4022,6 +4059,7 @@ bool MEIInput::ReadPedal(Object *parent, pugi::xml_node pedal)
     ReadTimePointInterface(pedal, vrvPedal);
     vrvPedal->ReadColor(pedal);
     vrvPedal->ReadPedalLog(pedal);
+    vrvPedal->ReadPedalVis(pedal);
     vrvPedal->ReadPlacement(pedal);
     vrvPedal->ReadVerticalGroup(pedal);
 

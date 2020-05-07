@@ -32,6 +32,7 @@ class Dynam;
 class F;
 class Fermata;
 class Fb;
+class Gliss;
 class Hairpin;
 class Harm;
 class Layer;
@@ -357,7 +358,7 @@ private:
      * measureCount) */
     std::vector<std::tuple<int, double, musicxml::OpenSpanner> > m_hairpinStopStack;
     std::vector<std::pair<BracketSpan *, musicxml::OpenSpanner> > m_bracketStack;
-    std::vector<std::pair<Trill*, musicxml::OpenSpanner> > m_trillStack;
+    std::vector<std::pair<Trill *, musicxml::OpenSpanner> > m_trillStack;
     /* The stack of endings to be inserted at the end of XML import */
     std::vector<std::pair<std::vector<Measure *>, musicxml::EndingInfo> > m_endingStack;
     /* The stack of open dashes (direction-type) containing *ControlElement, OpenDashes */
@@ -365,6 +366,7 @@ private:
     /* The stacks for ControlElements */
     std::vector<Dir *> m_dirStack;
     std::vector<Dynam *> m_dynamStack;
+    std::vector<Gliss *> m_glissStack;
     std::vector<Harm *> m_harmStack;
     std::vector<Octave *> m_octaveStack;
     std::vector<Pedal *> m_pedalStack;

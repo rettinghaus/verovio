@@ -70,7 +70,7 @@ LayerElement::LayerElement() : Object("le-"), FacsimileInterface(), LinkingInter
     Reset();
 }
 
-LayerElement::LayerElement(std::string classid)
+LayerElement::LayerElement(const std::string &classid)
     : Object(classid), FacsimileInterface(), LinkingInterface(), AttLabelled(), AttTyped()
 {
     RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
@@ -684,6 +684,7 @@ int LayerElement::AlignHorizontally(FunctorParams *functorParams)
         Note *firstNote = dynamic_cast<Note *>(ligatureParent->GetList(ligatureParent)->front());
         if (firstNote && (firstNote != note)) {
             m_alignment = firstNote->GetAlignment();
+            m_alignment->AddLayerElementRef(this);
             double duration = this->GetAlignmentDuration(
                 params->m_currentMensur, params->m_currentMeterSig, true, params->m_notationType);
             params->m_time += duration;
