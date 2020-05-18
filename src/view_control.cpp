@@ -1807,6 +1807,24 @@ void View::DrawGliss(DeviceContext *dc, Gliss *gliss, int x1, int x2, Staff *sta
     // only solid lines for now
     DrawRoundedLine(dc, x1, y1, x2, y2, lineWidth);
 
+    if (true) {
+        int x_diff = x1 - x2;
+        int y_diff = y1 - y2;
+        const double PI = 3.141592653589793238463;
+        wchar_t fillGlyph = SMUFL_EAA9_wiggleArpeggiatoUp;
+        float angle = atan2(y_diff, x_diff) * 180 / PI;
+        int length = 20;
+        
+        
+        // glyph = SMUFL_EAAF_wiggleGlissando;
+        // Smufl glyphs are horizontal - Rotate them counter clockwise
+        dc->RotateGraphic(Point(ToDeviceContextX(x1), ToDeviceContextY(y2)), angle);
+
+        DrawSmuflLine(dc, Point(x1, y1), length, staff->m_drawingStaffSize, false, fillGlyph, 0);
+        
+        dc->RotateGraphic(Point(0, 0), 0.0);
+    }
+
     if (graphic) {
         dc->EndResumedGraphic(graphic, this);
     }
