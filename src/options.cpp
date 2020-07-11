@@ -769,13 +769,13 @@ Options::Options()
     m_spacingSystem.Init(3, 0, 12);
     this->Register(&m_spacingSystem, "spacingSystem", &m_generalLayout);
 
-    m_staffLineWidth.SetInfo("Staff line width", "The staff line width in unit");
-    m_staffLineWidth.Init(0.15, 0.10, 0.30);
-    this->Register(&m_staffLineWidth, "staffLineWidth", &m_generalLayout);
+    m_staffLineThickness.SetInfo("Staff line width", "The staff line width in unit");
+    m_staffLineThickness.Init(0.15, 0.10, 0.30);
+    this->Register(&m_staffLineThickness, "staffLineThickness", &m_generalLayout);
 
-    m_stemWidth.SetInfo("Stem width", "The stem width");
-    m_stemWidth.Init(0.20, 0.10, 0.50);
-    this->Register(&m_stemWidth, "stemWidth", &m_generalLayout);
+    m_stemThickness.SetInfo("Stem width", "The stem width");
+    m_stemThickness.Init(0.20, 0.10, 0.50);
+    this->Register(&m_stemThickness, "stemThickness", &m_generalLayout);
 
     m_systemDivider.SetInfo("System divider", "The display of system dividers");
     m_systemDivider.Init(SYSTEMDIVIDER_left, &Option::s_systemDivider);

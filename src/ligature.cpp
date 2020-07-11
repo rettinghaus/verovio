@@ -289,7 +289,7 @@ int Ligature::CalcLigatureNotePos(FunctorParams *functorParams)
 
         // previousRight is 0 for the first note
         int width = (note->GetDrawingRadius(params->m_doc, true) * 2)
-            - params->m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+            - params->m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
         // With stacked notes, back-track the position
         if (m_drawingShapes.at(n1 + 1) & LIGATURE_STACKED) previousRight -= width;
         note->SetDrawingXRel(previousRight);

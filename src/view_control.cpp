@@ -400,7 +400,7 @@ void View::DrawBracketSpan(
     }
 
     int bracketSize = 2 * m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
-    int lineWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    int lineWidth = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
 
     if (bracketSpan->HasLwidth()) {
         if (bracketSpan->GetLwidth().GetType() == LINEWIDTHTYPE_lineWidthTerm) {
@@ -578,8 +578,8 @@ void View::DrawHairpin(
 
     /************** draw it **************/
 
-    y1 -= m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) / 2;
-    y2 -= m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) / 2;
+    y1 -= m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) / 2;
+    y2 -= m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) / 2;
 
     if (graphic)
         dc->ResumeGraphic(graphic, graphic->GetUuid());
@@ -588,9 +588,9 @@ void View::DrawHairpin(
     // dc->DeactivateGraphic();
 
     DrawObliquePolygon(
-        dc, x1, y1 - startY / 2, x2, y2 - endY / 2, m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize));
+        dc, x1, y1 - startY / 2, x2, y2 - endY / 2, m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize));
     DrawObliquePolygon(
-        dc, x1, y1 + startY / 2, x2, y2 + endY / 2, m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize));
+        dc, x1, y1 + startY / 2, x2, y2 + endY / 2, m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize));
 
     // dc->ReactivateGraphic();
     if (graphic)
@@ -659,7 +659,7 @@ void View::DrawOctave(
     str.push_back(code);
 
     if (octave->GetExtender() != BOOLEAN_false) {
-        int lineWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+        int lineWidth = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
         if (octave->HasLwidth()) {
             if (octave->GetLwidth().GetType() == LINEWIDTHTYPE_lineWidthTerm) {
                 if (octave->GetLwidth().GetLineWithTerm() == LINEWIDTHTERM_narrow) {
@@ -689,7 +689,7 @@ void View::DrawOctave(
         if (octave->GetLendsym() != LINESTARTENDSYMBOL_none)
             y2 += (disPlace == STAFFREL_basic_above) ? -extend.m_height : extend.m_height;
         // adjust is to avoid the figure to touch the line
-        x1 += m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+        x1 += m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
 
         if (octave->HasLform()) {
             if (octave->GetLform() == LINEFORM_solid) {
@@ -956,7 +956,7 @@ void View::DrawPedalLine(
     // The both correspond to the current system, which means no system break in-between (simple case)
     if (spanningType == SPANNING_START_END) {
         x1 -= startRadius;
-        x2 -= endRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+        x2 -= endRadius - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
     }
     // Only the first parent is the same, this means that the syl is "open" at the end of the system
     else if (spanningType == SPANNING_START) {
@@ -964,7 +964,7 @@ void View::DrawPedalLine(
     }
     // We are in the system of the last note - draw the connector from the beginning of the system
     else if (spanningType == SPANNING_END) {
-        x2 -= endRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+        x2 -= endRadius - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
     }
     else {
         // nothing to adjust
@@ -978,7 +978,7 @@ void View::DrawPedalLine(
     }
 
     int bracketSize = m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize);
-    int lineWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    int lineWidth = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
 
     // Opening bracket
     if ((spanningType == SPANNING_START_END) || (spanningType == SPANNING_START)) {
@@ -1751,7 +1751,7 @@ void View::DrawGliss(DeviceContext *dc, Gliss *gliss, int x1, int x2, Staff *sta
         y2 = y1 + (x2 - x1) * slope;
     }
 
-    int lineWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) * 1.5;
+    int lineWidth = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) * 1.5;
     if (gliss->HasLwidth()) {
         if (gliss->GetLwidth().GetType() == LINEWIDTHTYPE_lineWidthTerm) {
             if (gliss->GetLwidth().GetLineWithTerm() == LINEWIDTHTERM_narrow) {

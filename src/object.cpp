@@ -1598,14 +1598,14 @@ int Object::SetOverflowBBoxes(FunctorParams *functorParams)
     int staffSize = alignment->GetStaffSize();
 
     int overflowAbove = alignment->CalcOverflowAbove(current);
-    if (!skipAbove && (overflowAbove > params->m_doc->GetDrawingStaffLineWidth(staffSize) / 2)) {
+    if (!skipAbove && (overflowAbove > params->m_doc->GetDrawingStaffLineThickness(staffSize) / 2)) {
         // LogMessage("%s top overflow: %d", current->GetUuid().c_str(), overflowAbove);
         alignment->SetOverflowAbove(overflowAbove);
         alignment->AddBBoxAbove(current);
     }
 
     int overflowBelow = alignment->CalcOverflowBelow(current);
-    if (!skipBelow && (overflowBelow > params->m_doc->GetDrawingStaffLineWidth(staffSize) / 2)) {
+    if (!skipBelow && (overflowBelow > params->m_doc->GetDrawingStaffLineThickness(staffSize) / 2)) {
         // LogMessage("%s bottom overflow: %d", current->GetUuid().c_str(), overflowBelow);
         alignment->SetOverflowBelow(overflowBelow);
         alignment->AddBBoxBelow(current);

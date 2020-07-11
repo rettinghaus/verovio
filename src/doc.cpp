@@ -1492,14 +1492,14 @@ int Doc::GetDrawingBarLineWidth(int staffSize) const
     return m_options->m_barLineWidth.GetValue() * GetDrawingUnit(staffSize);
 }
 
-int Doc::GetDrawingStaffLineWidth(int staffSize) const
+int Doc::GetDrawingStaffLineThickness(int staffSize) const
 {
-    return m_options->m_staffLineWidth.GetValue() * GetDrawingUnit(staffSize);
+    return m_options->m_staffLineThickness.GetValue() * GetDrawingUnit(staffSize);
 }
 
-int Doc::GetDrawingStemWidth(int staffSize) const
+int Doc::GetDrawingStemThickness(int staffSize) const
 {
-    return m_options->m_stemWidth.GetValue() * GetDrawingUnit(staffSize);
+    return m_options->m_stemThickness.GetValue() * GetDrawingUnit(staffSize);
 }
 
 int Doc::GetDrawingDynamHeight(int staffSize, bool withMargin) const

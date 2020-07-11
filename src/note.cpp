@@ -250,7 +250,7 @@ Point Note::GetStemUpSE(Doc *doc, int staffSize, bool isCueSize)
     // x default is always set to the right for now
     int defaultXShift = doc->GetGlyphWidth(SMUFL_E0A3_noteheadHalf, staffSize, isCueSize);
     // adjust the x shift in order to take the stem width into account
-    defaultXShift -= doc->GetDrawingStemWidth(staffSize) / 2;
+    defaultXShift -= doc->GetDrawingStemThickness(staffSize) / 2;
     Point p(defaultXShift, defaultYShift);
 
     // Here we should get the notehead value
@@ -289,7 +289,7 @@ Point Note::GetStemDownNW(Doc *doc, int staffSize, bool isCueSize)
     // x default is always set to the left for now
     int defaultXShift = 0;
     // adjust the x shift in order to take the stem width into account
-    defaultXShift += doc->GetDrawingStemWidth(staffSize) / 2;
+    defaultXShift += doc->GetDrawingStemThickness(staffSize) / 2;
     Point p(defaultXShift, -defaultYShift);
 
     // Here we should get the notehead value
@@ -708,10 +708,10 @@ int Note::CalcChordNoteHeads(FunctorParams *functorParams)
     // positions notehead
     if (flippedNotehead) {
         if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
-            this->SetDrawingXRel(2 * radius - params->m_doc->GetDrawingStemWidth(staffSize));
+            this->SetDrawingXRel(2 * radius - params->m_doc->GetDrawingStemThickness(staffSize));
         }
         else {
-            this->SetDrawingXRel(-2 * radius + params->m_doc->GetDrawingStemWidth(staffSize));
+            this->SetDrawingXRel(-2 * radius + params->m_doc->GetDrawingStemThickness(staffSize));
         }
     }
 
@@ -824,11 +824,11 @@ int Note::CalcLedgerLines(FunctorParams *functorParams)
     if (!this->HasLedgerLines(linesAbove, linesBelow, staff)) return FUNCTOR_CONTINUE;
 
     // HARDCODED
-    int leftExtender = 2.5 * params->m_doc->GetDrawingStemWidth(staffSize);
-    int rightExtender = 2.5 * params->m_doc->GetDrawingStemWidth(staffSize);
+    int leftExtender = 2.5 * params->m_doc->GetDrawingStemThickness(staffSize);
+    int rightExtender = 2.5 * params->m_doc->GetDrawingStemThickness(staffSize);
     if (drawingCueSize || (this->GetDrawingDur() >= DUR_8)) {
-        leftExtender = 1.75 * params->m_doc->GetDrawingStemWidth(staffSize);
-        rightExtender = 1.25 * params->m_doc->GetDrawingStemWidth(staffSize);
+        leftExtender = 1.75 * params->m_doc->GetDrawingStemThickness(staffSize);
+        rightExtender = 1.25 * params->m_doc->GetDrawingStemThickness(staffSize);
     }
 
     if (drawingCueSize) {

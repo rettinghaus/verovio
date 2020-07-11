@@ -1182,8 +1182,8 @@ int LayerElement::AdjustLayers(FunctorParams *functorParams)
         std::vector<LayerElement *>::iterator iter;
         for (iter = params->m_previous.begin(); iter != params->m_previous.end(); ++iter) {
 
-            int verticalMargin = 0; // 1 * params->m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-            int horizontalMargin = 2 * params->m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+            int verticalMargin = 0; // 1 * params->m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
+            int horizontalMargin = 2 * params->m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
 
             if (this->Is(NOTE) && (*iter)->Is(NOTE)) {
                 assert(params->m_currentNote);

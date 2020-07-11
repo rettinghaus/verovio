@@ -140,8 +140,8 @@ public:
     int GetDrawingOctaveSize(int staffSize) const;
     int GetDrawingBrevisWidth(int staffSize) const;
     int GetDrawingBarLineWidth(int staffSize) const;
-    int GetDrawingStaffLineWidth(int staffSize) const;
-    int GetDrawingStemWidth(int staffSize) const;
+    int GetDrawingStaffLineThickness(int staffSize) const;
+    int GetDrawingStemThickness(int staffSize) const;
     int GetDrawingDirHeight(int staffSize, bool withMargin) const;
     int GetDrawingDynamHeight(int staffSize, bool withMargin) const;
     int GetDrawingHairpinSize(int staffSize, bool withMargin) const;

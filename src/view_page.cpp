@@ -385,7 +385,7 @@ void View::DrawStaffGrp(
     }
     else if (staffGrp->GetSymbol() == staffGroupingSym_SYMBOL_bracketsq) {
         DrawBracketsq(dc, x, yTop, yBottom, staffSize);
-        x -= m_doc->GetDrawingBeamWidth(staffSize, false) + 1.5 * m_doc->GetDrawingStaffLineWidth(staffSize);
+        x -= m_doc->GetDrawingBeamWidth(staffSize, false) + 1.5 * m_doc->GetDrawingStaffLineThickness(staffSize);
     }
 
     // recursively draw the children
@@ -520,7 +520,7 @@ void View::DrawBracket(DeviceContext *dc, int x, int y1, int y2, int staffSize)
 
     x2 = x - m_doc->GetDrawingBeamWidth(staffSize, false);
     x1 = x2 - m_doc->GetDrawingBeamWidth(staffSize, false);
-    offset = m_doc->GetDrawingStaffLineWidth(staffSize) / 2;
+    offset = m_doc->GetDrawingStaffLineThickness(staffSize) / 2;
 
     dc->StartCustomGraphic("grpSym");
 
@@ -541,7 +541,7 @@ void View::DrawBracketsq(DeviceContext *dc, int x, int y1, int y2, int staffSize
     int offset;
 
     x -= m_doc->GetDrawingBeamWidth(staffSize, false);
-    offset = m_doc->GetDrawingStaffLineWidth(staffSize) / 2;
+    offset = m_doc->GetDrawingStaffLineThickness(staffSize) / 2;
 
     dc->StartCustomGraphic("grpSym");
 
@@ -578,7 +578,7 @@ void View::DrawBrace(DeviceContext *dc, int x, int y1, int y2, int staffSize)
     Point bez2[4];
 
     int penWidth;
-    penWidth = m_doc->GetDrawingStemWidth(staffSize);
+    penWidth = m_doc->GetDrawingStemThickness(staffSize);
     y1 -= penWidth;
     y2 += penWidth;
     BoundingBox::Swap(y1, y2);
@@ -588,7 +588,7 @@ void View::DrawBrace(DeviceContext *dc, int x, int y1, int y2, int staffSize)
     x -= m_doc->GetDrawingBeamWhiteWidth(staffSize, false); // distance between bar and start brace
 
     ymed = (y1 + y2) / 2;
-    fact = m_doc->GetDrawingBeamWhiteWidth(staffSize, false) + m_doc->GetDrawingStemWidth(staffSize);
+    fact = m_doc->GetDrawingBeamWhiteWidth(staffSize, false) + m_doc->GetDrawingStemThickness(staffSize);
     xdec = ToDeviceContextX(fact);
 
     points[0].x = ToDeviceContextX(x);
@@ -1087,7 +1087,7 @@ void View::DrawStaffLines(DeviceContext *dc, Staff *staff, Measure *measure, Sys
         y2 = y1;
     }
 
-    int lineWidth = m_doc->GetDrawingStaffLineWidth(staff->m_drawingStaffSize);
+    int lineWidth = m_doc->GetDrawingStaffLineThickness(staff->m_drawingStaffSize);
     dc->SetPen(m_currentColour, ToDeviceContextX(lineWidth), AxSOLID);
     dc->SetBrush(m_currentColour, AxSOLID);
 
@@ -1129,8 +1129,8 @@ void View::DrawLedgerLines(DeviceContext *dc, Staff *staff, ArrayOfLedgerLines *
     dc->StartCustomGraphic("ledgerLines", gClass);
 
     // HARDCODED
-    int lineWidth = m_doc->GetDrawingStaffLineWidth(staff->m_drawingStaffSize) * 1.75;
-    if (cueSize) lineWidth = m_doc->GetDrawingStaffLineWidth(staff->m_drawingStaffSize) * 1.25;
+    int lineWidth = m_doc->GetDrawingStaffLineThickness(staff->m_drawingStaffSize) * 1.75;
+    if (cueSize) lineWidth = m_doc->GetDrawingStaffLineThickness(staff->m_drawingStaffSize) * 1.25;
 
     dc->SetPen(m_currentColour, ToDeviceContextX(lineWidth), AxSOLID);
     dc->SetBrush(m_currentColour, AxSOLID);

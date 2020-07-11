@@ -520,8 +520,8 @@ public:
     OptionDbl m_spacingNonLinear;
     OptionInt m_spacingStaff;
     OptionInt m_spacingSystem;
-    OptionDbl m_staffLineWidth;
-    OptionDbl m_stemWidth;
+    OptionDbl m_staffLineThickness;
+    OptionDbl m_stemThickness;
     OptionIntMap m_systemDivider;
     OptionInt m_systemMaxPerPage;
     OptionDbl m_tieThickness;

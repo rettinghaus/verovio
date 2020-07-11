@@ -270,12 +270,6 @@ void Slur::AdjustSlurPosition(Doc *doc, FloatingCurvePositioner *curve,
     const ArrayOfCurveSpannedElements *spannedElements, Point &p1, Point &p2, Point &c1, Point &c2,
     curvature_CURVEDIR curveDir, float &angle, bool forceBothSides)
 {
-    Point bezier[4];
-    bezier[0] = p1;
-    bezier[1] = c1;
-    bezier[2] = c2;
-    bezier[3] = p2;
-
     int maxShiftLeft = 0;
     int maxShiftRight = 0;
 

@@ -98,7 +98,7 @@ void View::DrawTupletBracket(DeviceContext *dc, LayerElement *element, Layer *la
     }
 
     data_STAFFREL_basic position = tuplet->GetDrawingBracketPos();
-    int lineWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    int lineWidth = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
 
     dc->ResumeGraphic(tupletBracket, tupletBracket->GetUuid());
 
@@ -110,9 +110,9 @@ void View::DrawTupletBracket(DeviceContext *dc, LayerElement *element, Layer *la
     // Draw a bracked with a gap
     if (tupletBracket->GetAlignedNum() && tupletBracket->GetAlignedNum()->HasSelfBB()) {
         int xNumLeft
-            = tupletBracket->GetAlignedNum()->GetSelfLeft() - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+            = tupletBracket->GetAlignedNum()->GetSelfLeft() - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
         int xNumRight
-            = tupletBracket->GetAlignedNum()->GetSelfRight() + m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+            = tupletBracket->GetAlignedNum()->GetSelfRight() + m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
         double slope = (double)(yRight - yLeft) / (double)(xRight - xLeft);
         int yNumLeft = yLeft + slope * (xNumLeft - xLeft);
         DrawObliquePolygon(dc, xLeft, yLeft, xNumLeft, yNumLeft, lineWidth);

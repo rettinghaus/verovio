@@ -542,7 +542,7 @@ void View::DrawBTrem(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
             // Idem as above
             y = childElement->GetDrawingBottom(m_doc, staff->m_drawingStaffSize, false)
                 + m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
-            x = stemPoint.x + m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) / 2;
+            x = stemPoint.x + m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) / 2;
         }
         else {
             y = childElement->GetDrawingBottom(m_doc, staff->m_drawingStaffSize)
@@ -920,7 +920,7 @@ void View::DrawFlag(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
     Stem *stem = dynamic_cast<Stem *>(flag->GetFirstAncestor(STEM));
     assert(stem);
 
-    int x = flag->GetDrawingX() - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) / 2;
+    int x = flag->GetDrawingX() - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) / 2;
     int y = flag->GetDrawingY();
 
     dc->StartGraphic(element, "", element->GetUuid());
@@ -1256,9 +1256,9 @@ void View::DrawMultiRest(DeviceContext *dc, LayerElement *element, Layer *layer,
         // Draw two lines at beginning and end
         int border = m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
         DrawFilledRectangle(
-            dc, x1, y1 + border, x1 + m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) * 2, y2 - border);
+            dc, x1, y1 + border, x1 + m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) * 2, y2 - border);
         DrawFilledRectangle(
-            dc, x2 - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) * 2, y1 + border, x2, y2 - border);
+            dc, x2 - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) * 2, y1 + border, x2, y2 - border);
     }
     else {
         // Draw the base rect
@@ -1449,8 +1449,8 @@ void View::DrawStem(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
 
     dc->StartGraphic(element, "", element->GetUuid());
 
-    DrawFilledRectangle(dc, stem->GetDrawingX() - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) / 2,
-        stem->GetDrawingY(), stem->GetDrawingX() + m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) / 2,
+    DrawFilledRectangle(dc, stem->GetDrawingX() - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) / 2,
+        stem->GetDrawingY(), stem->GetDrawingX() + m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) / 2,
         stem->GetDrawingY() - stem->GetDrawingStemLen());
 
     DrawLayerChildren(dc, stem, layer, staff, measure);
@@ -1608,7 +1608,7 @@ void View::DrawAcciaccaturaSlash(DeviceContext *dc, Stem *stem, Staff *staff)
     assert(stem);
     assert(staff);
 
-    dc->SetPen(AxNONE, m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize) * 1.2, AxSOLID);
+    dc->SetPen(AxNONE, m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize) * 1.2, AxSOLID);
     dc->SetBrush(AxNONE, AxSOLID);
 
     int positionShift = m_doc->GetCueSize(m_doc->GetDrawingUnit(staff->m_drawingStaffSize));
@@ -1755,7 +1755,7 @@ void View::DrawRestWhole(DeviceContext *dc, int x, int y, int valeur, bool cueSi
         || y < staff->GetDrawingY()
                 - (staff->m_drawingLines - 1) * m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize))
         DrawHorizontalLine(
-            dc, x1 - off / 2, x2 + off / 2, y1, m_doc->GetDrawingStaffLineWidth(staff->m_drawingStaffSize) * 1.75);
+            dc, x1 - off / 2, x2 + off / 2, y1, m_doc->GetDrawingStaffLineThickness(staff->m_drawingStaffSize) * 1.75);
 
     y2 = y1 + vertic;
     DrawFilledRectangle(dc, x1, y1, x2, y2);

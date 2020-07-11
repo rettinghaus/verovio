@@ -270,7 +270,7 @@ void View::DrawMensuralStem(
         stemY2 = (dir == STEMDIRECTION_up) ? y2 - shortener : y2 + shortener;
     }
 
-    int halfStemWidth = m_doc->GetDrawingStemWidth(staffSize) / 2;
+    int halfStemThickness = m_doc->GetDrawingStemThickness(staffSize) / 2;
     // draw the stems and the flags
 
     dc->StartCustomGraphic("stem");
@@ -278,23 +278,23 @@ void View::DrawMensuralStem(
 
         if (nbFlags > 0) {
             for (int i = 0; i < nbFlags; ++i) {
-                DrawSmuflCode(dc, x2 - halfStemWidth, stemY1 - i * flagStemHeight,
+                DrawSmuflCode(dc, x2 - halfStemThickness, stemY1 - i * flagStemHeight,
                     SMUFL_E949_mensuralCombStemUpFlagSemiminima, staff->m_drawingStaffSize, drawingCueSize);
             }
         }
         else {
-            DrawFilledRectangle(dc, x2 - halfStemWidth, stemY1, x2 + halfStemWidth, stemY2);
+            DrawFilledRectangle(dc, x2 - halfStemThickness, stemY1, x2 + halfStemThickness, stemY2);
         }
     }
     else {
         if (nbFlags > 0) {
             for (int i = 0; i < nbFlags; ++i) {
-                DrawSmuflCode(dc, x2 - halfStemWidth, stemY1 + i * flagStemHeight,
+                DrawSmuflCode(dc, x2 - halfStemThickness, stemY1 + i * flagStemHeight,
                     SMUFL_E94A_mensuralCombStemDownFlagSemiminima, staff->m_drawingStaffSize, drawingCueSize);
             }
         }
         else {
-            DrawFilledRectangle(dc, x2 - halfStemWidth, stemY1, x2 + halfStemWidth, stemY2);
+            DrawFilledRectangle(dc, x2 - halfStemThickness, stemY1, x2 + halfStemThickness, stemY2);
         }
     }
     dc->EndCustomGraphic();
@@ -316,8 +316,8 @@ void View::DrawMaximaToBrevis(DeviceContext *dc, int y, LayerElement *element, L
     bool isMensuralBlack = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
     bool fillNotehead = (isMensuralBlack || note->GetColored()) && !(isMensuralBlack && note->GetColored());
 
-    int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-    int strokeWidth = 2.8 * stemWidth;
+    int stemThickness = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
+    int strokeWidth = 2.8 * stemThickness;
 
     int shape = LIGATURE_DEFAULT;
     if (note->GetActualDur() != DUR_BR) {
@@ -341,27 +341,27 @@ void View::DrawMaximaToBrevis(DeviceContext *dc, int y, LayerElement *element, L
 
     if (!fillNotehead) {
         // double the bases of rectangles
-        DrawObliquePolygon(dc, topLeft.x + stemWidth, topLeft.y, bottomRight.x - stemWidth, topLeft.y, -strokeWidth);
+        DrawObliquePolygon(dc, topLeft.x + stemThickness, topLeft.y, bottomRight.x - stemThickness, topLeft.y, -strokeWidth);
         DrawObliquePolygon(
-            dc, topLeft.x + stemWidth, bottomRight.y, bottomRight.x - stemWidth, bottomRight.y, strokeWidth);
+            dc, topLeft.x + stemThickness, bottomRight.y, bottomRight.x - stemThickness, bottomRight.y, strokeWidth);
     }
     else {
-        DrawFilledRectangle(dc, topLeft.x + stemWidth, topLeft.y, bottomRight.x - stemWidth, bottomRight.y);
+        DrawFilledRectangle(dc, topLeft.x + stemThickness, topLeft.y, bottomRight.x - stemThickness, bottomRight.y);
     }
 
     // serifs and / or stem
-    DrawFilledRectangle(dc, topLeft.x, sides[0], topLeft.x + stemWidth, sides[1]);
+    DrawFilledRectangle(dc, topLeft.x, sides[0], topLeft.x + stemThickness, sides[1]);
 
     if (note->GetActualDur() != DUR_BR) {
         // Right side is a stem - end the notehead first
         dc->EndCustomGraphic();
         dc->StartCustomGraphic("stem");
-        DrawFilledRectangle(dc, bottomRight.x - stemWidth, sides[2], bottomRight.x, sides[3]);
+        DrawFilledRectangle(dc, bottomRight.x - stemThickness, sides[2], bottomRight.x, sides[3]);
         dc->EndCustomGraphic();
     }
     else {
         // Right side is a serif
-        DrawFilledRectangle(dc, bottomRight.x - stemWidth, sides[2], bottomRight.x, sides[3]);
+        DrawFilledRectangle(dc, bottomRight.x - stemThickness, sides[2], bottomRight.x, sides[3]);
         dc->EndCustomGraphic();
     }
 
@@ -414,8 +414,8 @@ void View::DrawLigatureNote(DeviceContext *dc, LayerElement *element, Layer *lay
     bool obliqueEnd = (prevShape & LIGATURE_OBLIQUE);
     bool stackedEnd = (shape & LIGATURE_STACKED);
 
-    int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-    int strokeWidth = 2.8 * stemWidth;
+    int stemThickness = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
+    int strokeWidth = 2.8 * stemThickness;
     /** end code duplicated */
 
     Point points[4];
@@ -474,11 +474,11 @@ void View::DrawLigatureNote(DeviceContext *dc, LayerElement *element, Layer *lay
                 sides[3] = prevSides[3];
             }
         }
-        DrawFilledRoundedRectangle(dc, topLeft->x, sideTop, topLeft->x + stemWidth, sideBottom, stemWidth / 3);
+        DrawFilledRoundedRectangle(dc, topLeft->x, sideTop, topLeft->x + stemThickness, sideBottom, stemThickness / 3);
     }
 
     if (!nextNote) {
-        DrawFilledRoundedRectangle(dc, bottomRight->x - stemWidth, sides[2], bottomRight->x, sides[3], stemWidth / 3);
+        DrawFilledRoundedRectangle(dc, bottomRight->x - stemThickness, sides[2], bottomRight->x, sides[3], stemThickness / 3);
     }
 
     return;
@@ -609,7 +609,7 @@ void View::CalcObliquePoints(Note *note1, Note *note2, Staff *staff, Point point
     assert(note2);
     assert(staff);
 
-    int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    int stemThickness = m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
 
     Point *topLeft = &points[0];
     Point *bottomLeft = &points[1];
@@ -638,7 +638,7 @@ void View::CalcObliquePoints(Note *note1, Note *note2, Staff *staff, Point point
     double slope = 0.0;
     if (bottomRight->x != bottomLeft->x)
         slope = (double)(bottomRight->y - bottomLeft->y) / (double)(bottomRight->x - bottomLeft->x);
-    int adjustment = (int)(slope * stemWidth) * adjustmentFactor;
+    int adjustment = (int)(slope * stemThickness) * adjustmentFactor;
     topLeft->y -= adjustment;
     bottomLeft->y -= adjustment;
     topRight->y += adjustment;

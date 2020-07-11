@@ -266,7 +266,7 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
             // same but in beam - adjust the x too
             else if ((parentBeam = start->IsInBeam()) && !parentBeam->IsLastInBeam(start)) {
                 y1 = start->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
-                x1 += startRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+                x1 += startRadius - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
             }
             // d(^)
             else {
@@ -289,7 +289,7 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
             // same but in beam
             else if ((parentBeam = start->IsInBeam()) && !parentBeam->IsLastInBeam(start)) {
                 y1 = start->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
-                x1 -= startRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+                x1 -= startRadius - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
             }
             // P(_)
             else {
@@ -321,7 +321,7 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
             // same but in beam - adjust the x too
             else if ((parentBeam = end->IsInBeam()) && !parentBeam->IsFirstInBeam(end)) {
                 y2 = end->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
-                x2 += endRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+                x2 += endRadius - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
             }
             // (^)d
             else {
@@ -354,7 +354,7 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
             else if ((parentBeam = end->IsInBeam()) && !parentBeam->IsFirstInBeam(end)) {
                 y2 = end->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
                 //
-                x2 -= endRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+                x2 -= endRadius - m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize);
             }
             // (_)P
             else {

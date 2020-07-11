@@ -135,8 +135,8 @@ void View::DrawFTrem(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
 
     if (dur > DUR_1) {
         // Adjust the x position of the first and last element for taking into account the stem width
-        firstElement->m_x -= (m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize)) / 2;
-        secondElement->m_x += (m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize)) / 2;
+        firstElement->m_x -= (m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize)) / 2;
+        secondElement->m_x += (m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize)) / 2;
     }
 
     // Number of bars to draw
@@ -233,8 +233,8 @@ void View::DrawBeamSegment(DeviceContext *dc, BeamSegment *beamSegment, BeamDraw
     // Draw the beam full bar
 
     // Adjust the x position of the first and last element for taking into account the stem width
-    beamElementCoords->at(0)->m_x -= (m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize)) / 2;
-    beamElementCoords->at(last)->m_x += (m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize)) / 2;
+    beamElementCoords->at(0)->m_x -= (m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize)) / 2;
+    beamElementCoords->at(last)->m_x += (m_doc->GetDrawingStemThickness(staff->m_drawingStaffSize)) / 2;
 
     // Shift direction
     shiftY = (beamInterface->m_drawingPlace == BEAMPLACE_below) ? 1.0 : -1.0;

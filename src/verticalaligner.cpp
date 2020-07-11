@@ -380,7 +380,7 @@ int StaffAlignment::AdjustFloatingPositioners(FunctorParams *functorParams)
 
             int overflowAbove = 0;
             if (!skipAbove) overflowAbove = this->CalcOverflowAbove((*iter));
-            if (overflowAbove > params->m_doc->GetDrawingStaffLineWidth(staffSize) / 2) {
+            if (overflowAbove > params->m_doc->GetDrawingStaffLineThickness(staffSize) / 2) {
                 // LogMessage("%sparams->m_doctop overflow: %d", current->GetUuid().c_str(), overflowAbove);
                 this->SetOverflowAbove(overflowAbove);
                 this->m_overflowAboveBBoxes.push_back((*iter));
@@ -388,7 +388,7 @@ int StaffAlignment::AdjustFloatingPositioners(FunctorParams *functorParams)
 
             int overflowBelow = 0;
             if (!skipBelow) overflowBelow = this->CalcOverflowBelow((*iter));
-            if (overflowBelow > params->m_doc->GetDrawingStaffLineWidth(staffSize) / 2) {
+            if (overflowBelow > params->m_doc->GetDrawingStaffLineThickness(staffSize) / 2) {
                 // LogMessage("%s bottom overflow: %d", current->GetUuid().c_str(), overflowBelow);
                 this->SetOverflowBelow(overflowBelow);
                 this->m_overflowBelowBBoxes.push_back((*iter));
