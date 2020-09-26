@@ -1,11 +1,7 @@
 # Run clang-format
 name: Clang-format
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
   checkout-and-check-formatting:
@@ -19,6 +15,5 @@ jobs:
       with:
         scandir: '.'
         excludedirs: 'build'
-        extensions: 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'
+        extensions: 'h,cpp'
         style: 'file'
-        
