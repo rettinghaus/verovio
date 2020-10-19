@@ -14,12 +14,12 @@
 
 //----------------------------------------------------------------------------
 
+#include "functorparams.h"
 #include "doc.h"
 #include "editorial.h"
-#include "functorparams.h"
 #include "note.h"
-#include "staff.h"
 #include "vrv.h"
+#include "staff.h"
 
 namespace vrv {
 

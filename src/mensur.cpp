@@ -28,14 +28,7 @@ int Mensur::s_numBase = 2;
 //----------------------------------------------------------------------------
 
 Mensur::Mensur()
-    : LayerElement("mensur-")
-    , AttColor()
-    , AttCue()
-    , AttDurationRatio()
-    , AttMensuralShared()
-    , AttMensurVis()
-    , AttSlashCount()
-    , AttStaffLoc()
+    : LayerElement("mensur-"), AttColor(), AttCue(), AttDurationRatio(), AttMensuralShared(), AttMensurVis(), AttSlashCount(), AttStaffLoc()
 {
     RegisterAttClass(ATT_COLOR);
     RegisterAttClass(ATT_CUE);
