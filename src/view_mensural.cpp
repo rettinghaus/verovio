@@ -217,7 +217,7 @@ void View::DrawMensuralStem(
     // Cue size is currently disabled
     bool drawingCueSize = false;
     int verticalCenter = staffY - m_doc->GetDrawingDoubleUnit(staffSize) * 2;
-    bool mensural_black = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
+    const bool mensural_black = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
 
     baseStem = m_doc->GetDrawingUnit(staffSize) * STANDARD_STEMLENGTH;
     flagStemHeight = m_doc->GetDrawingDoubleUnit(staffSize);
@@ -408,14 +408,14 @@ void View::DrawLigatureNote(DeviceContext *dc, LayerElement *element, Layer *lay
     int prevShape = (position > 0) ? ligature->m_drawingShapes.at(position - 1) : 0;
 
     /** code duplicated from View::DrawMaximaToBrevis */
-    bool isMensuralBlack = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
-    bool fillNotehead = (isMensuralBlack || note->GetColored()) && !(isMensuralBlack && note->GetColored());
-    bool oblique = ((shape & LIGATURE_OBLIQUE) || (prevShape & LIGATURE_OBLIQUE));
-    bool obliqueEnd = (prevShape & LIGATURE_OBLIQUE);
-    bool stackedEnd = (shape & LIGATURE_STACKED);
+    const bool isMensuralBlack = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
+    const bool fillNotehead = (isMensuralBlack || note->GetColored()) && !(isMensuralBlack && note->GetColored());
+    const bool oblique = ((shape & LIGATURE_OBLIQUE) || (prevShape & LIGATURE_OBLIQUE));
+    const bool obliqueEnd = (prevShape & LIGATURE_OBLIQUE);
+    const bool stackedEnd = (shape & LIGATURE_STACKED);
 
-    int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-    int strokeWidth = 2.8 * stemWidth;
+    const int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    const int strokeWidth = 2.8 * stemWidth;
     /** end code duplicated */
 
     Point points[4];
