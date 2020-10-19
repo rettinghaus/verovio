@@ -27,7 +27,7 @@ class Pages;
 class Page;
 class Score;
 
-enum DocType { Raw = 0, Rendering, Transcription, Facs };
+enum DocType { Raw=0, Rendering, Transcription, Facs };
 
 //----------------------------------------------------------------------------
 // Doc
@@ -68,7 +68,7 @@ public:
      * Getter for the options
      */
     Options *GetOptions() const { return m_options; }
-    void SetOptions(Options *options) { (*m_options) = *options; };
+    void SetOptions(Options *options) { (*m_options)=*options; };
 
     /**
      * Generate a document scoreDef when none is provided.
@@ -221,7 +221,7 @@ public:
      * It uses the MusObject::SetPageScoreDef functor method for parsing the file.
      * This will be done only if m_currentScoreDefDone is false or force is true.
      */
-    void SetCurrentScoreDefDoc(bool force = false);
+    void SetCurrentScoreDefDoc(bool force=false);
 
     /**
      * Optimize the scoreDef once the document is cast-off.
@@ -298,14 +298,14 @@ public:
      * By default, the element are used only for the rendering and not preserved in the MEI output
      * Permanent conversion discard analytical markup and elements will be preserved in the MEI output.
      */
-    void ConvertScoreDefMarkupDoc(bool permanent = false);
+    void ConvertScoreDefMarkupDoc(bool permanent=false);
 
     /**
      * Convert analytical encoding (@fermata, @tie) to correpsonding elements
      * By default, the element are used only for the rendering and not preserved in the MEI output
      * Permanent conversion discard analytical markup and elements will be preserved in the MEI output.
      */
-    void ConvertMarkupDoc(bool permanent = false);
+    void ConvertMarkupDoc(bool permanent=false);
 
     /**
      * Transpose the content of the doc.
@@ -335,7 +335,7 @@ public:
      * We need to call this because otherwise looking at the page idx will fail.
      * See Doc::LayOut for an example.
      */
-    void ResetDrawingPage() { m_drawingPage = NULL; }
+    void ResetDrawingPage() { m_drawingPage=NULL; }
 
     /**
      * Getter to the drawPage. Normally, getting the page should
@@ -367,7 +367,7 @@ public:
      * @name Setter for and getter for mensural only flag
      */
     ///@{
-    void SetMensuralMusicOnly(bool isMensuralMusicOnly) { m_isMensuralMusicOnly = isMensuralMusicOnly; }
+    void SetMensuralMusicOnly(bool isMensuralMusicOnly) { m_isMensuralMusicOnly=isMensuralMusicOnly; }
     bool IsMensuralMusicOnly() const { return m_isMensuralMusicOnly; }
     ///@}
 
@@ -375,7 +375,7 @@ public:
      * @name Setter and getter for facsimile
      */
     ///@{
-    void SetFacsimile(Facsimile *facsimile) { m_facsimile = facsimile; }
+    void SetFacsimile(Facsimile *facsimile) { m_facsimile=facsimile; }
     Facsimile *GetFacsimile() { return m_facsimile; }
     bool HasFacsimile() const { return m_facsimile != NULL; }
     ///@}
@@ -542,7 +542,7 @@ private:
     int m_pageMarginTop;
 
     /** Facsimile information */
-    Facsimile *m_facsimile = NULL;
+    Facsimile *m_facsimile=NULL;
 };
 
 } // namespace vrv

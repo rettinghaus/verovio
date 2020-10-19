@@ -56,7 +56,7 @@ namespace vrv {
 // Object
 //----------------------------------------------------------------------------
 
-unsigned long Object::s_objectCounter = 0;
+unsigned long Object::s_objectCounter=0;
 
 Object::Object() : BoundingBox()
 {
@@ -86,30 +86,30 @@ Object::Object(const Object &object) : BoundingBox(object)
     ClearChildren();
     ResetBoundingBox(); // It does not make sense to keep the values of the BBox
 
-    m_classid = object.m_classid;
-    m_parent = NULL;
+    m_classid=object.m_classid;
+    m_parent=NULL;
 
     // Flags
-    m_isAttribute = object.m_isAttribute;
-    m_isModified = true;
-    m_isReferenceObject = object.m_isReferenceObject;
+    m_isAttribute=object.m_isAttribute;
+    m_isModified=true;
+    m_isReferenceObject=object.m_isReferenceObject;
 
     // Also copy attribute classes
-    m_attClasses = object.m_attClasses;
-    m_interfaces = object.m_interfaces;
+    m_attClasses=object.m_attClasses;
+    m_interfaces=object.m_interfaces;
     // New uuid
     this->GenerateUuid();
     // For now do not copy them
-    // m_unsupported = object.m_unsupported;
+    // m_unsupported=object.m_unsupported;
 
     if (!object.CopyChildren()) {
         return;
     }
 
     int i;
-    for (i = 0; i < (int)object.m_children.size(); ++i) {
-        Object *current = object.m_children.at(i);
-        Object *clone = current->Clone();
+    for (i=0; i < (int)object.m_children.size(); ++i) {
+        Object *current=object.m_children.at(i);
+        Object *clone=current->Clone();
         if (clone) {
             clone->SetParent(this);
             clone->CloneReset();
@@ -132,26 +132,26 @@ Object &Object::operator=(const Object &object)
         ClearChildren();
         ResetBoundingBox(); // It does not make sense to keep the values of the BBox
 
-        m_classid = object.m_classid;
-        m_parent = NULL;
+        m_classid=object.m_classid;
+        m_parent=NULL;
         // Flags
-        m_isAttribute = object.m_isAttribute;
-        m_isModified = true;
-        m_isReferenceObject = object.m_isReferenceObject;
+        m_isAttribute=object.m_isAttribute;
+        m_isModified=true;
+        m_isReferenceObject=object.m_isReferenceObject;
 
         // Also copy attribute classes
-        m_attClasses = object.m_attClasses;
-        m_interfaces = object.m_interfaces;
+        m_attClasses=object.m_attClasses;
+        m_interfaces=object.m_interfaces;
         // New uuid
         this->GenerateUuid();
         // For now do now copy them
-        // m_unsupported = object.m_unsupported;
+        // m_unsupported=object.m_unsupported;
 
         if (object.CopyChildren()) {
             int i;
-            for (i = 0; i < (int)object.m_children.size(); ++i) {
-                Object *current = object.m_children.at(i);
-                Object *clone = current->Clone();
+            for (i=0; i < (int)object.m_children.size(); ++i) {
+                Object *current=object.m_children.at(i);
+                Object *clone=current->Clone();
                 clone->SetParent(this);
                 clone->CloneReset();
                 m_children.push_back(clone);
@@ -168,15 +168,15 @@ Object::~Object()
 
 void Object::Init(const std::string &classid)
 {
-    m_classid = classid;
-    m_parent = NULL;
+    m_classid=classid;
+    m_parent=NULL;
     // Flags
-    m_isAttribute = false;
-    m_isModified = true;
-    m_isReferenceObject = false;
+    m_isAttribute=false;
+    m_isModified=true;
+    m_isReferenceObject=false;
     // Comments
-    m_comment = "";
-    m_closingComment = "";
+    m_comment="";
+    m_closingComment="";
 
     this->GenerateUuid();
 
@@ -194,7 +194,7 @@ void Object::SetAsReferenceObject()
 {
     assert(m_children.empty());
 
-    m_isReferenceObject = true;
+    m_isReferenceObject=true;
 }
 
 void Object::Reset()
@@ -212,7 +212,7 @@ void Object::RegisterInterface(std::vector<AttClassId> *attClasses, InterfaceId 
 bool Object::IsBoundaryElement()
 {
     if (this->IsEditorialElement() || this->Is(ENDING) || this->Is(SECTION)) {
-        BoundaryStartInterface *interface = dynamic_cast<BoundaryStartInterface *>(this);
+        BoundaryStartInterface *interface=dynamic_cast<BoundaryStartInterface *>(this);
         assert(interface);
         return (interface->IsBoundary());
     }
@@ -229,8 +229,8 @@ void Object::MoveChildrenFrom(Object *sourceParent, int idx, bool allowTypeChang
     }
 
     int i;
-    for (i = 0; i < (int)sourceParent->m_children.size(); ++i) {
-        Object *child = sourceParent->Relinquish(i);
+    for (i=0; i < (int)sourceParent->m_children.size(); ++i) {
+        Object *child=sourceParent->Relinquish(i);
         child->SetParent(this);
         if (idx != -1) {
             this->InsertChild(child, idx);
@@ -247,9 +247,9 @@ void Object::ReplaceChild(Object *currentChild, Object *replacingChild)
     assert(this->GetChildIndex(currentChild) != -1);
     assert(this->GetChildIndex(replacingChild) == -1);
 
-    int idx = this->GetChildIndex(currentChild);
+    int idx=this->GetChildIndex(currentChild);
     currentChild->ResetParent();
-    m_children.at(idx) = replacingChild;
+    m_children.at(idx)=replacingChild;
     replacingChild->SetParent(this);
     this->Modify();
 }
@@ -259,7 +259,7 @@ void Object::InsertBefore(Object *child, Object *newChild)
     assert(this->GetChildIndex(child) != -1);
     assert(this->GetChildIndex(newChild) == -1);
 
-    int idx = this->GetChildIndex(child);
+    int idx=this->GetChildIndex(child);
     newChild->SetParent(this);
     this->InsertChild(newChild, idx);
 
@@ -271,7 +271,7 @@ void Object::InsertAfter(Object *child, Object *newChild)
     assert(this->GetChildIndex(child) != -1);
     assert(this->GetChildIndex(newChild) == -1);
 
-    int idx = this->GetChildIndex(child);
+    int idx=this->GetChildIndex(child);
     newChild->SetParent(this);
     this->InsertChild(newChild, idx + 1);
 
@@ -290,20 +290,20 @@ void Object::MoveItselfTo(Object *targetParent)
     assert(m_parent);
     assert(m_parent != targetParent);
 
-    Object *relinquishedObject = this->GetParent()->Relinquish(this->GetIdx());
+    Object *relinquishedObject=this->GetParent()->Relinquish(this->GetIdx());
     assert(relinquishedObject && (relinquishedObject == this));
     targetParent->AddChild(relinquishedObject);
 }
 
 void Object::SetUuid(std::string uuid)
 {
-    m_uuid = uuid;
+    m_uuid=uuid;
 }
 
 void Object::SwapUuid(Object *other)
 {
     assert(other);
-    std::string swapUuid = this->GetUuid();
+    std::string swapUuid=this->GetUuid();
     this->SetUuid(other->GetUuid());
     other->SetUuid(swapUuid);
 }
@@ -316,7 +316,7 @@ void Object::ClearChildren()
     }
 
     ArrayOfObjects::iterator iter;
-    for (iter = m_children.begin(); iter != m_children.end(); ++iter) {
+    for (iter=m_children.begin(); iter != m_children.end(); ++iter) {
         // we need to check if this is the parent
         // ownership might have been given up with Relinquish
         if ((*iter)->GetParent() == this) {
@@ -370,7 +370,7 @@ bool Object::HasAttribute(std::string attribute, std::string value) const
     ArrayOfStrAttr attributes;
     this->GetAttributes(&attributes);
     ArrayOfStrAttr::iterator iter;
-    for (iter = attributes.begin(); iter != attributes.end(); ++iter) {
+    for (iter=attributes.begin(); iter != attributes.end(); ++iter) {
         if (((*iter).first == attribute) && ((*iter).second == value)) return true;
     }
     return false;
@@ -378,27 +378,27 @@ bool Object::HasAttribute(std::string attribute, std::string value) const
 
 Object *Object::GetFirst(const ClassId classId)
 {
-    m_iteratorElementType = classId;
-    m_iteratorEnd = m_children.end();
-    m_iteratorCurrent = std::find_if(m_children.begin(), m_iteratorEnd, ObjectComparison(m_iteratorElementType));
+    m_iteratorElementType=classId;
+    m_iteratorEnd=m_children.end();
+    m_iteratorCurrent=std::find_if(m_children.begin(), m_iteratorEnd, ObjectComparison(m_iteratorElementType));
     return (m_iteratorCurrent == m_iteratorEnd) ? NULL : *m_iteratorCurrent;
 }
 
 Object *Object::GetNext()
 {
     m_iteratorCurrent++;
-    m_iteratorCurrent = std::find_if(m_iteratorCurrent, m_iteratorEnd, ObjectComparison(m_iteratorElementType));
+    m_iteratorCurrent=std::find_if(m_iteratorCurrent, m_iteratorEnd, ObjectComparison(m_iteratorElementType));
     return (m_iteratorCurrent == m_iteratorEnd) ? NULL : *m_iteratorCurrent;
 }
 
 Object *Object::GetNext(const Object *child, const ClassId classId)
 {
     ArrayOfObjects::iterator iteratorEnd, iteratorCurrent;
-    iteratorEnd = m_children.end();
-    iteratorCurrent = std::find(m_children.begin(), iteratorEnd, child);
+    iteratorEnd=m_children.end();
+    iteratorCurrent=std::find(m_children.begin(), iteratorEnd, child);
     if (iteratorCurrent != iteratorEnd) {
         ++iteratorCurrent;
-        iteratorCurrent = std::find_if(iteratorCurrent, iteratorEnd, ObjectComparison(classId));
+        iteratorCurrent=std::find_if(iteratorCurrent, iteratorEnd, ObjectComparison(classId));
     }
     return (iteratorCurrent == iteratorEnd) ? NULL : *iteratorCurrent;
 }
@@ -406,11 +406,11 @@ Object *Object::GetNext(const Object *child, const ClassId classId)
 Object *Object::GetPrevious(const Object *child, const ClassId classId)
 {
     ArrayOfObjects::reverse_iterator riteratorEnd, riteratorCurrent;
-    riteratorEnd = m_children.rend();
-    riteratorCurrent = std::find(m_children.rbegin(), riteratorEnd, child);
+    riteratorEnd=m_children.rend();
+    riteratorCurrent=std::find(m_children.rbegin(), riteratorEnd, child);
     if (riteratorCurrent != riteratorEnd) {
         ++riteratorCurrent;
-        riteratorCurrent = std::find_if(riteratorCurrent, riteratorEnd, ObjectComparison(classId));
+        riteratorCurrent=std::find_if(riteratorCurrent, riteratorEnd, ObjectComparison(classId));
     }
     return (riteratorCurrent == riteratorEnd) ? NULL : *riteratorCurrent;
 }
@@ -437,7 +437,7 @@ void Object::InsertChild(Object *element, int idx)
         m_children.push_back(element);
         return;
     }
-    ArrayOfObjects::iterator iter = m_children.begin();
+    ArrayOfObjects::iterator iter=m_children.begin();
     m_children.insert(iter + (idx), element);
 }
 
@@ -446,9 +446,9 @@ Object *Object::DetachChild(int idx)
     if (idx >= (int)m_children.size()) {
         return NULL;
     }
-    Object *child = m_children.at(idx);
+    Object *child=m_children.at(idx);
     child->ResetParent();
-    ArrayOfObjects::iterator iter = m_children.begin();
+    ArrayOfObjects::iterator iter=m_children.begin();
     m_children.erase(iter + (idx));
     return child;
 }
@@ -457,7 +457,7 @@ bool Object::HasDescendant(Object *child, int deepness) const
 {
     ArrayOfObjects::const_iterator iter;
 
-    for (iter = m_children.begin(); iter != m_children.end(); ++iter) {
+    for (iter=m_children.begin(); iter != m_children.end(); ++iter) {
         if (child == (*iter))
             return true;
         else if (deepness == 0)
@@ -474,7 +474,7 @@ Object *Object::Relinquish(int idx)
     if (idx >= (int)m_children.size()) {
         return NULL;
     }
-    Object *child = m_children.at(idx);
+    Object *child=m_children.at(idx);
     child->ResetParent();
     return child;
 }
@@ -482,9 +482,9 @@ Object *Object::Relinquish(int idx)
 void Object::ClearRelinquishedChildren()
 {
     ArrayOfObjects::iterator iter;
-    for (iter = m_children.begin(); iter != m_children.end();) {
+    for (iter=m_children.begin(); iter != m_children.end();) {
         if ((*iter)->GetParent() != this) {
-            iter = m_children.erase(iter);
+            iter=m_children.erase(iter);
         }
         else
             ++iter;
@@ -495,7 +495,7 @@ Object *Object::FindDescendantByUuid(std::string uuid, int deepness, bool direct
 {
     Functor findByUuid(&Object::FindByUuid);
     FindByUuidParams findbyUuidParams;
-    findbyUuidParams.m_uuid = uuid;
+    findbyUuidParams.m_uuid=uuid;
     this->Process(&findByUuid, &findbyUuidParams, NULL, NULL, deepness, direction);
     return findbyUuidParams.m_element;
 }
@@ -560,14 +560,14 @@ Object *Object::GetChild(int idx, const ClassId classId)
     if ((idx < 0) || (idx >= (int)objects.size())) {
         return NULL;
     }
-    ListOfObjects::iterator it = objects.begin();
+    ListOfObjects::iterator it=objects.begin();
     std::advance(it, idx);
     return *it;
 }
 
 bool Object::DeleteChild(Object *child)
 {
-    auto it = std::find(m_children.begin(), m_children.end(), child);
+    auto it=std::find(m_children.begin(), m_children.end(), child);
     if (it != m_children.end()) {
         m_children.erase(it);
         if (!m_isReferenceObject) {
@@ -584,12 +584,12 @@ bool Object::DeleteChild(Object *child)
 
 void Object::GenerateUuid()
 {
-    int nr = std::rand();
+    int nr=std::rand();
     char str[17];
     // I do not want to use a stream for doing this!
     snprintf(str, 17, "%016d", nr);
 
-    m_uuid = m_classid + std::string(str);
+    m_uuid=m_classid + std::string(str);
 }
 
 void Object::ResetUuid()
@@ -611,7 +611,7 @@ void Object::SeedUuid(unsigned int seed)
 void Object::SetParent(Object *parent)
 {
     assert(!m_parent);
-    m_parent = parent;
+    m_parent=parent;
 }
 
 bool Object::IsSupportedChild(Object *child)
@@ -652,9 +652,9 @@ int Object::GetDrawingY() const
 void Object::ResetCachedDrawingX() const
 {
     // if (m_cachedDrawingX == VRV_UNSET) return;
-    m_cachedDrawingX = VRV_UNSET;
+    m_cachedDrawingX=VRV_UNSET;
     ArrayOfObjects::const_iterator iter;
-    for (iter = m_children.begin(); iter != m_children.end(); ++iter) {
+    for (iter=m_children.begin(); iter != m_children.end(); ++iter) {
         (*iter)->ResetCachedDrawingX();
     }
 }
@@ -662,9 +662,9 @@ void Object::ResetCachedDrawingX() const
 void Object::ResetCachedDrawingY() const
 {
     // if (m_cachedDrawingY == VRV_UNSET) return;
-    m_cachedDrawingY = VRV_UNSET;
+    m_cachedDrawingY=VRV_UNSET;
     ArrayOfObjects::const_iterator iter;
-    for (iter = m_children.begin(); iter != m_children.end(); ++iter) {
+    for (iter=m_children.begin(); iter != m_children.end(); ++iter) {
         (*iter)->ResetCachedDrawingY();
     }
 }
@@ -673,7 +673,7 @@ int Object::GetChildIndex(const Object *child)
 {
     ArrayOfObjects::iterator iter;
     int i;
-    for (iter = m_children.begin(), i = 0; iter != m_children.end(); ++iter, ++i) {
+    for (iter=m_children.begin(), i=0; iter != m_children.end(); ++iter, ++i) {
         if (child == *iter) {
             return i;
         }
@@ -686,7 +686,7 @@ int Object::GetDescendantIndex(const Object *child, const ClassId classId, int d
     ListOfObjects objects;
     ClassIdComparison matchClassId(classId);
     this->FindAllDescendantByComparison(&objects, &matchClassId);
-    int i = 0;
+    int i=0;
     for (auto &object : objects) {
         if (child == object) return i;
         i++;
@@ -700,7 +700,7 @@ void Object::Modify(bool modified)
     if (m_parent && modified) {
         m_parent->Modify();
     }
-    m_isModified = modified;
+    m_isModified=modified;
 }
 
 void Object::FillFlatList(ArrayOfObjects *flatList)
@@ -778,27 +778,27 @@ void Object::Process(Functor *functor, FunctorParams *functorParams, Functor *en
         return;
     }
 
-    bool processChildren = true;
+    bool processChildren=true;
     if (functor->m_visibleOnly) {
         if (this->IsEditorialElement()) {
-            EditorialElement *editorialElement = vrv_cast<EditorialElement *>(this);
+            EditorialElement *editorialElement=vrv_cast<EditorialElement *>(this);
             assert(editorialElement);
             if (editorialElement->m_visibility == Hidden) {
-                processChildren = false;
+                processChildren=false;
             }
         }
         else if (this->Is(MDIV)) {
-            Mdiv *mdiv = vrv_cast<Mdiv *>(this);
+            Mdiv *mdiv=vrv_cast<Mdiv *>(this);
             assert(mdiv);
             if (mdiv->m_visibility == Hidden) {
-                processChildren = false;
+                processChildren=false;
             }
         }
         else if (this->IsSystemElement()) {
-            SystemElement *systemElement = vrv_cast<SystemElement *>(this);
+            SystemElement *systemElement=vrv_cast<SystemElement *>(this);
             assert(systemElement);
             if (systemElement->m_visibility == Hidden) {
-                processChildren = false;
+                processChildren=false;
             }
         }
     }
@@ -807,7 +807,7 @@ void Object::Process(Functor *functor, FunctorParams *functorParams, Functor *en
 
     // do not go any deeper in this case
     if (functor->m_returnCode == FUNCTOR_SIBLINGS) {
-        functor->m_returnCode = FUNCTOR_CONTINUE;
+        functor->m_returnCode=FUNCTOR_CONTINUE;
         return;
     }
     else if (this->IsEditorialElement()) {
@@ -821,13 +821,13 @@ void Object::Process(Functor *functor, FunctorParams *functorParams, Functor *en
     deepness--;
 
     if (processChildren) {
-        auto filterPredicate = [filters](Object *iter) -> bool {
+        auto filterPredicate=[filters](Object *iter) -> bool {
             if (filters && !filters->empty()) {
                 // first we look if there is a comparison object for the object type (e.g., a Staff)
-                ClassId classId = iter->GetClassId();
+                ClassId classId=iter->GetClassId();
                 ArrayOfComparisons::iterator comparisonIter
-                    = std::find_if(filters->begin(), filters->end(), [classId](Comparison *iter) -> bool {
-                          ClassIdComparison *attComparison = vrv_cast<ClassIdComparison *>(iter);
+                   =std::find_if(filters->begin(), filters->end(), [classId](Comparison *iter) -> bool {
+                          ClassIdComparison *attComparison=vrv_cast<ClassIdComparison *>(iter);
                           assert(attComparison);
                           return classId == attComparison->GetType();
                       });
@@ -844,9 +844,9 @@ void Object::Process(Functor *functor, FunctorParams *functorParams, Functor *en
         };
 
         // We need a pointer to the array for the option to work on a reversed copy
-        ArrayOfObjects *children = &this->m_children;
+        ArrayOfObjects *children=&this->m_children;
         if (direction == BACKWARD) {
-            for (ArrayOfObjects::reverse_iterator iter = children->rbegin(); iter != children->rend(); ++iter) {
+            for (ArrayOfObjects::reverse_iterator iter=children->rbegin(); iter != children->rend(); ++iter) {
                 // we will end here if there is no filter at all or for the current child type
                 if (filterPredicate(*iter)) {
                     (*iter)->Process(functor, functorParams, endFunctor, filters, deepness, direction);
@@ -854,7 +854,7 @@ void Object::Process(Functor *functor, FunctorParams *functorParams, Functor *en
             }
         }
         else {
-            for (ArrayOfObjects::iterator iter = children->begin(); iter != children->end(); ++iter) {
+            for (ArrayOfObjects::iterator iter=children->begin(); iter != children->end(); ++iter) {
                 // we will end here if there is no filter at all or for the current child type
                 if (filterPredicate(*iter)) {
                     (*iter)->Process(functor, functorParams, endFunctor, filters, deepness, direction);
@@ -874,7 +874,7 @@ int Object::Save(Output *output)
 
     Functor save(&Object::Save);
     // Special case where we want to process all objects
-    save.m_visibleOnly = false;
+    save.m_visibleOnly=false;
     Functor saveEnd(&Object::SaveEnd);
     this->Process(&save, &saveParams, &saveEnd);
 
@@ -946,7 +946,7 @@ int ObjectListInterface::GetListIndex(const Object *listElement)
 {
     ArrayOfObjects::iterator iter;
     int i;
-    for (iter = m_list.begin(), i = 0; iter != m_list.end(); ++iter, ++i) {
+    for (iter=m_list.begin(), i=0; iter != m_list.end(); ++iter, ++i) {
         if (listElement == *iter) {
             return i;
         }
@@ -956,22 +956,22 @@ int ObjectListInterface::GetListIndex(const Object *listElement)
 
 Object *ObjectListInterface::GetListFirst(const Object *startFrom, const ClassId classId)
 {
-    ArrayOfObjects::iterator it = m_list.begin();
-    int idx = GetListIndex(startFrom);
+    ArrayOfObjects::iterator it=m_list.begin();
+    int idx=GetListIndex(startFrom);
     if (idx == -1) return NULL;
     std::advance(it, idx);
-    it = std::find_if(it, m_list.end(), ObjectComparison(classId));
+    it=std::find_if(it, m_list.end(), ObjectComparison(classId));
     return (it == m_list.end()) ? NULL : *it;
 }
 
 Object *ObjectListInterface::GetListFirstBackward(Object *startFrom, const ClassId classId)
 {
-    ArrayOfObjects::iterator it = m_list.begin();
-    int idx = GetListIndex(startFrom);
+    ArrayOfObjects::iterator it=m_list.begin();
+    int idx=GetListIndex(startFrom);
     if (idx == -1) return NULL;
     std::advance(it, idx);
     ArrayOfObjects::reverse_iterator rit(it);
-    rit = std::find_if(rit, m_list.rend(), ObjectComparison(classId));
+    rit=std::find_if(rit, m_list.rend(), ObjectComparison(classId));
     return (rit == m_list.rend()) ? NULL : *rit;
 }
 
@@ -979,7 +979,7 @@ Object *ObjectListInterface::GetListPrevious(Object *listElement)
 {
     ArrayOfObjects::iterator iter;
     int i;
-    for (iter = m_list.begin(), i = 0; iter != m_list.end(); ++iter, ++i) {
+    for (iter=m_list.begin(), i=0; iter != m_list.end(); ++iter, ++i) {
         if (listElement == *iter) {
             if (i > 0) {
                 return *(--iter);
@@ -996,7 +996,7 @@ Object *ObjectListInterface::GetListNext(Object *listElement)
 {
     ArrayOfObjects::reverse_iterator iter;
     int i;
-    for (iter = m_list.rbegin(), i = 0; iter != m_list.rend(); ++iter, ++i) {
+    for (iter=m_list.rbegin(), i=0; iter != m_list.rend(); ++iter, ++i) {
         if (listElement == *iter) {
             if (i > 0) {
                 return *(--iter);
@@ -1017,12 +1017,12 @@ std::wstring TextListInterface::GetText(Object *node)
 {
     // alternatively we could cache the concatString in the interface and instantiate it in FilterList
     std::wstring concatText;
-    const ArrayOfObjects *childList = this->GetList(node); // make sure it's initialized
-    for (ArrayOfObjects::const_iterator it = childList->begin(); it != childList->end(); ++it) {
+    const ArrayOfObjects *childList=this->GetList(node); // make sure it's initialized
+    for (ArrayOfObjects::const_iterator it=childList->begin(); it != childList->end(); ++it) {
         if ((*it)->Is(LB)) {
             continue;
         }
-        Text *text = vrv_cast<Text *>(*it);
+        Text *text=vrv_cast<Text *>(*it);
         assert(text);
         concatText += text->GetText();
     }
@@ -1033,14 +1033,14 @@ void TextListInterface::GetTextLines(Object *node, std::vector<std::wstring> &li
 {
     // alternatively we could cache the concatString in the interface and instantiate it in FilterList
     std::wstring concatText;
-    const ArrayOfObjects *childList = this->GetList(node); // make sure it's initialized
-    for (ArrayOfObjects::const_iterator it = childList->begin(); it != childList->end(); ++it) {
+    const ArrayOfObjects *childList=this->GetList(node); // make sure it's initialized
+    for (ArrayOfObjects::const_iterator it=childList->begin(); it != childList->end(); ++it) {
         if ((*it)->Is(LB) && !concatText.empty()) {
             lines.push_back(concatText);
             concatText.clear();
             continue;
         }
-        Text *text = vrv_cast<Text *>(*it);
+        Text *text=vrv_cast<Text *>(*it);
         assert(text);
         concatText += text->GetText();
     }
@@ -1051,11 +1051,11 @@ void TextListInterface::GetTextLines(Object *node, std::vector<std::wstring> &li
 
 void TextListInterface::FilterList(ArrayOfObjects *childList)
 {
-    ArrayOfObjects::iterator iter = childList->begin();
+    ArrayOfObjects::iterator iter=childList->begin();
     while (iter != childList->end()) {
         if (!(*iter)->Is({ LB, TEXT })) {
             // remove anything that is not an LayerElement (e.g. Verse, Syl, etc. but keep Lb)
-            iter = childList->erase(iter);
+            iter=childList->erase(iter);
             continue;
         }
         ++iter;
@@ -1068,22 +1068,22 @@ void TextListInterface::FilterList(ArrayOfObjects *childList)
 
 Functor::Functor()
 {
-    m_returnCode = FUNCTOR_CONTINUE;
-    m_visibleOnly = true;
-    obj_fpt = NULL;
+    m_returnCode=FUNCTOR_CONTINUE;
+    m_visibleOnly=true;
+    obj_fpt=NULL;
 }
 
 Functor::Functor(int (Object::*_obj_fpt)(FunctorParams *))
 {
-    m_returnCode = FUNCTOR_CONTINUE;
-    m_visibleOnly = true;
-    obj_fpt = _obj_fpt;
+    m_returnCode=FUNCTOR_CONTINUE;
+    m_visibleOnly=true;
+    obj_fpt=_obj_fpt;
 }
 
 void Functor::Call(Object *ptr, FunctorParams *functorParams)
 {
     // we should have return codes (not just bool) for avoiding to go further down the tree in some cases
-    m_returnCode = (*ptr.*obj_fpt)(functorParams);
+    m_returnCode=(*ptr.*obj_fpt)(functorParams);
 }
 
 //----------------------------------------------------------------------------
@@ -1092,7 +1092,7 @@ void Functor::Call(Object *ptr, FunctorParams *functorParams)
 
 int Object::AddLayerElementToFlatList(FunctorParams *functorParams)
 {
-    AddLayerElementToFlatListParams *params = vrv_params_cast<AddLayerElementToFlatListParams *>(functorParams);
+    AddLayerElementToFlatListParams *params=vrv_params_cast<AddLayerElementToFlatListParams *>(functorParams);
     assert(params);
 
     params->m_flatList->push_back(this);
@@ -1103,7 +1103,7 @@ int Object::AddLayerElementToFlatList(FunctorParams *functorParams)
 
 int Object::FindByUuid(FunctorParams *functorParams)
 {
-    FindByUuidParams *params = vrv_params_cast<FindByUuidParams *>(functorParams);
+    FindByUuidParams *params=vrv_params_cast<FindByUuidParams *>(functorParams);
     assert(params);
 
     if (params->m_element) {
@@ -1112,7 +1112,7 @@ int Object::FindByUuid(FunctorParams *functorParams)
     }
 
     if (params->m_uuid == this->GetUuid()) {
-        params->m_element = this;
+        params->m_element=this;
         // LogDebug("Found it!");
         return FUNCTOR_STOP;
     }
@@ -1122,7 +1122,7 @@ int Object::FindByUuid(FunctorParams *functorParams)
 
 int Object::FindByComparison(FunctorParams *functorParams)
 {
-    FindByComparisonParams *params = vrv_params_cast<FindByComparisonParams *>(functorParams);
+    FindByComparisonParams *params=vrv_params_cast<FindByComparisonParams *>(functorParams);
     assert(params);
 
     if (params->m_element) {
@@ -1132,7 +1132,7 @@ int Object::FindByComparison(FunctorParams *functorParams)
 
     // evaluate by applying the Comparison operator()
     if ((*params->m_comparison)(this)) {
-        params->m_element = this;
+        params->m_element=this;
         // LogDebug("Found it!");
         return FUNCTOR_STOP;
     }
@@ -1142,12 +1142,12 @@ int Object::FindByComparison(FunctorParams *functorParams)
 
 int Object::FindExtremeByComparison(FunctorParams *functorParams)
 {
-    FindExtremeByComparisonParams *params = vrv_params_cast<FindExtremeByComparisonParams *>(functorParams);
+    FindExtremeByComparisonParams *params=vrv_params_cast<FindExtremeByComparisonParams *>(functorParams);
     assert(params);
 
     // evaluate by applying the Comparison operator()
     if ((*params->m_comparison)(this)) {
-        params->m_element = this;
+        params->m_element=this;
     }
     // continue until the end
     return FUNCTOR_CONTINUE;
@@ -1155,7 +1155,7 @@ int Object::FindExtremeByComparison(FunctorParams *functorParams)
 
 int Object::FindAllByComparison(FunctorParams *functorParams)
 {
-    FindAllByComparisonParams *params = vrv_params_cast<FindAllByComparisonParams *>(functorParams);
+    FindAllByComparisonParams *params=vrv_params_cast<FindAllByComparisonParams *>(functorParams);
     assert(params);
 
     // evaluate by applying the Comparison operator()
@@ -1168,13 +1168,13 @@ int Object::FindAllByComparison(FunctorParams *functorParams)
 
 int Object::FindAllBetween(FunctorParams *functorParams)
 {
-    FindAllBetweenParams *params = vrv_params_cast<FindAllBetweenParams *>(functorParams);
+    FindAllBetweenParams *params=vrv_params_cast<FindAllBetweenParams *>(functorParams);
     assert(params);
 
     // We are reaching the start of the range
     if (params->m_start == this) {
         // Setting the start to NULL indicates that we are in the range
-        params->m_start = NULL;
+        params->m_start=NULL;
     }
     // We have not reached the start yet
     else if (params->m_start) {
@@ -1197,30 +1197,30 @@ int Object::FindAllBetween(FunctorParams *functorParams)
 
 int Object::FindAllReferencedObjects(FunctorParams *functorParams)
 {
-    FindAllReferencedObjectsParams *params = vrv_params_cast<FindAllReferencedObjectsParams *>(functorParams);
+    FindAllReferencedObjectsParams *params=vrv_params_cast<FindAllReferencedObjectsParams *>(functorParams);
     assert(params);
 
     if (this->HasInterface(INTERFACE_LINKING)) {
-        LinkingInterface *interface = this->GetLinkingInterface();
+        LinkingInterface *interface=this->GetLinkingInterface();
         assert(interface);
         if (interface->GetNextLink()) params->m_elements->push_back(interface->GetNextLink());
         if (interface->GetSameasLink()) params->m_elements->push_back(interface->GetSameasLink());
     }
     if (this->HasInterface(INTERFACE_PLIST)) {
-        PlistInterface *interface = this->GetPlistInterface();
+        PlistInterface *interface=this->GetPlistInterface();
         assert(interface);
         for (auto &object : *interface->GetRefs()) {
             params->m_elements->push_back(object);
         }
     }
     if (this->HasInterface(INTERFACE_TIME_POINT) || this->HasInterface(INTERFACE_TIME_SPANNING)) {
-        TimePointInterface *interface = this->GetTimePointInterface();
+        TimePointInterface *interface=this->GetTimePointInterface();
         assert(interface);
         if (interface->GetStart() && !interface->GetStart()->Is(TIMESTAMP_ATTR))
             params->m_elements->push_back(interface->GetStart());
     }
     if (this->HasInterface(INTERFACE_TIME_SPANNING)) {
-        TimeSpanningInterface *interface = this->GetTimeSpanningInterface();
+        TimeSpanningInterface *interface=this->GetTimeSpanningInterface();
         assert(interface);
         if (interface->GetEnd() && !interface->GetEnd()->Is(TIMESTAMP_ATTR))
             params->m_elements->push_back(interface->GetEnd());
@@ -1232,7 +1232,7 @@ int Object::FindAllReferencedObjects(FunctorParams *functorParams)
 
 int Object::ConvertToCastOffMensural(FunctorParams *functorParams)
 {
-    ConvertToCastOffMensuralParams *params = vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
+    ConvertToCastOffMensuralParams *params=vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
     assert(params);
 
     assert(m_parent);
@@ -1249,16 +1249,16 @@ int Object::ConvertToCastOffMensural(FunctorParams *functorParams)
 
 int Object::PrepareFacsimile(FunctorParams *functorParams)
 {
-    PrepareFacsimileParams *params = vrv_params_cast<PrepareFacsimileParams *>(functorParams);
+    PrepareFacsimileParams *params=vrv_params_cast<PrepareFacsimileParams *>(functorParams);
     assert(params);
 
     if (this->HasInterface(INTERFACE_FACSIMILE)) {
-        FacsimileInterface *interface = this->GetFacsimileInterface();
+        FacsimileInterface *interface=this->GetFacsimileInterface();
         assert(interface);
         if (interface->HasFacs()) {
-            std::string facsUuid = (interface->GetFacs().compare(0, 1, "#") == 0 ? interface->GetFacs().substr(1)
+            std::string facsUuid=(interface->GetFacs().compare(0, 1, "#") == 0 ? interface->GetFacs().substr(1)
                                                                                  : interface->GetFacs());
-            Zone *zone = params->m_facsimile->FindZoneByUuid(facsUuid);
+            Zone *zone=params->m_facsimile->FindZoneByUuid(facsUuid);
             if (zone != NULL) {
                 interface->SetZone(zone);
             }
@@ -1274,29 +1274,29 @@ int Object::PrepareFacsimile(FunctorParams *functorParams)
 
 int Object::PrepareLinking(FunctorParams *functorParams)
 {
-    PrepareLinkingParams *params = vrv_params_cast<PrepareLinkingParams *>(functorParams);
+    PrepareLinkingParams *params=vrv_params_cast<PrepareLinkingParams *>(functorParams);
     assert(params);
 
     if (params->m_fillList && this->HasInterface(INTERFACE_LINKING)) {
-        LinkingInterface *interface = this->GetLinkingInterface();
+        LinkingInterface *interface=this->GetLinkingInterface();
         assert(interface);
         interface->InterfacePrepareLinking(functorParams, this);
     }
 
     // @next
-    std::string uuid = this->GetUuid();
-    auto r1 = params->m_nextUuidPairs.equal_range(uuid);
+    std::string uuid=this->GetUuid();
+    auto r1=params->m_nextUuidPairs.equal_range(uuid);
     if (r1.first != params->m_nextUuidPairs.end()) {
-        for (auto i = r1.first; i != r1.second; ++i) {
+        for (auto i=r1.first; i != r1.second; ++i) {
             i->second->SetNextLink(this);
         }
         params->m_nextUuidPairs.erase(r1.first, r1.second);
     }
 
     // @sameas
-    auto r2 = params->m_sameasUuidPairs.equal_range(uuid);
+    auto r2=params->m_sameasUuidPairs.equal_range(uuid);
     if (r2.first != params->m_sameasUuidPairs.end()) {
-        for (auto j = r2.first; j != r2.second; ++j) {
+        for (auto j=r2.first; j != r2.second; ++j) {
             j->second->SetSameasLink(this);
         }
         params->m_sameasUuidPairs.erase(r2.first, r2.second);
@@ -1306,17 +1306,17 @@ int Object::PrepareLinking(FunctorParams *functorParams)
 
 int Object::PreparePlist(FunctorParams *functorParams)
 {
-    PreparePlistParams *params = vrv_params_cast<PreparePlistParams *>(functorParams);
+    PreparePlistParams *params=vrv_params_cast<PreparePlistParams *>(functorParams);
     assert(params);
 
     if (params->m_fillList && this->HasInterface(INTERFACE_PLIST)) {
-        PlistInterface *interface = this->GetPlistInterface();
+        PlistInterface *interface=this->GetPlistInterface();
         assert(interface);
         return interface->InterfacePreparePlist(functorParams, this);
     }
 
-    std::string uuid = this->GetUuid();
-    auto i = std::find_if(params->m_interfaceUuidPairs.begin(), params->m_interfaceUuidPairs.end(),
+    std::string uuid=this->GetUuid();
+    auto i=std::find_if(params->m_interfaceUuidPairs.begin(), params->m_interfaceUuidPairs.end(),
         [uuid](std::pair<PlistInterface *, std::string> pair) { return (pair.second == uuid); });
     if (i != params->m_interfaceUuidPairs.end()) {
         i->first->SetRef(this);
@@ -1328,22 +1328,22 @@ int Object::PreparePlist(FunctorParams *functorParams)
 
 int Object::SetCautionaryScoreDef(FunctorParams *functorParams)
 {
-    SetCautionaryScoreDefParams *params = vrv_params_cast<SetCautionaryScoreDefParams *>(functorParams);
+    SetCautionaryScoreDefParams *params=vrv_params_cast<SetCautionaryScoreDefParams *>(functorParams);
     assert(params);
 
     assert(params->m_currentScoreDef);
 
     // starting a new staff
     if (this->Is(STAFF)) {
-        Staff *staff = vrv_cast<Staff *>(this);
+        Staff *staff=vrv_cast<Staff *>(this);
         assert(staff);
-        params->m_currentStaffDef = params->m_currentScoreDef->GetStaffDef(staff->GetN());
+        params->m_currentStaffDef=params->m_currentScoreDef->GetStaffDef(staff->GetN());
         return FUNCTOR_CONTINUE;
     }
 
     // starting a new layer
     if (this->Is(LAYER)) {
-        Layer *layer = vrv_cast<Layer *>(this);
+        Layer *layer=vrv_cast<Layer *>(this);
         assert(layer);
         layer->SetDrawingCautionValues(params->m_currentStaffDef);
         return FUNCTOR_SIBLINGS;
@@ -1354,46 +1354,46 @@ int Object::SetCautionaryScoreDef(FunctorParams *functorParams)
 
 int Object::SetCurrentScoreDef(FunctorParams *functorParams)
 {
-    SetCurrentScoreDefParams *params = vrv_params_cast<SetCurrentScoreDefParams *>(functorParams);
+    SetCurrentScoreDefParams *params=vrv_params_cast<SetCurrentScoreDefParams *>(functorParams);
     assert(params);
 
     assert(params->m_upcomingScoreDef);
 
     // starting a new page
     if (this->Is(PAGE)) {
-        Page *page = vrv_cast<Page *>(this);
+        Page *page=vrv_cast<Page *>(this);
         assert(page);
         if (page->GetParent()->GetChildIndex(page) == 0) {
             params->m_upcomingScoreDef->SetRedrawFlags(true, true, true, true, false);
-            params->m_drawLabels = true;
+            params->m_drawLabels=true;
         }
-        page->m_drawingScoreDef = *params->m_upcomingScoreDef;
+        page->m_drawingScoreDef=*params->m_upcomingScoreDef;
         return FUNCTOR_CONTINUE;
     }
 
     // starting a new system
     if (this->Is(SYSTEM)) {
-        System *system = vrv_cast<System *>(this);
+        System *system=vrv_cast<System *>(this);
         assert(system);
         // This is the only thing we do for now - we need to wait until we reach the first measure
-        params->m_currentSystem = system;
+        params->m_currentSystem=system;
         return FUNCTOR_CONTINUE;
     }
 
     // starting a new measure
     if (this->Is(MEASURE)) {
-        Measure *measure = vrv_cast<Measure *>(this);
+        Measure *measure=vrv_cast<Measure *>(this);
         assert(measure);
-        bool systemBreak = false;
-        bool scoreDefInsert = false;
+        bool systemBreak=false;
+        bool scoreDefInsert=false;
         // This is the first measure of the system - more to do...
         if (params->m_currentSystem) {
-            systemBreak = true;
+            systemBreak=true;
             // We had a scoreDef so we need to put cautionnary values
             // This will also happend with clef in the last measure - however, the cautionnary functor will not do
             // anything then
             if (params->m_upcomingScoreDef->m_setAsDrawing && params->m_previousMeasure) {
-                ScoreDef cautionaryScoreDef = *params->m_upcomingScoreDef;
+                ScoreDef cautionaryScoreDef=*params->m_upcomingScoreDef;
                 SetCautionaryScoreDefParams setCautionaryScoreDefParams(&cautionaryScoreDef);
                 Functor setCautionaryScoreDef(&Object::SetCautionaryScoreDef);
                 params->m_previousMeasure->Process(&setCautionaryScoreDef, &setCautionaryScoreDefParams);
@@ -1403,24 +1403,24 @@ int Object::SetCurrentScoreDef(FunctorParams *functorParams)
             // Set it to the current system (used e.g. for endings)
             params->m_currentSystem->SetDrawingScoreDef(params->m_upcomingScoreDef);
             params->m_currentSystem->GetDrawingScoreDef()->SetDrawLabels(params->m_drawLabels);
-            params->m_currentSystem = NULL;
-            params->m_drawLabels = false;
+            params->m_currentSystem=NULL;
+            params->m_drawLabels=false;
         }
         if (params->m_upcomingScoreDef->m_setAsDrawing) {
-            scoreDefInsert = true;
+            scoreDefInsert=true;
             measure->SetDrawingScoreDef(params->m_upcomingScoreDef);
-            params->m_currentScoreDef = measure->GetDrawingScoreDef();
+            params->m_currentScoreDef=measure->GetDrawingScoreDef();
             params->m_upcomingScoreDef->SetRedrawFlags(false, false, false, false, true);
-            params->m_upcomingScoreDef->m_setAsDrawing = false;
+            params->m_upcomingScoreDef->m_setAsDrawing=false;
         }
         measure->SetDrawingBarLines(params->m_previousMeasure, systemBreak, scoreDefInsert);
-        params->m_previousMeasure = measure;
+        params->m_previousMeasure=measure;
         return FUNCTOR_CONTINUE;
     }
 
     // starting a new scoreDef
     if (this->Is(SCOREDEF)) {
-        ScoreDef *scoreDef = vrv_cast<ScoreDef *>(this);
+        ScoreDef *scoreDef=vrv_cast<ScoreDef *>(this);
         assert(scoreDef);
         // Replace the current scoreDef with the new one, including its content (staffDef) - this also sets
         // m_setAsDrawing to true so it will then be taken into account at the next measure
@@ -1430,29 +1430,29 @@ int Object::SetCurrentScoreDef(FunctorParams *functorParams)
 
     // starting a new staffDef
     if (this->Is(STAFFDEF)) {
-        StaffDef *staffDef = vrv_cast<StaffDef *>(this);
+        StaffDef *staffDef=vrv_cast<StaffDef *>(this);
         assert(staffDef);
         params->m_upcomingScoreDef->ReplaceDrawingValues(staffDef);
     }
 
     // starting a new staff
     if (this->Is(STAFF)) {
-        Staff *staff = vrv_cast<Staff *>(this);
+        Staff *staff=vrv_cast<Staff *>(this);
         assert(staff);
-        params->m_currentStaffDef = params->m_currentScoreDef->GetStaffDef(staff->GetN());
+        params->m_currentStaffDef=params->m_currentScoreDef->GetStaffDef(staff->GetN());
         assert(staff->m_drawingStaffDef == NULL);
-        staff->m_drawingStaffDef = params->m_currentStaffDef;
-        staff->m_drawingLines = params->m_currentStaffDef->GetLines();
-        staff->m_drawingNotationType = params->m_currentStaffDef->GetNotationtype();
+        staff->m_drawingStaffDef=params->m_currentStaffDef;
+        staff->m_drawingLines=params->m_currentStaffDef->GetLines();
+        staff->m_drawingNotationType=params->m_currentStaffDef->GetNotationtype();
         if (params->m_currentStaffDef->HasScale()) {
-            staff->m_drawingStaffSize = params->m_currentStaffDef->GetScale();
+            staff->m_drawingStaffSize=params->m_currentStaffDef->GetScale();
         }
         return FUNCTOR_CONTINUE;
     }
 
     // starting a new layer
     if (this->Is(LAYER)) {
-        Layer *layer = vrv_cast<Layer *>(this);
+        Layer *layer=vrv_cast<Layer *>(this);
         assert(layer);
         if (params->m_doc->GetType() != Transcription) layer->SetDrawingStaffDefValues(params->m_currentStaffDef);
         return FUNCTOR_CONTINUE;
@@ -1460,33 +1460,33 @@ int Object::SetCurrentScoreDef(FunctorParams *functorParams)
 
     // starting a new clef
     if (this->Is(CLEF)) {
-        LayerElement *element = vrv_cast<LayerElement *>(this);
+        LayerElement *element=vrv_cast<LayerElement *>(this);
         assert(element);
-        Clef *clef = vrv_cast<Clef *>(element->ThisOrSameasAsLink());
+        Clef *clef=vrv_cast<Clef *>(element->ThisOrSameasAsLink());
         assert(clef);
         if (clef->IsScoreDefElement()) {
             return FUNCTOR_CONTINUE;
         }
         assert(params->m_currentStaffDef);
-        StaffDef *upcomingStaffDef = params->m_upcomingScoreDef->GetStaffDef(params->m_currentStaffDef->GetN());
+        StaffDef *upcomingStaffDef=params->m_upcomingScoreDef->GetStaffDef(params->m_currentStaffDef->GetN());
         assert(upcomingStaffDef);
         upcomingStaffDef->SetCurrentClef(clef);
-        params->m_upcomingScoreDef->m_setAsDrawing = true;
+        params->m_upcomingScoreDef->m_setAsDrawing=true;
         return FUNCTOR_CONTINUE;
     }
 
     // starting a new keysig
     if (this->Is(KEYSIG)) {
-        KeySig *keySig = vrv_cast<KeySig *>(this);
+        KeySig *keySig=vrv_cast<KeySig *>(this);
         assert(keySig);
         if (keySig->IsScoreDefElement()) {
             return FUNCTOR_CONTINUE;
         }
         assert(params->m_currentStaffDef);
-        StaffDef *upcomingStaffDef = params->m_upcomingScoreDef->GetStaffDef(params->m_currentStaffDef->GetN());
+        StaffDef *upcomingStaffDef=params->m_upcomingScoreDef->GetStaffDef(params->m_currentStaffDef->GetN());
         assert(upcomingStaffDef);
         upcomingStaffDef->SetCurrentKeySig(keySig);
-        params->m_upcomingScoreDef->m_setAsDrawing = true;
+        params->m_upcomingScoreDef->m_setAsDrawing=true;
         return FUNCTOR_CONTINUE;
     }
 
@@ -1495,43 +1495,43 @@ int Object::SetCurrentScoreDef(FunctorParams *functorParams)
 
 int Object::GetAlignmentLeftRight(FunctorParams *functorParams)
 {
-    GetAlignmentLeftRightParams *params = vrv_params_cast<GetAlignmentLeftRightParams *>(functorParams);
+    GetAlignmentLeftRightParams *params=vrv_params_cast<GetAlignmentLeftRightParams *>(functorParams);
     assert(params);
 
     if (!this->IsLayerElement()) return FUNCTOR_CONTINUE;
 
     if (!this->HasSelfBB() || this->HasEmptyBB()) return FUNCTOR_CONTINUE;
 
-    int refLeft = this->GetSelfLeft();
-    if (params->m_minLeft > refLeft) params->m_minLeft = refLeft;
+    int refLeft=this->GetSelfLeft();
+    if (params->m_minLeft > refLeft) params->m_minLeft=refLeft;
 
-    int refRight = this->GetSelfRight();
-    if (params->m_maxRight < refRight) params->m_maxRight = refRight;
+    int refRight=this->GetSelfRight();
+    if (params->m_maxRight < refRight) params->m_maxRight=refRight;
 
     return FUNCTOR_CONTINUE;
 }
 
 int Object::SetOverflowBBoxes(FunctorParams *functorParams)
 {
-    SetOverflowBBoxesParams *params = vrv_params_cast<SetOverflowBBoxesParams *>(functorParams);
+    SetOverflowBBoxesParams *params=vrv_params_cast<SetOverflowBBoxesParams *>(functorParams);
     assert(params);
 
     // starting a new staff
     if (this->Is(STAFF)) {
-        Staff *currentStaff = vrv_cast<Staff *>(this);
+        Staff *currentStaff=vrv_cast<Staff *>(this);
         assert(currentStaff);
 
         if (!currentStaff->DrawingIsVisible()) {
             return FUNCTOR_SIBLINGS;
         }
 
-        params->m_staffAlignment = currentStaff->GetAlignment();
+        params->m_staffAlignment=currentStaff->GetAlignment();
         return FUNCTOR_CONTINUE;
     }
 
     // starting new layer
     if (this->Is(LAYER)) {
-        Layer *currentLayer = vrv_cast<Layer *>(this);
+        Layer *currentLayer=vrv_cast<Layer *>(this);
         assert(currentLayer);
         // set scoreDef attr
         if (currentLayer->GetStaffDefClef()) {
@@ -1566,13 +1566,13 @@ int Object::SetOverflowBBoxes(FunctorParams *functorParams)
 
     // Ignore beam in cross-staff situation
     if (this->Is(BEAM)) {
-        Beam *beam = dynamic_cast<Beam *>(this);
+        Beam *beam=dynamic_cast<Beam *>(this);
         if (beam && beam->m_isCrossStaff) return FUNCTOR_CONTINUE;
     }
 
     // Ignore stem for notes in cross-staff situation and in beams
     if (this->Is(STEM)) {
-        Note *note = dynamic_cast<Note *>(this->GetParent());
+        Note *note=dynamic_cast<Note *>(this->GetParent());
         if (note && note->m_crossStaff && note->IsInBeam()) return FUNCTOR_CONTINUE;
     }
 
@@ -1592,33 +1592,33 @@ int Object::SetOverflowBBoxes(FunctorParams *functorParams)
 
     assert(params->m_staffAlignment);
 
-    LayerElement *current = vrv_cast<LayerElement *>(this);
+    LayerElement *current=vrv_cast<LayerElement *>(this);
     assert(current);
 
-    bool skipAbove = false;
-    bool skipBelow = false;
-    Chord *chord = dynamic_cast<Chord *>(this->GetFirstAncestor(CHORD, MAX_CHORD_DEPTH));
+    bool skipAbove=false;
+    bool skipBelow=false;
+    Chord *chord=dynamic_cast<Chord *>(this->GetFirstAncestor(CHORD, MAX_CHORD_DEPTH));
     if (chord && params->m_staffAlignment) {
         chord->GetCrossStaffOverflows(current, params->m_staffAlignment, skipAbove, skipBelow);
     }
 
-    StaffAlignment *alignment = params->m_staffAlignment;
-    Layer *crossLayer = NULL;
-    Staff *crossStaff = current->GetCrossStaff(crossLayer);
+    StaffAlignment *alignment=params->m_staffAlignment;
+    Layer *crossLayer=NULL;
+    Staff *crossStaff=current->GetCrossStaff(crossLayer);
     if (crossStaff && crossStaff->GetAlignment()) {
-        alignment = crossStaff->GetAlignment();
+        alignment=crossStaff->GetAlignment();
     }
 
-    int staffSize = alignment->GetStaffSize();
+    int staffSize=alignment->GetStaffSize();
 
-    int overflowAbove = alignment->CalcOverflowAbove(current);
+    int overflowAbove=alignment->CalcOverflowAbove(current);
     if (!skipAbove && (overflowAbove > params->m_doc->GetDrawingStaffLineWidth(staffSize) / 2)) {
         // LogMessage("%s top overflow: %d", current->GetUuid().c_str(), overflowAbove);
         alignment->SetOverflowAbove(overflowAbove);
         alignment->AddBBoxAbove(current);
     }
 
-    int overflowBelow = alignment->CalcOverflowBelow(current);
+    int overflowBelow=alignment->CalcOverflowBelow(current);
     if (!skipBelow && (overflowBelow > params->m_doc->GetDrawingStaffLineWidth(staffSize) / 2)) {
         // LogMessage("%s bottom overflow: %d", current->GetUuid().c_str(), overflowBelow);
         alignment->SetOverflowBelow(overflowBelow);
@@ -1630,12 +1630,12 @@ int Object::SetOverflowBBoxes(FunctorParams *functorParams)
 
 int Object::SetOverflowBBoxesEnd(FunctorParams *functorParams)
 {
-    SetOverflowBBoxesParams *params = vrv_params_cast<SetOverflowBBoxesParams *>(functorParams);
+    SetOverflowBBoxesParams *params=vrv_params_cast<SetOverflowBBoxesParams *>(functorParams);
     assert(params);
 
     // starting new layer
     if (this->Is(LAYER)) {
-        Layer *currentLayer = vrv_cast<Layer *>(this);
+        Layer *currentLayer=vrv_cast<Layer *>(this);
         assert(currentLayer);
         // set scoreDef attr
         if (currentLayer->GetCautionStaffDefClef()) {
@@ -1656,7 +1656,7 @@ int Object::SetOverflowBBoxesEnd(FunctorParams *functorParams)
 
 int Object::Save(FunctorParams *functorParams)
 {
-    SaveParams *params = vrv_params_cast<SaveParams *>(functorParams);
+    SaveParams *params=vrv_params_cast<SaveParams *>(functorParams);
     assert(params);
 
     if (!params->m_output->WriteObject(this)) {
@@ -1667,7 +1667,7 @@ int Object::Save(FunctorParams *functorParams)
 
 int Object::SaveEnd(FunctorParams *functorParams)
 {
-    SaveParams *params = vrv_params_cast<SaveParams *>(functorParams);
+    SaveParams *params=vrv_params_cast<SaveParams *>(functorParams);
     assert(params);
 
     if (!params->m_output->WriteObjectEnd(this)) {
@@ -1678,43 +1678,43 @@ int Object::SaveEnd(FunctorParams *functorParams)
 
 bool Object::sortByUlx(Object *a, Object *b)
 {
-    FacsimileInterface *fa = NULL, *fb = NULL;
+    FacsimileInterface *fa=NULL, *fb=NULL;
     InterfaceComparison comp(INTERFACE_FACSIMILE);
     if (a->GetFacsimileInterface() && a->GetFacsimileInterface()->HasFacs())
-        fa = a->GetFacsimileInterface();
+        fa=a->GetFacsimileInterface();
     else {
         ListOfObjects children;
         a->FindAllDescendantByComparison(&children, &comp);
-        for (auto it = children.begin(); it != children.end(); ++it) {
+        for (auto it=children.begin(); it != children.end(); ++it) {
             if ((*it)->Is(SYL)) continue;
-            FacsimileInterface *temp = dynamic_cast<FacsimileInterface *>(*it);
+            FacsimileInterface *temp=dynamic_cast<FacsimileInterface *>(*it);
             assert(temp);
             if (temp->HasFacs() && (fa == NULL || temp->GetZone()->GetUlx() < fa->GetZone()->GetUlx())) {
-                fa = temp;
+                fa=temp;
             }
         }
     }
     if (b->GetFacsimileInterface() && b->GetFacsimileInterface()->HasFacs())
-        fb = b->GetFacsimileInterface();
+        fb=b->GetFacsimileInterface();
     else {
         ListOfObjects children;
         b->FindAllDescendantByComparison(&children, &comp);
-        for (auto it = children.begin(); it != children.end(); ++it) {
+        for (auto it=children.begin(); it != children.end(); ++it) {
             if ((*it)->Is(SYL)) continue;
-            FacsimileInterface *temp = dynamic_cast<FacsimileInterface *>(*it);
+            FacsimileInterface *temp=dynamic_cast<FacsimileInterface *>(*it);
             assert(temp);
             if (temp->HasFacs() && (fb == NULL || temp->GetZone()->GetUlx() < fb->GetZone()->GetUlx())) {
-                fb = temp;
+                fb=temp;
             }
         }
     }
 
     // Preserve ordering of neume components in ligature
     if (a->Is(NC) && b->Is(NC)) {
-        Nc *nca = dynamic_cast<Nc *>(a);
-        Nc *ncb = dynamic_cast<Nc *>(b);
+        Nc *nca=dynamic_cast<Nc *>(a);
+        Nc *ncb=dynamic_cast<Nc *>(b);
         if (nca->HasLigated() && ncb->HasLigated() && (a->GetParent() == b->GetParent())) {
-            Object *parent = a->GetParent();
+            Object *parent=a->GetParent();
             assert(parent);
             if (abs(parent->GetChildIndex(a) - parent->GetChildIndex(b)) == 1) {
                 // Return nc with higher pitch
@@ -1751,13 +1751,13 @@ int Object::ReorderByXPos(FunctorParams *functorParams)
 
 int Object::FindNextChildByComparison(FunctorParams *functorparams)
 {
-    FindChildByComparisonParams *params = vrv_cast<FindChildByComparisonParams *>(functorparams);
+    FindChildByComparisonParams *params=vrv_cast<FindChildByComparisonParams *>(functorparams);
     assert(params);
 
     // we are reaching the start of the range
     if (params->m_start == this) {
         // setting m_start to be null tells us that we're in the range
-        params->m_start = NULL;
+        params->m_start=NULL;
         return FUNCTOR_CONTINUE;
     }
 
@@ -1767,7 +1767,7 @@ int Object::FindNextChildByComparison(FunctorParams *functorparams)
     }
 
     if ((*params->m_comparison)(this)) {
-        params->m_element = this;
+        params->m_element=this;
         return FUNCTOR_STOP;
     }
 
@@ -1776,7 +1776,7 @@ int Object::FindNextChildByComparison(FunctorParams *functorparams)
 
 int Object::FindPreviousChildByComparison(FunctorParams *functorparams)
 {
-    FindChildByComparisonParams *params = vrv_cast<FindChildByComparisonParams *>(functorparams);
+    FindChildByComparisonParams *params=vrv_cast<FindChildByComparisonParams *>(functorparams);
     assert(params);
     // this guy works by going from the start and replacing the return element with every nearer element
     // until you get to the 'start' element
@@ -1786,7 +1786,7 @@ int Object::FindPreviousChildByComparison(FunctorParams *functorparams)
     }
 
     if ((*params->m_comparison)(this)) {
-        params->m_element = this;
+        params->m_element=this;
     }
 
     return FUNCTOR_CONTINUE;

@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetChordref(std::string chordref_) { m_chordref = chordref_; }
+    void SetChordref(std::string chordref_) { m_chordref=chordref_; }
     std::string GetChordref() const { return m_chordref; }
     bool HasChordref() const;
     ///@}

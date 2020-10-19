@@ -50,14 +50,14 @@ public:
      */
     ///@{
     curvature_CURVEDIR GetDrawingCurvedir() const { return m_drawingCurvedir; }
-    void SetDrawingCurvedir(curvature_CURVEDIR curvedir) { m_drawingCurvedir = curvedir; }
+    void SetDrawingCurvedir(curvature_CURVEDIR curvedir) { m_drawingCurvedir=curvedir; }
     bool HasDrawingCurvedir() const { return (m_drawingCurvedir != curvature_CURVEDIR_NONE); }
     ///@}
 
     bool AdjustSlur(Doc *doc, FloatingCurvePositioner *curve, Staff *staff);
 
     int AdjustSlurCurve(Doc *doc, const ArrayOfCurveSpannedElements *spannedElements, Point &p1, Point &p2, Point &c1,
-        Point &c2, curvature_CURVEDIR curveDir, float angle, int staffSize, bool posRatio = true);
+        Point &c2, curvature_CURVEDIR curveDir, float angle, int staffSize, bool posRatio=true);
     void AdjustSlurPosition(Doc *doc, FloatingCurvePositioner *curve,
         const ArrayOfCurveSpannedElements *spannedElements, Point &p1, Point &p2, Point &c1, Point &c2,
         curvature_CURVEDIR curveDir, float &angle, bool forceBothSides);

@@ -16,7 +16,7 @@
 //                   TransPitch: pitch representation as three integers:
 //                            m_pname: diatonic pitch class integer from C=0 to B=6.
 //                            m_accid: chromatic alterations in semitones (0=natural, -1=flat).
-//                            m_oct: octave number (4 = middle-C octave).
+//                            m_oct: octave number (4=middle-C octave).
 //                   Transposer: transposition system which uses TransPitch as a user interface.
 //                   (Add MEI to TransPitch conversions in TransPitch class, or use external
 //                    code to interface to verovio attributes for <note>).
@@ -84,9 +84,9 @@ TransPitch::TransPitch(data_PITCHNAME pname, data_ACCIDENTAL_GESTURAL accidG, da
 
 TransPitch::TransPitch(const TransPitch &pitch)
 {
-    m_pname = pitch.m_pname;
-    m_accid = pitch.m_accid;
-    m_oct = pitch.m_oct;
+    m_pname=pitch.m_pname;
+    m_accid=pitch.m_accid;
+    m_oct=pitch.m_oct;
 }
 
 int TransPitch::GetChromaticAlteration(data_ACCIDENTAL_GESTURAL accidG, data_ACCIDENTAL_WRITTEN accidW)
@@ -168,7 +168,7 @@ data_PITCHNAME TransPitch::GetPitchName() const
 
 std::wstring TransPitch::GetPitchString() const
 {
-    wchar_t pitchLetter = (m_pname + ('C' - 'A')) % 7 + 'A';
+    wchar_t pitchLetter=(m_pname + ('C' - 'A')) % 7 + 'A';
     switch (m_accid) {
         case -2: return std::wstring({ pitchLetter, L'𝄫' });
         case -1: return std::wstring({ pitchLetter, L'♭' });
@@ -187,9 +187,9 @@ std::wstring TransPitch::GetPitchString() const
 TransPitch &TransPitch::operator=(const TransPitch &pitch)
 {
     if (this != &pitch) {
-        m_pname = pitch.m_pname;
-        m_accid = pitch.m_accid;
-        m_oct = pitch.m_oct;
+        m_pname=pitch.m_pname;
+        m_accid=pitch.m_accid;
+        m_oct=pitch.m_oct;
     }
     return *this;
 }
@@ -237,7 +237,7 @@ TransPitch &TransPitch::operator++()
         m_pname++;
     }
     else {
-        m_pname = dpc_C;
+        m_pname=dpc_C;
         m_oct++;
     }
     return *this;
@@ -245,7 +245,7 @@ TransPitch &TransPitch::operator++()
 
 TransPitch TransPitch::operator++(int)
 {
-    TransPitch temp = *this;
+    TransPitch temp=*this;
     ++*this;
     return temp;
 }
@@ -261,7 +261,7 @@ TransPitch &TransPitch::operator--()
         m_pname--;
     }
     else {
-        m_pname = dpc_B;
+        m_pname=dpc_B;
         m_oct--;
     }
     return *this;
@@ -269,7 +269,7 @@ TransPitch &TransPitch::operator--()
 
 TransPitch TransPitch::operator--(int)
 {
-    TransPitch temp = *this;
+    TransPitch temp=*this;
     --*this;
     return temp;
 }
@@ -291,9 +291,9 @@ bool TransPitch::IsValid(int maxAccid)
 
 void TransPitch::SetPitch(int aPname, int anAccid, int anOct)
 {
-    m_pname = aPname;
-    m_accid = anAccid;
-    m_oct = anOct;
+    m_pname=aPname;
+    m_accid=anAccid;
+    m_oct=anOct;
 }
 
 //////////////////////////////
@@ -314,12 +314,12 @@ std::ostream &operator<<(std::ostream &out, const TransPitch &pitch)
         default: out << "X";
     }
     if (pitch.m_accid > 0) {
-        for (int i = 0; i < pitch.m_accid; i++) {
+        for (int i=0; i < pitch.m_accid; i++) {
             out << "#";
         }
     }
     else if (pitch.m_accid < 0) {
-        for (int i = 0; i < abs(pitch.m_accid); i++) {
+        for (int i=0; i < abs(pitch.m_accid); i++) {
             out << "b";
         }
     }
@@ -364,7 +364,7 @@ Transposer::~Transposer()
 
 bool Transposer::SetTransposition(int transVal)
 {
-    m_transpose = transVal;
+    m_transpose=transVal;
     return true;
 }
 
@@ -373,7 +373,7 @@ bool Transposer::SetTransposition(int transVal)
 
 bool Transposer::SetTransposition(const std::string &transString)
 {
-    m_transpose = GetInterval(transString);
+    m_transpose=GetInterval(transString);
     return m_transpose != INVALID_INTERVAL_CLASS;
 }
 
@@ -385,8 +385,8 @@ bool Transposer::SetTransposition(const TransPitch &fromPitch, const std::string
     TransPitch toPitch;
     if (GetKeyTonic(toString, toPitch)) {
         // Determine proper octave offset.
-        int numSigns = toPitch.m_oct;
-        m_transpose = GetInterval(fromPitch, toPitch);
+        int numSigns=toPitch.m_oct;
+        m_transpose=GetInterval(fromPitch, toPitch);
         // A transposition with n plus or minus signs should never be more than n octaves away.
         if (numSigns > 0 && m_transpose > PerfectOctaveClass() * numSigns) {
             m_transpose -= PerfectOctaveClass();
@@ -415,7 +415,7 @@ bool Transposer::SetTransposition(int keyFifths, const std::string &semitones)
     if (!IsValidSemitones(semitones)) {
         return false;
     }
-    int semis = stoi(semitones);
+    int semis=stoi(semitones);
     return SetTransposition(keyFifths, semis);
 }
 
@@ -424,7 +424,7 @@ bool Transposer::SetTransposition(int keyFifths, const std::string &semitones)
 
 bool Transposer::SetTransposition(int keyFifths, int semitones)
 {
-    int intervalClass = SemitonesToIntervalClass(keyFifths, semitones);
+    int intervalClass=SemitonesToIntervalClass(keyFifths, semitones);
     return SetTransposition(intervalClass);
 }
 
@@ -436,84 +436,84 @@ bool Transposer::SetTransposition(int keyFifths, int semitones)
 
 int Transposer::SemitonesToIntervalClass(int keyFifths, int semitones)
 {
-    int sign = semitones < 0 ? -1 : +1;
-    semitones = semitones < 0 ? -semitones : semitones;
-    int octave = semitones / 12;
-    semitones = semitones - octave * 12;
+    int sign=semitones < 0 ? -1 : +1;
+    semitones=semitones < 0 ? -semitones : semitones;
+    int octave=semitones / 12;
+    semitones=semitones - octave * 12;
     int sum1, sum2;
-    std::string interval = "P1";
+    std::string interval="P1";
     switch (semitones) {
-        case 0: interval = "P1"; break;
+        case 0: interval="P1"; break;
 
         case 1:
-            sum1 = keyFifths - 5 * sign;
-            sum2 = keyFifths + 7 * sign;
-            interval = abs(sum1) < abs(sum2) ? "m2" : "A1";
+            sum1=keyFifths - 5 * sign;
+            sum2=keyFifths + 7 * sign;
+            interval=abs(sum1) < abs(sum2) ? "m2" : "A1";
             break;
 
         case 2:
-            sum1 = keyFifths + 2 * sign;
-            sum2 = keyFifths - 10 * sign;
-            interval = abs(sum1) < abs(sum2) ? "M2" : "d3";
+            sum1=keyFifths + 2 * sign;
+            sum2=keyFifths - 10 * sign;
+            interval=abs(sum1) < abs(sum2) ? "M2" : "d3";
             break;
 
         case 3:
-            sum1 = keyFifths - 3 * sign;
-            sum2 = keyFifths + 9 * sign;
-            interval = abs(sum1) < abs(sum2) ? "m3" : "A2";
+            sum1=keyFifths - 3 * sign;
+            sum2=keyFifths + 9 * sign;
+            interval=abs(sum1) < abs(sum2) ? "m3" : "A2";
             break;
 
         case 4:
-            sum1 = keyFifths + 4 * sign;
-            sum2 = keyFifths - 8 * sign;
-            interval = abs(sum1) < abs(sum2) ? "M3" : "d4";
+            sum1=keyFifths + 4 * sign;
+            sum2=keyFifths - 8 * sign;
+            interval=abs(sum1) < abs(sum2) ? "M3" : "d4";
             break;
 
         case 5:
-            sum1 = keyFifths - 1 * sign;
-            sum2 = keyFifths + 11 * sign;
-            interval = abs(sum1) < abs(sum2) ? "P4" : "A3";
+            sum1=keyFifths - 1 * sign;
+            sum2=keyFifths + 11 * sign;
+            interval=abs(sum1) < abs(sum2) ? "P4" : "A3";
             break;
 
         case 6:
-            sum1 = keyFifths + 6 * sign;
-            sum2 = keyFifths - 6 * sign;
-            interval = abs(sum1) < abs(sum2) ? "A4" : "d5";
+            sum1=keyFifths + 6 * sign;
+            sum2=keyFifths - 6 * sign;
+            interval=abs(sum1) < abs(sum2) ? "A4" : "d5";
             break;
 
         case 7:
-            sum1 = keyFifths + 1 * sign;
-            sum2 = keyFifths - 11 * sign;
-            interval = abs(sum1) < abs(sum2) ? "P5" : "d6";
+            sum1=keyFifths + 1 * sign;
+            sum2=keyFifths - 11 * sign;
+            interval=abs(sum1) < abs(sum2) ? "P5" : "d6";
             break;
 
         case 8:
-            sum1 = keyFifths - 4 * sign;
-            sum2 = keyFifths + 8 * sign;
-            interval = abs(sum1) < abs(sum2) ? "m6" : "A5";
+            sum1=keyFifths - 4 * sign;
+            sum2=keyFifths + 8 * sign;
+            interval=abs(sum1) < abs(sum2) ? "m6" : "A5";
             break;
 
         case 9:
-            sum1 = keyFifths + 3 * sign;
-            sum2 = keyFifths - 9 * sign;
-            interval = abs(sum1) < abs(sum2) ? "M6" : "d7";
+            sum1=keyFifths + 3 * sign;
+            sum2=keyFifths - 9 * sign;
+            interval=abs(sum1) < abs(sum2) ? "M6" : "d7";
             break;
 
         case 10:
-            sum1 = keyFifths - 2 * sign;
-            sum2 = keyFifths + 10 * sign;
-            interval = abs(sum1) < abs(sum2) ? "m7" : "A6";
+            sum1=keyFifths - 2 * sign;
+            sum2=keyFifths + 10 * sign;
+            interval=abs(sum1) < abs(sum2) ? "m7" : "A6";
             break;
 
         case 11:
-            sum1 = keyFifths + 5 * sign;
-            sum2 = keyFifths - 7 * sign;
-            interval = abs(sum1) < abs(sum2) ? "M7" : "d8";
+            sum1=keyFifths + 5 * sign;
+            sum2=keyFifths - 7 * sign;
+            interval=abs(sum1) < abs(sum2) ? "M7" : "d8";
             break;
     }
 
-    interval = sign < 0 ? "-" + interval : "+" + interval;
-    int intint = GetInterval(interval);
+    interval=sign < 0 ? "-" + interval : "+" + interval;
+    int intint=GetInterval(interval);
     intint += sign * octave * m_base;
     return intint;
 }
@@ -526,7 +526,7 @@ int Transposer::SemitonesToIntervalClass(int keyFifths, int semitones)
 
 std::string Transposer::SemitonesToIntervalName(int keyFifths, int semitones)
 {
-    int intervalClass = SemitonesToIntervalClass(keyFifths, semitones);
+    int intervalClass=SemitonesToIntervalClass(keyFifths, semitones);
     return GetIntervalName(intervalClass);
 }
 
@@ -541,12 +541,12 @@ std::string Transposer::SemitonesToIntervalName(int keyFifths, int semitones)
 
 int Transposer::IntervalToSemitones(int interval)
 {
-    int sign = interval < 0 ? -1 : +1;
-    interval = interval < 0 ? -interval : interval;
-    int octave = interval / m_base;
-    int intervalClass = interval - octave * m_base;
-    int diatonic = 0;
-    int chromatic = 0;
+    int sign=interval < 0 ? -1 : +1;
+    interval=interval < 0 ? -interval : interval;
+    int octave=interval / m_base;
+    int intervalClass=interval - octave * m_base;
+    int diatonic=0;
+    int chromatic=0;
     IntervalToDiatonicChromatic(diatonic, chromatic, intervalClass);
     if ((diatonic != INVALID_INTERVAL_CLASS) && (chromatic != INVALID_INTERVAL_CLASS)) {
         return (m_diatonic2semitone.at(diatonic) + chromatic) * sign + 12 * octave;
@@ -560,7 +560,7 @@ int Transposer::IntervalToSemitones(int interval)
 
 int Transposer::IntervalToSemitones(const std::string &intervalName)
 {
-    int interval = GetInterval(intervalName);
+    int interval=GetInterval(intervalName);
     return IntervalToSemitones(interval);
 }
 
@@ -593,9 +593,9 @@ std::string Transposer::GetTranspositionIntervalName()
 
 void Transposer::Transpose(TransPitch &pitch)
 {
-    int ipitch = TransPitchToIntegerPitch(pitch);
+    int ipitch=TransPitchToIntegerPitch(pitch);
     ipitch += m_transpose;
-    pitch = IntegerPitchToTransPitch(ipitch);
+    pitch=IntegerPitchToTransPitch(ipitch);
 }
 
 int Transposer::Transpose(int ipitch)
@@ -610,17 +610,17 @@ int Transposer::Transpose(int ipitch)
 
 void Transposer::Transpose(TransPitch &pitch, int transVal)
 {
-    int ipitch = TransPitchToIntegerPitch(pitch);
+    int ipitch=TransPitchToIntegerPitch(pitch);
     ipitch += transVal;
-    pitch = IntegerPitchToTransPitch(ipitch);
+    pitch=IntegerPitchToTransPitch(ipitch);
 }
 
 void Transposer::Transpose(TransPitch &pitch, const std::string &transString)
 {
-    int transVal = GetInterval(transString);
-    int ipitch = TransPitchToIntegerPitch(pitch);
+    int transVal=GetInterval(transString);
+    int ipitch=TransPitchToIntegerPitch(pitch);
     ipitch += transVal;
-    pitch = IntegerPitchToTransPitch(ipitch);
+    pitch=IntegerPitchToTransPitch(ipitch);
 }
 
 //////////////////////////////
@@ -651,10 +651,10 @@ int Transposer::GetMaxAccid()
 
 void Transposer::SetMaxAccid(int maxAccid)
 {
-    m_maxAccid = abs(maxAccid);
-    m_base = 7 * (2 * m_maxAccid + 1) + 5;
+    m_maxAccid=abs(maxAccid);
+    m_base=7 * (2 * m_maxAccid + 1) + 5;
     CalculateDiatonicMapping();
-    m_transpose = 0;
+    m_transpose=0;
 }
 
 //////////////////////////////
@@ -666,16 +666,16 @@ void Transposer::SetMaxAccid(int maxAccid)
 
 void Transposer::CalculateDiatonicMapping()
 {
-    int m2 = m_maxAccid * 2 + 1;
-    int M2 = m2 + 1;
+    int m2=m_maxAccid * 2 + 1;
+    int M2=m2 + 1;
     m_diatonicMapping.resize(7);
-    m_diatonicMapping[dpc_C] = m_maxAccid;
-    m_diatonicMapping[dpc_D] = m_diatonicMapping[dpc_C] + M2;
-    m_diatonicMapping[dpc_E] = m_diatonicMapping[dpc_D] + M2;
-    m_diatonicMapping[dpc_F] = m_diatonicMapping[dpc_E] + m2;
-    m_diatonicMapping[dpc_G] = m_diatonicMapping[dpc_F] + M2;
-    m_diatonicMapping[dpc_A] = m_diatonicMapping[dpc_G] + M2;
-    m_diatonicMapping[dpc_B] = m_diatonicMapping[dpc_A] + M2;
+    m_diatonicMapping[dpc_C]=m_maxAccid;
+    m_diatonicMapping[dpc_D]=m_diatonicMapping[dpc_C] + M2;
+    m_diatonicMapping[dpc_E]=m_diatonicMapping[dpc_D] + M2;
+    m_diatonicMapping[dpc_F]=m_diatonicMapping[dpc_E] + m2;
+    m_diatonicMapping[dpc_G]=m_diatonicMapping[dpc_F] + M2;
+    m_diatonicMapping[dpc_A]=m_diatonicMapping[dpc_G] + M2;
+    m_diatonicMapping[dpc_B]=m_diatonicMapping[dpc_A] + M2;
 }
 
 //////////////////////////////
@@ -687,11 +687,11 @@ void Transposer::CalculateDiatonicMapping()
 
 bool Transposer::GetKeyTonic(const std::string &keyTonic, TransPitch &tonic)
 {
-    int octave = 0;
-    int pitch = 0;
-    int accid = 0;
-    int state = 0;
-    for (unsigned int i = 0; i < (unsigned int)keyTonic.size(); i++) {
+    int octave=0;
+    int pitch=0;
+    int accid=0;
+    int state=0;
+    for (unsigned int i=0; i < (unsigned int)keyTonic.size(); i++) {
         switch (state) {
             case 0:
                 switch (keyTonic[i]) {
@@ -707,19 +707,19 @@ bool Transposer::GetKeyTonic(const std::string &keyTonic, TransPitch &tonic)
                 state++;
                 switch (keyTonic[i]) {
                     case 'C':
-                    case 'c': pitch = 0; break;
+                    case 'c': pitch=0; break;
                     case 'D':
-                    case 'd': pitch = 1; break;
+                    case 'd': pitch=1; break;
                     case 'E':
-                    case 'e': pitch = 2; break;
+                    case 'e': pitch=2; break;
                     case 'F':
-                    case 'f': pitch = 3; break;
+                    case 'f': pitch=3; break;
                     case 'G':
-                    case 'g': pitch = 4; break;
+                    case 'g': pitch=4; break;
                     case 'A':
-                    case 'a': pitch = 5; break;
+                    case 'a': pitch=5; break;
                     case 'B':
-                    case 'b': pitch = 6; break;
+                    case 'b': pitch=6; break;
                     default: LogWarning("Invalid keytonic pitch character: %c", keyTonic[i]); return false;
                 }
                 break;
@@ -737,7 +737,7 @@ bool Transposer::GetKeyTonic(const std::string &keyTonic, TransPitch &tonic)
         }
     }
 
-    tonic = TransPitch(pitch, accid, octave);
+    tonic=TransPitch(pitch, accid, octave);
     return true;
 }
 
@@ -756,14 +756,14 @@ int Transposer::GetInterval(const std::string &intervalName)
     std::string direction;
     std::string quality;
     std::string number;
-    int state = 0;
+    int state=0;
 
-    for (int i = 0; i < (int)intervalName.size(); i++) {
+    for (int i=0; i < (int)intervalName.size(); i++) {
         switch (state) {
             case 0: // direction or quality expected
                 switch (intervalName[i]) {
                     case '-': // interval is down
-                        direction = "-";
+                        direction="-";
                         state++;
                         break;
                     case '+': // interval is up
@@ -786,13 +786,13 @@ int Transposer::GetInterval(const std::string &intervalName)
                 else {
                     switch (intervalName[i]) {
                         case 'M': // major
-                            quality = "M";
+                            quality="M";
                             break;
                         case 'm': // minor
-                            quality = "m";
+                            quality="m";
                             break;
                         case 'P': // perfect
-                        case 'p': quality = "P"; break;
+                        case 'p': quality="P"; break;
                         case 'D': // diminished
                         case 'd': quality += "d"; break;
                         case 'A': // augmented
@@ -819,26 +819,26 @@ int Transposer::GetInterval(const std::string &intervalName)
         return INVALID_INTERVAL_CLASS;
     }
 
-    int dnum = stoi(number);
+    int dnum=stoi(number);
     if (dnum == 0) {
         LogError("Integer interval number cannot be zero: %s", intervalName.c_str());
         return INVALID_INTERVAL_CLASS;
     }
     dnum--;
-    int octave = dnum / 7;
-    dnum = dnum - octave * 7;
+    int octave=dnum / 7;
+    dnum=dnum - octave * 7;
 
-    int base = 0;
-    int adjust = 0;
+    int base=0;
+    int adjust=0;
 
     switch (dnum) {
         case 0: // unison
-            base = PerfectUnisonClass();
+            base=PerfectUnisonClass();
             if (quality[0] == 'A') {
-                adjust = (int)quality.size();
+                adjust=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                adjust = -(int)quality.size();
+                adjust=-(int)quality.size();
             }
             else if (quality != "P") {
                 LogError("Error in interval quality: %s", intervalName.c_str());
@@ -847,18 +847,18 @@ int Transposer::GetInterval(const std::string &intervalName)
             break;
         case 1: // second
             if (quality == "M") {
-                base = MajorSecondClass();
+                base=MajorSecondClass();
             }
             else if (quality == "m") {
-                base = MinorSecondClass();
+                base=MinorSecondClass();
             }
             else if (quality[0] == 'A') {
-                base = MajorSecondClass();
-                adjust = (int)quality.size();
+                base=MajorSecondClass();
+                adjust=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                base = MinorSecondClass();
-                adjust = -(int)quality.size();
+                base=MinorSecondClass();
+                adjust=-(int)quality.size();
             }
             else {
                 LogError("Error in interval quality: %s", intervalName.c_str());
@@ -867,18 +867,18 @@ int Transposer::GetInterval(const std::string &intervalName)
             break;
         case 2: // third
             if (quality == "M") {
-                base = MajorThirdClass();
+                base=MajorThirdClass();
             }
             else if (quality == "m") {
-                base = MinorThirdClass();
+                base=MinorThirdClass();
             }
             else if (quality[0] == 'A') {
-                base = MajorThirdClass();
-                adjust = (int)quality.size();
+                base=MajorThirdClass();
+                adjust=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                base = MinorThirdClass();
-                adjust = -(int)quality.size();
+                base=MinorThirdClass();
+                adjust=-(int)quality.size();
             }
             else {
                 LogError("Error in interval quality: %s", intervalName.c_str());
@@ -886,12 +886,12 @@ int Transposer::GetInterval(const std::string &intervalName)
             }
             break;
         case 3: // fourth
-            base = PerfectFourthClass();
+            base=PerfectFourthClass();
             if (quality[0] == 'A') {
-                adjust = (int)quality.size();
+                adjust=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                adjust = -(int)quality.size();
+                adjust=-(int)quality.size();
             }
             else if (quality != "P") {
                 LogError("Error in interval quality: %s", intervalName.c_str());
@@ -899,12 +899,12 @@ int Transposer::GetInterval(const std::string &intervalName)
             }
             break;
         case 4: // fifth
-            base = PerfectFifthClass();
+            base=PerfectFifthClass();
             if (quality[0] == 'A') {
-                adjust = (int)quality.size();
+                adjust=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                adjust = -(int)quality.size();
+                adjust=-(int)quality.size();
             }
             else if (quality != "P") {
                 LogError("Error in interval quality: %s", intervalName.c_str());
@@ -913,18 +913,18 @@ int Transposer::GetInterval(const std::string &intervalName)
             break;
         case 5: // sixth
             if (quality == "M") {
-                base = MajorSixthClass();
+                base=MajorSixthClass();
             }
             else if (quality == "m") {
-                base = MinorSixthClass();
+                base=MinorSixthClass();
             }
             else if (quality[0] == 'A') {
-                base = MajorSixthClass();
-                adjust = (int)quality.size();
+                base=MajorSixthClass();
+                adjust=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                base = MinorSixthClass();
-                adjust = -(int)quality.size();
+                base=MinorSixthClass();
+                adjust=-(int)quality.size();
             }
             else {
                 LogError("Error in interval quality: %s", intervalName.c_str());
@@ -933,18 +933,18 @@ int Transposer::GetInterval(const std::string &intervalName)
             break;
         case 6: // seventh
             if (quality == "M") {
-                base = MajorSeventhClass();
+                base=MajorSeventhClass();
             }
             else if (quality == "m") {
-                base = MinorSeventhClass();
+                base=MinorSeventhClass();
             }
             else if (quality[0] == 'A') {
-                base = MajorSeventhClass();
-                adjust = (int)quality.size();
+                base=MajorSeventhClass();
+                adjust=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                base = MinorSeventhClass();
-                adjust = -(int)quality.size();
+                base=MinorSeventhClass();
+                adjust=-(int)quality.size();
             }
             else {
                 LogError("Error in interval quality: %s", intervalName.c_str());
@@ -1114,22 +1114,22 @@ int Transposer::TransPitchToIntegerPitch(const TransPitch &pitch)
 TransPitch Transposer::IntegerPitchToTransPitch(int ipitch)
 {
     TransPitch pitch;
-    pitch.m_oct = ipitch / m_base;
-    int chroma = ipitch - pitch.m_oct * m_base;
-    int mindiff = -1000;
-    int mini = -1;
+    pitch.m_oct=ipitch / m_base;
+    int chroma=ipitch - pitch.m_oct * m_base;
+    int mindiff=-1000;
+    int mini=-1;
 
-    int targetdiff = m_maxAccid;
+    int targetdiff=m_maxAccid;
 
     if (chroma > m_base / 2) {
         // search from B downwards
-        mindiff = chroma - m_diatonicMapping.back();
-        mini = (int)m_diatonicMapping.size() - 1;
-        for (int i = (int)m_diatonicMapping.size() - 2; i >= 0; i--) {
-            int diff = chroma - m_diatonicMapping[i];
+        mindiff=chroma - m_diatonicMapping.back();
+        mini=(int)m_diatonicMapping.size() - 1;
+        for (int i=(int)m_diatonicMapping.size() - 2; i >= 0; i--) {
+            int diff=chroma - m_diatonicMapping[i];
             if (abs(diff) < abs(mindiff)) {
-                mindiff = diff;
-                mini = i;
+                mindiff=diff;
+                mini=i;
             }
             if (abs(mindiff) <= targetdiff) {
                 break;
@@ -1138,21 +1138,21 @@ TransPitch Transposer::IntegerPitchToTransPitch(int ipitch)
     }
     else {
         // search from C upwards
-        mindiff = chroma - m_diatonicMapping[0];
-        mini = 0;
-        for (int i = 1; i < (int)m_diatonicMapping.size(); i++) {
-            int diff = chroma - m_diatonicMapping[i];
+        mindiff=chroma - m_diatonicMapping[0];
+        mini=0;
+        for (int i=1; i < (int)m_diatonicMapping.size(); i++) {
+            int diff=chroma - m_diatonicMapping[i];
             if (abs(diff) < abs(mindiff)) {
-                mindiff = diff;
-                mini = i;
+                mindiff=diff;
+                mini=i;
             }
             if (abs(mindiff) <= targetdiff) {
                 break;
             }
         }
     }
-    pitch.m_pname = mini;
-    pitch.m_accid = mindiff;
+    pitch.m_pname=mini;
+    pitch.m_accid=mindiff;
     return pitch;
 }
 
@@ -1193,7 +1193,7 @@ int Transposer::GetInterval(const TransPitch &p1, const TransPitch &p2)
 
 std::string Transposer::GetIntervalName(const TransPitch &p1, const TransPitch &p2)
 {
-    int iclass = GetInterval(p1, p2);
+    int iclass=GetInterval(p1, p2);
     return GetIntervalName(iclass);
 }
 
@@ -1201,149 +1201,149 @@ std::string Transposer::GetIntervalName(int intervalClass)
 {
     std::string direction;
     if (intervalClass < 0) {
-        direction = "-";
-        intervalClass = -intervalClass;
+        direction="-";
+        intervalClass=-intervalClass;
     }
 
-    int octave = intervalClass / m_base;
-    int chroma = intervalClass - octave * m_base;
+    int octave=intervalClass / m_base;
+    int chroma=intervalClass - octave * m_base;
 
-    int mindiff = chroma;
-    int mini = 0;
-    for (int i = 1; i < (int)m_diatonicMapping.size(); i++) {
-        int diff = chroma - (m_diatonicMapping[i] - m_diatonicMapping[0]);
+    int mindiff=chroma;
+    int mini=0;
+    for (int i=1; i < (int)m_diatonicMapping.size(); i++) {
+        int diff=chroma - (m_diatonicMapping[i] - m_diatonicMapping[0]);
         if (abs(diff) < abs(mindiff)) {
-            mindiff = diff;
-            mini = i;
+            mindiff=diff;
+            mini=i;
         }
         if (abs(mindiff) <= m_maxAccid) {
             break;
         }
     }
 
-    int number = INVALID_INTERVAL_CLASS;
-    int diminished = 0;
-    int augmented = 0;
+    int number=INVALID_INTERVAL_CLASS;
+    int diminished=0;
+    int augmented=0;
     std::string quality;
 
     switch (mini) {
         case 0: // unison
-            number = 1;
+            number=1;
             if (mindiff == 0) {
-                quality = "P";
+                quality="P";
             }
             else if (mindiff < 0) {
-                diminished = -mindiff;
+                diminished=-mindiff;
             }
             else if (mindiff > 0) {
-                augmented = mindiff;
+                augmented=mindiff;
             }
             break;
         case 1: // second
-            number = 2;
+            number=2;
             if (mindiff == 0) {
-                quality = "M";
+                quality="M";
             }
             else if (mindiff == -1) {
-                quality = "m";
+                quality="m";
             }
             else if (mindiff < 0) {
-                diminished = -mindiff - 1;
+                diminished=-mindiff - 1;
             }
             else if (mindiff > 0) {
-                augmented = mindiff;
+                augmented=mindiff;
             }
             break;
         case 2: // third
-            number = 3;
+            number=3;
             if (mindiff == 0) {
-                quality = "M";
+                quality="M";
             }
             else if (mindiff == -1) {
-                quality = "m";
+                quality="m";
             }
             else if (mindiff < 0) {
-                diminished = -mindiff - 1;
+                diminished=-mindiff - 1;
             }
             else if (mindiff > 0) {
-                augmented = mindiff;
+                augmented=mindiff;
             }
             break;
         case 3: // fourth
-            number = 4;
+            number=4;
             if (mindiff == 0) {
-                quality = "P";
+                quality="P";
             }
             else if (mindiff < 0) {
-                diminished = -mindiff;
+                diminished=-mindiff;
             }
             else if (mindiff > 0) {
-                augmented = mindiff;
+                augmented=mindiff;
             }
             break;
         case 4: // fifth
-            number = 5;
+            number=5;
             if (mindiff == 0) {
-                quality = "P";
+                quality="P";
             }
             else if (mindiff < 0) {
-                diminished = -mindiff;
+                diminished=-mindiff;
             }
             else if (mindiff > 0) {
-                augmented = mindiff;
+                augmented=mindiff;
             }
             break;
         case 5: // sixth
-            number = 6;
+            number=6;
             if (mindiff == 0) {
-                quality = "M";
+                quality="M";
             }
             else if (mindiff == -1) {
-                quality = "m";
+                quality="m";
             }
             else if (mindiff < 0) {
-                diminished = -mindiff - 1;
+                diminished=-mindiff - 1;
             }
             else if (mindiff > 0) {
-                augmented = mindiff;
+                augmented=mindiff;
             }
             break;
         case 6: // seventh
-            number = 7;
+            number=7;
             if (mindiff == 0) {
-                quality = "M";
+                quality="M";
             }
             else if (mindiff == -1) {
-                quality = "m";
+                quality="m";
             }
             else if (mindiff < 0) {
-                diminished = -mindiff - 1;
+                diminished=-mindiff - 1;
             }
             else if (mindiff > 0) {
-                augmented = mindiff;
+                augmented=mindiff;
             }
             break;
     }
 
     if (quality.empty()) {
         if (augmented) {
-            for (int i = 0; i < augmented; i++) {
+            for (int i=0; i < augmented; i++) {
                 quality += "A";
             }
         }
         else if (diminished) {
-            for (int i = 0; i < diminished; i++) {
+            for (int i=0; i < diminished; i++) {
                 quality += "d";
             }
         }
         else {
-            quality = "?";
+            quality="?";
         }
     }
 
     number += octave * 7;
 
-    std::string output = direction;
+    std::string output=direction;
     output += quality;
     output += std::to_string(number);
 
@@ -1371,14 +1371,14 @@ std::string Transposer::GetIntervalName(int intervalClass)
 
 int Transposer::IntervalToCircleOfFifths(const std::string &transstring)
 {
-    int intervalClass = GetInterval(transstring);
+    int intervalClass=GetInterval(transstring);
     return IntervalToCircleOfFifths(intervalClass);
 }
 
 int Transposer::IntervalToCircleOfFifths(int transval)
 {
     if (transval < 0) {
-        transval = (m_base * 100 + transval) % m_base;
+        transval=(m_base * 100 + transval) % m_base;
     }
     else if (transval == 0) {
         return 0;
@@ -1387,9 +1387,9 @@ int Transposer::IntervalToCircleOfFifths(int transval)
         transval %= m_base;
     }
 
-    int p5 = PerfectFifthClass();
-    int p4 = PerfectFourthClass();
-    for (int i = 1; i < m_base; i++) {
+    int p5=PerfectFifthClass();
+    int p4=PerfectFourthClass();
+    for (int i=1; i < m_base; i++) {
         if ((p5 * i) % m_base == transval) {
             return i;
         }
@@ -1427,7 +1427,7 @@ int Transposer::CircleOfFifthsToIntervalClass(int fifths)
 
 std::string Transposer::CircleOfFifthsToIntervalName(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return GetIntervalName(intervalClass);
 }
 
@@ -1440,7 +1440,7 @@ std::string Transposer::CircleOfFifthsToIntervalName(int fifths)
 
 TransPitch Transposer::CircleOfFifthsToMajorTonic(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return IntegerPitchToTransPitch((GetCPitchClass() + intervalClass) % GetBase());
 }
 
@@ -1453,7 +1453,7 @@ TransPitch Transposer::CircleOfFifthsToMajorTonic(int fifths)
 
 TransPitch Transposer::CircleOfFifthsToMinorTonic(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return IntegerPitchToTransPitch((GetAPitchClass() + intervalClass) % GetBase());
 }
 
@@ -1466,7 +1466,7 @@ TransPitch Transposer::CircleOfFifthsToMinorTonic(int fifths)
 
 TransPitch Transposer::CircleOfFifthsToDorianTonic(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return IntegerPitchToTransPitch((GetDPitchClass() + intervalClass) % GetBase());
 }
 
@@ -1479,7 +1479,7 @@ TransPitch Transposer::CircleOfFifthsToDorianTonic(int fifths)
 
 TransPitch Transposer::CircleOfFifthsToPhrygianTonic(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return IntegerPitchToTransPitch((GetEPitchClass() + intervalClass) % GetBase());
 }
 
@@ -1492,7 +1492,7 @@ TransPitch Transposer::CircleOfFifthsToPhrygianTonic(int fifths)
 
 TransPitch Transposer::CircleOfFifthsToLydianTonic(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return IntegerPitchToTransPitch((GetFPitchClass() + intervalClass) % GetBase());
 }
 
@@ -1505,7 +1505,7 @@ TransPitch Transposer::CircleOfFifthsToLydianTonic(int fifths)
 
 TransPitch Transposer::CircleOfFifthsToMixolydianTonic(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return IntegerPitchToTransPitch((GetGPitchClass() + intervalClass) % GetBase());
 }
 
@@ -1518,7 +1518,7 @@ TransPitch Transposer::CircleOfFifthsToMixolydianTonic(int fifths)
 
 TransPitch Transposer::CircleOfFifthsToLocrianTonic(int fifths)
 {
-    int intervalClass = CircleOfFifthsToIntervalClass(fifths);
+    int intervalClass=CircleOfFifthsToIntervalClass(fifths);
     return IntegerPitchToTransPitch((GetBPitchClass() + intervalClass) % GetBase());
 }
 
@@ -1526,16 +1526,16 @@ TransPitch Transposer::CircleOfFifthsToLocrianTonic(int fifths)
 //
 // Transposer::DiatonicChromaticToIntervalClass -- Convert a diatonic/chromatic interval
 //    into a base-n interval class integer.
-//      +1D +1C = m2
-//      +1D +2C = M2
-//      +1D +3C = A2
-//      +2D +4C = M3
-//      +2D +3C = m3
-//      +2D +2C = m3
-//      +2D +1C = d3
-//      +3D +5C = P4
-//      +3D +6C = A4
-//      +3D +4C = d4
+//      +1D +1C=m2
+//      +1D +2C=M2
+//      +1D +3C=A2
+//      +2D +4C=M3
+//      +2D +3C=m3
+//      +2D +2C=m3
+//      +2D +1C=d3
+//      +3D +5C=P4
+//      +3D +6C=A4
+//      +3D +4C=d4
 //
 //
 
@@ -1547,12 +1547,12 @@ std::string Transposer::DiatonicChromaticToIntervalName(int diatonic, int chroma
             output += "P";
         }
         else if (chromatic > 0) {
-            for (int i = 0; i < chromatic; i++) {
+            for (int i=0; i < chromatic; i++) {
                 output += "A";
             }
         }
         else {
-            for (int i = 0; i < -chromatic; i++) {
+            for (int i=0; i < -chromatic; i++) {
                 output += "d";
             }
         }
@@ -1560,126 +1560,126 @@ std::string Transposer::DiatonicChromaticToIntervalName(int diatonic, int chroma
         return output;
     }
 
-    int octave = 0;
+    int octave=0;
     std::string direction;
     if (diatonic < 0) {
-        direction = "-";
-        octave = -diatonic / 7;
-        diatonic = (-diatonic - octave * 7);
-        chromatic = -chromatic;
+        direction="-";
+        octave=-diatonic / 7;
+        diatonic=(-diatonic - octave * 7);
+        chromatic=-chromatic;
     }
     else {
-        octave = diatonic / 7;
-        diatonic = diatonic - octave * 7;
+        octave=diatonic / 7;
+        diatonic=diatonic - octave * 7;
     }
 
-    int augmented = 0;
-    int diminished = 0;
+    int augmented=0;
+    int diminished=0;
     std::string quality;
 
     switch (abs(diatonic)) {
         case 0: // unsion
             if (chromatic == 0) {
-                quality = "P";
+                quality="P";
             }
             else if (chromatic > 0) {
-                augmented = chromatic;
+                augmented=chromatic;
             }
             else {
-                diminished = chromatic;
+                diminished=chromatic;
             }
             break;
         case 1: // second
             if (chromatic == 2) {
-                quality = "M";
+                quality="M";
             }
             else if (chromatic == 1) {
-                quality = "m";
+                quality="m";
             }
             else if (chromatic > 2) {
-                augmented = chromatic - 2;
+                augmented=chromatic - 2;
             }
             else {
-                diminished = chromatic - 1;
+                diminished=chromatic - 1;
             }
             break;
         case 2: // third
             if (chromatic == 4) {
-                quality = "M";
+                quality="M";
             }
             else if (chromatic == 3) {
-                quality = "m";
+                quality="m";
             }
             else if (chromatic > 4) {
-                augmented = chromatic - 4;
+                augmented=chromatic - 4;
             }
             else {
-                diminished = chromatic - 3;
+                diminished=chromatic - 3;
             }
             break;
         case 3: // fourth
             if (chromatic == 5) {
-                quality = "P";
+                quality="P";
             }
             else if (chromatic > 5) {
-                augmented = chromatic - 5;
+                augmented=chromatic - 5;
             }
             else {
-                diminished = chromatic - 5;
+                diminished=chromatic - 5;
             }
             break;
         case 4: // fifth
             if (chromatic == 7) {
-                quality = "P";
+                quality="P";
             }
             else if (chromatic > 7) {
-                augmented = chromatic - 7;
+                augmented=chromatic - 7;
             }
             else {
-                diminished = chromatic - 7;
+                diminished=chromatic - 7;
             }
             break;
         case 5: // sixth
             if (chromatic == 9) {
-                quality = "M";
+                quality="M";
             }
             else if (chromatic == 8) {
-                quality = "m";
+                quality="m";
             }
             else if (chromatic > 9) {
-                augmented = chromatic - 9;
+                augmented=chromatic - 9;
             }
             else {
-                diminished = chromatic - 8;
+                diminished=chromatic - 8;
             }
             break;
         case 6: // seventh
             if (chromatic == 11) {
-                quality = "M";
+                quality="M";
             }
             else if (chromatic == 10) {
-                quality = "m";
+                quality="m";
             }
             else if (chromatic > 11) {
-                augmented = chromatic - 11;
+                augmented=chromatic - 11;
             }
             else {
-                diminished = chromatic - 10;
+                diminished=chromatic - 10;
             }
             break;
     }
 
-    augmented = abs(augmented);
-    diminished = abs(diminished);
+    augmented=abs(augmented);
+    diminished=abs(diminished);
 
     if (quality.empty()) {
         if (augmented) {
-            for (int i = 0; i < augmented; i++) {
+            for (int i=0; i < augmented; i++) {
                 quality += "A";
             }
         }
         else if (diminished) {
-            for (int i = 0; i < diminished; i++) {
+            for (int i=0; i < diminished; i++) {
                 quality += "d";
             }
         }
@@ -1695,7 +1695,7 @@ std::string Transposer::DiatonicChromaticToIntervalName(int diatonic, int chroma
 
 int Transposer::DiatonicChromaticToIntervalClass(int diatonic, int chromatic)
 {
-    std::string intervalName = DiatonicChromaticToIntervalName(diatonic, chromatic);
+    std::string intervalName=DiatonicChromaticToIntervalName(diatonic, chromatic);
     return GetInterval(intervalName);
 }
 
@@ -1706,31 +1706,31 @@ int Transposer::DiatonicChromaticToIntervalClass(int diatonic, int chromatic)
 
 void Transposer::IntervalToDiatonicChromatic(int &diatonic, int &chromatic, int intervalClass)
 {
-    std::string intervalName = GetIntervalName(intervalClass);
+    std::string intervalName=GetIntervalName(intervalClass);
     IntervalToDiatonicChromatic(diatonic, chromatic, intervalName);
 }
 
 void Transposer::IntervalToDiatonicChromatic(int &diatonic, int &chromatic, const std::string &intervalName)
 {
-    int direction = 1;
+    int direction=1;
     std::string quality;
     std::string number;
-    int state = 0;
+    int state=0;
 
-    for (int i = 0; i < (int)intervalName.size(); i++) {
+    for (int i=0; i < (int)intervalName.size(); i++) {
         switch (state) {
             case 0: // direction or quality expected
                 switch (intervalName[i]) {
                     case '-': // interval is down
-                        direction = -1;
+                        direction=-1;
                         state++;
                         break;
                     case '+': // interval is up
-                        direction = 1;
+                        direction=1;
                         state++;
                         break;
                     default: // interval is up by default
-                        direction = 1;
+                        direction=1;
                         state++;
                         i--;
                         break;
@@ -1745,13 +1745,13 @@ void Transposer::IntervalToDiatonicChromatic(int &diatonic, int &chromatic, cons
                 else {
                     switch (intervalName[i]) {
                         case 'M': // major
-                            quality = "M";
+                            quality="M";
                             break;
                         case 'm': // minor
-                            quality = "m";
+                            quality="m";
                             break;
                         case 'P': // perfect
-                        case 'p': quality = "P"; break;
+                        case 'p': quality="P"; break;
                         case 'D': // diminished
                         case 'd': quality += "d"; break;
                         case 'A': // augmented
@@ -1770,161 +1770,161 @@ void Transposer::IntervalToDiatonicChromatic(int &diatonic, int &chromatic, cons
 
     if (quality.empty()) {
         LogError("Interval requires a chromatic quality: %s", intervalName.c_str());
-        chromatic = INVALID_INTERVAL_CLASS;
-        diatonic = INVALID_INTERVAL_CLASS;
+        chromatic=INVALID_INTERVAL_CLASS;
+        diatonic=INVALID_INTERVAL_CLASS;
         return;
     }
 
     if (number.empty()) {
         LogError("Interval requires a diatonic interval number: %s", intervalName.c_str());
-        chromatic = INVALID_INTERVAL_CLASS;
-        diatonic = INVALID_INTERVAL_CLASS;
+        chromatic=INVALID_INTERVAL_CLASS;
+        diatonic=INVALID_INTERVAL_CLASS;
         return;
     }
 
-    int dnum = stoi(number);
+    int dnum=stoi(number);
     if (dnum == 0) {
         LogError("Integer interval number cannot be zero: %s", intervalName.c_str());
-        chromatic = INVALID_INTERVAL_CLASS;
-        diatonic = INVALID_INTERVAL_CLASS;
+        chromatic=INVALID_INTERVAL_CLASS;
+        diatonic=INVALID_INTERVAL_CLASS;
         return;
     }
     dnum--;
-    int octave = dnum / 7;
-    dnum = dnum - octave * 7;
+    int octave=dnum / 7;
+    dnum=dnum - octave * 7;
 
-    diatonic = direction * (octave * 7 + dnum);
-    chromatic = 0;
+    diatonic=direction * (octave * 7 + dnum);
+    chromatic=0;
 
     switch (dnum) {
         case 0: // unison
             if (quality[0] == 'A') {
-                chromatic = (int)quality.size();
+                chromatic=(int)quality.size();
             }
             else if (quality[0] == 'd') {
-                chromatic = -(int)quality.size();
+                chromatic=-(int)quality.size();
             }
             else if (quality == "P") {
-                chromatic = 0;
+                chromatic=0;
             }
             else {
                 LogError("Error in Interval quality: %s", intervalName.c_str());
-                chromatic = INVALID_INTERVAL_CLASS;
-                diatonic = INVALID_INTERVAL_CLASS;
+                chromatic=INVALID_INTERVAL_CLASS;
+                diatonic=INVALID_INTERVAL_CLASS;
                 return;
             }
             break;
         case 1: // second
             if (quality == "M") {
-                chromatic = 2;
+                chromatic=2;
             }
             else if (quality == "m") {
-                chromatic = 1;
+                chromatic=1;
             }
             else if (quality[0] == 'A') {
-                chromatic = 2 + (int)quality.size();
+                chromatic=2 + (int)quality.size();
             }
             else if (quality[0] == 'd') {
-                chromatic = 1 - (int)quality.size();
+                chromatic=1 - (int)quality.size();
             }
             else {
                 LogError("Error in Interval quality: %s", intervalName.c_str());
-                chromatic = INVALID_INTERVAL_CLASS;
-                diatonic = INVALID_INTERVAL_CLASS;
+                chromatic=INVALID_INTERVAL_CLASS;
+                diatonic=INVALID_INTERVAL_CLASS;
                 return;
             }
             break;
         case 2: // third
             if (quality == "M") {
-                chromatic = 4;
+                chromatic=4;
             }
             else if (quality == "m") {
-                chromatic = 3;
+                chromatic=3;
             }
             else if (quality[0] == 'A') {
-                chromatic = 4 + (int)quality.size();
+                chromatic=4 + (int)quality.size();
             }
             else if (quality[0] == 'd') {
-                chromatic = 3 - (int)quality.size();
+                chromatic=3 - (int)quality.size();
             }
             else {
                 LogError("Error in Interval quality: %s", intervalName.c_str());
-                chromatic = INVALID_INTERVAL_CLASS;
-                diatonic = INVALID_INTERVAL_CLASS;
+                chromatic=INVALID_INTERVAL_CLASS;
+                diatonic=INVALID_INTERVAL_CLASS;
                 return;
             }
             break;
         case 3: // fourth
             if (quality[0] == 'A') {
-                chromatic = 5 + (int)quality.size();
+                chromatic=5 + (int)quality.size();
             }
             else if (quality[0] == 'd') {
-                chromatic = 5 - (int)quality.size();
+                chromatic=5 - (int)quality.size();
             }
             else if (quality == "P") {
-                chromatic = 5;
+                chromatic=5;
             }
             else {
                 LogError("Error in Interval quality: %s", intervalName.c_str());
-                chromatic = INVALID_INTERVAL_CLASS;
-                diatonic = INVALID_INTERVAL_CLASS;
+                chromatic=INVALID_INTERVAL_CLASS;
+                diatonic=INVALID_INTERVAL_CLASS;
                 return;
             }
             break;
         case 4: // fifth
             if (quality[0] == 'A') {
-                chromatic = 7 + (int)quality.size();
+                chromatic=7 + (int)quality.size();
             }
             else if (quality[0] == 'd') {
-                chromatic = 7 - (int)quality.size();
+                chromatic=7 - (int)quality.size();
             }
             else if (quality == "P") {
-                chromatic = 7;
+                chromatic=7;
             }
             else {
                 LogError("Error in Interval quality: %s", intervalName.c_str());
-                chromatic = INVALID_INTERVAL_CLASS;
-                diatonic = INVALID_INTERVAL_CLASS;
+                chromatic=INVALID_INTERVAL_CLASS;
+                diatonic=INVALID_INTERVAL_CLASS;
                 return;
             }
             break;
         case 5: // sixth
             if (quality == "M") {
-                chromatic = 9;
+                chromatic=9;
             }
             else if (quality == "m") {
-                chromatic = 8;
+                chromatic=8;
             }
             else if (quality[0] == 'A') {
-                chromatic = 9 + (int)quality.size();
+                chromatic=9 + (int)quality.size();
             }
             else if (quality[0] == 'd') {
-                chromatic = 8 - (int)quality.size();
+                chromatic=8 - (int)quality.size();
             }
             else {
                 LogError("Error in Interval quality: %s", intervalName.c_str());
-                chromatic = INVALID_INTERVAL_CLASS;
-                diatonic = INVALID_INTERVAL_CLASS;
+                chromatic=INVALID_INTERVAL_CLASS;
+                diatonic=INVALID_INTERVAL_CLASS;
                 return;
             }
             break;
         case 6: // seventh
             if (quality == "M") {
-                chromatic = 11;
+                chromatic=11;
             }
             else if (quality == "m") {
-                chromatic = 10;
+                chromatic=10;
             }
             else if (quality[0] == 'A') {
-                chromatic = 11 + (int)quality.size();
+                chromatic=11 + (int)quality.size();
             }
             else if (quality[0] == 'd') {
-                chromatic = 10 - (int)quality.size();
+                chromatic=10 - (int)quality.size();
             }
             else {
                 LogError("Error in Interval quality: %s", intervalName.c_str());
-                chromatic = INVALID_INTERVAL_CLASS;
-                diatonic = INVALID_INTERVAL_CLASS;
+                chromatic=INVALID_INTERVAL_CLASS;
+                diatonic=INVALID_INTERVAL_CLASS;
                 return;
             }
             break;
@@ -1946,11 +1946,11 @@ void Transposer::IntervalToDiatonicChromatic(int &diatonic, int &chromatic, cons
 //                   will be ignored.
 //    2:  ([Pp]|M|m|[aA]+|[dD]+) == The chromatic quality of the following
 //                   diatonic interval number.  Meanings of the letters:
-//                      P or p = perfect
-//                      M      = major
-//                      m      = minor
-//                      A or a = augmented
-//                      d or D = diminished
+//                      P or p=perfect
+//                      M     =major
+//                      m     =minor
+//                      A or a=augmented
+//                      d or D=diminished
 //                   unisons (1), fourths, fifths and octaves (8) and octave multiples
 //                   of these intervals can be prefixed by P but not by M or m.  Seconds,
 //                   thirds, sixths, sevenths and octave transpositions of those intervals
@@ -1963,15 +1963,15 @@ void Transposer::IntervalToDiatonicChromatic(int &diatonic, int &chromatic, cons
 //                   more thorough check for invalid pairings.  This function is used mainly to
 //                   determine whether an interval or a key tonic is being used in the --transpose
 //                   option for verovio.
-//     3: ([1-9][0-9]*) == a positive integer representing the diatonic interval.  1 = unison,
-//                   2 = second, 3 = third, and so on.  Compound intervals are allowed, such as
+//     3: ([1-9][0-9]*) == a positive integer representing the diatonic interval.  1=unison,
+//                   2=second, 3=third, and so on.  Compound intervals are allowed, such as
 //                   9 for a nineth (2nd plus a perfect octave), 15 for two perfect octaves.
 //
 //
 
 bool Transposer::IsValidIntervalName(const std::string &name)
 {
-    std::string pattern = "(-|\\+?)([Pp]|M|m|[aA]+|[dD]+)([1-9][0-9]*)";
+    std::string pattern="(-|\\+?)([Pp]|M|m|[aA]+|[dD]+)([1-9][0-9]*)";
     if (std::regex_search(name, std::regex(pattern))) {
         return true;
     }
@@ -2000,7 +2000,7 @@ bool Transposer::IsValidIntervalName(const std::string &name)
 
 bool Transposer::IsValidSemitones(const std::string &name)
 {
-    std::string pattern = "^(-|\\+?)(\\d+)$";
+    std::string pattern="^(-|\\+?)(\\d+)$";
     if (std::regex_search(name, std::regex(pattern))) {
         return true;
     }
@@ -2036,7 +2036,7 @@ bool Transposer::IsValidSemitones(const std::string &name)
 
 bool Transposer::IsValidKeyTonic(const std::string &name)
 {
-    std::string pattern = "([+]*|[-]*)([A-Ga-g])([Ss#]*|[Ffb]*)";
+    std::string pattern="([+]*|[-]*)([A-Ga-g])([Ss#]*|[Ffb]*)";
     if (std::regex_search(name, std::regex(pattern))) {
         return true;
     }
@@ -2081,7 +2081,7 @@ int main(void)
     pitch.SetPitch(dpc_C, 2, 4); // C##4
     std::cout << "Initial pitch:\t\t" << pitch << std::endl;
     transpose.Transpose(pitch, "A4"); // now F###4
-    bool valid = pitch.IsValid(2);
+    bool valid=pitch.IsValid(2);
     std::cout << "Up an aug. 4th:\t\t" << pitch;
     if (!valid) {
         std::cout << "\t(not valid in base-40 system)";

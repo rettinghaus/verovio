@@ -46,10 +46,10 @@ void MeterSig::Reset()
 
 int MeterSig::LayerCountInTimeSpan(FunctorParams *functorParams)
 {
-    LayerCountInTimeSpanParams *params = vrv_params_cast<LayerCountInTimeSpanParams *>(functorParams);
+    LayerCountInTimeSpanParams *params=vrv_params_cast<LayerCountInTimeSpanParams *>(functorParams);
     assert(params);
 
-    params->m_meterSig = this;
+    params->m_meterSig=this;
 
     return FUNCTOR_CONTINUE;
 }

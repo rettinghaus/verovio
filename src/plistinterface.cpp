@@ -42,7 +42,7 @@ void PlistInterface::Reset()
 
 void PlistInterface::AddRef(std::string ref)
 {
-    xsdAnyURI_List references = this->GetPlist();
+    xsdAnyURI_List references=this->GetPlist();
     if (std::find(references.begin(), references.end(), ref) == references.end()) {
         references.push_back(ref);
         this->SetPlist(references);
@@ -51,7 +51,7 @@ void PlistInterface::AddRef(std::string ref)
 
 void PlistInterface::AddRefAllowDuplicate(const std::string &ref)
 {
-    xsdAnyURI_List references = this->GetPlist();
+    xsdAnyURI_List references=this->GetPlist();
     references.push_back(ref);
     this->SetPlist(references);
 }
@@ -71,10 +71,10 @@ void PlistInterface::SetUuidStrs()
 {
     assert(m_uuids.empty() && m_references.empty());
 
-    xsdAnyURI_List list = this->GetPlist();
+    xsdAnyURI_List list=this->GetPlist();
     xsdAnyURI_List::iterator iter;
-    for (iter = list.begin(); iter != list.end(); ++iter) {
-        std::string uuid = ExtractUuidFragment(*iter);
+    for (iter=list.begin(); iter != list.end(); ++iter) {
+        std::string uuid=ExtractUuidFragment(*iter);
         if (!uuid.empty()) {
             m_uuids.push_back(uuid);
         }
@@ -90,7 +90,7 @@ void PlistInterface::SetUuidStrs()
 
 int PlistInterface::InterfacePreparePlist(FunctorParams *functorParams, Object *object)
 {
-    PreparePlistParams *params = vrv_params_cast<PreparePlistParams *>(functorParams);
+    PreparePlistParams *params=vrv_params_cast<PreparePlistParams *>(functorParams);
     assert(params);
 
     // This should not happen?
@@ -101,7 +101,7 @@ int PlistInterface::InterfacePreparePlist(FunctorParams *functorParams, Object *
     this->SetUuidStrs();
 
     std::vector<std::string>::iterator iter;
-    for (iter = m_uuids.begin(); iter != m_uuids.end(); ++iter) {
+    for (iter=m_uuids.begin(); iter != m_uuids.end(); ++iter) {
         params->m_interfaceUuidPairs.push_back(std::make_pair(this, *iter));
     }
 

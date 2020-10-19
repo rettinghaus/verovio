@@ -56,7 +56,7 @@ void ControlElement::Reset()
 
 data_HORIZONTALALIGNMENT ControlElement::GetChildRendAlignment()
 {
-    Rend *rend = dynamic_cast<Rend *>(this->FindDescendantByType(REND));
+    Rend *rend=dynamic_cast<Rend *>(this->FindDescendantByType(REND));
     if (!rend || !rend->HasHalign()) return HORIZONTALALIGNMENT_NONE;
 
     return rend->GetHalign();
@@ -68,7 +68,7 @@ data_HORIZONTALALIGNMENT ControlElement::GetChildRendAlignment()
 
 int ControlElement::AdjustXOverflow(FunctorParams *functorParams)
 {
-    AdjustXOverflowParams *params = vrv_params_cast<AdjustXOverflowParams *>(functorParams);
+    AdjustXOverflowParams *params=vrv_params_cast<AdjustXOverflowParams *>(functorParams);
     assert(params);
 
     if (!this->Is({ DIR, DYNAM, TEMPO })) {
@@ -96,7 +96,7 @@ int ControlElement::AdjustXOverflow(FunctorParams *functorParams)
     // Keep the one with the highest right position
     for (auto const &positoner : positioners) {
         if (!params->m_currentWidest || (params->m_currentWidest->GetContentRight() < positoner->GetContentRight())) {
-            params->m_currentWidest = positoner;
+            params->m_currentWidest=positoner;
         }
     }
 
@@ -110,7 +110,7 @@ int ControlElement::ResetDrawing(FunctorParams *functorParams)
 
     // Pass it to the pseudo functor of the interface
     if (this->HasInterface(INTERFACE_LINKING)) {
-        LinkingInterface *interface = this->GetLinkingInterface();
+        LinkingInterface *interface=this->GetLinkingInterface();
         assert(interface);
         return interface->InterfaceResetDrawing(functorParams, this);
     }

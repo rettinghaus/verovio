@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFunc(accidLog_FUNC func_) { m_func = func_; }
+    void SetFunc(accidLog_FUNC func_) { m_func=func_; }
     accidLog_FUNC GetFunc() const { return m_func; }
     bool HasFunc() const;
     ///@}
@@ -85,7 +85,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAccid(data_ACCIDENTAL_WRITTEN accid_) { m_accid = accid_; }
+    void SetAccid(data_ACCIDENTAL_WRITTEN accid_) { m_accid=accid_; }
     data_ACCIDENTAL_WRITTEN GetAccid() const { return m_accid; }
     bool HasAccid() const;
     ///@}
@@ -121,7 +121,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetArtic(data_ARTICULATION_List artic_) { m_artic = artic_; }
+    void SetArtic(data_ARTICULATION_List artic_) { m_artic=artic_; }
     data_ARTICULATION_List GetArtic() const { return m_artic; }
     bool HasArtic() const;
     ///@}
@@ -163,7 +163,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTarget(std::string target_) { m_target = target_; }
+    void SetTarget(std::string target_) { m_target=target_; }
     std::string GetTarget() const { return m_target; }
     bool HasTarget() const;
     ///@}
@@ -199,7 +199,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAudience(audience_AUDIENCE audience_) { m_audience = audience_; }
+    void SetAudience(audience_AUDIENCE audience_) { m_audience=audience_; }
     audience_AUDIENCE GetAudience() const { return m_audience; }
     bool HasAudience() const;
     ///@}
@@ -235,7 +235,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDots(int dots_) { m_dots = dots_; }
+    void SetDots(int dots_) { m_dots=dots_; }
     int GetDots() const { return m_dots; }
     bool HasDots() const;
     ///@}
@@ -271,11 +271,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAuth(std::string auth_) { m_auth = auth_; }
+    void SetAuth(std::string auth_) { m_auth=auth_; }
     std::string GetAuth() const { return m_auth; }
     bool HasAuth() const;
     //
-    void SetAuthUri(std::string authUri_) { m_authUri = authUri_; }
+    void SetAuthUri(std::string authUri_) { m_authUri=authUri_; }
     std::string GetAuthUri() const { return m_authUri; }
     bool HasAuthUri() const;
     ///@}
@@ -321,7 +321,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(data_BARRENDITION form_) { m_form = form_; }
+    void SetForm(data_BARRENDITION form_) { m_form=form_; }
     data_BARRENDITION GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}
@@ -357,15 +357,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBarLen(double barLen_) { m_barLen = barLen_; }
+    void SetBarLen(double barLen_) { m_barLen=barLen_; }
     double GetBarLen() const { return m_barLen; }
     bool HasBarLen() const;
     //
-    void SetBarMethod(data_BARMETHOD barMethod_) { m_barMethod = barMethod_; }
+    void SetBarMethod(data_BARMETHOD barMethod_) { m_barMethod=barMethod_; }
     data_BARMETHOD GetBarMethod() const { return m_barMethod; }
     bool HasBarMethod() const;
     //
-    void SetBarPlace(int barPlace_) { m_barPlace = barPlace_; }
+    void SetBarPlace(int barPlace_) { m_barPlace=barPlace_; }
     int GetBarPlace() const { return m_barPlace; }
     bool HasBarPlace() const;
     ///@}
@@ -412,7 +412,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBase(std::string base_) { m_base = base_; }
+    void SetBase(std::string base_) { m_base=base_; }
     std::string GetBase() const { return m_base; }
     bool HasBase() const;
     ///@}
@@ -448,7 +448,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAnalog(std::string analog_) { m_analog = analog_; }
+    void SetAnalog(std::string analog_) { m_analog=analog_; }
     std::string GetAnalog() const { return m_analog; }
     bool HasAnalog() const;
     ///@}
@@ -487,7 +487,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCalendar(std::string calendar_) { m_calendar = calendar_; }
+    void SetCalendar(std::string calendar_) { m_calendar=calendar_; }
     std::string GetCalendar() const { return m_calendar; }
     bool HasCalendar() const;
     ///@}
@@ -526,7 +526,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCodedval(std::string codedval_) { m_codedval = codedval_; }
+    void SetCodedval(std::string codedval_) { m_codedval=codedval_; }
     std::string GetCodedval() const { return m_codedval; }
     bool HasCodedval() const;
     ///@}
@@ -566,7 +566,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetClass(std::string class_) { m_class = class_; }
+    void SetClass(std::string class_) { m_class=class_; }
     std::string GetClass() const { return m_class; }
     bool HasClass() const;
     ///@}
@@ -605,7 +605,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCautionary(data_BOOLEAN cautionary_) { m_cautionary = cautionary_; }
+    void SetCautionary(data_BOOLEAN cautionary_) { m_cautionary=cautionary_; }
     data_BOOLEAN GetCautionary() const { return m_cautionary; }
     bool HasCautionary() const;
     ///@}
@@ -644,7 +644,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetShape(data_CLEFSHAPE shape_) { m_shape = shape_; }
+    void SetShape(data_CLEFSHAPE shape_) { m_shape=shape_; }
     data_CLEFSHAPE GetShape() const { return m_shape; }
     bool HasShape() const;
     ///@}
@@ -680,19 +680,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetClefShape(data_CLEFSHAPE clefShape_) { m_clefShape = clefShape_; }
+    void SetClefShape(data_CLEFSHAPE clefShape_) { m_clefShape=clefShape_; }
     data_CLEFSHAPE GetClefShape() const { return m_clefShape; }
     bool HasClefShape() const;
     //
-    void SetClefLine(char clefLine_) { m_clefLine = clefLine_; }
+    void SetClefLine(char clefLine_) { m_clefLine=clefLine_; }
     char GetClefLine() const { return m_clefLine; }
     bool HasClefLine() const;
     //
-    void SetClefDis(data_OCTAVE_DIS clefDis_) { m_clefDis = clefDis_; }
+    void SetClefDis(data_OCTAVE_DIS clefDis_) { m_clefDis=clefDis_; }
     data_OCTAVE_DIS GetClefDis() const { return m_clefDis; }
     bool HasClefDis() const;
     //
-    void SetClefDisPlace(data_STAFFREL_basic clefDisPlace_) { m_clefDisPlace = clefDisPlace_; }
+    void SetClefDisPlace(data_STAFFREL_basic clefDisPlace_) { m_clefDisPlace=clefDisPlace_; }
     data_STAFFREL_basic GetClefDisPlace() const { return m_clefDisPlace; }
     bool HasClefDisPlace() const;
     ///@}
@@ -738,7 +738,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetColor(std::string color_) { m_color = color_; }
+    void SetColor(std::string color_) { m_color=color_; }
     std::string GetColor() const { return m_color; }
     bool HasColor() const;
     ///@}
@@ -777,7 +777,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetColored(data_BOOLEAN colored_) { m_colored = colored_; }
+    void SetColored(data_BOOLEAN colored_) { m_colored=colored_; }
     data_BOOLEAN GetColored() const { return m_colored; }
     bool HasColored() const;
     ///@}
@@ -820,23 +820,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetUlx(int ulx_) { m_ulx = ulx_; }
+    void SetUlx(int ulx_) { m_ulx=ulx_; }
     int GetUlx() const { return m_ulx; }
     bool HasUlx() const;
     //
-    void SetUly(int uly_) { m_uly = uly_; }
+    void SetUly(int uly_) { m_uly=uly_; }
     int GetUly() const { return m_uly; }
     bool HasUly() const;
     //
-    void SetLrx(int lrx_) { m_lrx = lrx_; }
+    void SetLrx(int lrx_) { m_lrx=lrx_; }
     int GetLrx() const { return m_lrx; }
     bool HasLrx() const;
     //
-    void SetLry(int lry_) { m_lry = lry_; }
+    void SetLry(int lry_) { m_lry=lry_; }
     int GetLry() const { return m_lry; }
     bool HasLry() const;
     //
-    void SetRotate(double rotate) { m_rotate = rotate; }
+    void SetRotate(double rotate) { m_rotate=rotate; }
     double GetRotate() const { return m_rotate; }
     bool HasRotate() const;
     ///@}
@@ -880,7 +880,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCue(data_BOOLEAN cue_) { m_cue = cue_; }
+    void SetCue(data_BOOLEAN cue_) { m_cue=cue_; }
     data_BOOLEAN GetCue() const { return m_cue; }
     bool HasCue() const;
     ///@}
@@ -916,15 +916,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBezier(std::string bezier_) { m_bezier = bezier_; }
+    void SetBezier(std::string bezier_) { m_bezier=bezier_; }
     std::string GetBezier() const { return m_bezier; }
     bool HasBezier() const;
     //
-    void SetBulge(std::string bulge_) { m_bulge = bulge_; }
+    void SetBulge(std::string bulge_) { m_bulge=bulge_; }
     std::string GetBulge() const { return m_bulge; }
     bool HasBulge() const;
     //
-    void SetCurvedir(curvature_CURVEDIR curvedir_) { m_curvedir = curvedir_; }
+    void SetCurvedir(curvature_CURVEDIR curvedir_) { m_curvedir=curvedir_; }
     curvature_CURVEDIR GetCurvedir() const { return m_curvedir; }
     bool HasCurvedir() const;
     ///@}
@@ -975,11 +975,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLform(data_LINEFORM lform_) { m_lform = lform_; }
+    void SetLform(data_LINEFORM lform_) { m_lform=lform_; }
     data_LINEFORM GetLform() const { return m_lform; }
     bool HasLform() const;
     //
-    void SetLwidth(data_LINEWIDTH lwidth_) { m_lwidth = lwidth_; }
+    void SetLwidth(data_LINEWIDTH lwidth_) { m_lwidth=lwidth_; }
     data_LINEWIDTH GetLwidth() const { return m_lwidth; }
     bool HasLwidth() const;
     /** Getter for reference (for alternate type only) */
@@ -1019,7 +1019,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTarget(std::string target_) { m_target = target_; }
+    void SetTarget(std::string target_) { m_target=target_; }
     std::string GetTarget() const { return m_target; }
     bool HasTarget() const;
     ///@}
@@ -1055,7 +1055,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetData(std::string data_) { m_data = data_; }
+    void SetData(std::string data_) { m_data=data_; }
     std::string GetData() const { return m_data; }
     bool HasData() const;
     ///@}
@@ -1091,23 +1091,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetEnddate(std::string enddate_) { m_enddate = enddate_; }
+    void SetEnddate(std::string enddate_) { m_enddate=enddate_; }
     std::string GetEnddate() const { return m_enddate; }
     bool HasEnddate() const;
     //
-    void SetIsodate(std::string isodate_) { m_isodate = isodate_; }
+    void SetIsodate(std::string isodate_) { m_isodate=isodate_; }
     std::string GetIsodate() const { return m_isodate; }
     bool HasIsodate() const;
     //
-    void SetNotafter(std::string notafter_) { m_notafter = notafter_; }
+    void SetNotafter(std::string notafter_) { m_notafter=notafter_; }
     std::string GetNotafter() const { return m_notafter; }
     bool HasNotafter() const;
     //
-    void SetNotbefore(std::string notbefore_) { m_notbefore = notbefore_; }
+    void SetNotbefore(std::string notbefore_) { m_notbefore=notbefore_; }
     std::string GetNotbefore() const { return m_notbefore; }
     bool HasNotbefore() const;
     //
-    void SetStartdate(std::string startdate_) { m_startdate = startdate_; }
+    void SetStartdate(std::string startdate_) { m_startdate=startdate_; }
     std::string GetStartdate() const { return m_startdate; }
     bool HasStartdate() const;
     ///@}
@@ -1151,15 +1151,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDynamDist(data_MEASUREMENTREL dynamDist_) { m_dynamDist = dynamDist_; }
+    void SetDynamDist(data_MEASUREMENTREL dynamDist_) { m_dynamDist=dynamDist_; }
     data_MEASUREMENTREL GetDynamDist() const { return m_dynamDist; }
     bool HasDynamDist() const;
     //
-    void SetHarmDist(data_MEASUREMENTREL harmDist_) { m_harmDist = harmDist_; }
+    void SetHarmDist(data_MEASUREMENTREL harmDist_) { m_harmDist=harmDist_; }
     data_MEASUREMENTREL GetHarmDist() const { return m_harmDist; }
     bool HasHarmDist() const;
     //
-    void SetTextDist(data_MEASUREMENTREL textDist_) { m_textDist = textDist_; }
+    void SetTextDist(data_MEASUREMENTREL textDist_) { m_textDist=textDist_; }
     data_MEASUREMENTREL GetTextDist() const { return m_textDist; }
     bool HasTextDist() const;
     ///@}
@@ -1202,7 +1202,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(dotLog_FORM form_) { m_form = form_; }
+    void SetForm(dotLog_FORM form_) { m_form=form_; }
     dotLog_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}
@@ -1238,7 +1238,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDur(data_DURATION dur_) { m_dur = dur_; }
+    void SetDur(data_DURATION dur_) { m_dur=dur_; }
     data_DURATION GetDur() const { return m_dur; }
     bool HasDur() const;
     ///@}
@@ -1277,15 +1277,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDurDefault(data_DURATION durDefault_) { m_durDefault = durDefault_; }
+    void SetDurDefault(data_DURATION durDefault_) { m_durDefault=durDefault_; }
     data_DURATION GetDurDefault() const { return m_durDefault; }
     bool HasDurDefault() const;
     //
-    void SetNumDefault(int numDefault_) { m_numDefault = numDefault_; }
+    void SetNumDefault(int numDefault_) { m_numDefault=numDefault_; }
     int GetNumDefault() const { return m_numDefault; }
     bool HasNumDefault() const;
     //
-    void SetNumbaseDefault(int numbaseDefault_) { m_numbaseDefault = numbaseDefault_; }
+    void SetNumbaseDefault(int numbaseDefault_) { m_numbaseDefault=numbaseDefault_; }
     int GetNumbaseDefault() const { return m_numbaseDefault; }
     bool HasNumbaseDefault() const;
     ///@}
@@ -1335,7 +1335,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDur(data_DURATION dur_) { m_dur = dur_; }
+    void SetDur(data_DURATION dur_) { m_dur=dur_; }
     data_DURATION GetDur() const { return m_dur; }
     bool HasDur() const;
     ///@}
@@ -1374,11 +1374,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetNum(int num_) { m_num = num_; }
+    void SetNum(int num_) { m_num=num_; }
     int GetNum() const { return m_num; }
     bool HasNum() const;
     //
-    void SetNumbase(int numbase_) { m_numbase = numbase_; }
+    void SetNumbase(int numbase_) { m_numbase=numbase_; }
     int GetNumbase() const { return m_numbase; }
     bool HasNumbase() const;
     ///@}
@@ -1419,7 +1419,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetEnclose(data_ENCLOSURE enclose_) { m_enclose = enclose_; }
+    void SetEnclose(data_ENCLOSURE enclose_) { m_enclose=enclose_; }
     data_ENCLOSURE GetEnclose() const { return m_enclose; }
     bool HasEnclose() const;
     ///@}
@@ -1460,7 +1460,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetEndingRend(endings_ENDINGREND endingRend_) { m_endingRend = endingRend_; }
+    void SetEndingRend(endings_ENDINGREND endingRend_) { m_endingRend=endingRend_; }
     endings_ENDINGREND GetEndingRend() const { return m_endingRend; }
     bool HasEndingRend() const;
     ///@}
@@ -1496,11 +1496,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCert(data_CERTAINTY cert_) { m_cert = cert_; }
+    void SetCert(data_CERTAINTY cert_) { m_cert=cert_; }
     data_CERTAINTY GetCert() const { return m_cert; }
     bool HasCert() const;
     //
-    void SetEvidence(std::string evidence_) { m_evidence = evidence_; }
+    void SetEvidence(std::string evidence_) { m_evidence=evidence_; }
     std::string GetEvidence() const { return m_evidence; }
     bool HasEvidence() const;
     ///@}
@@ -1541,7 +1541,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetExtender(data_BOOLEAN extender_) { m_extender = extender_; }
+    void SetExtender(data_BOOLEAN extender_) { m_extender=extender_; }
     data_BOOLEAN GetExtender() const { return m_extender; }
     bool HasExtender() const;
     ///@}
@@ -1577,7 +1577,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetExtent(std::string extent_) { m_extent = extent_; }
+    void SetExtent(std::string extent_) { m_extent=extent_; }
     std::string GetExtent() const { return m_extent; }
     bool HasExtent() const;
     ///@}
@@ -1617,7 +1617,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFermata(data_STAFFREL_basic fermata_) { m_fermata = fermata_; }
+    void SetFermata(data_STAFFREL_basic fermata_) { m_fermata=fermata_; }
     data_STAFFREL_basic GetFermata() const { return m_fermata; }
     bool HasFermata() const;
     ///@}
@@ -1656,7 +1656,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetNonfiling(int nonfiling_) { m_nonfiling = nonfiling_; }
+    void SetNonfiling(int nonfiling_) { m_nonfiling=nonfiling_; }
     int GetNonfiling() const { return m_nonfiling; }
     bool HasNonfiling() const;
     ///@}
@@ -1695,7 +1695,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLevel(int level_) { m_level = level_; }
+    void SetLevel(int level_) { m_level=level_; }
     int GetLevel() const { return m_level; }
     bool HasLevel() const;
     ///@}
@@ -1731,7 +1731,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetHand(std::string hand_) { m_hand = hand_; }
+    void SetHand(std::string hand_) { m_hand=hand_; }
     std::string GetHand() const { return m_hand; }
     bool HasHand() const;
     ///@}
@@ -1770,7 +1770,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetHeight(data_MEASUREMENTABS height_) { m_height = height_; }
+    void SetHeight(data_MEASUREMENTABS height_) { m_height=height_; }
     data_MEASUREMENTABS GetHeight() const { return m_height; }
     bool HasHeight() const;
     ///@}
@@ -1806,7 +1806,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetHalign(data_HORIZONTALALIGNMENT halign_) { m_halign = halign_; }
+    void SetHalign(data_HORIZONTALALIGNMENT halign_) { m_halign=halign_; }
     data_HORIZONTALALIGNMENT GetHalign() const { return m_halign; }
     bool HasHalign() const;
     ///@}
@@ -1842,7 +1842,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMimetype(std::string mimetype_) { m_mimetype = mimetype_; }
+    void SetMimetype(std::string mimetype_) { m_mimetype=mimetype_; }
     std::string GetMimetype() const { return m_mimetype; }
     bool HasMimetype() const;
     ///@}
@@ -1882,7 +1882,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetJoin(std::string join_) { m_join = join_; }
+    void SetJoin(std::string join_) { m_join=join_; }
     std::string GetJoin() const { return m_join; }
     bool HasJoin() const;
     ///@}
@@ -1925,7 +1925,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSig(data_KEYSIGNATURE sig_) { m_sig = sig_; }
+    void SetSig(data_KEYSIGNATURE sig_) { m_sig=sig_; }
     data_KEYSIGNATURE GetSig() const { return m_sig; }
     bool HasSig() const;
     ///@}
@@ -1961,7 +1961,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetKeySig(data_KEYSIGNATURE keySig_) { m_keySig = keySig_; }
+    void SetKeySig(data_KEYSIGNATURE keySig_) { m_keySig=keySig_; }
     data_KEYSIGNATURE GetKeySig() const { return m_keySig; }
     bool HasKeySig() const;
     ///@}
@@ -1997,7 +1997,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLabel(std::string label_) { m_label = label_; }
+    void SetLabel(std::string label_) { m_label=label_; }
     std::string GetLabel() const { return m_label; }
     bool HasLabel() const;
     ///@}
@@ -2037,11 +2037,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLang(std::string lang_) { m_lang = lang_; }
+    void SetLang(std::string lang_) { m_lang=lang_; }
     std::string GetLang() const { return m_lang; }
     bool HasLang() const;
     //
-    void SetTranslit(std::string translit_) { m_translit = translit_; }
+    void SetTranslit(std::string translit_) { m_translit=translit_; }
     std::string GetTranslit() const { return m_translit; }
     bool HasTranslit() const;
     ///@}
@@ -2079,7 +2079,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDef(std::string def_) { m_def = def_; }
+    void SetDef(std::string def_) { m_def=def_; }
     std::string GetDef() const { return m_def; }
     bool HasDef() const;
     ///@}
@@ -2115,7 +2115,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLayer(int layer_) { m_layer = layer_; }
+    void SetLayer(int layer_) { m_layer=layer_; }
     int GetLayer() const { return m_layer; }
     bool HasLayer() const;
     ///@}
@@ -2151,7 +2151,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLine(char line_) { m_line = line_; }
+    void SetLine(char line_) { m_line=line_; }
     char GetLine() const { return m_line; }
     bool HasLine() const;
     ///@}
@@ -2191,19 +2191,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLendsym(data_LINESTARTENDSYMBOL lendsym_) { m_lendsym = lendsym_; }
+    void SetLendsym(data_LINESTARTENDSYMBOL lendsym_) { m_lendsym=lendsym_; }
     data_LINESTARTENDSYMBOL GetLendsym() const { return m_lendsym; }
     bool HasLendsym() const;
     //
-    void SetLendsymSize(int lendsymSize_) { m_lendsymSize = lendsymSize_; }
+    void SetLendsymSize(int lendsymSize_) { m_lendsymSize=lendsymSize_; }
     int GetLendsymSize() const { return m_lendsymSize; }
     bool HasLendsymSize() const;
     //
-    void SetLstartsym(data_LINESTARTENDSYMBOL lstartsym_) { m_lstartsym = lstartsym_; }
+    void SetLstartsym(data_LINESTARTENDSYMBOL lstartsym_) { m_lstartsym=lstartsym_; }
     data_LINESTARTENDSYMBOL GetLstartsym() const { return m_lstartsym; }
     bool HasLstartsym() const;
     //
-    void SetLstartsymSize(int lstartsymSize_) { m_lstartsymSize = lstartsymSize_; }
+    void SetLstartsymSize(int lstartsymSize_) { m_lstartsymSize=lstartsymSize_; }
     int GetLstartsymSize() const { return m_lstartsymSize; }
     bool HasLstartsymSize() const;
     ///@}
@@ -2245,15 +2245,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLform(data_LINEFORM lform_) { m_lform = lform_; }
+    void SetLform(data_LINEFORM lform_) { m_lform=lform_; }
     data_LINEFORM GetLform() const { return m_lform; }
     bool HasLform() const;
     //
-    void SetLsegs(int lsegs_) { m_lsegs = lsegs_; }
+    void SetLsegs(int lsegs_) { m_lsegs=lsegs_; }
     int GetLsegs() const { return m_lsegs; }
     bool HasLsegs() const;
     //
-    void SetLwidth(data_LINEWIDTH lwidth_) { m_lwidth = lwidth_; }
+    void SetLwidth(data_LINEWIDTH lwidth_) { m_lwidth=lwidth_; }
     data_LINEWIDTH GetLwidth() const { return m_lwidth; }
     bool HasLwidth() const;
     /** Getter for reference (for alternate type only) */
@@ -2301,35 +2301,35 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCopyof(std::string copyof_) { m_copyof = copyof_; }
+    void SetCopyof(std::string copyof_) { m_copyof=copyof_; }
     std::string GetCopyof() const { return m_copyof; }
     bool HasCopyof() const;
     //
-    void SetCorresp(std::string corresp_) { m_corresp = corresp_; }
+    void SetCorresp(std::string corresp_) { m_corresp=corresp_; }
     std::string GetCorresp() const { return m_corresp; }
     bool HasCorresp() const;
     //
-    void SetFollows(std::string follows_) { m_follows = follows_; }
+    void SetFollows(std::string follows_) { m_follows=follows_; }
     std::string GetFollows() const { return m_follows; }
     bool HasFollows() const;
     //
-    void SetNext(std::string next_) { m_next = next_; }
+    void SetNext(std::string next_) { m_next=next_; }
     std::string GetNext() const { return m_next; }
     bool HasNext() const;
     //
-    void SetPrecedes(std::string precedes_) { m_precedes = precedes_; }
+    void SetPrecedes(std::string precedes_) { m_precedes=precedes_; }
     std::string GetPrecedes() const { return m_precedes; }
     bool HasPrecedes() const;
     //
-    void SetPrev(std::string prev_) { m_prev = prev_; }
+    void SetPrev(std::string prev_) { m_prev=prev_; }
     std::string GetPrev() const { return m_prev; }
     bool HasPrev() const;
     //
-    void SetSameas(std::string sameas_) { m_sameas = sameas_; }
+    void SetSameas(std::string sameas_) { m_sameas=sameas_; }
     std::string GetSameas() const { return m_sameas; }
     bool HasSameas() const;
     //
-    void SetSynch(std::string synch_) { m_synch = synch_; }
+    void SetSynch(std::string synch_) { m_synch=synch_; }
     std::string GetSynch() const { return m_synch; }
     bool HasSynch() const;
     ///@}
@@ -2391,29 +2391,29 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLyricAlign(data_MEASUREMENTREL lyricAlign_) { m_lyricAlign = lyricAlign_; }
+    void SetLyricAlign(data_MEASUREMENTREL lyricAlign_) { m_lyricAlign=lyricAlign_; }
     data_MEASUREMENTREL GetLyricAlign() const { return m_lyricAlign; }
     bool HasLyricAlign() const;
     //
-    void SetLyricFam(std::string lyricFam_) { m_lyricFam = lyricFam_; }
+    void SetLyricFam(std::string lyricFam_) { m_lyricFam=lyricFam_; }
     std::string GetLyricFam() const { return m_lyricFam; }
     bool HasLyricFam() const;
     //
-    void SetLyricName(std::string lyricName_) { m_lyricName = lyricName_; }
+    void SetLyricName(std::string lyricName_) { m_lyricName=lyricName_; }
     std::string GetLyricName() const { return m_lyricName; }
     bool HasLyricName() const;
     //
-    void SetLyricSize(data_FONTSIZE lyricSize_) { m_lyricSize = lyricSize_; }
+    void SetLyricSize(data_FONTSIZE lyricSize_) { m_lyricSize=lyricSize_; }
     data_FONTSIZE GetLyricSize() const { return m_lyricSize; }
     bool HasLyricSize() const;
     /** Getter for reference (for alternate type only) */
     data_FONTSIZE *GetLyricSizeAlternate() { return &m_lyricSize; }
     //
-    void SetLyricStyle(data_FONTSTYLE lyricStyle_) { m_lyricStyle = lyricStyle_; }
+    void SetLyricStyle(data_FONTSTYLE lyricStyle_) { m_lyricStyle=lyricStyle_; }
     data_FONTSTYLE GetLyricStyle() const { return m_lyricStyle; }
     bool HasLyricStyle() const;
     //
-    void SetLyricWeight(data_FONTWEIGHT lyricWeight_) { m_lyricWeight = lyricWeight_; }
+    void SetLyricWeight(data_FONTWEIGHT lyricWeight_) { m_lyricWeight=lyricWeight_; }
     data_FONTWEIGHT GetLyricWeight() const { return m_lyricWeight; }
     bool HasLyricWeight() const;
     ///@}
@@ -2459,7 +2459,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMnumVisible(data_BOOLEAN mnumVisible_) { m_mnumVisible = mnumVisible_; }
+    void SetMnumVisible(data_BOOLEAN mnumVisible_) { m_mnumVisible=mnumVisible_; }
     data_BOOLEAN GetMnumVisible() const { return m_mnumVisible; }
     bool HasMnumVisible() const;
     ///@}
@@ -2495,7 +2495,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetUnit(std::string unit_) { m_unit = unit_; }
+    void SetUnit(std::string unit_) { m_unit=unit_; }
     std::string GetUnit() const { return m_unit; }
     bool HasUnit() const;
     ///@}
@@ -2531,15 +2531,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBegin(std::string begin_) { m_begin = begin_; }
+    void SetBegin(std::string begin_) { m_begin=begin_; }
     std::string GetBegin() const { return m_begin; }
     bool HasBegin() const;
     //
-    void SetEnd(std::string end_) { m_end = end_; }
+    void SetEnd(std::string end_) { m_end=end_; }
     std::string GetEnd() const { return m_end; }
     bool HasEnd() const;
     //
-    void SetBetype(data_BETYPE betype_) { m_betype = betype_; }
+    void SetBetype(data_BETYPE betype_) { m_betype=betype_; }
     data_BETYPE GetBetype() const { return m_betype; }
     bool HasBetype() const;
     ///@}
@@ -2592,7 +2592,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMedium(std::string medium_) { m_medium = medium_; }
+    void SetMedium(std::string medium_) { m_medium=medium_; }
     std::string GetMedium() const { return m_medium; }
     bool HasMedium() const;
     ///@}
@@ -2628,7 +2628,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMeiversion(meiVersion_MEIVERSION meiversion_) { m_meiversion = meiversion_; }
+    void SetMeiversion(meiVersion_MEIVERSION meiversion_) { m_meiversion=meiversion_; }
     meiVersion_MEIVERSION GetMeiversion() const { return m_meiversion; }
     bool HasMeiversion() const;
     ///@}
@@ -2664,7 +2664,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDecls(std::string decls_) { m_decls = decls_; }
+    void SetDecls(std::string decls_) { m_decls=decls_; }
     std::string GetDecls() const { return m_decls; }
     bool HasDecls() const;
     ///@}
@@ -2704,7 +2704,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMetcon(meterConformance_METCON metcon_) { m_metcon = metcon_; }
+    void SetMetcon(meterConformance_METCON metcon_) { m_metcon=metcon_; }
     meterConformance_METCON GetMetcon() const { return m_metcon; }
     bool HasMetcon() const;
     ///@}
@@ -2743,11 +2743,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMetcon(data_BOOLEAN metcon_) { m_metcon = metcon_; }
+    void SetMetcon(data_BOOLEAN metcon_) { m_metcon=metcon_; }
     data_BOOLEAN GetMetcon() const { return m_metcon; }
     bool HasMetcon() const;
     //
-    void SetControl(data_BOOLEAN control_) { m_control = control_; }
+    void SetControl(data_BOOLEAN control_) { m_control=control_; }
     data_BOOLEAN GetControl() const { return m_control; }
     bool HasControl() const;
     ///@}
@@ -2793,15 +2793,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCount(int count_) { m_count = count_; }
+    void SetCount(int count_) { m_count=count_; }
     int GetCount() const { return m_count; }
     bool HasCount() const;
     //
-    void SetSym(data_METERSIGN sym_) { m_sym = sym_; }
+    void SetSym(data_METERSIGN sym_) { m_sym=sym_; }
     data_METERSIGN GetSym() const { return m_sym; }
     bool HasSym() const;
     //
-    void SetUnit(int unit_) { m_unit = unit_; }
+    void SetUnit(int unit_) { m_unit=unit_; }
     int GetUnit() const { return m_unit; }
     bool HasUnit() const;
     ///@}
@@ -2844,15 +2844,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMeterCount(int meterCount_) { m_meterCount = meterCount_; }
+    void SetMeterCount(int meterCount_) { m_meterCount=meterCount_; }
     int GetMeterCount() const { return m_meterCount; }
     bool HasMeterCount() const;
     //
-    void SetMeterUnit(int meterUnit_) { m_meterUnit = meterUnit_; }
+    void SetMeterUnit(int meterUnit_) { m_meterUnit=meterUnit_; }
     int GetMeterUnit() const { return m_meterUnit; }
     bool HasMeterUnit() const;
     //
-    void SetMeterSym(data_METERSIGN meterSym_) { m_meterSym = meterSym_; }
+    void SetMeterSym(data_METERSIGN meterSym_) { m_meterSym=meterSym_; }
     data_METERSIGN GetMeterSym() const { return m_meterSym; }
     bool HasMeterSym() const;
     ///@}
@@ -2903,15 +2903,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMm(int mm_) { m_mm = mm_; }
+    void SetMm(int mm_) { m_mm=mm_; }
     int GetMm() const { return m_mm; }
     bool HasMm() const;
     //
-    void SetMmUnit(data_DURATION mmUnit_) { m_mmUnit = mmUnit_; }
+    void SetMmUnit(data_DURATION mmUnit_) { m_mmUnit=mmUnit_; }
     data_DURATION GetMmUnit() const { return m_mmUnit; }
     bool HasMmUnit() const;
     //
-    void SetMmDots(int mmDots_) { m_mmDots = mmDots_; }
+    void SetMmDots(int mmDots_) { m_mmDots=mmDots_; }
     int GetMmDots() const { return m_mmDots; }
     bool HasMmDots() const;
     ///@}
@@ -2957,7 +2957,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMultiNumber(data_BOOLEAN multiNumber_) { m_multiNumber = multiNumber_; }
+    void SetMultiNumber(data_BOOLEAN multiNumber_) { m_multiNumber=multiNumber_; }
     data_BOOLEAN GetMultiNumber() const { return m_multiNumber; }
     bool HasMultiNumber() const;
     ///@}
@@ -2996,7 +2996,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetN(int n_) { m_n = n_; }
+    void SetN(int n_) { m_n=n_; }
     int GetN() const { return m_n; }
     bool HasN() const;
     ///@}
@@ -3036,7 +3036,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetN(std::string n_) { m_n = n_; }
+    void SetN(std::string n_) { m_n=n_; }
     std::string GetN() const { return m_n; }
     bool HasN() const;
     ///@}
@@ -3076,11 +3076,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetNymref(std::string nymref_) { m_nymref = nymref_; }
+    void SetNymref(std::string nymref_) { m_nymref=nymref_; }
     std::string GetNymref() const { return m_nymref; }
     bool HasNymref() const;
     //
-    void SetRole(std::string role_) { m_role = role_; }
+    void SetRole(std::string role_) { m_role=role_; }
     std::string GetRole() const { return m_role; }
     bool HasRole() const;
     ///@}
@@ -3124,11 +3124,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMusicName(std::string musicName_) { m_musicName = musicName_; }
+    void SetMusicName(std::string musicName_) { m_musicName=musicName_; }
     std::string GetMusicName() const { return m_musicName; }
     bool HasMusicName() const;
     //
-    void SetMusicSize(data_FONTSIZE musicSize_) { m_musicSize = musicSize_; }
+    void SetMusicSize(data_FONTSIZE musicSize_) { m_musicSize=musicSize_; }
     data_FONTSIZE GetMusicSize() const { return m_musicSize; }
     bool HasMusicSize() const;
     /** Getter for reference (for alternate type only) */
@@ -3168,39 +3168,39 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetHeadAltsym(std::string headAltsym_) { m_headAltsym = headAltsym_; }
+    void SetHeadAltsym(std::string headAltsym_) { m_headAltsym=headAltsym_; }
     std::string GetHeadAltsym() const { return m_headAltsym; }
     bool HasHeadAltsym() const;
     //
-    void SetHeadAuth(std::string headAuth_) { m_headAuth = headAuth_; }
+    void SetHeadAuth(std::string headAuth_) { m_headAuth=headAuth_; }
     std::string GetHeadAuth() const { return m_headAuth; }
     bool HasHeadAuth() const;
     //
-    void SetHeadColor(std::string headColor_) { m_headColor = headColor_; }
+    void SetHeadColor(std::string headColor_) { m_headColor=headColor_; }
     std::string GetHeadColor() const { return m_headColor; }
     bool HasHeadColor() const;
     //
-    void SetHeadFill(data_FILL headFill_) { m_headFill = headFill_; }
+    void SetHeadFill(data_FILL headFill_) { m_headFill=headFill_; }
     data_FILL GetHeadFill() const { return m_headFill; }
     bool HasHeadFill() const;
     //
-    void SetHeadFillcolor(std::string headFillcolor_) { m_headFillcolor = headFillcolor_; }
+    void SetHeadFillcolor(std::string headFillcolor_) { m_headFillcolor=headFillcolor_; }
     std::string GetHeadFillcolor() const { return m_headFillcolor; }
     bool HasHeadFillcolor() const;
     //
-    void SetHeadMod(data_NOTEHEADMODIFIER headMod_) { m_headMod = headMod_; }
+    void SetHeadMod(data_NOTEHEADMODIFIER headMod_) { m_headMod=headMod_; }
     data_NOTEHEADMODIFIER GetHeadMod() const { return m_headMod; }
     bool HasHeadMod() const;
     //
-    void SetHeadRotation(data_ROTATION headRotation_) { m_headRotation = headRotation_; }
+    void SetHeadRotation(data_ROTATION headRotation_) { m_headRotation=headRotation_; }
     data_ROTATION GetHeadRotation() const { return m_headRotation; }
     bool HasHeadRotation() const;
     //
-    void SetHeadShape(data_HEADSHAPE headShape_) { m_headShape = headShape_; }
+    void SetHeadShape(data_HEADSHAPE headShape_) { m_headShape=headShape_; }
     data_HEADSHAPE GetHeadShape() const { return m_headShape; }
     bool HasHeadShape() const;
     //
-    void SetHeadVisible(data_BOOLEAN headVisible_) { m_headVisible = headVisible_; }
+    void SetHeadVisible(data_BOOLEAN headVisible_) { m_headVisible=headVisible_; }
     data_BOOLEAN GetHeadVisible() const { return m_headVisible; }
     bool HasHeadVisible() const;
     ///@}
@@ -3265,7 +3265,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOct(data_OCTAVE oct_) { m_oct = oct_; }
+    void SetOct(data_OCTAVE oct_) { m_oct=oct_; }
     data_OCTAVE GetOct() const { return m_oct; }
     bool HasOct() const;
     ///@}
@@ -3301,7 +3301,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOctDefault(data_OCTAVE octDefault_) { m_octDefault = octDefault_; }
+    void SetOctDefault(data_OCTAVE octDefault_) { m_octDefault=octDefault_; }
     data_OCTAVE GetOctDefault() const { return m_octDefault; }
     bool HasOctDefault() const;
     ///@}
@@ -3341,11 +3341,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDis(data_OCTAVE_DIS dis_) { m_dis = dis_; }
+    void SetDis(data_OCTAVE_DIS dis_) { m_dis=dis_; }
     data_OCTAVE_DIS GetDis() const { return m_dis; }
     bool HasDis() const;
     //
-    void SetDisPlace(data_STAFFREL_basic disPlace_) { m_disPlace = disPlace_; }
+    void SetDisPlace(data_STAFFREL_basic disPlace_) { m_disPlace=disPlace_; }
     data_STAFFREL_basic GetDisPlace() const { return m_disPlace; }
     bool HasDisPlace() const;
     ///@}
@@ -3383,7 +3383,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOntheline(data_BOOLEAN ontheline_) { m_ontheline = ontheline_; }
+    void SetOntheline(data_BOOLEAN ontheline_) { m_ontheline=ontheline_; }
     data_BOOLEAN GetOntheline() const { return m_ontheline; }
     bool HasOntheline() const;
     ///@}
@@ -3423,7 +3423,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOptimize(data_BOOLEAN optimize_) { m_optimize = optimize_; }
+    void SetOptimize(data_BOOLEAN optimize_) { m_optimize=optimize_; }
     data_BOOLEAN GetOptimize() const { return m_optimize; }
     bool HasOptimize() const;
     ///@}
@@ -3462,7 +3462,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOriginLayer(std::string originLayer_) { m_originLayer = originLayer_; }
+    void SetOriginLayer(std::string originLayer_) { m_originLayer=originLayer_; }
     std::string GetOriginLayer() const { return m_originLayer; }
     bool HasOriginLayer() const;
     ///@}
@@ -3498,7 +3498,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOriginStaff(std::string originStaff_) { m_originStaff = originStaff_; }
+    void SetOriginStaff(std::string originStaff_) { m_originStaff=originStaff_; }
     std::string GetOriginStaff() const { return m_originStaff; }
     bool HasOriginStaff() const;
     ///@}
@@ -3537,11 +3537,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOriginStartid(std::string originStartid_) { m_originStartid = originStartid_; }
+    void SetOriginStartid(std::string originStartid_) { m_originStartid=originStartid_; }
     std::string GetOriginStartid() const { return m_originStartid; }
     bool HasOriginStartid() const;
     //
-    void SetOriginEndid(std::string originEndid_) { m_originEndid = originEndid_; }
+    void SetOriginEndid(std::string originEndid_) { m_originEndid=originEndid_; }
     std::string GetOriginEndid() const { return m_originEndid; }
     bool HasOriginEndid() const;
     ///@}
@@ -3579,11 +3579,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOriginTstamp(data_MEASUREBEAT originTstamp_) { m_originTstamp = originTstamp_; }
+    void SetOriginTstamp(data_MEASUREBEAT originTstamp_) { m_originTstamp=originTstamp_; }
     data_MEASUREBEAT GetOriginTstamp() const { return m_originTstamp; }
     bool HasOriginTstamp() const;
     //
-    void SetOriginTstamp2(data_MEASUREBEAT originTstamp2_) { m_originTstamp2 = originTstamp2_; }
+    void SetOriginTstamp2(data_MEASUREBEAT originTstamp2_) { m_originTstamp2=originTstamp2_; }
     data_MEASUREBEAT GetOriginTstamp2() const { return m_originTstamp2; }
     bool HasOriginTstamp2() const;
     ///@}
@@ -3628,35 +3628,35 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPageHeight(data_MEASUREMENTABS pageHeight_) { m_pageHeight = pageHeight_; }
+    void SetPageHeight(data_MEASUREMENTABS pageHeight_) { m_pageHeight=pageHeight_; }
     data_MEASUREMENTABS GetPageHeight() const { return m_pageHeight; }
     bool HasPageHeight() const;
     //
-    void SetPageWidth(data_MEASUREMENTABS pageWidth_) { m_pageWidth = pageWidth_; }
+    void SetPageWidth(data_MEASUREMENTABS pageWidth_) { m_pageWidth=pageWidth_; }
     data_MEASUREMENTABS GetPageWidth() const { return m_pageWidth; }
     bool HasPageWidth() const;
     //
-    void SetPageTopmar(data_MEASUREMENTABS pageTopmar_) { m_pageTopmar = pageTopmar_; }
+    void SetPageTopmar(data_MEASUREMENTABS pageTopmar_) { m_pageTopmar=pageTopmar_; }
     data_MEASUREMENTABS GetPageTopmar() const { return m_pageTopmar; }
     bool HasPageTopmar() const;
     //
-    void SetPageBotmar(data_MEASUREMENTABS pageBotmar_) { m_pageBotmar = pageBotmar_; }
+    void SetPageBotmar(data_MEASUREMENTABS pageBotmar_) { m_pageBotmar=pageBotmar_; }
     data_MEASUREMENTABS GetPageBotmar() const { return m_pageBotmar; }
     bool HasPageBotmar() const;
     //
-    void SetPageLeftmar(data_MEASUREMENTABS pageLeftmar_) { m_pageLeftmar = pageLeftmar_; }
+    void SetPageLeftmar(data_MEASUREMENTABS pageLeftmar_) { m_pageLeftmar=pageLeftmar_; }
     data_MEASUREMENTABS GetPageLeftmar() const { return m_pageLeftmar; }
     bool HasPageLeftmar() const;
     //
-    void SetPageRightmar(data_MEASUREMENTABS pageRightmar_) { m_pageRightmar = pageRightmar_; }
+    void SetPageRightmar(data_MEASUREMENTABS pageRightmar_) { m_pageRightmar=pageRightmar_; }
     data_MEASUREMENTABS GetPageRightmar() const { return m_pageRightmar; }
     bool HasPageRightmar() const;
     //
-    void SetPagePanels(std::string pagePanels_) { m_pagePanels = pagePanels_; }
+    void SetPagePanels(std::string pagePanels_) { m_pagePanels=pagePanels_; }
     std::string GetPagePanels() const { return m_pagePanels; }
     bool HasPagePanels() const;
     //
-    void SetPageScale(std::string pageScale_) { m_pageScale = pageScale_; }
+    void SetPageScale(std::string pageScale_) { m_pageScale=pageScale_; }
     std::string GetPageScale() const { return m_pageScale; }
     bool HasPageScale() const;
     ///@}
@@ -3712,11 +3712,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPart(std::string part_) { m_part = part_; }
+    void SetPart(std::string part_) { m_part=part_; }
     std::string GetPart() const { return m_part; }
     bool HasPart() const;
     //
-    void SetPartstaff(std::string partstaff_) { m_partstaff = partstaff_; }
+    void SetPartstaff(std::string partstaff_) { m_partstaff=partstaff_; }
     std::string GetPartstaff() const { return m_partstaff; }
     bool HasPartstaff() const;
     ///@}
@@ -3760,7 +3760,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPname(data_PITCHNAME pname_) { m_pname = pname_; }
+    void SetPname(data_PITCHNAME pname_) { m_pname=pname_; }
     data_PITCHNAME GetPname() const { return m_pname; }
     bool HasPname() const;
     ///@}
@@ -3796,7 +3796,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPlace(data_STAFFREL place_) { m_place = place_; }
+    void SetPlace(data_STAFFREL place_) { m_place=place_; }
     data_STAFFREL GetPlace() const { return m_place; }
     bool HasPlace() const;
     ///@}
@@ -3832,7 +3832,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPlist(xsdAnyURI_List plist_) { m_plist = plist_; }
+    void SetPlist(xsdAnyURI_List plist_) { m_plist=plist_; }
     xsdAnyURI_List GetPlist() const { return m_plist; }
     bool HasPlist() const;
     ///@}
@@ -3874,23 +3874,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetActuate(std::string actuate_) { m_actuate = actuate_; }
+    void SetActuate(std::string actuate_) { m_actuate=actuate_; }
     std::string GetActuate() const { return m_actuate; }
     bool HasActuate() const;
     //
-    void SetRole(std::string role_) { m_role = role_; }
+    void SetRole(std::string role_) { m_role=role_; }
     std::string GetRole() const { return m_role; }
     bool HasRole() const;
     //
-    void SetShow(std::string show_) { m_show = show_; }
+    void SetShow(std::string show_) { m_show=show_; }
     std::string GetShow() const { return m_show; }
     bool HasShow() const;
     //
-    void SetTarget(std::string target_) { m_target = target_; }
+    void SetTarget(std::string target_) { m_target=target_; }
     std::string GetTarget() const { return m_target; }
     bool HasTarget() const;
     //
-    void SetTargettype(std::string targettype_) { m_targettype = targettype_; }
+    void SetTargettype(std::string targettype_) { m_targettype=targettype_; }
     std::string GetTargettype() const { return m_targettype; }
     bool HasTargettype() const;
     ///@}
@@ -3940,7 +3940,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetQuantity(double quantity_) { m_quantity = quantity_; }
+    void SetQuantity(double quantity_) { m_quantity=quantity_; }
     double GetQuantity() const { return m_quantity; }
     bool HasQuantity() const;
     ///@}
@@ -3979,23 +3979,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAtleast(double atleast_) { m_atleast = atleast_; }
+    void SetAtleast(double atleast_) { m_atleast=atleast_; }
     double GetAtleast() const { return m_atleast; }
     bool HasAtleast() const;
     //
-    void SetAtmost(double atmost_) { m_atmost = atmost_; }
+    void SetAtmost(double atmost_) { m_atmost=atmost_; }
     double GetAtmost() const { return m_atmost; }
     bool HasAtmost() const;
     //
-    void SetMin(double min_) { m_min = min_; }
+    void SetMin(double min_) { m_min=min_; }
     double GetMin() const { return m_min; }
     bool HasMin() const;
     //
-    void SetMax(double max_) { m_max = max_; }
+    void SetMax(double max_) { m_max=max_; }
     double GetMax() const { return m_max; }
     bool HasMax() const;
     //
-    void SetConfidence(double confidence_) { m_confidence = confidence_; }
+    void SetConfidence(double confidence_) { m_confidence=confidence_; }
     double GetConfidence() const { return m_confidence; }
     bool HasConfidence() const;
     ///@}
@@ -4049,7 +4049,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetResp(std::string resp_) { m_resp = resp_; }
+    void SetResp(std::string resp_) { m_resp=resp_; }
     std::string GetResp() const { return m_resp; }
     bool HasResp() const;
     ///@}
@@ -4089,7 +4089,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDur(data_DURATIONRESTS dur_) { m_dur = dur_; }
+    void SetDur(data_DURATIONRESTS dur_) { m_dur=dur_; }
     data_DURATIONRESTS GetDur() const { return m_dur; }
     bool HasDur() const;
     ///@}
@@ -4128,7 +4128,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetScale(data_PERCENT scale_) { m_scale = scale_; }
+    void SetScale(data_PERCENT scale_) { m_scale=scale_; }
     data_PERCENT GetScale() const { return m_scale; }
     bool HasScale() const;
     ///@}
@@ -4164,7 +4164,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSeq(int seq_) { m_seq = seq_; }
+    void SetSeq(int seq_) { m_seq=seq_; }
     int GetSeq() const { return m_seq; }
     bool HasSeq() const;
     ///@}
@@ -4203,7 +4203,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSlash(char slash_) { m_slash = slash_; }
+    void SetSlash(char slash_) { m_slash=slash_; }
     char GetSlash() const { return m_slash; }
     bool HasSlash() const;
     ///@}
@@ -4239,7 +4239,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSlur(std::string slur_) { m_slur = slur_; }
+    void SetSlur(std::string slur_) { m_slur=slur_; }
     std::string GetSlur() const { return m_slur; }
     bool HasSlur() const;
     ///@}
@@ -4278,7 +4278,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSource(std::string source_) { m_source = source_; }
+    void SetSource(std::string source_) { m_source=source_; }
     std::string GetSource() const { return m_source; }
     bool HasSource() const;
     ///@}
@@ -4318,19 +4318,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSpacingPackexp(double spacingPackexp_) { m_spacingPackexp = spacingPackexp_; }
+    void SetSpacingPackexp(double spacingPackexp_) { m_spacingPackexp=spacingPackexp_; }
     double GetSpacingPackexp() const { return m_spacingPackexp; }
     bool HasSpacingPackexp() const;
     //
-    void SetSpacingPackfact(double spacingPackfact_) { m_spacingPackfact = spacingPackfact_; }
+    void SetSpacingPackfact(double spacingPackfact_) { m_spacingPackfact=spacingPackfact_; }
     double GetSpacingPackfact() const { return m_spacingPackfact; }
     bool HasSpacingPackfact() const;
     //
-    void SetSpacingStaff(data_MEASUREMENTREL spacingStaff_) { m_spacingStaff = spacingStaff_; }
+    void SetSpacingStaff(data_MEASUREMENTREL spacingStaff_) { m_spacingStaff=spacingStaff_; }
     data_MEASUREMENTREL GetSpacingStaff() const { return m_spacingStaff; }
     bool HasSpacingStaff() const;
     //
-    void SetSpacingSystem(data_MEASUREMENTREL spacingSystem_) { m_spacingSystem = spacingSystem_; }
+    void SetSpacingSystem(data_MEASUREMENTREL spacingSystem_) { m_spacingSystem=spacingSystem_; }
     data_MEASUREMENTREL GetSpacingSystem() const { return m_spacingSystem; }
     bool HasSpacingSystem() const;
     ///@}
@@ -4381,7 +4381,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDef(std::string def_) { m_def = def_; }
+    void SetDef(std::string def_) { m_def=def_; }
     std::string GetDef() const { return m_def; }
     bool HasDef() const;
     ///@}
@@ -4417,7 +4417,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLines(int lines_) { m_lines = lines_; }
+    void SetLines(int lines_) { m_lines=lines_; }
     int GetLines() const { return m_lines; }
     bool HasLines() const;
     ///@}
@@ -4453,7 +4453,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSymbol(staffGroupingSym_SYMBOL symbol_) { m_symbol = symbol_; }
+    void SetSymbol(staffGroupingSym_SYMBOL symbol_) { m_symbol=symbol_; }
     staffGroupingSym_SYMBOL GetSymbol() const { return m_symbol; }
     bool HasSymbol() const;
     ///@}
@@ -4489,7 +4489,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetStaff(xsdPositiveInteger_List staff_) { m_staff = staff_; }
+    void SetStaff(xsdPositiveInteger_List staff_) { m_staff=staff_; }
     xsdPositiveInteger_List GetStaff() const { return m_staff; }
     bool HasStaff() const;
     ///@}
@@ -4529,15 +4529,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAboveorder(data_STAFFITEM aboveorder_) { m_aboveorder = aboveorder_; }
+    void SetAboveorder(data_STAFFITEM aboveorder_) { m_aboveorder=aboveorder_; }
     data_STAFFITEM GetAboveorder() const { return m_aboveorder; }
     bool HasAboveorder() const;
     //
-    void SetBeloworder(data_STAFFITEM beloworder_) { m_beloworder = beloworder_; }
+    void SetBeloworder(data_STAFFITEM beloworder_) { m_beloworder=beloworder_; }
     data_STAFFITEM GetBeloworder() const { return m_beloworder; }
     bool HasBeloworder() const;
     //
-    void SetBetweenorder(data_STAFFITEM betweenorder_) { m_betweenorder = betweenorder_; }
+    void SetBetweenorder(data_STAFFITEM betweenorder_) { m_betweenorder=betweenorder_; }
     data_STAFFITEM GetBetweenorder() const { return m_betweenorder; }
     bool HasBetweenorder() const;
     ///@}
@@ -4583,7 +4583,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLoc(int loc_) { m_loc = loc_; }
+    void SetLoc(int loc_) { m_loc=loc_; }
     int GetLoc() const { return m_loc; }
     bool HasLoc() const;
     ///@}
@@ -4619,11 +4619,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPloc(data_PITCHNAME ploc_) { m_ploc = ploc_; }
+    void SetPloc(data_PITCHNAME ploc_) { m_ploc=ploc_; }
     data_PITCHNAME GetPloc() const { return m_ploc; }
     bool HasPloc() const;
     //
-    void SetOloc(data_OCTAVE oloc_) { m_oloc = oloc_; }
+    void SetOloc(data_OCTAVE oloc_) { m_oloc=oloc_; }
     data_OCTAVE GetOloc() const { return m_oloc; }
     bool HasOloc() const;
     ///@}
@@ -4661,7 +4661,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetEndid(std::string endid_) { m_endid = endid_; }
+    void SetEndid(std::string endid_) { m_endid=endid_; }
     std::string GetEndid() const { return m_endid; }
     bool HasEndid() const;
     ///@}
@@ -4700,7 +4700,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetStartid(std::string startid_) { m_startid = startid_; }
+    void SetStartid(std::string startid_) { m_startid=startid_; }
     std::string GetStartid() const { return m_startid; }
     bool HasStartid() const;
     ///@}
@@ -4739,31 +4739,31 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetStemDir(data_STEMDIRECTION stemDir_) { m_stemDir = stemDir_; }
+    void SetStemDir(data_STEMDIRECTION stemDir_) { m_stemDir=stemDir_; }
     data_STEMDIRECTION GetStemDir() const { return m_stemDir; }
     bool HasStemDir() const;
     //
-    void SetStemLen(double stemLen_) { m_stemLen = stemLen_; }
+    void SetStemLen(double stemLen_) { m_stemLen=stemLen_; }
     double GetStemLen() const { return m_stemLen; }
     bool HasStemLen() const;
     //
-    void SetStemMod(data_STEMMODIFIER stemMod_) { m_stemMod = stemMod_; }
+    void SetStemMod(data_STEMMODIFIER stemMod_) { m_stemMod=stemMod_; }
     data_STEMMODIFIER GetStemMod() const { return m_stemMod; }
     bool HasStemMod() const;
     //
-    void SetStemPos(data_STEMPOSITION stemPos_) { m_stemPos = stemPos_; }
+    void SetStemPos(data_STEMPOSITION stemPos_) { m_stemPos=stemPos_; }
     data_STEMPOSITION GetStemPos() const { return m_stemPos; }
     bool HasStemPos() const;
     //
-    void SetStemVisible(data_BOOLEAN stemVisible_) { m_stemVisible = stemVisible_; }
+    void SetStemVisible(data_BOOLEAN stemVisible_) { m_stemVisible=stemVisible_; }
     data_BOOLEAN GetStemVisible() const { return m_stemVisible; }
     bool HasStemVisible() const;
     //
-    void SetStemX(double stemX_) { m_stemX = stemX_; }
+    void SetStemX(double stemX_) { m_stemX=stemX_; }
     double GetStemX() const { return m_stemX; }
     bool HasStemX() const;
     //
-    void SetStemY(double stemY_) { m_stemY = stemY_; }
+    void SetStemY(double stemY_) { m_stemY=stemY_; }
     double GetStemY() const { return m_stemY; }
     bool HasStemY() const;
     ///@}
@@ -4814,11 +4814,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCon(sylLog_CON con_) { m_con = con_; }
+    void SetCon(sylLog_CON con_) { m_con=con_; }
     sylLog_CON GetCon() const { return m_con; }
     bool HasCon() const;
     //
-    void SetWordpos(sylLog_WORDPOS wordpos_) { m_wordpos = wordpos_; }
+    void SetWordpos(sylLog_WORDPOS wordpos_) { m_wordpos=wordpos_; }
     sylLog_WORDPOS GetWordpos() const { return m_wordpos; }
     bool HasWordpos() const;
     ///@}
@@ -4859,7 +4859,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSyl(std::string syl_) { m_syl = syl_; }
+    void SetSyl(std::string syl_) { m_syl=syl_; }
     std::string GetSyl() const { return m_syl; }
     bool HasSyl() const;
     ///@}
@@ -4895,19 +4895,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSystemLeftline(data_BOOLEAN systemLeftline_) { m_systemLeftline = systemLeftline_; }
+    void SetSystemLeftline(data_BOOLEAN systemLeftline_) { m_systemLeftline=systemLeftline_; }
     data_BOOLEAN GetSystemLeftline() const { return m_systemLeftline; }
     bool HasSystemLeftline() const;
     //
-    void SetSystemLeftmar(data_MEASUREMENTABS systemLeftmar_) { m_systemLeftmar = systemLeftmar_; }
+    void SetSystemLeftmar(data_MEASUREMENTABS systemLeftmar_) { m_systemLeftmar=systemLeftmar_; }
     data_MEASUREMENTABS GetSystemLeftmar() const { return m_systemLeftmar; }
     bool HasSystemLeftmar() const;
     //
-    void SetSystemRightmar(data_MEASUREMENTABS systemRightmar_) { m_systemRightmar = systemRightmar_; }
+    void SetSystemRightmar(data_MEASUREMENTABS systemRightmar_) { m_systemRightmar=systemRightmar_; }
     data_MEASUREMENTABS GetSystemRightmar() const { return m_systemRightmar; }
     bool HasSystemRightmar() const;
     //
-    void SetSystemTopmar(data_MEASUREMENTABS systemTopmar_) { m_systemTopmar = systemTopmar_; }
+    void SetSystemTopmar(data_MEASUREMENTABS systemTopmar_) { m_systemTopmar=systemTopmar_; }
     data_MEASUREMENTABS GetSystemTopmar() const { return m_systemTopmar; }
     bool HasSystemTopmar() const;
     ///@}
@@ -4962,7 +4962,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetEvaluate(targetEval_EVALUATE evaluate_) { m_evaluate = evaluate_; }
+    void SetEvaluate(targetEval_EVALUATE evaluate_) { m_evaluate=evaluate_; }
     targetEval_EVALUATE GetEvaluate() const { return m_evaluate; }
     bool HasEvaluate() const;
     ///@}
@@ -5001,7 +5001,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFunc(tempoLog_FUNC func_) { m_func = func_; }
+    void SetFunc(tempoLog_FUNC func_) { m_func=func_; }
     tempoLog_FUNC GetFunc() const { return m_func; }
     bool HasFunc() const;
     ///@}
@@ -5037,11 +5037,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAltrend(std::string altrend_) { m_altrend = altrend_; }
+    void SetAltrend(std::string altrend_) { m_altrend=altrend_; }
     std::string GetAltrend() const { return m_altrend; }
     bool HasAltrend() const;
     //
-    void SetRend(data_TEXTRENDITION rend_) { m_rend = rend_; }
+    void SetRend(data_TEXTRENDITION rend_) { m_rend=rend_; }
     data_TEXTRENDITION GetRend() const { return m_rend; }
     bool HasRend() const;
     ///@}
@@ -5079,25 +5079,25 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTextFam(std::string textFam_) { m_textFam = textFam_; }
+    void SetTextFam(std::string textFam_) { m_textFam=textFam_; }
     std::string GetTextFam() const { return m_textFam; }
     bool HasTextFam() const;
     //
-    void SetTextName(std::string textName_) { m_textName = textName_; }
+    void SetTextName(std::string textName_) { m_textName=textName_; }
     std::string GetTextName() const { return m_textName; }
     bool HasTextName() const;
     //
-    void SetTextSize(data_FONTSIZE textSize_) { m_textSize = textSize_; }
+    void SetTextSize(data_FONTSIZE textSize_) { m_textSize=textSize_; }
     data_FONTSIZE GetTextSize() const { return m_textSize; }
     bool HasTextSize() const;
     /** Getter for reference (for alternate type only) */
     data_FONTSIZE *GetTextSizeAlternate() { return &m_textSize; }
     //
-    void SetTextStyle(data_FONTSTYLE textStyle_) { m_textStyle = textStyle_; }
+    void SetTextStyle(data_FONTSTYLE textStyle_) { m_textStyle=textStyle_; }
     data_FONTSTYLE GetTextStyle() const { return m_textStyle; }
     bool HasTextStyle() const;
     //
-    void SetTextWeight(data_FONTWEIGHT textWeight_) { m_textWeight = textWeight_; }
+    void SetTextWeight(data_FONTWEIGHT textWeight_) { m_textWeight=textWeight_; }
     data_FONTWEIGHT GetTextWeight() const { return m_textWeight; }
     bool HasTextWeight() const;
     ///@}
@@ -5156,7 +5156,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTie(data_TIE tie_) { m_tie = tie_; }
+    void SetTie(data_TIE tie_) { m_tie=tie_; }
     data_TIE GetTie() const { return m_tie; }
     bool HasTie() const;
     ///@}
@@ -5195,7 +5195,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTstamp(double tstamp_) { m_tstamp = tstamp_; }
+    void SetTstamp(double tstamp_) { m_tstamp=tstamp_; }
     double GetTstamp() const { return m_tstamp; }
     bool HasTstamp() const;
     ///@}
@@ -5234,7 +5234,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTstamp2(data_MEASUREBEAT tstamp2_) { m_tstamp2 = tstamp2_; }
+    void SetTstamp2(data_MEASUREBEAT tstamp2_) { m_tstamp2=tstamp2_; }
     data_MEASUREBEAT GetTstamp2() const { return m_tstamp2; }
     bool HasTstamp2() const;
     ///@}
@@ -5273,23 +5273,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTransDiat(double transDiat_) { m_transDiat = transDiat_; }
+    void SetTransDiat(double transDiat_) { m_transDiat=transDiat_; }
     double GetTransDiat() const { return m_transDiat; }
     bool HasTransDiat() const;
     //
-    void SetTransSemi(double transSemi_) { m_transSemi = transSemi_; }
+    void SetTransSemi(double transSemi_) { m_transSemi=transSemi_; }
     double GetTransSemi() const { return m_transSemi; }
     bool HasTransSemi() const;
     ///@}
 
 private:
     /**
-     * Records the amount of diatonic pitch shift, e.g., C to C♯ = 0, C to D♭ = 1,
+     * Records the amount of diatonic pitch shift, e.g., C to C♯=0, C to D♭=1,
      * necessary to calculate the sounded pitch from the written one.
      **/
     double m_transDiat;
     /**
-     * Records the amount of pitch shift in semitones, e.g., C to C♯ = 1, C to D♭ = 1,
+     * Records the amount of pitch shift in semitones, e.g., C to C♯=1, C to D♭=1,
      * necessary to calculate the sounded pitch from the written one.
      **/
     double m_transSemi;
@@ -5321,7 +5321,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTuplet(std::string tuplet_) { m_tuplet = tuplet_; }
+    void SetTuplet(std::string tuplet_) { m_tuplet=tuplet_; }
     std::string GetTuplet() const { return m_tuplet; }
     bool HasTuplet() const;
     ///@}
@@ -5360,7 +5360,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetType(std::string type_) { m_type = type_; }
+    void SetType(std::string type_) { m_type=type_; }
     std::string GetType() const { return m_type; }
     bool HasType() const;
     ///@}
@@ -5399,25 +5399,25 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFontfam(std::string fontfam_) { m_fontfam = fontfam_; }
+    void SetFontfam(std::string fontfam_) { m_fontfam=fontfam_; }
     std::string GetFontfam() const { return m_fontfam; }
     bool HasFontfam() const;
     //
-    void SetFontname(std::string fontname_) { m_fontname = fontname_; }
+    void SetFontname(std::string fontname_) { m_fontname=fontname_; }
     std::string GetFontname() const { return m_fontname; }
     bool HasFontname() const;
     //
-    void SetFontsize(data_FONTSIZE fontsize_) { m_fontsize = fontsize_; }
+    void SetFontsize(data_FONTSIZE fontsize_) { m_fontsize=fontsize_; }
     data_FONTSIZE GetFontsize() const { return m_fontsize; }
     bool HasFontsize() const;
     /** Getter for reference (for alternate type only) */
     data_FONTSIZE *GetFontsizeAlternate() { return &m_fontsize; }
     //
-    void SetFontstyle(data_FONTSTYLE fontstyle_) { m_fontstyle = fontstyle_; }
+    void SetFontstyle(data_FONTSTYLE fontstyle_) { m_fontstyle=fontstyle_; }
     data_FONTSTYLE GetFontstyle() const { return m_fontstyle; }
     bool HasFontstyle() const;
     //
-    void SetFontweight(data_FONTWEIGHT fontweight_) { m_fontweight = fontweight_; }
+    void SetFontweight(data_FONTWEIGHT fontweight_) { m_fontweight=fontweight_; }
     data_FONTWEIGHT GetFontweight() const { return m_fontweight; }
     bool HasFontweight() const;
     ///@}
@@ -5465,7 +5465,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetValign(data_VERTICALALIGNMENT valign_) { m_valign = valign_; }
+    void SetValign(data_VERTICALALIGNMENT valign_) { m_valign=valign_; }
     data_VERTICALALIGNMENT GetValign() const { return m_valign; }
     bool HasValign() const;
     ///@}
@@ -5501,7 +5501,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVgrp(int vgrp_) { m_vgrp = vgrp_; }
+    void SetVgrp(int vgrp_) { m_vgrp=vgrp_; }
     int GetVgrp() const { return m_vgrp; }
     bool HasVgrp() const;
     ///@}
@@ -5537,7 +5537,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVisible(data_BOOLEAN visible_) { m_visible = visible_; }
+    void SetVisible(data_BOOLEAN visible_) { m_visible=visible_; }
     data_BOOLEAN GetVisible() const { return m_visible; }
     bool HasVisible() const;
     ///@}
@@ -5576,7 +5576,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetHo(data_MEASUREMENTREL ho_) { m_ho = ho_; }
+    void SetHo(data_MEASUREMENTREL ho_) { m_ho=ho_; }
     data_MEASUREMENTREL GetHo() const { return m_ho; }
     bool HasHo() const;
     ///@}
@@ -5616,7 +5616,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTo(double to_) { m_to = to_; }
+    void SetTo(double to_) { m_to=to_; }
     double GetTo() const { return m_to; }
     bool HasTo() const;
     ///@}
@@ -5655,7 +5655,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVo(data_MEASUREMENTREL vo_) { m_vo = vo_; }
+    void SetVo(data_MEASUREMENTREL vo_) { m_vo=vo_; }
     data_MEASUREMENTREL GetVo() const { return m_vo; }
     bool HasVo() const;
     ///@}
@@ -5695,11 +5695,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetStartho(data_MEASUREMENTREL startho_) { m_startho = startho_; }
+    void SetStartho(data_MEASUREMENTREL startho_) { m_startho=startho_; }
     data_MEASUREMENTREL GetStartho() const { return m_startho; }
     bool HasStartho() const;
     //
-    void SetEndho(data_MEASUREMENTREL endho_) { m_endho = endho_; }
+    void SetEndho(data_MEASUREMENTREL endho_) { m_endho=endho_; }
     data_MEASUREMENTREL GetEndho() const { return m_endho; }
     bool HasEndho() const;
     ///@}
@@ -5743,11 +5743,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetStartto(double startto_) { m_startto = startto_; }
+    void SetStartto(double startto_) { m_startto=startto_; }
     double GetStartto() const { return m_startto; }
     bool HasStartto() const;
     //
-    void SetEndto(double endto_) { m_endto = endto_; }
+    void SetEndto(double endto_) { m_endto=endto_; }
     double GetEndto() const { return m_endto; }
     bool HasEndto() const;
     ///@}
@@ -5791,11 +5791,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetStartvo(data_MEASUREMENTREL startvo_) { m_startvo = startvo_; }
+    void SetStartvo(data_MEASUREMENTREL startvo_) { m_startvo=startvo_; }
     data_MEASUREMENTREL GetStartvo() const { return m_startvo; }
     bool HasStartvo() const;
     //
-    void SetEndvo(data_MEASUREMENTREL endvo_) { m_endvo = endvo_; }
+    void SetEndvo(data_MEASUREMENTREL endvo_) { m_endvo=endvo_; }
     data_MEASUREMENTREL GetEndvo() const { return m_endvo; }
     bool HasEndvo() const;
     ///@}
@@ -5839,7 +5839,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVoltasym(voltaGroupingSym_VOLTASYM voltasym_) { m_voltasym = voltasym_; }
+    void SetVoltasym(voltaGroupingSym_VOLTASYM voltasym_) { m_voltasym=voltasym_; }
     voltaGroupingSym_VOLTASYM GetVoltasym() const { return m_voltasym; }
     bool HasVoltasym() const;
     ///@}
@@ -5875,7 +5875,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSpace(std::string space_) { m_space = space_; }
+    void SetSpace(std::string space_) { m_space=space_; }
     std::string GetSpace() const { return m_space; }
     bool HasSpace() const;
     ///@}
@@ -5911,7 +5911,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetWidth(data_MEASUREMENTABS width_) { m_width = width_; }
+    void SetWidth(data_MEASUREMENTABS width_) { m_width=width_; }
     data_MEASUREMENTABS GetWidth() const { return m_width; }
     bool HasWidth() const;
     ///@}
@@ -5947,11 +5947,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetX(double x_) { m_x = x_; }
+    void SetX(double x_) { m_x=x_; }
     double GetX() const { return m_x; }
     bool HasX() const;
     //
-    void SetY(double y_) { m_y = y_; }
+    void SetY(double y_) { m_y=y_; }
     double GetY() const { return m_y; }
     bool HasY() const;
     ///@}
@@ -5997,11 +5997,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetX2(double x2_) { m_x2 = x2_; }
+    void SetX2(double x2_) { m_x2=x2_; }
     double GetX2() const { return m_x2; }
     bool HasX2() const;
     //
-    void SetY2(double y2_) { m_y2 = y2_; }
+    void SetY2(double y2_) { m_y2=y2_; }
     double GetY2() const { return m_y2; }
     bool HasY2() const;
     ///@}

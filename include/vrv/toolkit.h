@@ -22,7 +22,7 @@ namespace vrv {
 class EditorToolkit;
 
 enum FileFormat {
-    UNKNOWN = 0,
+    UNKNOWN=0,
     AUTO,
     MEI,
     HUMDRUM,
@@ -49,7 +49,7 @@ public:
      */
     ///@{
     /** If initFont is set to false, Resources::InitFonts will have to be called explicitely */
-    Toolkit(bool initFont = true);
+    Toolkit(bool initFont=true);
     virtual ~Toolkit();
     ///@}
 
@@ -93,7 +93,7 @@ public:
      * @name Getter and setter for single option
      */
     ///@{
-    std::string GetOption(const std::string &option, bool defaultValue = false) const;
+    std::string GetOption(const std::string &option, bool defaultValue=false) const;
     bool SetOption(const std::string &option, const std::string &value);
     ///@}
 
@@ -134,13 +134,13 @@ public:
      * Render the page in SVG and returns it as a string.
      * Page number is 1-based
      */
-    std::string RenderToSVG(int pageNo = 1, bool xml_declaration = false);
+    std::string RenderToSVG(int pageNo=1, bool xml_declaration=false);
 
     /**
      * Render the page in SVG and save it to the file.
      * Page number is 1-based.
      */
-    bool RenderToSVGFile(const std::string &filename, int pageNo = 1);
+    bool RenderToSVGFile(const std::string &filename, int pageNo=1);
 
     /**
      * Creates a midi file, opens it, and writes to it.
@@ -254,7 +254,7 @@ public:
      */
     ///@{
     bool SetInputFrom(std::string const &inputFrom);
-    void SetInputFrom(FileFormat format) { m_inputFrom = format; }
+    void SetInputFrom(FileFormat format) { m_inputFrom=format; }
     int GetInputFrom() { return m_inputFrom; }
     ///@}
 

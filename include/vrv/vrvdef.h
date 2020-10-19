@@ -39,7 +39,7 @@ namespace vrv {
 // Adds "-dev" in the version number - should be set to false for releases
 #define VERSION_DEV true
 
-enum MEIVersion { MEI_UNDEFINED = 0, MEI_2013, MEI_3_0_0, MEI_4_0_0, MEI_4_0_1, MEI_5_0_0_dev };
+enum MEIVersion { MEI_UNDEFINED=0, MEI_2013, MEI_3_0_0, MEI_4_0_0, MEI_4_0_1, MEI_5_0_0_dev };
 
 //----------------------------------------------------------------------------
 // Cast redefinition
@@ -72,7 +72,7 @@ enum MEIVersion { MEI_UNDEFINED = 0, MEI_2013, MEI_3_0_0, MEI_4_0_0, MEI_4_0_1, 
  * Object::IsLayerElement.
  */
 enum ClassId {
-    BOUNDING_BOX = 0, // Should not be instanciated as is
+    BOUNDING_BOX=0, // Should not be instanciated as is
     OBJECT, // Should not be instanciated as is
     DEVICE_CONTEXT, // Should not be instanciated as is,
     FLOATING_OBJECT,
@@ -376,7 +376,7 @@ typedef std::map<int, LayerN_VerserN_t> StaffN_LayerN_VerseN_t;
  * FUNCTOR_SIBLINGS won't go any deeper in the tree.
  * FUNCTOR_STOP wil stop the tree processing.
  */
-enum FunctorCode { FUNCTOR_CONTINUE = 0, FUNCTOR_SIBLINGS, FUNCTOR_STOP };
+enum FunctorCode { FUNCTOR_CONTINUE=0, FUNCTOR_SIBLINGS, FUNCTOR_STOP };
 
 //----------------------------------------------------------------------------
 // Maximum number of levels between parent and children for optimizing search
@@ -451,7 +451,7 @@ enum FunctorCode { FUNCTOR_CONTINUE = 0, FUNCTOR_SIBLINGS, FUNCTOR_STOP };
 
 // the maximum is 255 (unsigned char)
 enum EditorialLevel {
-    EDITORIAL_UNDEFINED = 0,
+    EDITORIAL_UNDEFINED=0,
     EDITORIAL_TOPLEVEL,
     EDITORIAL_SCOREDEF,
     EDITORIAL_STAFFGRP,
@@ -468,14 +468,14 @@ enum EditorialLevel {
 // Visibility for editorial and mdiv elements
 //----------------------------------------------------------------------------
 
-enum VisibilityType { Hidden = 0, Visible };
+enum VisibilityType { Hidden=0, Visible };
 
 //----------------------------------------------------------------------------
 // The used SMuFL glyph anchors
 //----------------------------------------------------------------------------
 
 enum SMuFLGlyphAnchor {
-    SMUFL_stemDownNW = 0,
+    SMUFL_stemDownNW=0,
     SMUFL_stemUpSE,
     SMUFL_cutOutNE,
     SMUFL_cutOutNW,
@@ -487,7 +487,7 @@ enum SMuFLGlyphAnchor {
 // Spanning types for control events
 //----------------------------------------------------------------------------
 
-enum { SPANNING_START_END = 0, SPANNING_START, SPANNING_END, SPANNING_MIDDLE };
+enum { SPANNING_START_END=0, SPANNING_START, SPANNING_END, SPANNING_MIDDLE };
 
 //----------------------------------------------------------------------------
 // Types for layer element
@@ -498,34 +498,34 @@ enum { SPANNING_START_END = 0, SPANNING_START, SPANNING_END, SPANNING_MIDDLE };
  * scoreDef layer elements and cautionary scoreDef layer elements
  */
 
-enum ElementScoreDefRole { SCOREDEF_NONE = 0, SCOREDEF_SYSTEM, SCOREDEF_INTERMEDIATE, SCOREDEF_CAUTIONARY };
+enum ElementScoreDefRole { SCOREDEF_NONE=0, SCOREDEF_SYSTEM, SCOREDEF_INTERMEDIATE, SCOREDEF_CAUTIONARY };
 
 //----------------------------------------------------------------------------
 // Artic part types
 //----------------------------------------------------------------------------
 
-enum ArticPartType { ARTIC_PART_INSIDE = 0, ARTIC_PART_OUTSIDE };
+enum ArticPartType { ARTIC_PART_INSIDE=0, ARTIC_PART_OUTSIDE };
 
 //----------------------------------------------------------------------------
 // Visibility optimization
 //----------------------------------------------------------------------------
 
-enum VisibilityOptimization { OPTIMIZATION_NONE = 0, OPTIMIZATION_HIDDEN, OPTIMIZATION_SHOW };
+enum VisibilityOptimization { OPTIMIZATION_NONE=0, OPTIMIZATION_HIDDEN, OPTIMIZATION_SHOW };
 
 //----------------------------------------------------------------------------
 // Layout positions (3 x 3 grid)
 //----------------------------------------------------------------------------
 
 enum {
-    POSITION_LEFT = 0,
+    POSITION_LEFT=0,
     POSITION_CENTER,
     POSITION_RIGHT,
 };
 
 enum {
-    POSITION_TOP = 0,
-    POSITION_MIDDLE = 3,
-    POSITION_BOTTOM = 6,
+    POSITION_TOP=0,
+    POSITION_MIDDLE=3,
+    POSITION_BOTTOM=6,
 };
 
 //----------------------------------------------------------------------------
@@ -533,32 +533,32 @@ enum {
 //----------------------------------------------------------------------------
 
 enum {
-    LIGATURE_DEFAULT = 0,
-    LIGATURE_STEM_LEFT_UP = 1,
-    LIGATURE_STEM_LEFT_DOWN = 2,
-    LIGATURE_STEM_RIGHT_UP = 4,
-    LIGATURE_STEM_RIGHT_DOWN = 8,
-    LIGATURE_OBLIQUE = 16,
-    LIGATURE_STACKED = 32
+    LIGATURE_DEFAULT=0,
+    LIGATURE_STEM_LEFT_UP=1,
+    LIGATURE_STEM_LEFT_DOWN=2,
+    LIGATURE_STEM_RIGHT_UP=4,
+    LIGATURE_STEM_RIGHT_DOWN=8,
+    LIGATURE_OBLIQUE=16,
+    LIGATURE_STACKED=32
 };
 
 //----------------------------------------------------------------------------
 // Analytical markup bitfields
 //----------------------------------------------------------------------------
 
-enum { MARKUP_DEFAULT = 0, MARKUP_ANALYTICAL_TIE = 1, MARKUP_ANALYTICAL_FERMATA = 2, MARKUP_GRACE_ATTRIBUTE = 4 };
+enum { MARKUP_DEFAULT=0, MARKUP_ANALYTICAL_TIE=1, MARKUP_ANALYTICAL_FERMATA=2, MARKUP_GRACE_ATTRIBUTE=4 };
 
 //----------------------------------------------------------------------------
 // Bounding box access
 //----------------------------------------------------------------------------
 
-enum Accessor { SELF = 0, CONTENT };
+enum Accessor { SELF=0, CONTENT };
 
 //----------------------------------------------------------------------------
 // Some keys
 //----------------------------------------------------------------------------
 
-enum { KEY_LEFT = 37, KEY_UP = 38, KEY_RIGHT = 39, KEY_DOWN = 40 };
+enum { KEY_LEFT=37, KEY_UP=38, KEY_RIGHT=39, KEY_DOWN=40 };
 
 //----------------------------------------------------------------------------
 // Legacy Wolfgang defines

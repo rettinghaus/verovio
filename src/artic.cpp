@@ -25,10 +25,10 @@
 namespace vrv {
 
 std::vector<data_ARTICULATION> Artic::s_outStaffArtic
-    = { ARTICULATION_acc, ARTICULATION_dnbow, ARTICULATION_marc, ARTICULATION_upbow, ARTICULATION_harm };
+   ={ ARTICULATION_acc, ARTICULATION_dnbow, ARTICULATION_marc, ARTICULATION_upbow, ARTICULATION_harm };
 
 std::vector<data_ARTICULATION> Artic::s_aboveStaffArtic
-    = { ARTICULATION_dnbow, ARTICULATION_marc, ARTICULATION_upbow, ARTICULATION_harm };
+   ={ ARTICULATION_dnbow, ARTICULATION_marc, ARTICULATION_upbow, ARTICULATION_harm };
 
 //----------------------------------------------------------------------------
 // Artic
@@ -70,12 +70,12 @@ void Artic::SplitArtic(std::vector<data_ARTICULATION> *insideSlur, std::vector<d
     assert(outsideSlur);
 
     std::vector<data_ARTICULATION>::iterator iter;
-    auto end = Artic::s_outStaffArtic.end();
-    std::vector<data_ARTICULATION> articList = this->GetArtic();
+    auto end=Artic::s_outStaffArtic.end();
+    std::vector<data_ARTICULATION> articList=this->GetArtic();
 
-    for (iter = articList.begin(); iter != articList.end(); ++iter) {
+    for (iter=articList.begin(); iter != articList.end(); ++iter) {
         // return false if one cannot be rendered on the staff
-        auto i = std::find(Artic::s_outStaffArtic.begin(), end, *iter);
+        auto i=std::find(Artic::s_outStaffArtic.begin(), end, *iter);
         if (i != end)
             outsideSlur->push_back(*iter);
         else
@@ -194,7 +194,7 @@ ArticPart::ArticPart(ArticPartType type, Artic *artic)
     RegisterAttClass(ATT_COLOR);
     RegisterAttClass(ATT_PLACEMENT);
 
-    m_type = type;
+    m_type=type;
 
     Reset();
 
@@ -215,12 +215,12 @@ void ArticPart::Reset()
 bool ArticPart::AlwaysAbove()
 {
     std::vector<data_ARTICULATION>::iterator iter;
-    auto end = Artic::s_aboveStaffArtic.end();
-    std::vector<data_ARTICULATION> articList = this->GetArtic();
+    auto end=Artic::s_aboveStaffArtic.end();
+    std::vector<data_ARTICULATION> articList=this->GetArtic();
 
-    for (iter = articList.begin(); iter != articList.end(); ++iter) {
+    for (iter=articList.begin(); iter != articList.end(); ++iter) {
         // return false if one has always to be rendered above the staff
-        auto i = std::find(Artic::s_aboveStaffArtic.begin(), end, *iter);
+        auto i=std::find(Artic::s_aboveStaffArtic.begin(), end, *iter);
         if (i != end) {
             return true;
         }
@@ -248,23 +248,23 @@ void ArticPart::AddSlurPositioner(FloatingCurvePositioner *positioner, bool star
 
 int Artic::CalcArtic(FunctorParams *functorParams)
 {
-    FunctorDocParams *params = vrv_params_cast<FunctorDocParams *>(functorParams);
+    FunctorDocParams *params=vrv_params_cast<FunctorDocParams *>(functorParams);
     assert(params);
 
     /************** Get the parent and the stem direction **************/
 
-    LayerElement *parent = NULL;
-    Note *parentNote = NULL;
-    Chord *parentChord = dynamic_cast<Chord *>(this->GetFirstAncestor(CHORD, 2));
-    data_STEMDIRECTION stemDir = STEMDIRECTION_NONE;
-    data_STAFFREL place = STAFFREL_NONE;
+    LayerElement *parent=NULL;
+    Note *parentNote=NULL;
+    Chord *parentChord=dynamic_cast<Chord *>(this->GetFirstAncestor(CHORD, 2));
+    data_STEMDIRECTION stemDir=STEMDIRECTION_NONE;
+    data_STAFFREL place=STAFFREL_NONE;
 
     if (!parentChord) {
-        parentNote = dynamic_cast<Note *>(this->GetFirstAncestor(NOTE));
-        parent = parentNote;
+        parentNote=dynamic_cast<Note *>(this->GetFirstAncestor(NOTE));
+        parent=parentNote;
     }
     else {
-        parent = parentChord;
+        parent=parentChord;
     }
 
     if (!parentChord && !parentNote) {
@@ -272,43 +272,43 @@ int Artic::CalcArtic(FunctorParams *functorParams)
         return FUNCTOR_CONTINUE;
     }
 
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
-    Layer *layer = vrv_cast<Layer *>(this->GetFirstAncestor(LAYER));
+    Layer *layer=vrv_cast<Layer *>(this->GetFirstAncestor(LAYER));
     assert(layer);
 
-    stemDir = parentNote ? parentNote->GetDrawingStemDir() : parentChord->GetDrawingStemDir();
+    stemDir=parentNote ? parentNote->GetDrawingStemDir() : parentChord->GetDrawingStemDir();
 
     /************** placement **************/
 
-    bool allowAbove = true;
+    bool allowAbove=true;
     data_STEMDIRECTION layerStemDir;
 
     // for now we ignore within @place
     if (this->GetPlace() != STAFFREL_NONE) {
-        place = this->GetPlace();
+        place=this->GetPlace();
         // If we have a place indication do not allow to be changed to above
-        allowAbove = false;
+        allowAbove=false;
     }
-    else if ((layerStemDir = layer->GetDrawingStemDir(parent)) != STEMDIRECTION_NONE) {
-        place = (layerStemDir == STEMDIRECTION_up) ? STAFFREL_above : STAFFREL_below;
+    else if ((layerStemDir=layer->GetDrawingStemDir(parent)) != STEMDIRECTION_NONE) {
+        place=(layerStemDir == STEMDIRECTION_up) ? STAFFREL_above : STAFFREL_below;
         // If we have more than one layer do not allow to be changed to above
-        allowAbove = false;
+        allowAbove=false;
     }
     else if (stemDir == STEMDIRECTION_up)
-        place = STAFFREL_below;
+        place=STAFFREL_below;
     else
-        place = STAFFREL_above;
+        place=STAFFREL_above;
 
     /************** adjust the xRel position **************/
 
-    int xShift = parent->GetDrawingRadius(params->m_doc);
+    int xShift=parent->GetDrawingRadius(params->m_doc);
     this->SetDrawingXRel(xShift);
 
     /************** set it to both the inside and outside part **************/
 
-    ArticPart *insidePart = this->GetInsidePart();
-    ArticPart *outsidePart = this->GetOutsidePart();
+    ArticPart *insidePart=this->GetInsidePart();
+    ArticPart *outsidePart=this->GetOutsidePart();
 
     if (insidePart) {
         insidePart->SetPlace(place);
@@ -316,37 +316,37 @@ int Artic::CalcArtic(FunctorParams *functorParams)
 
     if (outsidePart) {
         // If allowAbove is true it will place the above if the content requires so (even if place below if given)
-        if (place == STAFFREL_below && allowAbove && outsidePart->AlwaysAbove()) place = STAFFREL_above;
+        if (place == STAFFREL_below && allowAbove && outsidePart->AlwaysAbove()) place=STAFFREL_above;
         outsidePart->SetPlace(place);
     }
 
     /************** calculate the y position **************/
 
-    Staff *staffAbove = NULL;
-    Staff *staffBelow = NULL;
-    Layer *crossLayer = NULL;
+    Staff *staffAbove=NULL;
+    Staff *staffBelow=NULL;
+    Layer *crossLayer=NULL;
 
     // Cross-staff handling of articulation will need to be re-thought. We can look at assiging a cross-staff to the
     // appropriate ArticPart
     // (see below) - For chords, we need to distinguish cross-staff chords and cross-staff chord notes
     if (parent->m_crossStaff && parent->m_crossLayer) {
-        staff = parent->m_crossStaff;
-        staffAbove = staff;
-        staffBelow = staff;
-        crossLayer = parent->m_crossLayer;
+        staff=parent->m_crossStaff;
+        staffAbove=staff;
+        staffBelow=staff;
+        crossLayer=parent->m_crossLayer;
     }
     else if (parentChord) {
         parentChord->GetCrossStaffExtremes(staffAbove, staffBelow);
     }
 
-    int staffYBottom = -params->m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
+    int staffYBottom=-params->m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
     // Avoid in artic to be in legder lines
-    int yInAbove = std::max(
+    int yInAbove=std::max(
         parent->GetDrawingTop(params->m_doc, staff->m_drawingStaffSize, false) - staff->GetDrawingY(), staffYBottom);
     int yInBelow
-        = std::min(parent->GetDrawingBottom(params->m_doc, staff->m_drawingStaffSize, false) - staff->GetDrawingY(), 0);
-    int yOutAbove = std::max(yInAbove, 0);
-    int yOutBelow = std::min(yInBelow, staffYBottom);
+       =std::min(parent->GetDrawingBottom(params->m_doc, staff->m_drawingStaffSize, false) - staff->GetDrawingY(), 0);
+    int yOutAbove=std::max(yInAbove, 0);
+    int yOutBelow=std::min(yInBelow, staffYBottom);
 
     // Does not work properly with chords, needs rethinking - It might be better to make artic or articPart relative to
     // notes
@@ -355,15 +355,15 @@ int Artic::CalcArtic(FunctorParams *functorParams)
         if (insidePart->GetPlace() == STAFFREL_above) {
             insidePart->SetDrawingYRel(yInAbove);
             if (parent->m_crossStaff) {
-                insidePart->m_crossStaff = staffAbove;
-                insidePart->m_crossLayer = crossLayer;
+                insidePart->m_crossStaff=staffAbove;
+                insidePart->m_crossLayer=crossLayer;
             }
         }
         else {
             insidePart->SetDrawingYRel(yInBelow);
             if (parent->m_crossStaff) {
-                insidePart->m_crossStaff = staffBelow;
-                insidePart->m_crossLayer = crossLayer;
+                insidePart->m_crossStaff=staffBelow;
+                insidePart->m_crossLayer=crossLayer;
             }
         }
     }
@@ -372,15 +372,15 @@ int Artic::CalcArtic(FunctorParams *functorParams)
         if (outsidePart->GetPlace() == STAFFREL_above) {
             outsidePart->SetDrawingYRel(yOutAbove);
             if (parent->m_crossStaff) {
-                outsidePart->m_crossStaff = staffAbove;
-                outsidePart->m_crossLayer = crossLayer;
+                outsidePart->m_crossStaff=staffAbove;
+                outsidePart->m_crossLayer=crossLayer;
             }
         }
         else {
             outsidePart->SetDrawingYRel(yOutBelow);
             if (parent->m_crossStaff) {
-                outsidePart->m_crossStaff = staffBelow;
-                outsidePart->m_crossLayer = crossLayer;
+                outsidePart->m_crossStaff=staffBelow;
+                outsidePart->m_crossLayer=crossLayer;
             }
         }
     }
@@ -389,19 +389,19 @@ int Artic::CalcArtic(FunctorParams *functorParams)
     // side
     if (insidePart && outsidePart) {
 
-        int margin = params->m_doc->GetTopMargin(insidePart->GetClassId())
+        int margin=params->m_doc->GetTopMargin(insidePart->GetClassId())
             * params->m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
 
         if (insidePart->GetPlace() == outsidePart->GetPlace()) {
             if (insidePart->GetPlace() == STAFFREL_above) {
-                int inTop = insidePart->GetContentTop();
-                int outBottom = outsidePart->GetContentBottom();
+                int inTop=insidePart->GetContentTop();
+                int outBottom=outsidePart->GetContentBottom();
                 if (inTop > outBottom)
                     outsidePart->SetDrawingYRel(outsidePart->GetDrawingYRel() + inTop - outBottom + margin);
             }
             else {
-                int inBottom = insidePart->GetContentBottom();
-                int outTop = outsidePart->GetContentTop();
+                int inBottom=insidePart->GetContentBottom();
+                int outTop=outsidePart->GetContentTop();
                 if (inBottom < outTop)
                     outsidePart->SetDrawingYRel(outsidePart->GetDrawingYRel() + outTop - inBottom + margin);
             }
@@ -419,12 +419,12 @@ int Artic::PrepareLayerElementParts(FunctorParams *functorParams)
     this->SplitArtic(&insideSlur, &outsideSlur);
 
     if (insideSlur.size() > 0) {
-        ArticPart *articPart = new ArticPart(ARTIC_PART_INSIDE, this);
+        ArticPart *articPart=new ArticPart(ARTIC_PART_INSIDE, this);
         articPart->SetArtic(insideSlur);
         this->AddChild(articPart);
     }
     if (outsideSlur.size() > 0) {
-        ArticPart *articPart = new ArticPart(ARTIC_PART_OUTSIDE, this);
+        ArticPart *articPart=new ArticPart(ARTIC_PART_OUTSIDE, this);
         articPart->SetArtic(outsideSlur);
         this->AddChild(articPart);
     }
@@ -458,24 +458,24 @@ int ArticPart::ResetVerticalAlignment(FunctorParams *functorParams)
 
 int ArticPart::AdjustArticWithSlurs(FunctorParams *functorParams)
 {
-    FunctorDocParams *params = vrv_params_cast<FunctorDocParams *>(functorParams);
+    FunctorDocParams *params=vrv_params_cast<FunctorDocParams *>(functorParams);
     assert(params);
 
     if (m_startSlurPositioners.empty() && m_endSlurPositioners.empty()) return FUNCTOR_CONTINUE;
 
     std::vector<FloatingCurvePositioner *>::iterator iter;
-    for (iter = m_endSlurPositioners.begin(); iter != m_endSlurPositioners.end(); ++iter) {
+    for (iter=m_endSlurPositioners.begin(); iter != m_endSlurPositioners.end(); ++iter) {
         // if (this->Encloses((*iter)->m_points[1])) this->SetColor("red");
-        int shift = this->Intersects((*iter), CONTENT, params->m_doc->GetDrawingUnit(100));
+        int shift=this->Intersects((*iter), CONTENT, params->m_doc->GetDrawingUnit(100));
         if (shift != 0) {
             this->SetDrawingYRel(this->GetDrawingYRel() + shift);
             // this->SetColor("red");
         }
     }
 
-    for (iter = m_startSlurPositioners.begin(); iter != m_startSlurPositioners.end(); ++iter) {
+    for (iter=m_startSlurPositioners.begin(); iter != m_startSlurPositioners.end(); ++iter) {
         // if (this->Encloses((*iter)->m_points[1])) this->SetColor("red");
-        int shift = this->Intersects((*iter), CONTENT, params->m_doc->GetDrawingUnit(100));
+        int shift=this->Intersects((*iter), CONTENT, params->m_doc->GetDrawingUnit(100));
         if (shift != 0) {
             this->SetDrawingYRel(this->GetDrawingYRel() + shift);
             // this->SetColor("green");

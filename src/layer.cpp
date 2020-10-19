@@ -46,14 +46,14 @@ Layer::Layer()
     RegisterAttClass(ATT_VISIBILITY);
 
     // owned pointers need to be set to NULL;
-    m_staffDefClef = NULL;
-    m_staffDefKeySig = NULL;
-    m_staffDefMensur = NULL;
-    m_staffDefMeterSig = NULL;
-    m_cautionStaffDefClef = NULL;
-    m_cautionStaffDefKeySig = NULL;
-    m_cautionStaffDefMensur = NULL;
-    m_cautionStaffDefMeterSig = NULL;
+    m_staffDefClef=NULL;
+    m_staffDefKeySig=NULL;
+    m_staffDefMensur=NULL;
+    m_staffDefMeterSig=NULL;
+    m_cautionStaffDefClef=NULL;
+    m_cautionStaffDefKeySig=NULL;
+    m_cautionStaffDefMensur=NULL;
+    m_cautionStaffDefMeterSig=NULL;
 
     Reset();
 }
@@ -74,63 +74,63 @@ void Layer::Reset()
 
     ResetStaffDefObjects();
 
-    m_drawingStemDir = STEMDIRECTION_NONE;
+    m_drawingStemDir=STEMDIRECTION_NONE;
 }
 
 void Layer::CloneReset()
 {
     Object::CloneReset();
 
-    m_drawKeySigCancellation = false;
-    m_staffDefClef = NULL;
-    m_staffDefKeySig = NULL;
-    m_staffDefMensur = NULL;
-    m_staffDefMeterSig = NULL;
-    m_drawCautionKeySigCancel = false;
-    m_cautionStaffDefClef = NULL;
-    m_cautionStaffDefKeySig = NULL;
-    m_cautionStaffDefMensur = NULL;
-    m_cautionStaffDefMeterSig = NULL;
+    m_drawKeySigCancellation=false;
+    m_staffDefClef=NULL;
+    m_staffDefKeySig=NULL;
+    m_staffDefMensur=NULL;
+    m_staffDefMeterSig=NULL;
+    m_drawCautionKeySigCancel=false;
+    m_cautionStaffDefClef=NULL;
+    m_cautionStaffDefKeySig=NULL;
+    m_cautionStaffDefMensur=NULL;
+    m_cautionStaffDefMeterSig=NULL;
 
-    m_drawingStemDir = STEMDIRECTION_NONE;
+    m_drawingStemDir=STEMDIRECTION_NONE;
 }
 
 void Layer::ResetStaffDefObjects()
 {
-    m_drawKeySigCancellation = false;
+    m_drawKeySigCancellation=false;
     if (m_staffDefClef) {
         delete m_staffDefClef;
-        m_staffDefClef = NULL;
+        m_staffDefClef=NULL;
     }
     if (m_staffDefKeySig) {
         delete m_staffDefKeySig;
-        m_staffDefKeySig = NULL;
+        m_staffDefKeySig=NULL;
     }
     if (m_staffDefMensur) {
         delete m_staffDefMensur;
-        m_staffDefMensur = NULL;
+        m_staffDefMensur=NULL;
     }
     if (m_staffDefMeterSig) {
         delete m_staffDefMeterSig;
-        m_staffDefMeterSig = NULL;
+        m_staffDefMeterSig=NULL;
     }
     // cautionary values
-    m_drawCautionKeySigCancel = false;
+    m_drawCautionKeySigCancel=false;
     if (m_cautionStaffDefClef) {
         delete m_cautionStaffDefClef;
-        m_cautionStaffDefClef = NULL;
+        m_cautionStaffDefClef=NULL;
     }
     if (m_cautionStaffDefKeySig) {
         delete m_cautionStaffDefKeySig;
-        m_cautionStaffDefKeySig = NULL;
+        m_cautionStaffDefKeySig=NULL;
     }
     if (m_cautionStaffDefMensur) {
         delete m_cautionStaffDefMensur;
-        m_cautionStaffDefMensur = NULL;
+        m_cautionStaffDefMensur=NULL;
     }
     if (m_cautionStaffDefMeterSig) {
         delete m_cautionStaffDefMeterSig;
-        m_cautionStaffDefMeterSig = NULL;
+        m_cautionStaffDefMeterSig=NULL;
     }
 }
 
@@ -158,20 +158,20 @@ LayerElement *Layer::GetPrevious(LayerElement *element)
 
 LayerElement *Layer::GetAtPos(int x)
 {
-    Object *first = this->GetFirst();
+    Object *first=this->GetFirst();
     if (!first || !first->IsLayerElement()) return NULL;
 
-    LayerElement *element = vrv_cast<LayerElement *>(first);
+    LayerElement *element=vrv_cast<LayerElement *>(first);
     assert(element);
     if (element->GetDrawingX() > x) return NULL;
 
     Object *next;
-    while ((next = this->GetNext())) {
+    while ((next=this->GetNext())) {
         if (!next->IsLayerElement()) continue;
-        LayerElement *nextLayerElement = vrv_cast<LayerElement *>(next);
+        LayerElement *nextLayerElement=vrv_cast<LayerElement *>(next);
         assert(nextLayerElement);
         if (nextLayerElement->GetDrawingX() > x) return element;
-        element = nextLayerElement;
+        element=nextLayerElement;
     }
     // This can be NULL if the layer is empty
     return element;
@@ -179,7 +179,7 @@ LayerElement *Layer::GetAtPos(int x)
 
 Clef *Layer::GetClef(LayerElement *test)
 {
-    Object *testObject = test;
+    Object *testObject=test;
 
     if (!test) {
         return GetCurrentClef();
@@ -188,15 +188,15 @@ Clef *Layer::GetClef(LayerElement *test)
     // make sure list is set
     ResetList(this);
     if (!test->Is(CLEF)) {
-        testObject = GetListFirstBackward(testObject, CLEF);
+        testObject=GetListFirstBackward(testObject, CLEF);
     }
 
     if (testObject && testObject->Is(CLEF)) {
-        Clef *clef = vrv_cast<Clef *>(testObject);
+        Clef *clef=vrv_cast<Clef *>(testObject);
         assert(clef);
         return clef;
     }
-    Clef *facsClef = this->GetClefFacs(test);
+    Clef *facsClef=this->GetClefFacs(test);
     if (facsClef != NULL) {
         return facsClef;
     }
@@ -205,7 +205,7 @@ Clef *Layer::GetClef(LayerElement *test)
 
 Clef *Layer::GetClefFacs(LayerElement *test)
 {
-    Doc *doc = vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
+    Doc *doc=vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
     assert(doc);
     if (doc->GetType() == Facs) {
         ListOfObjects clefs;
@@ -220,7 +220,7 @@ Clef *Layer::GetClefFacs(LayerElement *test)
 
 int Layer::GetClefLocOffset(LayerElement *test)
 {
-    Clef *clef = GetClef(test);
+    Clef *clef=GetClef(test);
     if (!clef) return 0;
     return clef->GetClefLocOffset();
 }
@@ -242,28 +242,28 @@ data_STEMDIRECTION Layer::GetDrawingStemDir(const ArrayOfBeamElementCoords *coor
     assert(!coords->empty());
 
     // Adjust the x position of the first and last element for taking into account the stem width
-    LayerElement *first = dynamic_cast<LayerElement *>(coords->front()->m_element);
-    LayerElement *last = dynamic_cast<LayerElement *>(coords->back()->m_element);
+    LayerElement *first=dynamic_cast<LayerElement *>(coords->front()->m_element);
+    LayerElement *last=dynamic_cast<LayerElement *>(coords->back()->m_element);
 
     if (!first || !last) {
         return m_drawingStemDir;
     }
 
-    Measure *measure = vrv_cast<Measure *>(this->GetFirstAncestor(MEASURE));
+    Measure *measure=vrv_cast<Measure *>(this->GetFirstAncestor(MEASURE));
     assert(measure);
 
-    Alignment *alignmentFirst = first->GetAlignment();
+    Alignment *alignmentFirst=first->GetAlignment();
     assert(alignmentFirst);
-    Alignment *alignmentLast = last->GetAlignment();
+    Alignment *alignmentLast=last->GetAlignment();
     assert(alignmentLast);
 
     // We are ignoring cross-staff situation here because this should not be called if we have one
-    Staff *staff = vrv_cast<Staff *>(first->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(first->GetFirstAncestor(STAFF));
     assert(staff);
 
-    double time = alignmentFirst->GetTime();
-    double duration = alignmentLast->GetTime() - time + last->GetAlignmentDuration();
-    duration = durRound(duration);
+    double time=alignmentFirst->GetTime();
+    double duration=alignmentLast->GetTime() - time + last->GetAlignmentDuration();
+    duration=durRound(duration);
 
     if (this->GetLayerCountInTimeSpan(time, duration, measure, staff->GetN()) < 2) {
         return STEMDIRECTION_NONE;
@@ -277,16 +277,16 @@ int Layer::GetLayerCountForTimeSpanOf(LayerElement *element)
 {
     assert(element);
 
-    Measure *measure = vrv_cast<Measure *>(this->GetFirstAncestor(MEASURE));
+    Measure *measure=vrv_cast<Measure *>(this->GetFirstAncestor(MEASURE));
     assert(measure);
 
-    Alignment *alignment = element->GetAlignment();
+    Alignment *alignment=element->GetAlignment();
     assert(alignment);
 
-    Layer *layer = NULL;
-    Staff *staff = element->GetCrossStaff(layer);
+    Layer *layer=NULL;
+    Staff *staff=element->GetCrossStaff(layer);
     if (!staff) {
-        staff = dynamic_cast<Staff *>(element->GetFirstAncestor(STAFF));
+        staff=dynamic_cast<Staff *>(element->GetFirstAncestor(STAFF));
     }
     // At this stage we have the parent or the cross-staff
     assert(staff);
@@ -301,8 +301,8 @@ int Layer::GetLayerCountInTimeSpan(double time, double duration, Measure *measur
     Functor layerCountInTimeSpan(&Object::LayerCountInTimeSpan);
     LayerCountInTimeSpanParams layerCountInTimeSpanParams(
         GetCurrentMeterSig(), GetCurrentMensur(), &layerCountInTimeSpan);
-    layerCountInTimeSpanParams.m_time = time;
-    layerCountInTimeSpanParams.m_duration = duration;
+    layerCountInTimeSpanParams.m_time=time;
+    layerCountInTimeSpanParams.m_duration=duration;
 
     ArrayOfComparisons filters;
     AttNIntegerComparison matchStaff(ALIGNMENT_REFERENCE, staff);
@@ -317,16 +317,16 @@ ListOfObjects Layer::GetLayerElementsForTimeSpanOf(LayerElement *element)
 {
     assert(element);
 
-    Measure *measure = static_cast<Measure *>(this->GetFirstAncestor(MEASURE));
+    Measure *measure=static_cast<Measure *>(this->GetFirstAncestor(MEASURE));
     assert(measure);
 
-    Alignment *alignment = element->GetAlignment();
+    Alignment *alignment=element->GetAlignment();
     assert(alignment);
 
-    Layer *layer = NULL;
-    Staff *staff = element->GetCrossStaff(layer);
+    Layer *layer=NULL;
+    Staff *staff=element->GetCrossStaff(layer);
     if (!staff) {
-        staff = static_cast<Staff *>(element->GetFirstAncestor(STAFF));
+        staff=static_cast<Staff *>(element->GetFirstAncestor(STAFF));
     }
     // At this stage we have the parent or the cross-staff
     assert(staff);
@@ -340,8 +340,8 @@ ListOfObjects Layer::GetLayerElementsInTimeSpan(double time, double duration, Me
 
     Functor layerElementsInTimeSpan(&Object::LayerElementsInTimeSpan);
     LayerElementsInTimeSpanParams layerElementsInTimeSpanParams(GetCurrentMeterSig(), GetCurrentMensur(), this);
-    layerElementsInTimeSpanParams.m_time = time;
-    layerElementsInTimeSpanParams.m_duration = duration;
+    layerElementsInTimeSpanParams.m_time=time;
+    layerElementsInTimeSpanParams.m_duration=duration;
 
     ArrayOfComparisons filters;
     AttNIntegerComparison matchStaff(ALIGNMENT_REFERENCE, staff);
@@ -354,28 +354,28 @@ ListOfObjects Layer::GetLayerElementsInTimeSpan(double time, double duration, Me
 
 Clef *Layer::GetCurrentClef() const
 {
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff && staff->m_drawingStaffDef && staff->m_drawingStaffDef->GetCurrentClef());
     return staff->m_drawingStaffDef->GetCurrentClef();
 }
 
 KeySig *Layer::GetCurrentKeySig() const
 {
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff && staff->m_drawingStaffDef);
     return staff->m_drawingStaffDef->GetCurrentKeySig();
 }
 
 Mensur *Layer::GetCurrentMensur() const
 {
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff && staff->m_drawingStaffDef);
     return staff->m_drawingStaffDef->GetCurrentMensur();
 }
 
 MeterSig *Layer::GetCurrentMeterSig() const
 {
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff && staff->m_drawingStaffDef);
     return staff->m_drawingStaffDef->GetCurrentMeterSig();
 }
@@ -391,19 +391,19 @@ void Layer::SetDrawingStaffDefValues(StaffDef *currentStaffDef)
     this->ResetStaffDefObjects();
 
     if (currentStaffDef->DrawClef()) {
-        this->m_staffDefClef = new Clef(*currentStaffDef->GetCurrentClef());
+        this->m_staffDefClef=new Clef(*currentStaffDef->GetCurrentClef());
         this->m_staffDefClef->SetParent(this);
     }
     if (currentStaffDef->DrawKeySig()) {
-        this->m_staffDefKeySig = new KeySig(*currentStaffDef->GetCurrentKeySig());
+        this->m_staffDefKeySig=new KeySig(*currentStaffDef->GetCurrentKeySig());
         this->m_staffDefKeySig->SetParent(this);
     }
     if (currentStaffDef->DrawMensur()) {
-        this->m_staffDefMensur = new Mensur(*currentStaffDef->GetCurrentMensur());
+        this->m_staffDefMensur=new Mensur(*currentStaffDef->GetCurrentMensur());
         this->m_staffDefMensur->SetParent(this);
     }
     if (currentStaffDef->DrawMeterSig()) {
-        this->m_staffDefMeterSig = new MeterSig(*currentStaffDef->GetCurrentMeterSig());
+        this->m_staffDefMeterSig=new MeterSig(*currentStaffDef->GetCurrentMeterSig());
         this->m_staffDefMeterSig->SetParent(this);
     }
 
@@ -422,20 +422,20 @@ void Layer::SetDrawingCautionValues(StaffDef *currentStaffDef)
     }
 
     if (currentStaffDef->DrawClef()) {
-        this->m_cautionStaffDefClef = new Clef(*currentStaffDef->GetCurrentClef());
+        this->m_cautionStaffDefClef=new Clef(*currentStaffDef->GetCurrentClef());
         this->m_cautionStaffDefClef->SetParent(this);
     }
     // special case - see above
     if (currentStaffDef->DrawKeySig()) {
-        this->m_cautionStaffDefKeySig = new KeySig(*currentStaffDef->GetCurrentKeySig());
+        this->m_cautionStaffDefKeySig=new KeySig(*currentStaffDef->GetCurrentKeySig());
         this->m_cautionStaffDefKeySig->SetParent(this);
     }
     if (currentStaffDef->DrawMensur()) {
-        this->m_cautionStaffDefMensur = new Mensur(*currentStaffDef->GetCurrentMensur());
+        this->m_cautionStaffDefMensur=new Mensur(*currentStaffDef->GetCurrentMensur());
         this->m_cautionStaffDefMensur->SetParent(this);
     }
     if (currentStaffDef->DrawMeterSig()) {
-        this->m_cautionStaffDefMeterSig = new MeterSig(*currentStaffDef->GetCurrentMeterSig());
+        this->m_cautionStaffDefMeterSig=new MeterSig(*currentStaffDef->GetCurrentMeterSig());
         this->m_cautionStaffDefMeterSig->SetParent(this);
     }
 
@@ -452,12 +452,12 @@ void Layer::SetDrawingCautionValues(StaffDef *currentStaffDef)
 
 int Layer::ConvertToCastOffMensural(FunctorParams *functorParams)
 {
-    ConvertToCastOffMensuralParams *params = vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
+    ConvertToCastOffMensuralParams *params=vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
     assert(params);
 
-    params->m_contentLayer = this;
+    params->m_contentLayer=this;
 
-    params->m_targetLayer = new Layer(*this);
+    params->m_targetLayer=new Layer(*this);
     params->m_targetLayer->ClearChildren();
     params->m_targetLayer->CloneReset();
     // Keep the xml:id of the layer in the first segment
@@ -470,11 +470,11 @@ int Layer::ConvertToCastOffMensural(FunctorParams *functorParams)
 
 int Layer::ConvertToUnCastOffMensural(FunctorParams *functorParams)
 {
-    ConvertToUnCastOffMensuralParams *params = vrv_params_cast<ConvertToUnCastOffMensuralParams *>(functorParams);
+    ConvertToUnCastOffMensuralParams *params=vrv_params_cast<ConvertToUnCastOffMensuralParams *>(functorParams);
     assert(params);
 
     if (params->m_contentLayer == NULL) {
-        params->m_contentLayer = this;
+        params->m_contentLayer=this;
     }
     else {
         params->m_contentLayer->MoveChildrenFrom(this);
@@ -523,20 +523,20 @@ int Layer::ResetHorizontalAlignment(FunctorParams *functorParams)
 
 int Layer::AlignHorizontally(FunctorParams *functorParams)
 {
-    AlignHorizontallyParams *params = vrv_params_cast<AlignHorizontallyParams *>(functorParams);
+    AlignHorizontallyParams *params=vrv_params_cast<AlignHorizontallyParams *>(functorParams);
     assert(params);
 
-    params->m_currentMensur = GetCurrentMensur();
-    params->m_currentMeterSig = GetCurrentMeterSig();
+    params->m_currentMensur=GetCurrentMensur();
+    params->m_currentMeterSig=GetCurrentMeterSig();
 
     // We are starting a new layer, reset the time;
     // We set it to -1.0 for the scoreDef attributes since they have to be aligned before any timestamp event (-1.0)
-    params->m_time = DUR_MAX * -1.0;
+    params->m_time=DUR_MAX * -1.0;
 
     if (params->m_isFirstMeasure)
-        params->m_scoreDefRole = SCOREDEF_SYSTEM;
+        params->m_scoreDefRole=SCOREDEF_SYSTEM;
     else
-        params->m_scoreDefRole = SCOREDEF_INTERMEDIATE;
+        params->m_scoreDefRole=SCOREDEF_INTERMEDIATE;
 
     if (this->GetStaffDefClef()) {
         GetStaffDefClef()->AlignHorizontally(params);
@@ -551,21 +551,21 @@ int Layer::AlignHorizontally(FunctorParams *functorParams)
         GetStaffDefMeterSig()->AlignHorizontally(params);
     }
 
-    params->m_scoreDefRole = SCOREDEF_NONE;
+    params->m_scoreDefRole=SCOREDEF_NONE;
 
     // Now we have to set it to 0.0 since we will start aligning muscial content
-    params->m_time = 0.0;
+    params->m_time=0.0;
 
     return FUNCTOR_CONTINUE;
 }
 
 int Layer::AlignHorizontallyEnd(FunctorParams *functorParams)
 {
-    AlignHorizontallyParams *params = vrv_params_cast<AlignHorizontallyParams *>(functorParams);
+    AlignHorizontallyParams *params=vrv_params_cast<AlignHorizontallyParams *>(functorParams);
     assert(params);
 
-    params->m_scoreDefRole = SCOREDEF_CAUTIONARY;
-    params->m_time = params->m_measureAligner->GetMaxTime();
+    params->m_scoreDefRole=SCOREDEF_CAUTIONARY;
+    params->m_time=params->m_measureAligner->GetMaxTime();
 
     if (this->GetCautionStaffDefClef()) {
         GetCautionStaffDefClef()->AlignHorizontally(params);
@@ -580,15 +580,15 @@ int Layer::AlignHorizontallyEnd(FunctorParams *functorParams)
         GetCautionStaffDefMeterSig()->AlignHorizontally(params);
     }
 
-    params->m_scoreDefRole = SCOREDEF_NONE;
+    params->m_scoreDefRole=SCOREDEF_NONE;
 
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
-    int graceAlignerId = params->m_doc->GetOptions()->m_graceRhythmAlign.GetValue() ? 0 : staff->GetN();
+    int graceAlignerId=params->m_doc->GetOptions()->m_graceRhythmAlign.GetValue() ? 0 : staff->GetN();
 
     int i;
-    for (i = 0; i < params->m_measureAligner->GetChildCount(); ++i) {
-        Alignment *alignment = vrv_cast<Alignment *>(params->m_measureAligner->GetChild(i));
+    for (i=0; i < params->m_measureAligner->GetChildCount(); ++i) {
+        Alignment *alignment=vrv_cast<Alignment *>(params->m_measureAligner->GetChild(i));
         assert(alignment);
         if (alignment->HasGraceAligner(graceAlignerId)) {
             alignment->GetGraceAligner(graceAlignerId)->AlignStack();
@@ -600,13 +600,13 @@ int Layer::AlignHorizontallyEnd(FunctorParams *functorParams)
 
 int Layer::PrepareProcessingLists(FunctorParams *functorParams)
 {
-    PrepareProcessingListsParams *params = vrv_params_cast<PrepareProcessingListsParams *>(functorParams);
+    PrepareProcessingListsParams *params=vrv_params_cast<PrepareProcessingListsParams *>(functorParams);
     assert(params);
 
     // Alternate solution with StaffN_LayerN_VerseN_t
-    // StaffN_LayerN_VerseN_t *tree = vrv_cast<StaffN_LayerN_VerseN_t*>((*params).at(0));
+    // StaffN_LayerN_VerseN_t *tree=vrv_cast<StaffN_LayerN_VerseN_t*>((*params).at(0));
 
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
     params->m_layerTree.child[staff->GetN()].child[this->GetN()];
 
@@ -615,26 +615,26 @@ int Layer::PrepareProcessingLists(FunctorParams *functorParams)
 
 int Layer::PrepareRpt(FunctorParams *functorParams)
 {
-    PrepareRptParams *params = vrv_params_cast<PrepareRptParams *>(functorParams);
+    PrepareRptParams *params=vrv_params_cast<PrepareRptParams *>(functorParams);
     assert(params);
 
     // If we have encountered a mRpt before and there is none is this layer, reset it to NULL
     if (params->m_currentMRpt && !this->FindDescendantByType(MRPT)) {
-        params->m_currentMRpt = NULL;
+        params->m_currentMRpt=NULL;
     }
     return FUNCTOR_CONTINUE;
 }
 
 int Layer::CalcOnsetOffset(FunctorParams *functorParams)
 {
-    CalcOnsetOffsetParams *params = vrv_params_cast<CalcOnsetOffsetParams *>(functorParams);
+    CalcOnsetOffsetParams *params=vrv_params_cast<CalcOnsetOffsetParams *>(functorParams);
     assert(params);
 
-    params->m_currentScoreTime = 0.0;
-    params->m_currentRealTimeSeconds = 0.0;
+    params->m_currentScoreTime=0.0;
+    params->m_currentRealTimeSeconds=0.0;
 
-    params->m_currentMensur = GetCurrentMensur();
-    params->m_currentMeterSig = GetCurrentMeterSig();
+    params->m_currentMensur=GetCurrentMensur();
+    params->m_currentMeterSig=GetCurrentMeterSig();
 
     return FUNCTOR_CONTINUE;
 }
@@ -642,7 +642,7 @@ int Layer::CalcOnsetOffset(FunctorParams *functorParams)
 /*
 int Layer::GenerateMIDI(FunctorParams *functorParams)
 {
-    GenerateMIDIParams *params = vrv_params_cast<GenerateMIDIParams *>(functorParams);
+    GenerateMIDIParams *params=vrv_params_cast<GenerateMIDIParams *>(functorParams);
     assert(params);
 
     if (this->HasSameasLink()) {
@@ -655,7 +655,7 @@ int Layer::GenerateMIDI(FunctorParams *functorParams)
 
 int Layer::GenerateTimemap(FunctorParams *functorParams)
 {
-    GenerateTimemapParams *params = vrv_params_cast<GenerateTimemapParams *>(functorParams);
+    GenerateTimemapParams *params=vrv_params_cast<GenerateTimemapParams *>(functorParams);
     assert(params);
 
     if (this->HasSameasLink()) {

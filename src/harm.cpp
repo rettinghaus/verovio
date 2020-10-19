@@ -77,13 +77,13 @@ bool Harm::IsSupportedChild(Object *child)
 
 bool Harm::GetRootPitch(TransPitch &pitch, unsigned int &pos)
 {
-    Text *textObject = dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
+    Text *textObject=dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
     if (!textObject) return false;
-    std::wstring text = textObject->GetText();
+    std::wstring text=textObject->GetText();
 
     if (text.length() > pos && text.at(pos) >= 'A' && text.at(pos) <= 'G') {
-        int pname = (text.at(pos) - 'C' + 7) % 7;
-        int accid = 0;
+        int pname=(text.at(pos) - 'C' + 7) % 7;
+        int accid=0;
         for (pos++; pos < text.length(); pos++) {
             if (text.at(pos) == L'𝄫')
                 accid -= 2;
@@ -96,7 +96,7 @@ bool Harm::GetRootPitch(TransPitch &pitch, unsigned int &pos)
             else
                 break;
         }
-        pitch = TransPitch(pname, accid, 4);
+        pitch=TransPitch(pname, accid, 4);
         return true;
     }
     LogWarning("Failed to extract a pitch.");
@@ -105,9 +105,9 @@ bool Harm::GetRootPitch(TransPitch &pitch, unsigned int &pos)
 
 void Harm::SetRootPitch(const TransPitch &pitch, unsigned int endPos)
 {
-    Text *textObject = dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
+    Text *textObject=dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
     if (!textObject) return;
-    std::wstring text = textObject->GetText();
+    std::wstring text=textObject->GetText();
 
     if (text.length() > endPos) {
         textObject->SetText(pitch.GetPitchString() + &text.at(endPos));
@@ -119,12 +119,12 @@ void Harm::SetRootPitch(const TransPitch &pitch, unsigned int endPos)
 
 bool Harm::GetBassPitch(TransPitch &pitch)
 {
-    Text *textObject = dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
+    Text *textObject=dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
     if (!textObject) return false;
-    std::wstring text = textObject->GetText();
+    std::wstring text=textObject->GetText();
     if (!text.length()) return false;
 
-    for (unsigned int pos = 0; pos < text.length(); pos++) {
+    for (unsigned int pos=0; pos < text.length(); pos++) {
         if (text.at(pos) == L'/') {
             pos++;
             return GetRootPitch(pitch, pos);
@@ -135,17 +135,17 @@ bool Harm::GetBassPitch(TransPitch &pitch)
 
 void Harm::SetBassPitch(const TransPitch &pitch)
 {
-    Text *textObject = dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
+    Text *textObject=dynamic_cast<Text *>(this->FindDescendantByType(TEXT, 1));
     if (!textObject) return;
-    std::wstring text = textObject->GetText();
+    std::wstring text=textObject->GetText();
     unsigned int pos;
-    for (pos = 0; pos < text.length(); pos++) {
+    for (pos=0; pos < text.length(); pos++) {
         if (text.at(pos) == L'/') {
             break;
         }
     }
 
-    text = text.substr(0, pos) + L"/" + pitch.GetPitchString();
+    text=text.substr(0, pos) + L"/" + pitch.GetPitchString();
     textObject->SetText(text);
 }
 
@@ -155,10 +155,10 @@ void Harm::SetBassPitch(const TransPitch &pitch)
 
 int Harm::PrepareFloatingGrps(FunctorParams *functorParams)
 {
-    PrepareFloatingGrpsParams *params = vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
+    PrepareFloatingGrpsParams *params=vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
     assert(params);
 
-    std::string n = this->GetN();
+    std::string n=this->GetN();
 
     for (auto &kv : params->m_harms) {
         if (kv.first == n) {
@@ -176,7 +176,7 @@ int Harm::PrepareFloatingGrps(FunctorParams *functorParams)
 
 int Harm::AdjustHarmGrpsSpacing(FunctorParams *functorParams)
 {
-    AdjustHarmGrpsSpacingParams *params = vrv_params_cast<AdjustHarmGrpsSpacingParams *>(functorParams);
+    AdjustHarmGrpsSpacingParams *params=vrv_params_cast<AdjustHarmGrpsSpacingParams *>(functorParams);
     assert(params);
 
     // If the harm is empty, do not adjust spacing
@@ -184,7 +184,7 @@ int Harm::AdjustHarmGrpsSpacing(FunctorParams *functorParams)
         return FUNCTOR_CONTINUE;
     }
 
-    int currentGrpId = this->GetDrawingGrpId();
+    int currentGrpId=this->GetDrawingGrpId();
 
     // No group ID, nothing to do - should probably never happen
     if (currentGrpId == 0) {
@@ -212,7 +212,7 @@ int Harm::AdjustHarmGrpsSpacing(FunctorParams *functorParams)
     ArrayOfFloatingPositioners positioners;
     params->m_currentSystem->m_systemAligner.FindAllPositionerPointingTo(&positioners, this);
 
-    FloatingPositioner *harmPositioner = NULL;
+    FloatingPositioner *harmPositioner=NULL;
     // Something is probably not right if nothing found - maybe no @staff
     if (positioners.empty()) {
         LogDebug("Something was wrong when searching positioners for %s '%s'", this->GetClassName().c_str(),
@@ -223,7 +223,7 @@ int Harm::AdjustHarmGrpsSpacing(FunctorParams *functorParams)
     // Keep the one with the lowest left position (this will also be the widest)
     for (auto const &positoner : positioners) {
         if (!harmPositioner || (harmPositioner->GetContentLeft() > positoner->GetContentLeft())) {
-            harmPositioner = positoner;
+            harmPositioner=positoner;
         }
     }
 
@@ -234,23 +234,23 @@ int Harm::AdjustHarmGrpsSpacing(FunctorParams *functorParams)
 
     // Not much to do when we hit the first syllable of the system
     if (params->m_previousHarmPositioner == NULL) {
-        params->m_previousHarmStart = this->GetStart();
-        params->m_previousHarmPositioner = harmPositioner;
-        params->m_previousMeasure = NULL;
+        params->m_previousHarmStart=this->GetStart();
+        params->m_previousHarmPositioner=harmPositioner;
+        params->m_previousMeasure=NULL;
         return FUNCTOR_SIBLINGS;
     }
 
-    int xShift = 0;
+    int xShift=0;
 
     // We have a previous harm from the previous measure - we need to add the measure with because the measures are
     // not aligned yet
     if (params->m_previousMeasure) {
-        xShift = params->m_previousMeasure->GetWidth();
+        xShift=params->m_previousMeasure->GetWidth();
     }
 
-    int overlap = params->m_previousHarmPositioner->GetContentRight() - (harmPositioner->GetContentLeft() + xShift);
+    int overlap=params->m_previousHarmPositioner->GetContentRight() - (harmPositioner->GetContentLeft() + xShift);
     // Two units as default spacing
-    int wordSpace = 2 * params->m_doc->GetDrawingUnit(100);
+    int wordSpace=2 * params->m_doc->GetDrawingUnit(100);
 
     // Adjust it proportionally to the lyric size
     wordSpace
@@ -273,21 +273,21 @@ int Harm::AdjustHarmGrpsSpacing(FunctorParams *functorParams)
         }
     }
 
-    params->m_previousHarmStart = this->GetStart();
-    params->m_previousHarmPositioner = harmPositioner;
-    params->m_previousMeasure = NULL;
+    params->m_previousHarmStart=this->GetStart();
+    params->m_previousHarmPositioner=harmPositioner;
+    params->m_previousMeasure=NULL;
 
     return FUNCTOR_SIBLINGS;
 }
 
 int Harm::Transpose(FunctorParams *functorParams)
 {
-    TransposeParams *params = vrv_params_cast<TransposeParams *>(functorParams);
+    TransposeParams *params=vrv_params_cast<TransposeParams *>(functorParams);
     assert(params);
 
     LogDebug("Transposing harm");
 
-    unsigned int position = 0;
+    unsigned int position=0;
     TransPitch pitch;
     if (this->GetRootPitch(pitch, position)) {
         params->m_transposer->Transpose(pitch);

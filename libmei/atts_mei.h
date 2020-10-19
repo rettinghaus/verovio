@@ -49,11 +49,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetNotationtype(data_NOTATIONTYPE notationtype_) { m_notationtype = notationtype_; }
+    void SetNotationtype(data_NOTATIONTYPE notationtype_) { m_notationtype=notationtype_; }
     data_NOTATIONTYPE GetNotationtype() const { return m_notationtype; }
     bool HasNotationtype() const;
     //
-    void SetNotationsubtype(std::string notationsubtype_) { m_notationsubtype = notationsubtype_; }
+    void SetNotationsubtype(std::string notationsubtype_) { m_notationsubtype=notationsubtype_; }
     std::string GetNotationsubtype() const { return m_notationsubtype; }
     bool HasNotationsubtype() const;
     ///@}

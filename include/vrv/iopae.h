@@ -57,86 +57,86 @@ namespace pae {
     public:
         Note(const pae::Note &old)
         { // for STL vector
-            // mnote = old.mnote;
-            // mrest = old.mrest;
-            tie = old.tie;
-            acciaccatura = old.acciaccatura;
-            appoggiatura = old.appoggiatura;
-            fermata = old.fermata;
-            trill = old.trill;
-            chord = old.chord;
+            // mnote=old.mnote;
+            // mrest=old.mrest;
+            tie=old.tie;
+            acciaccatura=old.acciaccatura;
+            appoggiatura=old.appoggiatura;
+            fermata=old.fermata;
+            trill=old.trill;
+            chord=old.chord;
 
-            octave = old.octave;
-            beam = old.beam;
-            pitch = old.pitch;
-            duration = old.duration;
-            accidental = old.accidental;
-            accidGes = old.accidGes;
-            dots = old.dots;
-            rest = old.rest;
+            octave=old.octave;
+            beam=old.beam;
+            pitch=old.pitch;
+            duration=old.duration;
+            accidental=old.accidental;
+            accidGes=old.accidGes;
+            dots=old.dots;
+            rest=old.rest;
 
-            clef = old.clef;
-            mensur = old.mensur;
-            meter = old.meter;
-            key = old.key;
+            clef=old.clef;
+            mensur=old.mensur;
+            meter=old.meter;
+            key=old.key;
 
-            tuplet_notes = old.tuplet_notes;
-            tuplet_note = old.tuplet_note;
-            tuplet_val = old.tuplet_val;
+            tuplet_notes=old.tuplet_notes;
+            tuplet_note=old.tuplet_note;
+            tuplet_val=old.tuplet_val;
         }
         Note() { clear(); }
         void clear()
         {
-            appoggiatura = 0;
-            acciaccatura = fermata = tie = trill = chord = false;
+            appoggiatura=0;
+            acciaccatura=fermata=tie=trill=chord=false;
 
-            octave = 4;
-            beam = 0;
-            pitch = PITCHNAME_NONE;
-            duration = DURATION_NONE;
-            accidental = ACCIDENTAL_WRITTEN_NONE;
-            accidGes = false;
-            dots = 0;
-            rest = false;
+            octave=4;
+            beam=0;
+            pitch=PITCHNAME_NONE;
+            duration=DURATION_NONE;
+            accidental=ACCIDENTAL_WRITTEN_NONE;
+            accidGes=false;
+            dots=0;
+            rest=false;
 
-            tuplet_notes = 0;
-            tuplet_note = 0;
-            tuplet_val = 0;
+            tuplet_notes=0;
+            tuplet_note=0;
+            tuplet_val=0;
 
-            clef = NULL;
-            mensur = NULL;
-            meter = NULL;
-            key = NULL;
+            clef=NULL;
+            mensur=NULL;
+            meter=NULL;
+            key=NULL;
         }
 
         Note &operator=(const Note &d)
         { // for STL vector
-            // mnote = d.mnote;
-            // mrest = d.mrest;
-            tie = d.tie;
-            acciaccatura = d.acciaccatura;
-            appoggiatura = d.appoggiatura;
-            fermata = d.fermata;
-            trill = d.trill;
-            chord = d.chord;
+            // mnote=d.mnote;
+            // mrest=d.mrest;
+            tie=d.tie;
+            acciaccatura=d.acciaccatura;
+            appoggiatura=d.appoggiatura;
+            fermata=d.fermata;
+            trill=d.trill;
+            chord=d.chord;
 
-            octave = d.octave;
-            beam = d.beam;
-            pitch = d.pitch;
-            duration = d.duration;
-            accidental = d.accidental;
-            accidGes = d.accidGes;
-            dots = d.dots;
-            rest = d.rest;
+            octave=d.octave;
+            beam=d.beam;
+            pitch=d.pitch;
+            duration=d.duration;
+            accidental=d.accidental;
+            accidGes=d.accidGes;
+            dots=d.dots;
+            rest=d.rest;
 
-            clef = d.clef;
-            mensur = d.mensur;
-            meter = d.meter;
-            key = d.key;
+            clef=d.clef;
+            mensur=d.mensur;
+            meter=d.meter;
+            key=d.key;
 
-            tuplet_notes = d.tuplet_notes;
-            tuplet_note = d.tuplet_note;
-            tuplet_val = d.tuplet_val;
+            tuplet_notes=d.tuplet_notes;
+            tuplet_note=d.tuplet_note;
+            tuplet_val=d.tuplet_val;
 
             return *this;
         }
@@ -176,37 +176,37 @@ namespace pae {
     public:
         Measure(const Measure &d)
         { // for STL vector
-            clef = d.clef;
-            meter = d.meter;
-            mensur = d.mensur;
-            notes = d.notes;
+            clef=d.clef;
+            meter=d.meter;
+            mensur=d.mensur;
+            notes=d.notes;
 
-            key = d.key;
+            key=d.key;
 
-            durations = d.durations;
-            dots = d.dots;
-            durations_offset = d.durations_offset;
-            barLine = d.barLine;
-            abbreviation_offset = d.abbreviation_offset;
-            wholerest = d.wholerest;
+            durations=d.durations;
+            dots=d.dots;
+            durations_offset=d.durations_offset;
+            barLine=d.barLine;
+            abbreviation_offset=d.abbreviation_offset;
+            wholerest=d.wholerest;
         }
         Measure() { clear(); }
 
         Measure &operator=(const Measure &d)
         { // for STL vector
-            clef = d.clef;
-            meter = d.meter;
-            mensur = d.mensur;
-            notes = d.notes;
+            clef=d.clef;
+            meter=d.meter;
+            mensur=d.mensur;
+            notes=d.notes;
 
-            key = d.key;
+            key=d.key;
 
-            durations = d.durations;
-            dots = d.dots;
-            durations_offset = d.durations_offset;
-            barLine = d.barLine;
-            abbreviation_offset = d.abbreviation_offset;
-            wholerest = d.wholerest;
+            durations=d.durations;
+            dots=d.dots;
+            durations_offset=d.durations_offset;
+            barLine=d.barLine;
+            abbreviation_offset=d.abbreviation_offset;
+            wholerest=d.wholerest;
             return *this;
         }
 
@@ -215,19 +215,19 @@ namespace pae {
             durations.clear();
             dots.clear();
             notes.clear();
-            durations_offset = DURATION_long;
+            durations_offset=DURATION_long;
             reset();
         }
         void reset()
         {
-            clef = NULL;
-            meter = NULL;
-            mensur = NULL;
-            key = NULL;
+            clef=NULL;
+            meter=NULL;
+            mensur=NULL;
+            key=NULL;
             notes.clear();
-            barLine = BARRENDITION_invis;
-            wholerest = 0;
-            abbreviation_offset = -1;
+            barLine=BARRENDITION_invis;
+            wholerest=0;
+            abbreviation_offset=-1;
         }
         Clef *clef;
         Mensur *mensur;
@@ -389,20 +389,20 @@ private:
     void parsePlainAndEasy(std::istream &infile);
 
     // parsing functions
-    int getKeyInfo(const char *incipit, KeySig *key, int index = 0);
-    int getTimeInfo(const char *incipit, MeterSig *meter, Mensur *mensur, int index = 0);
-    int getClefInfo(const char *incipit, Clef *mus_clef, int index = 0);
+    int getKeyInfo(const char *incipit, KeySig *key, int index=0);
+    int getTimeInfo(const char *incipit, MeterSig *meter, Mensur *mensur, int index=0);
+    int getClefInfo(const char *incipit, Clef *mus_clef, int index=0);
     int getBarLine(const char *incipit, data_BARRENDITION *output, int index);
-    int getAccidental(const char *incipit, data_ACCIDENTAL_WRITTEN *accident, int index = 0);
-    int getOctave(const char *incipit, char *octave, int index = 0);
-    int getDurations(const char *incipit, pae::Measure *measure, int index = 0);
+    int getAccidental(const char *incipit, data_ACCIDENTAL_WRITTEN *accident, int index=0);
+    int getOctave(const char *incipit, char *octave, int index=0);
+    int getDurations(const char *incipit, pae::Measure *measure, int index=0);
     int getDuration(const char *incipit, data_DURATION *duration, int *dot, int index);
-    int getTupletFermata(const char *incipit, pae::Note *note, int index = 0);
-    int getTupletFermataEnd(const char *incipit, pae::Note *note, int index = 0);
-    int getGraceNote(const char *incipit, pae::Note *note, int index = 0);
+    int getTupletFermata(const char *incipit, pae::Note *note, int index=0);
+    int getTupletFermataEnd(const char *incipit, pae::Note *note, int index=0);
+    int getGraceNote(const char *incipit, pae::Note *note, int index=0);
     int getWholeRest(const char *incipit, int *wholerest, int index);
-    int getAbbreviation(const char *incipit, pae::Measure *measure, int index = 0);
-    int getNote(const char *incipit, pae::Note *note, pae::Measure *measure, int index = 0);
+    int getAbbreviation(const char *incipit, pae::Measure *measure, int index=0);
+    int getNote(const char *incipit, pae::Note *note, pae::Measure *measure, int index=0);
 
     data_PITCHNAME getPitch(char c_note);
 

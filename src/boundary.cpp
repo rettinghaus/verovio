@@ -27,16 +27,16 @@ namespace vrv {
 BoundaryEnd::BoundaryEnd(Object *start) : SystemElement("bdend-")
 {
     Reset();
-    m_start = start;
-    m_startClassName = start->GetClassName();
+    m_start=start;
+    m_startClassName=start->GetClassName();
 }
 
 BoundaryEnd::~BoundaryEnd() {}
 
 void BoundaryEnd::Reset()
 {
-    m_start = NULL;
-    m_drawingMeasure = NULL;
+    m_start=NULL;
+    m_drawingMeasure=NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -52,14 +52,14 @@ BoundaryStartInterface::~BoundaryStartInterface() {}
 
 void BoundaryStartInterface::Reset()
 {
-    m_end = NULL;
-    m_drawingMeasure = NULL;
+    m_end=NULL;
+    m_drawingMeasure=NULL;
 }
 
 void BoundaryStartInterface::SetEnd(BoundaryEnd *end)
 {
     assert(!m_end);
-    m_end = end;
+    m_end=end;
 }
 
 void BoundaryStartInterface::ConvertToPageBasedBoundary(Object *object, Object *parent)
@@ -68,7 +68,7 @@ void BoundaryStartInterface::ConvertToPageBasedBoundary(Object *object, Object *
     assert(parent);
 
     // Then add a BoundaryEnd
-    BoundaryEnd *boundaryEnd = new BoundaryEnd(object);
+    BoundaryEnd *boundaryEnd=new BoundaryEnd(object);
     this->SetEnd(boundaryEnd);
     parent->AddChild(boundaryEnd);
 
@@ -82,7 +82,7 @@ void BoundaryStartInterface::ConvertToPageBasedBoundary(Object *object, Object *
 
 int BoundaryEnd::PrepareBoundaries(FunctorParams *functorParams)
 {
-    PrepareBoundariesParams *params = vrv_params_cast<PrepareBoundariesParams *>(functorParams);
+    PrepareBoundariesParams *params=vrv_params_cast<PrepareBoundariesParams *>(functorParams);
     assert(params);
 
     // We set its pointer to the last measure we have encountered - this can be NULL in case no measure exists before
@@ -93,7 +93,7 @@ int BoundaryEnd::PrepareBoundaries(FunctorParams *functorParams)
     // Endings are also set as Measure::m_drawingEnding for all meaasures in between - when we reach the end boundary of
     // an ending, we need to set the m_currentEnding to NULL
     if (params->m_currentEnding && this->GetStart()->Is(ENDING)) {
-        params->m_currentEnding = NULL;
+        params->m_currentEnding=NULL;
         // With ending we need the drawing measure - this will crash with en empty ending at the beginning of a score...
         assert(m_drawingMeasure);
     }
@@ -112,7 +112,7 @@ int BoundaryEnd::ResetDrawing(FunctorParams *functorParams)
 
 int BoundaryEnd::CastOffSystems(FunctorParams *functorParams)
 {
-    CastOffSystemsParams *params = vrv_params_cast<CastOffSystemsParams *>(functorParams);
+    CastOffSystemsParams *params=vrv_params_cast<CastOffSystemsParams *>(functorParams);
     assert(params);
 
     // Since the functor returns FUNCTOR_SIBLINGS we should never go lower than the system children
@@ -122,7 +122,7 @@ int BoundaryEnd::CastOffSystems(FunctorParams *functorParams)
     // We want to move the measure to the currentSystem. However, we cannot use DetachChild
     // from the content System because this screws up the iterator. Relinquish gives up
     // the ownership of the Measure - the contentSystem will be deleted afterwards.
-    BoundaryEnd *endBoundary = dynamic_cast<BoundaryEnd *>(params->m_contentSystem->Relinquish(this->GetIdx()));
+    BoundaryEnd *endBoundary=dynamic_cast<BoundaryEnd *>(params->m_contentSystem->Relinquish(this->GetIdx()));
     // End boundaries are not added to the pending objects because we do not want them to be placed at the beginning of
     // the next system but only if the pending object array it empty (otherwise it will mess up the MEI tree)
     if (params->m_pendingObjects.empty())
@@ -135,7 +135,7 @@ int BoundaryEnd::CastOffSystems(FunctorParams *functorParams)
 
 int BoundaryEnd::PrepareFloatingGrps(FunctorParams *functorParams)
 {
-    PrepareFloatingGrpsParams *params = vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
+    PrepareFloatingGrpsParams *params=vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
     assert(params);
 
     assert(this->GetStart());
@@ -143,7 +143,7 @@ int BoundaryEnd::PrepareFloatingGrps(FunctorParams *functorParams)
     // We are reaching the end of an ending - put it to the param and it will be grouped with the next one if there is
     // not measure in between
     if (this->GetStart()->Is(ENDING)) {
-        params->m_previousEnding = vrv_cast<Ending *>(this->GetStart());
+        params->m_previousEnding=vrv_cast<Ending *>(this->GetStart());
         assert(params->m_previousEnding);
         // This is the end of the first ending - generate a grpId
         if (params->m_previousEnding->GetDrawingGrpId() == 0) {
@@ -160,7 +160,7 @@ int BoundaryEnd::PrepareFloatingGrps(FunctorParams *functorParams)
 
 int BoundaryStartInterface::InterfacePrepareBoundaries(FunctorParams *functorParams)
 {
-    PrepareBoundariesParams *params = vrv_params_cast<PrepareBoundariesParams *>(functorParams);
+    PrepareBoundariesParams *params=vrv_params_cast<PrepareBoundariesParams *>(functorParams);
     assert(params);
 
     // We have to be in a boundary start element
@@ -173,7 +173,7 @@ int BoundaryStartInterface::InterfacePrepareBoundaries(FunctorParams *functorPar
 
 int BoundaryStartInterface::InterfaceResetDrawing(FunctorParams *functorParams)
 {
-    m_drawingMeasure = NULL;
+    m_drawingMeasure=NULL;
 
     return FUNCTOR_CONTINUE;
 }

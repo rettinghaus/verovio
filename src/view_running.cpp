@@ -32,16 +32,16 @@ void View::DrawRunningElements(DeviceContext *dc, Page *page)
     assert(page);
 
     if (dc->Is(BBOX_DEVICE_CONTEXT)) {
-        BBoxDeviceContext *bBoxDC = vrv_cast<BBoxDeviceContext *>(dc);
+        BBoxDeviceContext *bBoxDC=vrv_cast<BBoxDeviceContext *>(dc);
         assert(bBoxDC);
         if (!bBoxDC->UpdateVerticalValues()) return;
     }
 
-    RunningElement *header = page->GetHeader();
+    RunningElement *header=page->GetHeader();
     if (header) {
         DrawPgHeader(dc, header);
     }
-    RunningElement *footer = page->GetFooter();
+    RunningElement *footer=page->GetFooter();
     if (footer) {
         DrawPgHeader(dc, footer);
     }
@@ -59,12 +59,12 @@ void View::DrawPgHeader(DeviceContext *dc, RunningElement *pgHeader)
     TextDrawingParams params;
 
     // If we have not timestamp
-    params.m_x = pgHeader->GetDrawingX();
-    params.m_y = pgHeader->GetDrawingY();
-    params.m_width = pgHeader->GetWidth();
-    params.m_alignment = HORIZONTALALIGNMENT_NONE;
-    params.m_laidOut = true;
-    params.m_pointSize = m_doc->GetDrawingLyricFont(100)->GetPointSize();
+    params.m_x=pgHeader->GetDrawingX();
+    params.m_y=pgHeader->GetDrawingY();
+    params.m_width=pgHeader->GetWidth();
+    params.m_alignment=HORIZONTALALIGNMENT_NONE;
+    params.m_laidOut=true;
+    params.m_pointSize=m_doc->GetDrawingLyricFont(100)->GetPointSize();
 
     pgHeadTxt.SetPointSize(params.m_pointSize);
 

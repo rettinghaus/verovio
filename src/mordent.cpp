@@ -58,7 +58,7 @@ wchar_t Mordent::GetMordentGlyph() const
 {
     // If there is glyph.num, prioritize it, otherwise check other attributes
     if (HasGlyphNum()) {
-        wchar_t code = GetGlyphNum();
+        wchar_t code=GetGlyphNum();
         if (NULL != Resources::GetGlyph(code)) return code;
     }
 

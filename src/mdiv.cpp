@@ -39,7 +39,7 @@ void Mdiv::Reset()
     ResetLabelled();
     ResetNNumberLike();
 
-    m_visibility = Hidden;
+    m_visibility=Hidden;
 }
 
 bool Mdiv::IsSupportedChild(Object *child)
@@ -61,9 +61,9 @@ bool Mdiv::IsSupportedChild(Object *child)
 
 void Mdiv::MakeVisible()
 {
-    m_visibility = Visible;
+    m_visibility=Visible;
     if (GetParent() && GetParent()->Is(MDIV)) {
-        Mdiv *parent = vrv_cast<Mdiv *>(GetParent());
+        Mdiv *parent=vrv_cast<Mdiv *>(GetParent());
         assert(parent);
         parent->MakeVisible();
     }

@@ -43,14 +43,14 @@ bool PgHead::GenerateFromMEIHeader(pugi::xml_document &header)
     data_FONTSIZE fs;
 
     // title
-    nodeSet = header.select_nodes("//fileDesc/titleStmt/title[text()]");
+    nodeSet=header.select_nodes("//fileDesc/titleStmt/title[text()]");
     if (!nodeSet.empty()) {
-        Rend *titleRend = new Rend();
+        Rend *titleRend=new Rend();
         titleRend->SetHalign(HORIZONTALALIGNMENT_center);
         titleRend->SetValign(VERTICALALIGNMENT_middle);
         titleRend->SetLabel("title");
         for (auto titleNode : nodeSet) {
-            Rend *rend = new Rend();
+            Rend *rend=new Rend();
             if (titleNode == nodeSet.first()) {
                 fs.SetTerm(FONTSIZETERM_x_large);
                 rend->SetFontsize(fs);
@@ -60,7 +60,7 @@ bool PgHead::GenerateFromMEIHeader(pugi::xml_document &header)
                 fs.SetTerm(FONTSIZETERM_small);
                 rend->SetFontsize(fs);
             }
-            Text *text = new Text();
+            Text *text=new Text();
             text->SetText(UTF8to16(titleNode.node().text().as_string()));
             rend->SetLang(titleNode.node().attribute("xml:lang").as_string());
             rend->AddChild(text);
@@ -69,12 +69,12 @@ bool PgHead::GenerateFromMEIHeader(pugi::xml_document &header)
         this->AddChild(titleRend);
     }
 
-    nodeSet = header.select_nodes(
+    nodeSet=header.select_nodes(
         "//fileDesc/titleStmt/respStmt/persName[contains('lyricist translator composer harmonizer arranger', @role)]");
-    for (pugi::xpath_node_set::const_iterator it = nodeSet.begin(); it != nodeSet.end(); ++it) {
-        node = *it;
-        Rend *personRend = new Rend();
-        std::string role = node.node().attribute("role").as_string();
+    for (pugi::xpath_node_set::const_iterator it=nodeSet.begin(); it != nodeSet.end(); ++it) {
+        node=*it;
+        Rend *personRend=new Rend();
+        std::string role=node.node().attribute("role").as_string();
         if (role == "lyricist" || role == "translator") {
             personRend->SetHalign(HORIZONTALALIGNMENT_left);
         }
@@ -84,7 +84,7 @@ bool PgHead::GenerateFromMEIHeader(pugi::xml_document &header)
         }
         personRend->SetValign(VERTICALALIGNMENT_bottom);
         personRend->SetLabel(role);
-        Text *personText = new Text();
+        Text *personText=new Text();
         personText->SetText(UTF8to16(node.node().text().as_string()));
         personRend->SetLang(node.node().attribute("xml:lang").as_string());
         personRend->AddChild(personText);

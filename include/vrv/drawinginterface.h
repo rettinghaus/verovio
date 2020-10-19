@@ -167,13 +167,13 @@ public:
      */
     ///@{
     bool DrawClef() { return (m_drawClef && m_currentClef.HasShape()); }
-    void SetDrawClef(bool drawClef) { m_drawClef = drawClef; }
+    void SetDrawClef(bool drawClef) { m_drawClef=drawClef; }
     bool DrawKeySig() { return (m_drawKeySig); }
-    void SetDrawKeySig(bool drawKeySig) { m_drawKeySig = drawKeySig; }
+    void SetDrawKeySig(bool drawKeySig) { m_drawKeySig=drawKeySig; }
     bool DrawMensur() { return (m_drawMensur && m_currentMensur.HasSign()); }
-    void SetDrawMensur(bool drawMensur) { m_drawMensur = drawMensur; }
+    void SetDrawMensur(bool drawMensur) { m_drawMensur=drawMensur; }
     bool DrawMeterSig() { return (m_drawMeterSig && (m_currentMeterSig.HasUnit() || m_currentMeterSig.HasSym())); }
-    void SetDrawMeterSig(bool drawMeterSig) { m_drawMeterSig = drawMeterSig; }
+    void SetDrawMeterSig(bool drawMeterSig) { m_drawMeterSig=drawMeterSig; }
     ///@}
 
     /**
@@ -251,16 +251,16 @@ public:
     int GetDrawingStemLen();
     ///@}
 
-    Point GetDrawingStemStart(Object *object = NULL);
-    Point GetDrawingStemEnd(Object *object = NULL);
+    Point GetDrawingStemStart(Object *object=NULL);
+    Point GetDrawingStemEnd(Object *object=NULL);
 
     /**
      * @name Virtual methods overriden in child classes (Chord and Note)
      */
     ///@{
-    virtual Point GetStemUpSE(Doc *doc, int staffSize, bool graceSize) = 0;
-    virtual Point GetStemDownNW(Doc *doc, int staffSize, bool graceSize) = 0;
-    virtual int CalcStemLenInThirdUnits(Staff *staff) = 0;
+    virtual Point GetStemUpSE(Doc *doc, int staffSize, bool graceSize)=0;
+    virtual Point GetStemDownNW(Doc *doc, int staffSize, bool graceSize)=0;
+    virtual int CalcStemLenInThirdUnits(Staff *staff)=0;
     ///@}
 
 protected:

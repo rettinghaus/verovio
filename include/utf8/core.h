@@ -45,15 +45,15 @@ namespace internal
     // Unicode constants
     // Leading (high) surrogates: 0xd800 - 0xdbff
     // Trailing (low) surrogates: 0xdc00 - 0xdfff
-    const uint16_t LEAD_SURROGATE_MIN  = 0xd800u;
-    const uint16_t LEAD_SURROGATE_MAX  = 0xdbffu;
-    const uint16_t TRAIL_SURROGATE_MIN = 0xdc00u;
-    const uint16_t TRAIL_SURROGATE_MAX = 0xdfffu;
-    const uint16_t LEAD_OFFSET         = LEAD_SURROGATE_MIN - (0x10000 >> 10);
-    const uint32_t SURROGATE_OFFSET    = 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
+    const uint16_t LEAD_SURROGATE_MIN =0xd800u;
+    const uint16_t LEAD_SURROGATE_MAX =0xdbffu;
+    const uint16_t TRAIL_SURROGATE_MIN=0xdc00u;
+    const uint16_t TRAIL_SURROGATE_MAX=0xdfffu;
+    const uint16_t LEAD_OFFSET        =LEAD_SURROGATE_MIN - (0x10000 >> 10);
+    const uint32_t SURROGATE_OFFSET   =0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
 
     // Maximum valid value for a Unicode code point
-    const uint32_t CODE_POINT_MAX      = 0x0010ffffu;
+    const uint32_t CODE_POINT_MAX     =0x0010ffffu;
 
     template<typename octet_type>
     inline uint8_t mask8(octet_type oc)
@@ -99,7 +99,7 @@ namespace internal
     inline typename std::iterator_traits<octet_iterator>::difference_type
     sequence_length(octet_iterator lead_it)
     {
-        uint8_t lead = utf8::internal::mask8(*lead_it);
+        uint8_t lead=utf8::internal::mask8(*lead_it);
         if (lead < 0x80)
             return 1;
         else if ((lead >> 5) == 0x6)
@@ -146,7 +146,7 @@ namespace internal
         return UTF8_OK;
     }
 
-    #define UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(IT, END) {utf_error ret = increase_safely(IT, END); if (ret != UTF8_OK) return ret;}    
+    #define UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(IT, END) {utf_error ret=increase_safely(IT, END); if (ret != UTF8_OK) return ret;}    
 
     /// get_sequence_x functions decode utf-8 sequences of the length x
     template <typename octet_iterator>
@@ -155,7 +155,7 @@ namespace internal
         if (it == end)
             return NOT_ENOUGH_ROOM;
 
-        code_point = utf8::internal::mask8(*it);
+        code_point=utf8::internal::mask8(*it);
 
         return UTF8_OK;
     }
@@ -166,11 +166,11 @@ namespace internal
         if (it == end) 
             return NOT_ENOUGH_ROOM;
         
-        code_point = utf8::internal::mask8(*it);
+        code_point=utf8::internal::mask8(*it);
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
-        code_point = ((code_point << 6) & 0x7ff) + ((*it) & 0x3f);
+        code_point=((code_point << 6) & 0x7ff) + ((*it) & 0x3f);
 
         return UTF8_OK;
     }
@@ -181,11 +181,11 @@ namespace internal
         if (it == end)
             return NOT_ENOUGH_ROOM;
             
-        code_point = utf8::internal::mask8(*it);
+        code_point=utf8::internal::mask8(*it);
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
-        code_point = ((code_point << 12) & 0xffff) + ((utf8::internal::mask8(*it) << 6) & 0xfff);
+        code_point=((code_point << 12) & 0xffff) + ((utf8::internal::mask8(*it) << 6) & 0xfff);
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
@@ -200,11 +200,11 @@ namespace internal
         if (it == end)
            return NOT_ENOUGH_ROOM;
 
-        code_point = utf8::internal::mask8(*it);
+        code_point=utf8::internal::mask8(*it);
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
-        code_point = ((code_point << 18) & 0x1fffff) + ((utf8::internal::mask8(*it) << 12) & 0x3ffff);
+        code_point=((code_point << 18) & 0x1fffff) + ((utf8::internal::mask8(*it) << 12) & 0x3ffff);
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
@@ -224,29 +224,29 @@ namespace internal
     {
         // Save the original value of it so we can go back in case of failure
         // Of course, it does not make much sense with i.e. stream iterators
-        octet_iterator original_it = it;
+        octet_iterator original_it=it;
 
-        uint32_t cp = 0;
+        uint32_t cp=0;
         // Determine the sequence length based on the lead octet
         typedef typename std::iterator_traits<octet_iterator>::difference_type octet_difference_type;
-        const octet_difference_type length = utf8::internal::sequence_length(it);
+        const octet_difference_type length=utf8::internal::sequence_length(it);
 
         // Get trail octets and calculate the code point
-        utf_error err = UTF8_OK;
+        utf_error err=UTF8_OK;
         switch (length) {
             case 0: 
                 return INVALID_LEAD;
             case 1:
-                err = utf8::internal::get_sequence_1(it, end, cp);
+                err=utf8::internal::get_sequence_1(it, end, cp);
                 break;
             case 2:
-                err = utf8::internal::get_sequence_2(it, end, cp);
+                err=utf8::internal::get_sequence_2(it, end, cp);
             break;
             case 3:
-                err = utf8::internal::get_sequence_3(it, end, cp);
+                err=utf8::internal::get_sequence_3(it, end, cp);
             break;
             case 4:
-                err = utf8::internal::get_sequence_4(it, end, cp);
+                err=utf8::internal::get_sequence_4(it, end, cp);
             break;
         }
 
@@ -255,19 +255,19 @@ namespace internal
             if (utf8::internal::is_code_point_valid(cp)) {
                 if (!utf8::internal::is_overlong_sequence(cp, length)){
                     // Passed! Return here.
-                    code_point = cp;
+                    code_point=cp;
                     ++it;
                     return UTF8_OK;
                 }
                 else
-                    err = OVERLONG_SEQUENCE;
+                    err=OVERLONG_SEQUENCE;
             }
             else 
-                err = INVALID_CODE_POINT;
+                err=INVALID_CODE_POINT;
         }
 
         // Failure branch - restore the original value of the iterator
-        it = original_it;
+        it=original_it;
         return err;
     }
 
@@ -282,14 +282,14 @@ namespace internal
     /// The library API - functions intended to be called by the users
 
     // Byte order mark
-    const uint8_t bom[] = {0xef, 0xbb, 0xbf};
+    const uint8_t bom[]={0xef, 0xbb, 0xbf};
 
     template <typename octet_iterator>
     octet_iterator find_invalid(octet_iterator start, octet_iterator end)
     {
-        octet_iterator result = start;
+        octet_iterator result=start;
         while (result != end) {
-            utf8::internal::utf_error err_code = utf8::internal::validate_next(result, end);
+            utf8::internal::utf_error err_code=utf8::internal::validate_next(result, end);
             if (err_code != internal::UTF8_OK)
                 return result;
         }

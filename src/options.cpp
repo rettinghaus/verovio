@@ -22,22 +22,22 @@
 namespace vrv {
 
 std::map<int, std::string> Option::s_breaks
-    = { { BREAKS_none, "none" }, { BREAKS_auto, "auto" }, { BREAKS_line, "line" }, { BREAKS_encoded, "encoded" } };
+   ={ { BREAKS_none, "none" }, { BREAKS_auto, "auto" }, { BREAKS_line, "line" }, { BREAKS_encoded, "encoded" } };
 
 std::map<int, std::string> Option::s_footer
-    = { { FOOTER_none, "none" }, { FOOTER_auto, "auto" }, { FOOTER_encoded, "encoded" } };
+   ={ { FOOTER_none, "none" }, { FOOTER_auto, "auto" }, { FOOTER_encoded, "encoded" } };
 
 std::map<int, std::string> Option::s_header
-    = { { HEADER_none, "none" }, { HEADER_auto, "auto" }, { HEADER_encoded, "encoded" } };
+   ={ { HEADER_none, "none" }, { HEADER_auto, "auto" }, { HEADER_encoded, "encoded" } };
 
 std::map<int, std::string> Option::s_measureNumber
-    = { { MEASURENUMBER_system, "system" }, { MEASURENUMBER_interval, "interval" } };
+   ={ { MEASURENUMBER_system, "system" }, { MEASURENUMBER_interval, "interval" } };
 
 std::map<int, std::string> Option::s_systemDivider
-    = { { SYSTEMDIVIDER_none, "none" }, { SYSTEMDIVIDER_left, "left" }, { SYSTEMDIVIDER_left_right, "left-right" } };
+   ={ { SYSTEMDIVIDER_none, "none" }, { SYSTEMDIVIDER_left, "left" }, { SYSTEMDIVIDER_left_right, "left-right" } };
 
 constexpr const char *engravingDefaults
-    = "{'engravingDefaults':{'thinBarlineThickness':0.15,'lyricLineThickness':0.125,"
+   ="{'engravingDefaults':{'thinBarlineThickness':0.15,'lyricLineThickness':0.125,"
       "'slurMidpointThickness':0.3,'staffLineThickness':0.075,'stemThickness':0.1,'tieMidpointThickness':0.25,"
       "'hairpinThickness':0.1,'thickBarlineThickness':0.5,'tupletBracketThickness':0.1,'subBracketThickness':0.5,"
       "'bracketThickness':0.5,'repeatEndingLineThickness':0.15}}";
@@ -54,8 +54,8 @@ void Option::CopyTo(Option *option)
 
 void Option::SetInfo(const std::string &title, const std::string &description)
 {
-    m_title = title;
-    m_description = description;
+    m_title=title;
+    m_description=description;
 }
 
 bool Option::SetValueBool(bool value)
@@ -106,20 +106,20 @@ std::string Option::GetDefaultStrValue() const
 
 void OptionBool::CopyTo(Option *option)
 {
-    OptionBool *child = dynamic_cast<OptionBool *>(option);
+    OptionBool *child=dynamic_cast<OptionBool *>(option);
     assert(child);
-    *child = *this;
+    *child=*this;
 }
 
 void OptionBool::Init(bool defaultValue)
 {
-    m_value = defaultValue;
-    m_defaultValue = defaultValue;
+    m_value=defaultValue;
+    m_defaultValue=defaultValue;
 }
 
 bool OptionBool::SetValue(const std::string &value)
 {
-    bool b = (value == "true") ? true : false;
+    bool b=(value == "true") ? true : false;
     return SetValue(b);
 }
 
@@ -145,8 +145,8 @@ std::string OptionBool::GetDefaultStrValue() const
 
 bool OptionBool::SetValue(bool value)
 {
-    m_value = value;
-    m_isSet = true;
+    m_value=value;
+    m_isSet=true;
     return true;
 }
 
@@ -156,17 +156,17 @@ bool OptionBool::SetValue(bool value)
 
 void OptionDbl::CopyTo(Option *option)
 {
-    OptionDbl *child = dynamic_cast<OptionDbl *>(option);
+    OptionDbl *child=dynamic_cast<OptionDbl *>(option);
     assert(child);
-    *child = *this;
+    *child=*this;
 }
 
 void OptionDbl::Init(double defaultValue, double minValue, double maxValue)
 {
-    m_value = defaultValue;
-    m_defaultValue = defaultValue;
-    m_minValue = minValue;
-    m_maxValue = maxValue;
+    m_value=defaultValue;
+    m_defaultValue=defaultValue;
+    m_minValue=minValue;
+    m_maxValue=maxValue;
 }
 
 bool OptionDbl::SetValue(const std::string &value)
@@ -196,8 +196,8 @@ bool OptionDbl::SetValue(double value)
             GetKey().c_str(), m_defaultValue, m_minValue, m_maxValue);
         return false;
     }
-    m_value = value;
-    m_isSet = true;
+    m_value=value;
+    m_isSet=true;
     return true;
 }
 
@@ -207,18 +207,18 @@ bool OptionDbl::SetValue(double value)
 
 void OptionInt::CopyTo(Option *option)
 {
-    OptionInt *child = dynamic_cast<OptionInt *>(option);
+    OptionInt *child=dynamic_cast<OptionInt *>(option);
     assert(child);
-    *child = *this;
+    *child=*this;
 }
 
 void OptionInt::Init(int defaultValue, int minValue, int maxValue, bool definitionFactor)
 {
-    m_value = defaultValue;
-    m_defaultValue = defaultValue;
-    m_minValue = minValue;
-    m_maxValue = maxValue;
-    m_definitionFactor = definitionFactor;
+    m_value=defaultValue;
+    m_defaultValue=defaultValue;
+    m_minValue=minValue;
+    m_maxValue=maxValue;
+    m_definitionFactor=definitionFactor;
 }
 
 bool OptionInt::SetValueDbl(double value)
@@ -258,8 +258,8 @@ bool OptionInt::SetValue(int value)
             GetKey().c_str(), m_defaultValue, m_minValue, m_maxValue);
         return false;
     }
-    m_value = value;
-    m_isSet = true;
+    m_value=value;
+    m_isSet=true;
     return true;
 }
 
@@ -269,21 +269,21 @@ bool OptionInt::SetValue(int value)
 
 void OptionString::CopyTo(Option *option)
 {
-    OptionString *child = dynamic_cast<OptionString *>(option);
+    OptionString *child=dynamic_cast<OptionString *>(option);
     assert(child);
-    *child = *this;
+    *child=*this;
 }
 
 void OptionString::Init(const std::string &defaultValue)
 {
-    m_value = defaultValue;
-    m_defaultValue = defaultValue;
+    m_value=defaultValue;
+    m_defaultValue=defaultValue;
 }
 
 bool OptionString::SetValue(const std::string &value)
 {
-    m_value = value;
-    m_isSet = true;
+    m_value=value;
+    m_isSet=true;
     return true;
 }
 
@@ -293,9 +293,9 @@ bool OptionString::SetValue(const std::string &value)
 
 void OptionArray::CopyTo(Option *option)
 {
-    OptionArray *child = dynamic_cast<OptionArray *>(option);
+    OptionArray *child=dynamic_cast<OptionArray *>(option);
     assert(child);
-    *child = *this;
+    *child=*this;
 }
 
 void OptionArray::Init()
@@ -306,8 +306,8 @@ void OptionArray::Init()
 
 bool OptionArray::SetValueArray(const std::vector<std::string> &values)
 {
-    m_values = values;
-    m_isSet = true;
+    m_values=values;
+    m_isSet=true;
     // m_values.erase(std::remove_if(m_values.begin(), m_values.end(),
     //                                       [](const std::string &s) { return s.empty(); }),
     //                        m_values.end());
@@ -319,7 +319,7 @@ bool OptionArray::SetValue(const std::string &value)
     // Passing a single value to an array option adds it to the values and to not replace them
     if (!value.empty()) {
         m_values.push_back(value);
-        m_isSet = true;
+        m_isSet=true;
     }
     return true;
 }
@@ -328,7 +328,7 @@ std::string OptionArray::GetStrValue() const
 {
     std::stringstream ss;
     int i;
-    for (i = 0; i < (int)m_values.size(); ++i) {
+    for (i=0; i < (int)m_values.size(); ++i) {
         if (i != 0) {
             ss << ", ";
         }
@@ -341,7 +341,7 @@ std::string OptionArray::GetDefaultStrValue() const
 {
     std::stringstream ss;
     int i;
-    for (i = 0; i < (int)m_defaultValues.size(); ++i) {
+    for (i=0; i < (int)m_defaultValues.size(); ++i) {
         if (i != 0) {
             ss << ", ";
         }
@@ -352,8 +352,8 @@ std::string OptionArray::GetDefaultStrValue() const
 
 bool OptionArray::SetValue(std::vector<std::string> const &values)
 {
-    m_values = values;
-    m_isSet = true;
+    m_values=values;
+    m_isSet=true;
     m_values.erase(std::remove_if(m_values.begin(), m_values.end(), [](const std::string &s) { return s.empty(); }),
         m_values.end());
     return true;
@@ -365,25 +365,25 @@ bool OptionArray::SetValue(std::vector<std::string> const &values)
 
 OptionIntMap::OptionIntMap()
 {
-    m_value = 0;
-    m_defaultValue = 0;
+    m_value=0;
+    m_defaultValue=0;
 
-    m_values = NULL;
+    m_values=NULL;
 }
 
 void OptionIntMap::CopyTo(Option *option)
 {
-    OptionIntMap *child = dynamic_cast<OptionIntMap *>(option);
+    OptionIntMap *child=dynamic_cast<OptionIntMap *>(option);
     assert(child);
-    *child = *this;
+    *child=*this;
 }
 
 void OptionIntMap::Init(int defaultValue, std::map<int, std::string> *values)
 {
-    m_value = defaultValue;
-    m_defaultValue = defaultValue;
+    m_value=defaultValue;
+    m_defaultValue=defaultValue;
 
-    m_values = values;
+    m_values=values;
 }
 
 bool OptionIntMap::SetValue(const std::string &value)
@@ -391,10 +391,10 @@ bool OptionIntMap::SetValue(const std::string &value)
     assert(m_values);
 
     std::map<int, std::string>::iterator it;
-    for (it = m_values->begin(); it != m_values->end(); ++it)
+    for (it=m_values->begin(); it != m_values->end(); ++it)
         if (it->second == value) {
-            m_value = it->first;
-            m_isSet = true;
+            m_value=it->first;
+            m_isSet=true;
             return true;
         }
     LogError("Parameter '%s' not valid for '%s'", value.c_str(), GetKey().c_str());
@@ -422,8 +422,8 @@ bool OptionIntMap::SetValue(int value)
     assert(m_values);
     assert(m_values->count(value));
 
-    m_value = value;
-    m_isSet = true;
+    m_value=value;
+    m_isSet=true;
 
     return true;
 }
@@ -435,7 +435,7 @@ std::vector<std::string> OptionIntMap::GetStrValues(bool withoutDefault) const
     std::vector<std::string> strValues;
     strValues.reserve(m_values->size());
     std::map<int, std::string>::iterator it;
-    for (it = m_values->begin(); it != m_values->end(); ++it) {
+    for (it=m_values->begin(); it != m_values->end(); ++it) {
         if (withoutDefault && (it->first == m_defaultValue)) {
             continue;
         }
@@ -447,10 +447,10 @@ std::vector<std::string> OptionIntMap::GetStrValues(bool withoutDefault) const
 
 std::string OptionIntMap::GetStrValuesAsStr(bool withoutDefault) const
 {
-    std::vector<std::string> strValues = GetStrValues(withoutDefault);
+    std::vector<std::string> strValues=GetStrValues(withoutDefault);
     std::stringstream ss;
     int i;
-    for (i = 0; i < (int)strValues.size(); ++i) {
+    for (i=0; i < (int)strValues.size(); ++i) {
         if (i != 0) {
             ss << ", ";
         }
@@ -465,27 +465,27 @@ std::string OptionIntMap::GetStrValuesAsStr(bool withoutDefault) const
 
 void OptionStaffrel::CopyTo(Option *option)
 {
-    OptionStaffrel *child = dynamic_cast<OptionStaffrel *>(option);
+    OptionStaffrel *child=dynamic_cast<OptionStaffrel *>(option);
     assert(child);
-    *child = *this;
+    *child=*this;
 }
 
 void OptionStaffrel::Init(data_STAFFREL defaultValue)
 {
-    m_value = defaultValue;
-    m_defaultValue = defaultValue;
+    m_value=defaultValue;
+    m_defaultValue=defaultValue;
 }
 
 bool OptionStaffrel::SetValue(const std::string &value)
 {
     Att converter;
-    data_STAFFREL staffrel = converter.StrToStaffrel(value);
+    data_STAFFREL staffrel=converter.StrToStaffrel(value);
     if (staffrel == STAFFREL_NONE) {
         LogError("Parameter '%s' not valid", value.c_str());
         return false;
     }
-    m_value = staffrel;
-    m_isSet = true;
+    m_value=staffrel;
+    m_isSet=true;
     return true;
 }
 
@@ -508,7 +508,7 @@ std::string OptionStaffrel::GetDefaultStrValue() const
 void OptionJson::Init(const std::string &defaultValue)
 {
     m_defaultValues.parse(defaultValue);
-    m_isSet = false;
+    m_isSet=false;
 }
 
 bool OptionJson::SetValue(const std::string &jsonFilePath)
@@ -524,8 +524,8 @@ bool OptionJson::SetValue(const std::string &jsonFilePath)
         return false;
     }
 
-    m_values = newValues;
-    m_isSet = true;
+    m_values=newValues;
+    m_isSet=true;
 
     in.close();
     return true;
@@ -539,10 +539,10 @@ int OptionJson::GetIntValue(const std::vector<std::string> &jsonNodePath, bool g
 double OptionJson::GetDoubleValue(const std::vector<std::string> &jsonNodePath, bool getDefault) const
 {
     JsonPath path
-        = getDefault ? StringPath2NodePath(m_defaultValues, jsonNodePath) : StringPath2NodePath(m_values, jsonNodePath);
+       =getDefault ? StringPath2NodePath(m_defaultValues, jsonNodePath) : StringPath2NodePath(m_values, jsonNodePath);
 
     if (path.size() != jsonNodePath.size() && !getDefault) {
-        path = StringPath2NodePath(m_defaultValues, jsonNodePath);
+        path=StringPath2NodePath(m_defaultValues, jsonNodePath);
     }
 
     if (path.size() != jsonNodePath.size() || !path.back().get().is<jsonxx::Number>()) return 0;
@@ -556,9 +556,9 @@ bool OptionJson::UpdateNodeValue(const std::vector<std::string> &jsonNodePath, c
         return false;
     }
 
-    JsonPath path = StringPath2NodePath(m_values, jsonNodePath);
+    JsonPath path=StringPath2NodePath(m_values, jsonNodePath);
     if (path.size() != jsonNodePath.size()) {
-        path = StringPath2NodePath(m_defaultValues, jsonNodePath);
+        path=StringPath2NodePath(m_defaultValues, jsonNodePath);
     }
 
     if (path.size() != jsonNodePath.size()) {
@@ -578,14 +578,14 @@ OptionJson::JsonPath OptionJson::StringPath2NodePath(
     }
     path.reserve(jsonNodePath.size());
     path.push_back(const_cast<jsonxx::Value &>(obj.get<jsonxx::Value>(jsonNodePath.front())));
-    for (auto iter = jsonNodePath.begin() + 1; iter != jsonNodePath.end(); ++iter) {
-        jsonxx::Value &val = path.back();
+    for (auto iter=jsonNodePath.begin() + 1; iter != jsonNodePath.end(); ++iter) {
+        jsonxx::Value &val=path.back();
         if (val.is<jsonxx::Object>() && val.get<jsonxx::Object>().has<jsonxx::Value>(*iter)) {
             path.push_back(val.get<jsonxx::Object>().get<jsonxx::Value>(*iter));
         }
         else if (val.is<jsonxx::Array>()) {
             try {
-                const int index = std::stoi(*iter);
+                const int index=std::stoi(*iter);
                 if (!val.get<jsonxx::Array>().has<jsonxx::Value>(index)) break;
 
                 path.push_back(val.get<jsonxx::Array>().get<jsonxx::Value>(index));
@@ -1215,10 +1215,10 @@ Options &Options::operator=(const Options &options)
 
     // Make sure we copy only the option values and not the pointers to members
 
-    MapOfStrOptions const *items = options.GetItems();
+    MapOfStrOptions const *items=options.GetItems();
     MapOfStrOptions::const_iterator iter;
-    for (iter = items->begin(); iter != items->end(); ++iter) {
-        Option *opt = m_items.at(iter->first);
+    for (iter=items->begin(); iter != items->end(); ++iter) {
+        Option *opt=m_items.at(iter->first);
         assert(opt);
         iter->second->CopyTo(opt);
     }
@@ -1233,7 +1233,7 @@ void Options::Sync()
     if (!m_engravingDefaults.isSet()) return;
     // override default or passed engravingDefaults with explicitly set values
     std::list<std::pair<std::string, OptionDbl *> > engravingDefaults
-        = { { "staffLineThickness", &m_staffLineWidth }, //
+       ={ { "staffLineThickness", &m_staffLineWidth }, //
               { "stemThickness", &m_stemWidth }, //
               { "legerLineThickness", &m_ledgerLineThickness }, //
               { "legerLineExtension", &m_ledgerLineExtension }, //
@@ -1253,7 +1253,7 @@ void Options::Sync()
     for (auto &pair : engravingDefaults) {
         if (pair.second->isSet()) continue;
 
-        const double jsonValue = m_engravingDefaults.GetDoubleValue({ "engravingDefaults", pair.first });
+        const double jsonValue=m_engravingDefaults.GetDoubleValue({ "engravingDefaults", pair.first });
         pair.second->SetValueDbl(jsonValue * 2);
     }
 }
@@ -1263,7 +1263,7 @@ void Options::Register(Option *option, const std::string &key, OptionGrp *grp)
     assert(option);
     assert(grp);
 
-    m_items[key] = option;
+    m_items[key]=option;
     option->SetKey(key);
     grp->AddOption(option);
 }

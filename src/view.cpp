@@ -26,16 +26,16 @@ namespace vrv {
 
 View::View()
 {
-    m_doc = NULL;
-    m_options = NULL;
-    m_pageIdx = 0;
+    m_doc=NULL;
+    m_options=NULL;
+    m_pageIdx=0;
 
-    m_currentColour = AxNONE;
-    m_currentElement = NULL;
-    m_currentLayer = NULL;
-    m_currentMeasure = NULL;
-    m_currentStaff = NULL;
-    m_currentSystem = NULL;
+    m_currentColour=AxNONE;
+    m_currentElement=NULL;
+    m_currentLayer=NULL;
+    m_currentMeasure=NULL;
+    m_currentStaff=NULL;
+    m_currentSystem=NULL;
 }
 
 View::~View() {}
@@ -44,21 +44,21 @@ void View::SetDoc(Doc *doc)
 {
     // Unset the doc
     if (doc == NULL) {
-        m_doc = NULL;
-        m_options = NULL;
+        m_doc=NULL;
+        m_options=NULL;
         DoReset();
     }
     else {
-        m_doc = doc;
-        m_options = doc->GetOptions();
+        m_doc=doc;
+        m_options=doc->GetOptions();
     }
-    m_currentElement = NULL;
-    m_currentLayer = NULL;
-    m_currentMeasure = NULL;
-    m_currentStaff = NULL;
-    m_currentSystem = NULL;
-    m_currentPage = NULL;
-    m_pageIdx = 0;
+    m_currentElement=NULL;
+    m_currentLayer=NULL;
+    m_currentMeasure=NULL;
+    m_currentStaff=NULL;
+    m_currentSystem=NULL;
+    m_currentPage=NULL;
+    m_pageIdx=0;
 }
 
 void View::SetPage(int pageIdx, bool doLayout)
@@ -66,8 +66,8 @@ void View::SetPage(int pageIdx, bool doLayout)
     assert(m_doc); // Page cannot be NULL
     assert(m_doc->HasPage(pageIdx));
 
-    m_pageIdx = pageIdx;
-    m_currentPage = m_doc->SetDrawingPage(pageIdx);
+    m_pageIdx=pageIdx;
+    m_currentPage=m_doc->SetDrawingPage(pageIdx);
 
     if (doLayout) {
         m_doc->SetCurrentScoreDefDoc();
@@ -79,11 +79,11 @@ void View::SetPage(int pageIdx, bool doLayout)
             m_currentPage->LayOut();
     }
 
-    m_currentElement = NULL;
-    m_currentLayer = NULL;
-    m_currentMeasure = NULL;
-    m_currentStaff = NULL;
-    m_currentSystem = NULL;
+    m_currentElement=NULL;
+    m_currentLayer=NULL;
+    m_currentMeasure=NULL;
+    m_currentStaff=NULL;
+    m_currentSystem=NULL;
 
     OnPageChange();
     DoRefresh();
@@ -163,10 +163,10 @@ std::wstring View::IntToSmuflFigures(unsigned short number, int offset)
 {
     std::wostringstream stream;
     stream << number;
-    std::wstring str = stream.str();
+    std::wstring str=stream.str();
 
     int i;
-    for (i = 0; i < (int)str.size(); ++i) {
+    for (i=0; i < (int)str.size(); ++i) {
         str[i] += offset - 48;
     }
     return str;

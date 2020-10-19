@@ -326,7 +326,7 @@ private:
     /**
      * Defines spacing type between current staff and previous one
      */
-    SystemAligner::SpacingType m_spacingType = SystemAligner::SpacingType::None;
+    SystemAligner::SpacingType m_spacingType=SystemAligner::SpacingType::None;
 
     /**
      * The list of FloatingPositioner for the staff.

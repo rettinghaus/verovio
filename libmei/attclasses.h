@@ -20,7 +20,7 @@
 namespace vrv {
 
 enum AttClassId {
-    ATT_CLASS_min = 0,
+    ATT_CLASS_min=0,
     ATT_NOTATIONTYPE,
     ATT_HARMANL,
     ATT_HARMONICFUNCTION,

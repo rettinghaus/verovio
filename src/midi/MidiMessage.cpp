@@ -36,20 +36,20 @@ MidiMessage::MidiMessage(int command) : vector<uchar>(1, (uchar)command) {
 
 
 MidiMessage::MidiMessage(int command, int p1) : vector<uchar>(2) {
-	(*this)[0] = (uchar)command;
-	(*this)[1] = (uchar)p1;
+	(*this)[0]=(uchar)command;
+	(*this)[1]=(uchar)p1;
 }
 
 
 MidiMessage::MidiMessage(int command, int p1, int p2) : vector<uchar>(3) {
-	(*this)[0] = (uchar)command;
-	(*this)[1] = (uchar)p1;
-	(*this)[2] = (uchar)p2;
+	(*this)[0]=(uchar)command;
+	(*this)[1]=(uchar)p1;
+	(*this)[2]=(uchar)p2;
 }
 
 
 MidiMessage::MidiMessage(const MidiMessage& message) : vector<uchar>() {
-	(*this) = message;
+	(*this)=message;
 }
 
 
@@ -89,7 +89,7 @@ MidiMessage& MidiMessage::operator=(const MidiMessage& message) {
 	if (this == &message) {
 		return *this;
 	}
-	(*this) = message;
+	(*this)=message;
 	return *this;
 }
 
@@ -150,23 +150,23 @@ int MidiMessage::getSize(void) const {
 //
 
 int MidiMessage::setSizeToCommand(void) {
-	int osize = (int)this->size();
+	int osize=(int)this->size();
 	if (osize < 1) {
 		return 0;
 	}
-	int command = getCommandNibble();
+	int command=getCommandNibble();
 	if (command < 0) {
 		return 0;
 	}
-	int bytecount = 1;
+	int bytecount=1;
 	switch (command) {
-		case 0x80: bytecount = 2; break;  // Note Off
-		case 0x90: bytecount = 2; break;  // Note On
-		case 0xA0: bytecount = 2; break;  // Aftertouch
-		case 0xB0: bytecount = 2; break;  // Continuous Controller
-		case 0xC0: bytecount = 1; break;  // Patch Change
-		case 0xD0: bytecount = 1; break;  // Channel Pressure
-		case 0xE0: bytecount = 2; break;  // Pitch Bend
+		case 0x80: bytecount=2; break;  // Note Off
+		case 0x90: bytecount=2; break;  // Note On
+		case 0xA0: bytecount=2; break;  // Aftertouch
+		case 0xB0: bytecount=2; break;  // Continuous Controller
+		case 0xC0: bytecount=1; break;  // Patch Change
+		case 0xD0: bytecount=1; break;  // Channel Pressure
+		case 0xE0: bytecount=2; break;  // Pitch Bend
 		case 0xF0:
 		default:
 			return (int)size();
@@ -174,7 +174,7 @@ int MidiMessage::setSizeToCommand(void) {
 	if (bytecount + 1 < osize) {
 		resize(bytecount+1);
 		for (int i=osize; i<bytecount+1; i++) {
-			(*this)[i] = 0;
+			(*this)[i]=0;
 		}
 	}
 
@@ -218,7 +218,7 @@ int MidiMessage::getTempoMicroseconds(void) const {
 //
 
 double MidiMessage::getTempoSeconds(void) const {
-	int microseconds = getTempoMicroseconds();
+	int microseconds=getTempoMicroseconds();
 	if (microseconds < 0) {
 		return -1.0;
 	} else {
@@ -235,7 +235,7 @@ double MidiMessage::getTempoSeconds(void) const {
 //
 
 double MidiMessage::getTempoBPM(void) const {
-	int microseconds = getTempoMicroseconds();
+	int microseconds=getTempoMicroseconds();
 	if (microseconds < 0) {
 		return -1.0;
 	}
@@ -250,7 +250,7 @@ double MidiMessage::getTempoBPM(void) const {
 //
 
 double MidiMessage::getTempoTPS(int tpq) const {
-	int microseconds = getTempoMicroseconds();
+	int microseconds=getTempoMicroseconds();
 	if (microseconds < 0) {
 		return -1.0;
 	} else {
@@ -266,7 +266,7 @@ double MidiMessage::getTempoTPS(int tpq) const {
 //
 
 double MidiMessage::getTempoSPT(int tpq) const {
-	int microseconds = getTempoMicroseconds();
+	int microseconds=getTempoMicroseconds();
 	if (microseconds < 0) {
 		return -1.0;
 	} else {
@@ -840,7 +840,7 @@ int MidiMessage::getP3(void) const {
 
 int MidiMessage::getKeyNumber(void) const {
 	if (isNote() || isAftertouch()) {
-		int output = getP1();
+		int output=getP1();
 		if (output < 0) {
 			return output;
 		} else {
@@ -862,7 +862,7 @@ int MidiMessage::getKeyNumber(void) const {
 
 int MidiMessage::getVelocity(void) const {
 	if (isNote()) {
-		int output = getP2();
+		int output=getP2();
 		if (output < 0) {
 			return output;
 		} else {
@@ -885,7 +885,7 @@ int MidiMessage::getVelocity(void) const {
 
 int MidiMessage::getControllerNumber(void) const {
   if (isController()) {
-		int output = getP1();
+		int output=getP1();
 		if (output < 0) {
 			// -1 means no P1, although isController() is false in such a case.
 			return output;
@@ -908,7 +908,7 @@ int MidiMessage::getControllerNumber(void) const {
 
 int MidiMessage::getControllerValue(void) const {
 	if (isController()) {
-		int output = getP2();
+		int output=getP2();
 		if (output < 0) {
 			// -1 means no P2, although isController() is false in such a case.
 			return output;
@@ -934,7 +934,7 @@ void MidiMessage::setP0(int value) {
 	if (getSize() < 1) {
 		resize(1);
 	}
-	(*this)[0] = value;
+	(*this)[0]=value;
 }
 
 
@@ -952,7 +952,7 @@ void MidiMessage::setP1(int value) {
 	if (getSize() < 2) {
 		resize(2);
 	}
-	(*this)[1] = value;
+	(*this)[1]=value;
 }
 
 
@@ -971,7 +971,7 @@ void MidiMessage::setP2(int value) {
 	if (getSize() < 3) {
 		resize(3);
 	}
-	(*this)[2] = value;
+	(*this)[2]=value;
 }
 
 
@@ -990,7 +990,7 @@ void MidiMessage::setP3(int value) {
 	if (getSize() < 4) {
 		resize(4);
 	}
-	(*this)[3] = value;
+	(*this)[3]=value;
 }
 
 
@@ -1093,7 +1093,7 @@ void MidiMessage::setCommandByte(int value) {
 	if (size() < 1) {
 		resize(1);
 	} else {
-		(*this)[0] = (uchar)(value & 0xff);
+		(*this)[0]=(uchar)(value & 0xff);
 	}
 }
 
@@ -1112,16 +1112,16 @@ void MidiMessage::setCommand(int value) {
 
 void MidiMessage::setCommand(int value, int p1) {
 	this->resize(2);
-	(*this)[0] = (uchar)value;
-	(*this)[1] = (uchar)p1;
+	(*this)[0]=(uchar)value;
+	(*this)[1]=(uchar)p1;
 }
 
 
 void MidiMessage::setCommand(int value, int p1, int p2) {
 	this->resize(3);
-	(*this)[0] = (uchar)value;
-	(*this)[1] = (uchar)p1;
-	(*this)[2] = (uchar)p2;
+	(*this)[0]=(uchar)value;
+	(*this)[1]=(uchar)p1;
+	(*this)[2]=(uchar)p2;
 }
 
 
@@ -1136,9 +1136,9 @@ void MidiMessage::setCommandNibble(int value) {
 		this->resize(1);
 	}
 	if (value <= 0x0f) {
-		(*this)[0] = ((*this)[0] & 0x0f) | ((uchar)((value << 4) & 0xf0));
+		(*this)[0]=((*this)[0] & 0x0f) | ((uchar)((value << 4) & 0xf0));
 	} else {
-		(*this)[0] = ((*this)[0] & 0x0f) | ((uchar)(value & 0xf0));
+		(*this)[0]=((*this)[0] & 0x0f) | ((uchar)(value & 0xf0));
 	}
 }
 
@@ -1154,7 +1154,7 @@ void MidiMessage::setChannelNibble(int value) {
 	if (this->size() < 1) {
 		this->resize(1);
 	}
-	(*this)[0] = ((*this)[0] & 0xf0) | ((uchar)(value & 0x0f));
+	(*this)[0]=((*this)[0] & 0xf0) | ((uchar)(value & 0x0f));
 }
 
 
@@ -1172,22 +1172,22 @@ void MidiMessage::setChannel(int value) {
 //
 
 void MidiMessage::setParameters(int p1) {
-	int oldsize = (int)size();
+	int oldsize=(int)size();
 	resize(2);
-	(*this)[1] = (uchar)p1;
+	(*this)[1]=(uchar)p1;
 	if (oldsize < 1) {
-		(*this)[0] = 0;
+		(*this)[0]=0;
 	}
 }
 
 
 void MidiMessage::setParameters(int p1, int p2) {
-	int oldsize = (int)size();
+	int oldsize=(int)size();
 	resize(3);
-	(*this)[1] = (uchar)p1;
-	(*this)[2] = (uchar)p2;
+	(*this)[1]=(uchar)p1;
+	(*this)[2]=(uchar)p2;
 	if (oldsize < 1) {
-		(*this)[0] = 0;
+		(*this)[0]=0;
 	}
 }
 
@@ -1201,7 +1201,7 @@ void MidiMessage::setParameters(int p1, int p2) {
 void MidiMessage::setMessage(const std::vector<uchar>& message) {
 	this->resize(message.size());
 	for (int i=0; i<(int)this->size(); i++) {
-		(*this)[i] = message[i];
+		(*this)[i]=message[i];
 	}
 }
 
@@ -1209,7 +1209,7 @@ void MidiMessage::setMessage(const std::vector<uchar>& message) {
 void MidiMessage::setMessage(const std::vector<char>& message) {
 	resize(message.size());
 	for (int i=0; i<(int)size(); i++) {
-		(*this)[i] = (uchar)message[i];
+		(*this)[i]=(uchar)message[i];
 	}
 }
 
@@ -1217,7 +1217,7 @@ void MidiMessage::setMessage(const std::vector<char>& message) {
 void MidiMessage::setMessage(const std::vector<int>& message) {
 	resize(message.size());
 	for (int i=0; i<(int)size(); i++) {
-		(*this)[i] = (uchar)message[i];
+		(*this)[i]=(uchar)message[i];
 	}
 }
 
@@ -1235,17 +1235,17 @@ void MidiMessage::setMessage(const std::vector<int>& message) {
 //
 //    The first parameter is the diatonic pitch number (or pitch class
 //    if the octave is set to 0):
-//       octave * 7 + 0 = C pitches
-//       octave * 7 + 1 = D pitches
-//       octave * 7 + 2 = E pitches
-//       octave * 7 + 3 = F pitches
-//       octave * 7 + 4 = G pitches
-//       octave * 7 + 5 = A pitches
-//       octave * 7 + 6 = B pitches
+//       octave * 7 + 0=C pitches
+//       octave * 7 + 1=D pitches
+//       octave * 7 + 2=E pitches
+//       octave * 7 + 3=F pitches
+//       octave * 7 + 4=G pitches
+//       octave * 7 + 5=A pitches
+//       octave * 7 + 6=B pitches
 //
 //    The second parameter is the semitone alteration (accidental).
-//    0 = natural state, 1 = sharp, 2 = double sharp, -1 = flat,
-//    -2 = double flat.
+//    0=natural state, 1=sharp, 2=double sharp, -1=flat,
+//    -2=double flat.
 //
 //    Only note-on messages can be processed (other messages will be
 //    silently ignored).
@@ -1261,8 +1261,8 @@ void MidiMessage::setSpelling(int base7, int accidental) {
 	if (getVelocity() < 4) {
 		setVelocity(4);
 	}
-	int dpc = base7 % 7;
-	uchar spelling = 0;
+	int dpc=base7 % 7;
+	uchar spelling=0;
 
 	// Table 5.1, page 101 in Beyond MIDI (1997)
 	// http://beyondmidi.ccarh.org/beyondmidi-600dpi.pdf
@@ -1270,82 +1270,82 @@ void MidiMessage::setSpelling(int base7, int accidental) {
 
 		case 0:
 			switch (accidental) {
-				case -2: spelling = 1; break; // Cbb
-				case -1: spelling = 1; break; // Cb
-				case  0: spelling = 2; break; // C
-				case +1: spelling = 2; break; // C#
-				case +2: spelling = 3; break; // C##
+				case -2: spelling=1; break; // Cbb
+				case -1: spelling=1; break; // Cb
+				case  0: spelling=2; break; // C
+				case +1: spelling=2; break; // C#
+				case +2: spelling=3; break; // C##
 			}
 			break;
 
 		case 1:
 			switch (accidental) {
-				case -2: spelling = 1; break; // Dbb
-				case -1: spelling = 1; break; // Db
-				case  0: spelling = 2; break; // D
-				case +1: spelling = 3; break; // D#
-				case +2: spelling = 3; break; // D##
+				case -2: spelling=1; break; // Dbb
+				case -1: spelling=1; break; // Db
+				case  0: spelling=2; break; // D
+				case +1: spelling=3; break; // D#
+				case +2: spelling=3; break; // D##
 			}
 			break;
 
 		case 2:
 			switch (accidental) {
-				case -2: spelling = 1; break; // Ebb
-				case -1: spelling = 2; break; // Eb
-				case  0: spelling = 2; break; // E
-				case +1: spelling = 3; break; // E#
-				case +2: spelling = 3; break; // E##
+				case -2: spelling=1; break; // Ebb
+				case -1: spelling=2; break; // Eb
+				case  0: spelling=2; break; // E
+				case +1: spelling=3; break; // E#
+				case +2: spelling=3; break; // E##
 			}
 			break;
 
 		case 3:
 			switch (accidental) {
-				case -2: spelling = 1; break; // Fbb
-				case -1: spelling = 1; break; // Fb
-				case  0: spelling = 2; break; // F
-				case +1: spelling = 2; break; // F#
-				case +2: spelling = 3; break; // F##
-				case +3: spelling = 3; break; // F###
+				case -2: spelling=1; break; // Fbb
+				case -1: spelling=1; break; // Fb
+				case  0: spelling=2; break; // F
+				case +1: spelling=2; break; // F#
+				case +2: spelling=3; break; // F##
+				case +3: spelling=3; break; // F###
 			}
 			break;
 
 		case 4:
 			switch (accidental) {
-				case -2: spelling = 1; break; // Gbb
-				case -1: spelling = 1; break; // Gb
-				case  0: spelling = 2; break; // G
-				case +1: spelling = 2; break; // G#
-				case +2: spelling = 3; break; // G##
+				case -2: spelling=1; break; // Gbb
+				case -1: spelling=1; break; // Gb
+				case  0: spelling=2; break; // G
+				case +1: spelling=2; break; // G#
+				case +2: spelling=3; break; // G##
 			}
 			break;
 
 		case 5:
 			switch (accidental) {
-				case -2: spelling = 1; break; // Abb
-				case -1: spelling = 1; break; // Ab
-				case  0: spelling = 2; break; // A
-				case +1: spelling = 3; break; // A#
-				case +2: spelling = 3; break; // A##
+				case -2: spelling=1; break; // Abb
+				case -1: spelling=1; break; // Ab
+				case  0: spelling=2; break; // A
+				case +1: spelling=3; break; // A#
+				case +2: spelling=3; break; // A##
 			}
 			break;
 
 		case 6:
 			switch (accidental) {
-				case -2: spelling = 1; break; // Bbb
-				case -1: spelling = 2; break; // Bb
-				case  0: spelling = 2; break; // B
-				case +1: spelling = 3; break; // B#
-				case +2: spelling = 3; break; // B##
+				case -2: spelling=1; break; // Bbb
+				case -1: spelling=2; break; // Bb
+				case  0: spelling=2; break; // B
+				case +1: spelling=3; break; // B#
+				case +2: spelling=3; break; // B##
 			}
 			break;
 
 	}
 
-	uchar vel = getVelocity();
+	uchar vel=getVelocity();
 	// suppress any previous content in the first two bits:
-	vel = vel & 0xFC;
+	vel=vel & 0xFC;
 	// insert the spelling code:
-	vel = vel | spelling;
+	vel=vel | spelling;
 	setVelocity(vel);
 }
 
@@ -1362,7 +1362,7 @@ void MidiMessage::setSpelling(int base7, int accidental) {
 //        pc + octave * 7
 //     where pc is the numbers 0 through 6 representing the pitch classes
 //     C through B, the octave is MIDI octave (not the scientific pitch
-//     octave which is one less than the MIDI ocatave, such as C4 = middle C).
+//     octave which is one less than the MIDI ocatave, such as C4=middle C).
 //     The second number is the accidental for the base-7 pitch.
 //
 
@@ -1370,13 +1370,13 @@ void MidiMessage::getSpelling(int& base7, int& accidental) {
 	if (!isNoteOn()) {
 		return;
 	}
-	base7 = -123456;
-	accidental = 123456;
-	int base12   = getKeyNumber();
-	int octave   = base12 / 12;
-	int base12pc = base12 - octave * 12;
-	int base7pc  = 0;
-	int spelling = 0x03 & getVelocity();
+	base7=-123456;
+	accidental=123456;
+	int base12  =getKeyNumber();
+	int octave  =base12 / 12;
+	int base12pc=base12 - octave * 12;
+	int base7pc =0;
+	int spelling=0x03 & getVelocity();
 
 	// Table 5.1, page 101 in Beyond MIDI (1997)
 	// http://beyondmidi.ccarh.org/beyondmidi-600dpi.pdf
@@ -1384,103 +1384,103 @@ void MidiMessage::getSpelling(int& base7, int& accidental) {
 
 		case 0:
 			switch (spelling) {
-				        case 1: base7pc = 1; accidental = -2; break;  // Dbb
-				case 0: case 2: base7pc = 0; accidental =  0; break;  // C
-				        case 3: base7pc = 6; accidental = +1; octave--; break;  // B#
+				        case 1: base7pc=1; accidental=-2; break;  // Dbb
+				case 0: case 2: base7pc=0; accidental= 0; break;  // C
+				        case 3: base7pc=6; accidental=+1; octave--; break;  // B#
 			}
 			break;
 
 		case 1:
 			switch (spelling) {
-				        case 1: base7pc = 1; accidental = -1; break;  // Db
-				case 0: case 2: base7pc = 0; accidental = +1; break;  // C#
-				        case 3: base7pc = 6; accidental = +2; octave--; break;  // B##
+				        case 1: base7pc=1; accidental=-1; break;  // Db
+				case 0: case 2: base7pc=0; accidental=+1; break;  // C#
+				        case 3: base7pc=6; accidental=+2; octave--; break;  // B##
 			}
 			break;
 
 		case 2:
 			switch (spelling) {
-				        case 1: base7pc = 2; accidental = -2; break;  // Ebb
-				case 0: case 2: base7pc = 1; accidental =  0; break;  // D
-				        case 3: base7pc = 0; accidental = +2; break;  // C##
+				        case 1: base7pc=2; accidental=-2; break;  // Ebb
+				case 0: case 2: base7pc=1; accidental= 0; break;  // D
+				        case 3: base7pc=0; accidental=+2; break;  // C##
 			}
 			break;
 
 		case 3:
 			switch (spelling) {
-				        case 1: base7pc = 3; accidental = -2; break;  // Fbb
-				case 0: case 2: base7pc = 2; accidental = -1; break;  // Eb
-				        case 3: base7pc = 1; accidental = +1; break;  // D#
+				        case 1: base7pc=3; accidental=-2; break;  // Fbb
+				case 0: case 2: base7pc=2; accidental=-1; break;  // Eb
+				        case 3: base7pc=1; accidental=+1; break;  // D#
 			}
 			break;
 
 		case 4:
 			switch (spelling) {
-				        case 1: base7pc = 3; accidental = -1; break;  // Fb
-				case 0: case 2: base7pc = 2; accidental =  0; break;  // E
-				        case 3: base7pc = 1; accidental = +2; break;  // D##
+				        case 1: base7pc=3; accidental=-1; break;  // Fb
+				case 0: case 2: base7pc=2; accidental= 0; break;  // E
+				        case 3: base7pc=1; accidental=+2; break;  // D##
 			}
 			break;
 
 		case 5:
 			switch (spelling) {
-				        case 1: base7pc = 4; accidental = -2; break;  // Gbb
-				case 0: case 2: base7pc = 3; accidental =  0; break;  // F
-				        case 3: base7pc = 2; accidental = +1; break;  // E#
+				        case 1: base7pc=4; accidental=-2; break;  // Gbb
+				case 0: case 2: base7pc=3; accidental= 0; break;  // F
+				        case 3: base7pc=2; accidental=+1; break;  // E#
 			}
 			break;
 
 		case 6:
 			switch (spelling) {
-				        case 1: base7pc = 4; accidental = -1; break;  // Gb
-				case 0: case 2: base7pc = 3; accidental = +1; break;  // F#
-				        case 3: base7pc = 2; accidental = +2; break;  // E##
+				        case 1: base7pc=4; accidental=-1; break;  // Gb
+				case 0: case 2: base7pc=3; accidental=+1; break;  // F#
+				        case 3: base7pc=2; accidental=+2; break;  // E##
 			}
 			break;
 
 		case 7:
 			switch (spelling) {
-				        case 1: base7pc = 5; accidental = -2; break;  // Abb
-				case 0: case 2: base7pc = 4; accidental =  0; break;  // G
-				        case 3: base7pc = 3; accidental = +2; break;  // F##
+				        case 1: base7pc=5; accidental=-2; break;  // Abb
+				case 0: case 2: base7pc=4; accidental= 0; break;  // G
+				        case 3: base7pc=3; accidental=+2; break;  // F##
 			}
 			break;
 
 		case 8:
 			switch (spelling) {
-				        case 1: base7pc = 5; accidental = -1; break;  // Ab
-				case 0: case 2: base7pc = 4; accidental = +1; break;  // G#
-				        case 3: base7pc = 3; accidental = +3; break;  // F###
+				        case 1: base7pc=5; accidental=-1; break;  // Ab
+				case 0: case 2: base7pc=4; accidental=+1; break;  // G#
+				        case 3: base7pc=3; accidental=+3; break;  // F###
 			}
 			break;
 
 		case 9:
 			switch (spelling) {
-				        case 1: base7pc = 6; accidental = -2; break;  // Bbb
-				case 0: case 2: base7pc = 5; accidental =  0; break;  // A
-				        case 3: base7pc = 4; accidental = +2; break;  // G##
+				        case 1: base7pc=6; accidental=-2; break;  // Bbb
+				case 0: case 2: base7pc=5; accidental= 0; break;  // A
+				        case 3: base7pc=4; accidental=+2; break;  // G##
 			}
 			break;
 
 		case 10:
 			switch (spelling) {
-				        case 1: base7pc = 0; accidental = -2; octave++; break;  // Cbb
-				case 0: case 2: base7pc = 6; accidental = -1; break;  // Bb
-				        case 3: base7pc = 5; accidental = +1; break;  // A#
+				        case 1: base7pc=0; accidental=-2; octave++; break;  // Cbb
+				case 0: case 2: base7pc=6; accidental=-1; break;  // Bb
+				        case 3: base7pc=5; accidental=+1; break;  // A#
 			}
 			break;
 
 		case 11:
 			switch (spelling) {
-				        case 1: base7pc = 0; accidental = -1; octave++; break;  // Cb
-				case 0: case 2: base7pc = 6; accidental =  0; break;  // B
-				        case 3: base7pc = 5; accidental = +2; break;  // A##
+				        case 1: base7pc=0; accidental=-1; octave++; break;  // Cb
+				case 0: case 2: base7pc=6; accidental= 0; break;  // B
+				        case 3: base7pc=5; accidental=+2; break;  // A##
 			}
 			break;
 
 	}
 
-	base7 = base7pc + 7 * octave;
+	base7=base7pc + 7 * octave;
 }
 
 
@@ -1496,7 +1496,7 @@ std::string MidiMessage::getMetaContent(void) {
 	if (!isMetaMessage()) {
 		return output;
 	}
-	int start = 3;
+	int start=3;
 	if (operator[](2) > 0x7f) {
 		start++;
 		if (operator[](3) > 0x7f) {
@@ -1540,16 +1540,16 @@ void MidiMessage::setMetaContent(const std::string& content) {
 	this->resize(2);
 	
 	// add the size of the meta message data (VLV)
-	int dsize = (int)content.size();
+	int dsize=(int)content.size();
 	if (dsize < 128) {
 		push_back((uchar)dsize);
 	} else {
 		// calculate VLV bytes and insert into message
-		uchar byte1 = dsize & 0x7f;
-		uchar byte2 = (dsize >>  7) & 0x7f;
-		uchar byte3 = (dsize >> 14) & 0x7f;
-		uchar byte4 = (dsize >> 21) & 0x7f;
-		uchar byte5 = (dsize >> 28) & 0x7f;
+		uchar byte1=dsize & 0x7f;
+		uchar byte2=(dsize >>  7) & 0x7f;
+		uchar byte3=(dsize >> 14) & 0x7f;
+		uchar byte4=(dsize >> 21) & 0x7f;
+		uchar byte5=(dsize >> 28) & 0x7f;
 		if (byte5) {
 			byte4 |= 0x80;
 		}
@@ -1582,7 +1582,7 @@ void MidiMessage::setMetaContent(const std::string& content) {
 //
 
 void MidiMessage::setMetaTempo(double tempo) {
-	int microseconds = (int)(60.0 / tempo * 1000000.0 + 0.5);
+	int microseconds=(int)(60.0 / tempo * 1000000.0 + 0.5);
 	setTempoMicroseconds(microseconds);
 }
 
@@ -1607,12 +1607,12 @@ void MidiMessage::setTempo(double tempo) {
 
 void MidiMessage::setTempoMicroseconds(int microseconds) {
 	resize(6);
-	(*this)[0] = 0xff;
-	(*this)[1] = 0x51;
-	(*this)[2] = 3;
-	(*this)[3] = (microseconds >> 16) & 0xff;
-	(*this)[4] = (microseconds >>  8) & 0xff;
-	(*this)[5] = (microseconds >>  0) & 0xff;
+	(*this)[0]=0xff;
+	(*this)[1]=0x51;
+	(*this)[2]=3;
+	(*this)[3]=(microseconds >> 16) & 0xff;
+	(*this)[4]=(microseconds >>  8) & 0xff;
+	(*this)[5]=(microseconds >>  0) & 0xff;
 }
 
 
@@ -1629,30 +1629,30 @@ void MidiMessage::setTempoMicroseconds(int microseconds) {
 //     num32ndsPerQuarter ==  8 (8 32nds per quarter note)
 //
 // Time signature of 4/4 would be:
-//    top    = 4
-//    bottom = 4 (converted to 2 in the MIDI file for 2nd power of 2).
-//    clocksPerClick = 24 (2 eighth notes based on num32ndsPerQuarter)
-//    num32ndsPerQuarter = 8
+//    top   =4
+//    bottom=4 (converted to 2 in the MIDI file for 2nd power of 2).
+//    clocksPerClick=24 (2 eighth notes based on num32ndsPerQuarter)
+//    num32ndsPerQuarter=8
 //
 // Time signature of 6/8 would be:
-//    top    = 6
-//    bottom = 8 (converted to 3 in the MIDI file for 3rd power of 2).
-//    clocksPerClick = 36 (3 eighth notes based on num32ndsPerQuarter)
-//    num32ndsPerQuarter = 8
+//    top   =6
+//    bottom=8 (converted to 3 in the MIDI file for 3rd power of 2).
+//    clocksPerClick=36 (3 eighth notes based on num32ndsPerQuarter)
+//    num32ndsPerQuarter=8
 //
 
 void MidiMessage::makeTimeSignature(int top, int bottom, int clocksPerClick,
 		int num32ndsPerQuarter) {
-	int base2 = 0;
+	int base2=0;
 	while (bottom >>= 1) base2++;
 	resize(7);
-	(*this)[0] = 0xff;
-	(*this)[1] = 0x58;
-	(*this)[2] = 4;
-	(*this)[3] = 0xff & top;
-	(*this)[4] = 0xff & base2;
-	(*this)[5] = 0xff & clocksPerClick;
-	(*this)[6] = 0xff & num32ndsPerQuarter;
+	(*this)[0]=0xff;
+	(*this)[1]=0x58;
+	(*this)[2]=4;
+	(*this)[3]=0xff & top;
+	(*this)[4]=0xff & base2;
+	(*this)[5]=0xff & clocksPerClick;
+	(*this)[6]=0xff & num32ndsPerQuarter;
 }
 
 
@@ -1667,7 +1667,7 @@ void MidiMessage::makeTimeSignature(int top, int bottom, int clocksPerClick,
 //
 // MidiMessage::makeNoteOn -- create a note-on message.
 //
-// default value: channel = 0
+// default value: channel=0
 //
 // Note: The channel parameter used to be last, but makes more sense to
 //   have it first...
@@ -1675,9 +1675,9 @@ void MidiMessage::makeTimeSignature(int top, int bottom, int clocksPerClick,
 
 void MidiMessage::makeNoteOn(int channel, int key, int velocity) {
 	resize(3);
-	(*this)[0] = 0x90 | (0x0f & channel);
-	(*this)[1] = key & 0x7f;
-	(*this)[2] = velocity & 0x7f;
+	(*this)[0]=0x90 | (0x0f & channel);
+	(*this)[1]=key & 0x7f;
+	(*this)[2]=velocity & 0x7f;
 }
 
 
@@ -1688,7 +1688,7 @@ void MidiMessage::makeNoteOn(int channel, int key, int velocity) {
 //   parameters are given, the current contents is presumed to be a
 //   note-on message, which will be converted into a note-off message.
 //
-// default value: channel = 0
+// default value: channel=0
 //
 // Note: The channel parameter used to be last, but makes more sense to
 //   have it first...
@@ -1697,17 +1697,17 @@ void MidiMessage::makeNoteOn(int channel, int key, int velocity) {
 
 void MidiMessage::makeNoteOff(int channel, int key, int velocity) {
 	resize(3);
-	(*this)[0] = 0x80 | (0x0f & channel);
-	(*this)[1] = key & 0x7f;
-	(*this)[2] = velocity & 0x7f;
+	(*this)[0]=0x80 | (0x0f & channel);
+	(*this)[1]=key & 0x7f;
+	(*this)[2]=velocity & 0x7f;
 }
 
 
 void MidiMessage::makeNoteOff(int channel, int key) {
 	resize(3);
-	(*this)[0] = 0x90 | (0x0f & channel);
-	(*this)[1] = key & 0x7f;
-	(*this)[2] = 0x00;
+	(*this)[0]=0x90 | (0x0f & channel);
+	(*this)[1]=key & 0x7f;
+	(*this)[2]=0x00;
 }
 
 //
@@ -1718,11 +1718,11 @@ void MidiMessage::makeNoteOff(int channel, int key) {
 void MidiMessage::makeNoteOff(void) {
 	if (!isNoteOn()) {
 		resize(3);
-		(*this)[0] = 0x90;
-		(*this)[1] = 0;
-		(*this)[2] = 0;
+		(*this)[0]=0x90;
+		(*this)[1]=0;
+		(*this)[2]=0;
 	} else {
-		(*this)[2] = 0;
+		(*this)[2]=0;
 	}
 }
 

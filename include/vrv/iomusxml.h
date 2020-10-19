@@ -55,7 +55,7 @@ namespace musicxml {
 
     class OpenSlur {
     public:
-        OpenSlur(const int &number) { m_number = number; }
+        OpenSlur(const int &number) { m_number=number; }
 
         int m_number;
     };
@@ -64,8 +64,8 @@ namespace musicxml {
     public:
         CloseSlur(const std::string &measureNum, const int &number)
         {
-            m_measureNum = measureNum;
-            m_number = number;
+            m_measureNum=measureNum;
+            m_number=number;
         }
 
         std::string m_measureNum;
@@ -76,8 +76,8 @@ namespace musicxml {
     public:
         OpenSpanner(const int &dirN, const int &lastMeasureCount)
         {
-            m_dirN = dirN;
-            m_lastMeasureCount = lastMeasureCount;
+            m_dirN=dirN;
+            m_lastMeasureCount=lastMeasureCount;
         }
 
         int m_dirN;
@@ -88,8 +88,8 @@ namespace musicxml {
     public:
         OpenArpeggio(const int &arpegN, const int &timeStamp)
         {
-            m_arpegN = arpegN;
-            m_timeStamp = timeStamp;
+            m_arpegN=arpegN;
+            m_timeStamp=timeStamp;
         }
 
         int m_arpegN;
@@ -100,9 +100,9 @@ namespace musicxml {
     public:
         EndingInfo(const std::string &endingNumber, const std::string &endingType, const std::string &endingText)
         {
-            m_endingNumber = endingNumber;
-            m_endingType = endingType;
-            m_endingText = endingText;
+            m_endingNumber=endingNumber;
+            m_endingType=endingType;
+            m_endingText=endingText;
         }
 
         std::string m_endingNumber;
@@ -114,28 +114,28 @@ namespace musicxml {
     public:
         ClefChange(const std::string &measureNum, Staff *staff, Clef *clef, const int &scoreOnset, bool afterBarline)
         {
-            m_measureNum = measureNum;
-            m_staff = staff;
-            m_clef = clef;
-            m_scoreOnset = scoreOnset;
-            m_afterBarline = afterBarline;
+            m_measureNum=measureNum;
+            m_staff=staff;
+            m_clef=clef;
+            m_scoreOnset=scoreOnset;
+            m_afterBarline=afterBarline;
         }
 
         std::string m_measureNum;
         Staff *m_staff;
         Clef *m_clef;
         int m_scoreOnset; // the score position of clef change
-        bool isFirst = true; // insert clef change at first layer, others use @sameas
-        bool m_afterBarline = false; // musicXML attribute
+        bool isFirst=true; // insert clef change at first layer, others use @sameas
+        bool m_afterBarline=false; // musicXML attribute
     };
 
     class OpenDashes {
     public:
         OpenDashes(const int dirN, int staffNum, const int measureCount)
         {
-            m_dirN = dirN;
-            m_staffNum = staffNum;
-            m_measureCount = measureCount;
+            m_dirN=dirN;
+            m_staffNum=staffNum;
+            m_measureCount=measureCount;
         }
 
         int m_dirN; // direction number
@@ -212,7 +212,7 @@ private:
     /*
      * Add a Layer element to the layer or to the LayerElement at the top of m_elementStack.
      */
-    void AddLayerElement(Layer *layer, LayerElement *element, int duration = 0);
+    void AddLayerElement(Layer *layer, LayerElement *element, int duration=0);
 
     /*
      * Returns the appropriate layer for a node looking at its MusicXml staff and voice elements.
@@ -356,18 +356,18 @@ private:
     /* octave offset */
     std::vector<int> m_octDis;
     /* measure repeats */
-    bool m_mRpt = false;
+    bool m_mRpt=false;
     /* measure repeats */
-    bool m_slash = false;
+    bool m_slash=false;
     /* MIDI ticks */
     int m_ppq;
     /* measure time */
-    int m_durTotal = 0;
+    int m_durTotal=0;
     /* measure time */
-    int m_durFb = 0;
+    int m_durFb=0;
     /* meter signature */
-    int m_meterCount = 4;
-    int m_meterUnit = 4;
+    int m_meterCount=4;
+    int m_meterUnit=4;
     /* LastElementID */
     std::string m_ID;
     /* A map of stacks for piling open LayerElements (beams, tuplets, chords, btrem, ftrem) separately per layer */
@@ -375,7 +375,7 @@ private:
     /* A maps of time stamps (score time) to indicate write pointer of a given layer */
     std::map<Layer *, int> m_layerEndTimes;
     /* To remember layer of last element (note) to handle chords */
-    Layer *m_prevLayer = NULL;
+    Layer *m_prevLayer=NULL;
     /* The stack for open slurs */
     std::vector<std::pair<Slur *, musicxml::OpenSlur> > m_slurStack;
     /* The stack for slur stops that might come before the slur has been opened */

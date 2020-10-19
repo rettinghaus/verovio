@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(harmAnl_FORM form_) { m_form = form_; }
+    void SetForm(harmAnl_FORM form_) { m_form=form_; }
     harmAnl_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}
@@ -85,7 +85,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDeg(std::string deg_) { m_deg = deg_; }
+    void SetDeg(std::string deg_) { m_deg=deg_; }
     std::string GetDeg() const { return m_deg; }
     bool HasDeg() const;
     ///@}
@@ -93,9 +93,9 @@ public:
 private:
     /**
      * Captures scale degree information using Humdrum **deg syntax -- an optional
-     * indicator of melodic approach (^ = ascending approach, v = descending approach),
-     * a scale degree value (1 = tonic ...
-     * 7 = leading tone), and an optional indication of chromatic alteration, "1",
+     * indicator of melodic approach (^=ascending approach, v=descending approach),
+     * a scale degree value (1=tonic ...
+     * 7=leading tone), and an optional indication of chromatic alteration, "1",
      * "v7", "^1", or "v5+", for example. The amount of chromatic alternation is not
      * indicated.
      **/
@@ -128,7 +128,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetInth(std::string inth_) { m_inth = inth_; }
+    void SetInth(std::string inth_) { m_inth=inth_; }
     std::string GetInth() const { return m_inth; }
     bool HasInth() const;
     ///@}
@@ -164,7 +164,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetIntm(std::string intm_) { m_intm = intm_; }
+    void SetIntm(std::string intm_) { m_intm=intm_; }
     std::string GetIntm() const { return m_intm; }
     bool HasIntm() const;
     ///@}
@@ -205,7 +205,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMode(data_MODE mode_) { m_mode = mode_; }
+    void SetMode(data_MODE mode_) { m_mode=mode_; }
     data_MODE GetMode() const { return m_mode; }
     bool HasMode() const;
     ///@}
@@ -241,15 +241,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetKeyAccid(data_ACCIDENTAL_GESTURAL keyAccid_) { m_keyAccid = keyAccid_; }
+    void SetKeyAccid(data_ACCIDENTAL_GESTURAL keyAccid_) { m_keyAccid=keyAccid_; }
     data_ACCIDENTAL_GESTURAL GetKeyAccid() const { return m_keyAccid; }
     bool HasKeyAccid() const;
     //
-    void SetKeyMode(data_MODE keyMode_) { m_keyMode = keyMode_; }
+    void SetKeyMode(data_MODE keyMode_) { m_keyMode=keyMode_; }
     data_MODE GetKeyMode() const { return m_keyMode; }
     bool HasKeyMode() const;
     //
-    void SetKeyPname(data_PITCHNAME keyPname_) { m_keyPname = keyPname_; }
+    void SetKeyPname(data_PITCHNAME keyPname_) { m_keyPname=keyPname_; }
     data_PITCHNAME GetKeyPname() const { return m_keyPname; }
     bool HasKeyPname() const;
     ///@}
@@ -295,7 +295,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMfunc(data_MELODICFUNCTION mfunc_) { m_mfunc = mfunc_; }
+    void SetMfunc(data_MELODICFUNCTION mfunc_) { m_mfunc=mfunc_; }
     data_MELODICFUNCTION GetMfunc() const { return m_mfunc; }
     bool HasMfunc() const;
     ///@}
@@ -331,7 +331,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPclass(int pclass_) { m_pclass = pclass_; }
+    void SetPclass(int pclass_) { m_pclass=pclass_; }
     int GetPclass() const { return m_pclass; }
     bool HasPclass() const;
     ///@}
@@ -367,7 +367,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPsolfa(std::string psolfa_) { m_psolfa = psolfa_; }
+    void SetPsolfa(std::string psolfa_) { m_psolfa=psolfa_; }
     std::string GetPsolfa() const { return m_psolfa; }
     bool HasPsolfa() const;
     ///@}

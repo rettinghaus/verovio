@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAltsym(std::string altsym_) { m_altsym = altsym_; }
+    void SetAltsym(std::string altsym_) { m_altsym=altsym_; }
     std::string GetAltsym() const { return m_altsym; }
     bool HasAltsym() const;
     ///@}
@@ -88,7 +88,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFunc(std::string func_) { m_func = func_; }
+    void SetFunc(std::string func_) { m_func=func_; }
     std::string GetFunc() const { return m_func; }
     bool HasFunc() const;
     ///@}
@@ -124,7 +124,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFunc(std::string func_) { m_func = func_; }
+    void SetFunc(std::string func_) { m_func=func_; }
     std::string GetFunc() const { return m_func; }
     bool HasFunc() const;
     ///@}
@@ -160,7 +160,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFunc(std::string func_) { m_func = func_; }
+    void SetFunc(std::string func_) { m_func=func_; }
     std::string GetFunc() const { return m_func; }
     bool HasFunc() const;
     ///@}

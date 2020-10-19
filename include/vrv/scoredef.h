@@ -162,7 +162,7 @@ public:
      */
     ///@{
     bool DrawLabels() const { return m_drawLabels; }
-    void SetDrawLabels(bool drawLabels) { m_drawLabels = drawLabels; }
+    void SetDrawLabels(bool drawLabels) { m_drawLabels=drawLabels; }
     ///@}
 
     /**

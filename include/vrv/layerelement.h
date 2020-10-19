@@ -92,7 +92,7 @@ public:
      */
     ///@{
     ElementScoreDefRole GetScoreDefRole() const { return m_scoreDefRole; }
-    void SetScoreDefRole(ElementScoreDefRole scoreDefRole) { m_scoreDefRole = scoreDefRole; }
+    void SetScoreDefRole(ElementScoreDefRole scoreDefRole) { m_scoreDefRole=scoreDefRole; }
     ///@}
 
     /**
@@ -121,7 +121,7 @@ public:
      */
     ///@{
     int GetAlignmentLayerN() const { return m_alignmentLayerN; }
-    void SetAlignmentLayerN(int alignmentLayerN) { m_alignmentLayerN = alignmentLayerN; }
+    void SetAlignmentLayerN(int alignmentLayerN) { m_alignmentLayerN=alignmentLayerN; }
     ///@}
 
     /**
@@ -154,14 +154,14 @@ public:
      * articPartType indicates if the inside or outside artic part has to be taken into account (inside is taken
      * into account in any case)
      */
-    int GetDrawingTop(Doc *doc, int staffSize, bool withArtic = true, ArticPartType articPartType = ARTIC_PART_INSIDE);
+    int GetDrawingTop(Doc *doc, int staffSize, bool withArtic=true, ArticPartType articPartType=ARTIC_PART_INSIDE);
     int GetDrawingBottom(
-        Doc *doc, int staffSize, bool withArtic = true, ArticPartType articPartType = ARTIC_PART_INSIDE);
+        Doc *doc, int staffSize, bool withArtic=true, ArticPartType articPartType=ARTIC_PART_INSIDE);
 
     /**
      * Return the drawing radius for notes and chords
      */
-    int GetDrawingRadius(Doc *doc, bool isInLigature = false);
+    int GetDrawingRadius(Doc *doc, bool isInLigature=false);
 
     /**
      * Alignment getter
@@ -187,18 +187,18 @@ public:
     /**
      * Returns the duration if the element has a DurationInterface
      */
-    double GetAlignmentDuration(Mensur *mensur = NULL, MeterSig *meterSig = NULL, bool notGraceOnly = true,
-        data_NOTATIONTYPE notationType = NOTATIONTYPE_cmn);
+    double GetAlignmentDuration(Mensur *mensur=NULL, MeterSig *meterSig=NULL, bool notGraceOnly=true,
+        data_NOTATIONTYPE notationType=NOTATIONTYPE_cmn);
 
     /**
      * Returns the duration if the content of the layer element with a @sameas attribute.
      * Used only on beam, tuplet or ftrem have.
      */
-    double GetSameAsContentAlignmentDuration(Mensur *mensur = NULL, MeterSig *meterSig = NULL, bool notGraceOnly = true,
-        data_NOTATIONTYPE notationType = NOTATIONTYPE_cmn);
+    double GetSameAsContentAlignmentDuration(Mensur *mensur=NULL, MeterSig *meterSig=NULL, bool notGraceOnly=true,
+        data_NOTATIONTYPE notationType=NOTATIONTYPE_cmn);
 
-    double GetContentAlignmentDuration(Mensur *mensur = NULL, MeterSig *meterSig = NULL, bool notGraceOnly = true,
-        data_NOTATIONTYPE notationType = NOTATIONTYPE_cmn);
+    double GetContentAlignmentDuration(Mensur *mensur=NULL, MeterSig *meterSig=NULL, bool notGraceOnly=true,
+        data_NOTATIONTYPE notationType=NOTATIONTYPE_cmn);
 
     /**
      * Get zone bounds using child elements with facsimile information.

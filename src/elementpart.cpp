@@ -67,7 +67,7 @@ void Flag::Reset()
 {
     LayerElement::Reset();
 
-    m_drawingNbFlags = 0;
+    m_drawingNbFlags=0;
 }
 
 wchar_t Flag::GetSmuflCode(data_STEMDIRECTION stemDir)
@@ -102,15 +102,15 @@ wchar_t Flag::GetSmuflCode(data_STEMDIRECTION stemDir)
 
 Point Flag::GetStemUpSE(Doc *doc, int staffSize, bool graceSize, wchar_t &code)
 {
-    code = this->GetSmuflCode(STEMDIRECTION_up);
+    code=this->GetSmuflCode(STEMDIRECTION_up);
 
-    int h = doc->GetGlyphHeight(code, staffSize, graceSize);
+    int h=doc->GetGlyphHeight(code, staffSize, graceSize);
     return Point(0, h + doc->GetGlyphDescender(code, staffSize, graceSize));
 }
 
 Point Flag::GetStemDownNW(Doc *doc, int staffSize, bool graceSize, wchar_t &code)
 {
-    code = this->GetSmuflCode(STEMDIRECTION_down);
+    code=this->GetSmuflCode(STEMDIRECTION_down);
 
     return Point(0, doc->GetGlyphDescender(code, staffSize, graceSize));
 }
@@ -133,14 +133,14 @@ void TupletBracket::Reset()
     LayerElement::Reset();
     ResetTupletVis();
 
-    m_drawingXRelLeft = 0;
-    m_drawingXRelRight = 0;
-    m_alignedNum = NULL;
+    m_drawingXRelLeft=0;
+    m_drawingXRelRight=0;
+    m_alignedNum=NULL;
 }
 
 int TupletBracket::GetDrawingXLeft()
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    Tuplet *tuplet=vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingLeft());
 
     return tuplet->GetDrawingLeft()->GetDrawingX() + m_drawingXRelLeft;
@@ -148,7 +148,7 @@ int TupletBracket::GetDrawingXLeft()
 
 int TupletBracket::GetDrawingXRight()
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    Tuplet *tuplet=vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingRight());
 
     return tuplet->GetDrawingRight()->GetDrawingX() + m_drawingXRelRight;
@@ -156,13 +156,13 @@ int TupletBracket::GetDrawingXRight()
 
 int TupletBracket::GetDrawingYLeft()
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    Tuplet *tuplet=vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingLeft());
 
-    Beam *beam = tuplet->GetBracketAlignedBeam();
+    Beam *beam=tuplet->GetBracketAlignedBeam();
     if (beam) {
         // Calculate the y point aligning with the beam
-        int xLeft = tuplet->GetDrawingLeft()->GetDrawingX() + m_drawingXRelLeft;
+        int xLeft=tuplet->GetDrawingLeft()->GetDrawingX() + m_drawingXRelLeft;
         return beam->m_beamSegment.m_startingY
             + beam->m_beamSegment.m_beamSlope * (xLeft - beam->m_beamSegment.m_startingX) + this->GetDrawingYRel();
     }
@@ -173,13 +173,13 @@ int TupletBracket::GetDrawingYLeft()
 
 int TupletBracket::GetDrawingYRight()
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    Tuplet *tuplet=vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingRight());
 
-    Beam *beam = tuplet->GetBracketAlignedBeam();
+    Beam *beam=tuplet->GetBracketAlignedBeam();
     if (beam) {
         // Calculate the y point aligning with the beam
-        int xRight = tuplet->GetDrawingRight()->GetDrawingX() + m_drawingXRelRight;
+        int xRight=tuplet->GetDrawingRight()->GetDrawingX() + m_drawingXRelRight;
         return beam->m_beamSegment.m_startingY
             + beam->m_beamSegment.m_beamSlope * (xRight - beam->m_beamSegment.m_startingX) + this->GetDrawingYRel();
     }
@@ -208,14 +208,14 @@ void TupletNum::Reset()
     ResetNumberPlacement();
     ResetTupletVis();
 
-    m_alignedBracket = NULL;
+    m_alignedBracket=NULL;
 }
 
 int TupletNum::GetDrawingYMid()
 {
     if (m_alignedBracket) {
-        int yLeft = m_alignedBracket->GetDrawingYLeft();
-        int yRight = m_alignedBracket->GetDrawingYRight();
+        int yLeft=m_alignedBracket->GetDrawingYLeft();
+        int yRight=m_alignedBracket->GetDrawingYRight();
         return yLeft + ((yRight - yLeft) / 2);
     }
     else {
@@ -226,20 +226,20 @@ int TupletNum::GetDrawingYMid()
 int TupletNum::GetDrawingXMid(Doc *doc)
 {
     if (m_alignedBracket) {
-        int xLeft = m_alignedBracket->GetDrawingXLeft();
-        int xRight = m_alignedBracket->GetDrawingXRight();
+        int xLeft=m_alignedBracket->GetDrawingXLeft();
+        int xRight=m_alignedBracket->GetDrawingXRight();
         return xLeft + ((xRight - xLeft) / 2);
     }
     else {
-        Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+        Tuplet *tuplet=vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
         assert(tuplet && tuplet->GetDrawingLeft() && tuplet->GetDrawingRight());
-        int xLeft = tuplet->GetDrawingLeft()->GetDrawingX();
-        int xRight = tuplet->GetDrawingRight()->GetDrawingX();
+        int xLeft=tuplet->GetDrawingLeft()->GetDrawingX();
+        int xRight=tuplet->GetDrawingRight()->GetDrawingX();
         if (doc) {
             xRight += (tuplet->GetDrawingRight()->GetDrawingRadius(doc) * 2);
         }
         if (tuplet->GetNumAlignedBeam()) {
-            Beam *beam = tuplet->GetNumAlignedBeam();
+            Beam *beam=tuplet->GetNumAlignedBeam();
             switch (beam->m_drawingPlace) {
                 case BEAMPLACE_above: xLeft += (tuplet->GetDrawingLeft()->GetDrawingRadius(doc)); break;
                 case BEAMPLACE_below: xRight -= (tuplet->GetDrawingRight()->GetDrawingRadius(doc)); break;
@@ -253,7 +253,7 @@ int TupletNum::GetDrawingXMid(Doc *doc)
 void TupletNum::SetAlignedBracket(TupletBracket *alignedBracket)
 {
     if (m_alignedBracket) m_alignedBracket->SetAlignedNum(NULL);
-    m_alignedBracket = alignedBracket;
+    m_alignedBracket=alignedBracket;
     if (m_alignedBracket) m_alignedBracket->SetAlignedNum(this);
 }
 
@@ -279,9 +279,9 @@ void Stem::Reset()
     ResetStems();
     ResetStemsCmn();
 
-    m_drawingStemDir = STEMDIRECTION_NONE;
-    m_drawingStemLen = 0;
-    m_isVirtual = false;
+    m_drawingStemDir=STEMDIRECTION_NONE;
+    m_drawingStemLen=0;
+    m_isVirtual=false;
 }
 
 bool Stem::IsSupportedChild(Object *child)
@@ -323,7 +323,7 @@ int Flag::ResetDrawing(FunctorParams *functorParams)
     // Call parent one too
     LayerElement::ResetDrawing(functorParams);
 
-    m_drawingNbFlags = 0;
+    m_drawingNbFlags=0;
 
     return FUNCTOR_CONTINUE;
 }
@@ -333,9 +333,9 @@ int TupletBracket::ResetHorizontalAlignment(FunctorParams *functorParams)
     // Call parent one too
     LayerElement::ResetHorizontalAlignment(functorParams);
 
-    m_drawingXRelLeft = 0;
-    m_drawingXRelRight = 0;
-    m_alignedNum = NULL;
+    m_drawingXRelLeft=0;
+    m_drawingXRelRight=0;
+    m_alignedNum=NULL;
 
     return FUNCTOR_CONTINUE;
 }
@@ -353,7 +353,7 @@ int TupletNum::ResetHorizontalAlignment(FunctorParams *functorParams)
     // Call parent one too
     LayerElement::ResetHorizontalAlignment(functorParams);
 
-    m_alignedBracket = NULL;
+    m_alignedBracket=NULL;
 
     return FUNCTOR_CONTINUE;
 }
@@ -368,28 +368,28 @@ int TupletNum::ResetVerticalAlignment(FunctorParams *functorParams)
 
 int Stem::CalcStem(FunctorParams *functorParams)
 {
-    CalcStemParams *params = vrv_params_cast<CalcStemParams *>(functorParams);
+    CalcStemParams *params=vrv_params_cast<CalcStemParams *>(functorParams);
     assert(params);
 
     assert(params->m_staff);
     assert(params->m_layer);
     assert(params->m_interface);
 
-    int staffSize = params->m_staff->m_drawingStaffSize;
-    int stemShift = params->m_doc->GetDrawingStemWidth(staffSize) / 2;
-    bool drawingCueSize = this->GetDrawingCueSize();
+    int staffSize=params->m_staff->m_drawingStaffSize;
+    int stemShift=params->m_doc->GetDrawingStemWidth(staffSize) / 2;
+    bool drawingCueSize=this->GetDrawingCueSize();
 
     /************ Set the position, the length and adjust to the note head ************/
 
-    int baseStem = 0;
+    int baseStem=0;
     // Use the given one if any
     if (this->HasStemLen()) {
-        baseStem = this->GetStemLen() * -params->m_doc->GetDrawingUnit(staffSize);
+        baseStem=this->GetStemLen() * -params->m_doc->GetDrawingUnit(staffSize);
     }
     else {
-        int thirdUnit = params->m_doc->GetDrawingUnit(staffSize) / 3;
-        baseStem = -(params->m_interface->CalcStemLenInThirdUnits(params->m_staff) * thirdUnit);
-        if (drawingCueSize) baseStem = params->m_doc->GetCueSize(baseStem);
+        int thirdUnit=params->m_doc->GetDrawingUnit(staffSize) / 3;
+        baseStem=-(params->m_interface->CalcStemLenInThirdUnits(params->m_staff) * thirdUnit);
+        if (drawingCueSize) baseStem=params->m_doc->GetCueSize(baseStem);
     }
     // Even if a stem length is given we add the length of the chord content (however only if not 0)
     // Also, the given stem length is understood as being measured from the center of the note.
@@ -398,22 +398,22 @@ int Stem::CalcStem(FunctorParams *functorParams)
         Point p;
         if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
             if (this->GetStemPos() == STEMPOSITION_left) {
-                p = params->m_interface->GetStemDownNW(params->m_doc, staffSize, drawingCueSize);
+                p=params->m_interface->GetStemDownNW(params->m_doc, staffSize, drawingCueSize);
                 p.x += stemShift;
             }
             else {
-                p = params->m_interface->GetStemUpSE(params->m_doc, staffSize, drawingCueSize);
+                p=params->m_interface->GetStemUpSE(params->m_doc, staffSize, drawingCueSize);
                 p.x -= stemShift;
             }
             this->SetDrawingStemLen(baseStem + params->m_chordStemLength + p.y);
         }
         else {
             if (this->GetStemPos() == STEMPOSITION_right) {
-                p = params->m_interface->GetStemUpSE(params->m_doc, staffSize, drawingCueSize);
+                p=params->m_interface->GetStemUpSE(params->m_doc, staffSize, drawingCueSize);
                 p.x -= stemShift;
             }
             else {
-                p = params->m_interface->GetStemDownNW(params->m_doc, staffSize, drawingCueSize);
+                p=params->m_interface->GetStemDownNW(params->m_doc, staffSize, drawingCueSize);
                 p.x += stemShift;
             }
             this->SetDrawingStemLen(-(baseStem + params->m_chordStemLength - p.y));
@@ -424,18 +424,18 @@ int Stem::CalcStem(FunctorParams *functorParams)
 
     /************ Set flag and slashes (if necessary) and adjust the length ************/
 
-    int slashFactor = (this->GetStemMod() < 6) ? this->GetStemMod() - 4 : 0;
+    int slashFactor=(this->GetStemMod() < 6) ? this->GetStemMod() - 4 : 0;
 
-    Flag *flag = NULL;
+    Flag *flag=NULL;
     if (params->m_dur > DUR_4) {
-        flag = vrv_cast<Flag *>(this->FindDescendantByType(FLAG));
+        flag=vrv_cast<Flag *>(this->FindDescendantByType(FLAG));
         assert(flag);
-        flag->m_drawingNbFlags = params->m_dur - DUR_4;
+        flag->m_drawingNbFlags=params->m_dur - DUR_4;
         if (!this->HasStemLen() && this->HasStemMod()) slashFactor += (params->m_dur > DUR_8) ? 2 : 1;
     }
 
     // Adjust basic stem length to number of slashes
-    int tremStep = (params->m_doc->GetDrawingBeamWidth(staffSize, drawingCueSize)
+    int tremStep=(params->m_doc->GetDrawingBeamWidth(staffSize, drawingCueSize)
         + params->m_doc->GetDrawingBeamWhiteWidth(staffSize, drawingCueSize));
     if (abs(baseStem) < ((slashFactor + 4) * tremStep)) {
         if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
@@ -454,41 +454,41 @@ int Stem::CalcStem(FunctorParams *functorParams)
     // Do not adjust the length if given in the encoding - however, the stem will be extend with the SMuFL
     // extension from 32th - this can be improved
     if (this->HasStemLen()) {
-        if ((this->GetStemLen() == 0) && flag) flag->m_drawingNbFlags = 0;
+        if ((this->GetStemLen() == 0) && flag) flag->m_drawingNbFlags=0;
         return FUNCTOR_CONTINUE;
     }
     if ((this->GetStemVisible() == BOOLEAN_false) && flag) {
-        flag->m_drawingNbFlags = 0;
+        flag->m_drawingNbFlags=0;
         return FUNCTOR_CONTINUE;
     }
 
     // Do not adjust the length of grace notes - this is debatable and should probably become as styling option
     if (params->m_isGraceNote) return FUNCTOR_CONTINUE;
 
-    int flagHeight = 0;
+    int flagHeight=0;
 
     // SMUFL flags cover some additional stem length from the 32th only
     if (params->m_dur > DUR_16) {
         assert(flag);
         Point stemEnd;
-        wchar_t flagCode = 0;
+        wchar_t flagCode=0;
         if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
-            stemEnd = flag->GetStemUpSE(params->m_doc, staffSize, drawingCueSize, flagCode);
+            stemEnd=flag->GetStemUpSE(params->m_doc, staffSize, drawingCueSize, flagCode);
         }
         else {
-            stemEnd = flag->GetStemDownNW(params->m_doc, staffSize, drawingCueSize, flagCode);
+            stemEnd=flag->GetStemDownNW(params->m_doc, staffSize, drawingCueSize, flagCode);
         }
         // Trick for shortening the stem with DUR_8
-        flagHeight = stemEnd.y;
+        flagHeight=stemEnd.y;
     }
 
-    int endY = this->GetDrawingY() - this->GetDrawingStemLen() + flagHeight;
-    bool adjust = false;
+    int endY=this->GetDrawingY() - this->GetDrawingStemLen() + flagHeight;
+    bool adjust=false;
     if ((this->GetDrawingStemDir() == STEMDIRECTION_up) && (endY < params->m_verticalCenter)) {
-        adjust = true;
+        adjust=true;
     }
     else if ((this->GetDrawingStemDir() == STEMDIRECTION_down) && (endY > params->m_verticalCenter)) {
-        adjust = true;
+        adjust=true;
     }
 
     if (adjust) {
@@ -504,8 +504,8 @@ int Stem::ResetDrawing(FunctorParams *functorParams)
     // Call parent one too
     LayerElement::ResetDrawing(functorParams);
 
-    m_drawingStemDir = STEMDIRECTION_NONE;
-    m_drawingStemLen = 0;
+    m_drawingStemDir=STEMDIRECTION_NONE;
+    m_drawingStemLen=0;
 
     return FUNCTOR_CONTINUE;
 }

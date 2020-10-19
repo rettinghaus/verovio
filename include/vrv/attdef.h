@@ -83,7 +83,7 @@ typedef std::vector<data_ARTICULATION> data_ARTICULATION_List;
  * MEI data.BEATRPT_REND
  */
 enum data_BEATRPT_REND {
-    BEATRPT_REND_NONE = 0,
+    BEATRPT_REND_NONE=0,
     BEATRPT_REND_1,
     BEATRPT_REND_2,
     BEATRPT_REND_3,
@@ -96,8 +96,8 @@ enum data_BEATRPT_REND {
  * MEI data.DURATION
  */
 enum data_DURATION {
-    DURATION_NONE = VRV_UNSET,
-    DURATION_long = DUR_LG,
+    DURATION_NONE=VRV_UNSET,
+    DURATION_long=DUR_LG,
     DURATION_breve,
     DURATION_1,
     DURATION_2,
@@ -111,8 +111,8 @@ enum data_DURATION {
     DURATION_512,
     DURATION_1024,
     DURATION_2048,
-    DURATION_maxima = DUR_MX,
-    DURATION_longa = DUR_MENSURAL_OFFSET + DUR_LG,
+    DURATION_maxima=DUR_MX,
+    DURATION_longa=DUR_MENSURAL_OFFSET + DUR_LG,
     DURATION_brevis,
     DURATION_semibrevis,
     DURATION_minima,
@@ -177,13 +177,13 @@ typedef int data_MIDIVALUE;
  * MEI data.MODUSMAIOR
  * NONE is -3 for perfect value (abs) by default
  */
-enum data_MODUSMAIOR { MODUSMAIOR_NONE = -3, MODUSMAIOR_2 = 2, MODUSMAIOR_3 };
+enum data_MODUSMAIOR { MODUSMAIOR_NONE=-3, MODUSMAIOR_2=2, MODUSMAIOR_3 };
 
 /**
  * MEI data.MODUSMINOR
  * NONE is -3 for perfect value (abs) by default
  */
-enum data_MODUSMINOR { MODUSMINOR_NONE = -3, MODUSMINOR_2 = 2, MODUSMINOR_3 };
+enum data_MODUSMINOR { MODUSMINOR_NONE=-3, MODUSMINOR_2=2, MODUSMINOR_3 };
 
 /**
  * MEI data.MIDIVALUE
@@ -193,7 +193,7 @@ typedef std::string data_NCNAME;
 /**
  * MEI data.OCTAVE.DIS
  */
-enum data_OCTAVE_DIS { OCTAVE_DIS_NONE = 0, OCTAVE_DIS_8 = 8, OCTAVE_DIS_15 = 15, OCTAVE_DIS_22 = 22 };
+enum data_OCTAVE_DIS { OCTAVE_DIS_NONE=0, OCTAVE_DIS_8=8, OCTAVE_DIS_15=15, OCTAVE_DIS_22=22 };
 
 /**
  * MEI data.OCTAVE
@@ -203,7 +203,7 @@ typedef signed char data_OCTAVE;
 /**
  * MEI data.ORIENTATION
  */
-enum data_ORIENTATION { ORIENTATION_NONE = 0, ORIENTATION_reversed, ORIENTATION_90CW, ORIENTATION_90CCW };
+enum data_ORIENTATION { ORIENTATION_NONE=0, ORIENTATION_reversed, ORIENTATION_90CW, ORIENTATION_90CCW };
 
 /**
  * MEI data.PERCENT
@@ -224,7 +224,7 @@ typedef double data_PERCENT_LIMITED_SIGNED;
  * MEI data.PITCHNAME
  */
 enum data_PITCHNAME {
-    PITCHNAME_NONE = 0,
+    PITCHNAME_NONE=0,
     PITCHNAME_c,
     PITCHNAME_d,
     PITCHNAME_e,
@@ -238,7 +238,7 @@ enum data_PITCHNAME {
  * MEI data.PITCHNAME.GES
  */
 enum data_PITCHNAME_GES {
-    PITCHNAME_GES_NONE = 0,
+    PITCHNAME_GES_NONE=0,
     PITCHNAME_GES_c,
     PITCHNAME_GES_d,
     PITCHNAME_GES_e,
@@ -253,18 +253,18 @@ enum data_PITCHNAME_GES {
  * MEI data.PROLATIO
  * NONE is -3 for perfect value (abs) by default
  */
-enum data_PROLATIO { PROLATIO_NONE = -3, PROLATIO_2 = 2, PROLATIO_3 };
+enum data_PROLATIO { PROLATIO_NONE=-3, PROLATIO_2=2, PROLATIO_3 };
 
 /**
  * MEI data.TIE
  */
-enum data_TIE { TIE_NONE = 0, TIE_i, TIE_m, TIE_t };
+enum data_TIE { TIE_NONE=0, TIE_i, TIE_m, TIE_t };
 
 /**
  * MEI data.TEMPUS
  * NONE is -3 for perfect value (abs) by default
  */
-enum data_TEMPUS { TEMPUS_NONE = -3, TEMPUS_2 = 2, TEMPUS_3 };
+enum data_TEMPUS { TEMPUS_NONE=-3, TEMPUS_2=2, TEMPUS_3 };
 
 /**
  * A typedef for a list of data.URI integer.

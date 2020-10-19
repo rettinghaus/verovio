@@ -56,7 +56,7 @@ public:
      */
     ///@{
     VisibilityOptimization GetDrawingVisibility() const { return m_drawingVisibility; }
-    void SetDrawingVisibility(VisibilityOptimization drawingIsVisible) { m_drawingVisibility = drawingIsVisible; }
+    void SetDrawingVisibility(VisibilityOptimization drawingIsVisible) { m_drawingVisibility=drawingIsVisible; }
     ///@}
 
     /**

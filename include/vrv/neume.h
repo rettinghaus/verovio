@@ -35,7 +35,7 @@ class Neume;
 //----------------------------------------------------------------------------
 
 enum NeumeGroup {
-    NEUME_ERROR = 0,
+    NEUME_ERROR=0,
     PUNCTUM,
     CLIVIS,
     PES,

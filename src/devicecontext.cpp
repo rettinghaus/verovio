@@ -36,21 +36,21 @@ void DeviceContext::SetPen(int colour, int width, int opacity, int dashLength, i
     float opacityValue;
 
     switch (opacity) {
-        case AxSOLID: opacityValue = 1.0; break;
+        case AxSOLID: opacityValue=1.0; break;
         case AxDOT:
-            dashLength = dashLength ? dashLength : width * 1;
-            opacityValue = 1.0;
+            dashLength=dashLength ? dashLength : width * 1;
+            opacityValue=1.0;
             break;
         case AxLONG_DASH:
-            dashLength = dashLength ? dashLength : width * 4;
-            opacityValue = 1.0;
+            dashLength=dashLength ? dashLength : width * 4;
+            opacityValue=1.0;
             break;
         case AxSHORT_DASH:
-            dashLength = dashLength ? dashLength : width * 2;
-            opacityValue = 1.0;
+            dashLength=dashLength ? dashLength : width * 2;
+            opacityValue=1.0;
             break;
-        case AxTRANSPARENT: opacityValue = 0.0; break;
-        default: opacityValue = 1.0; // solid brush by default
+        case AxTRANSPARENT: opacityValue=0.0; break;
+        default: opacityValue=1.0; // solid brush by default
     }
 
     m_penStack.push(Pen(colour, width, opacityValue, dashLength, lineCap));
@@ -61,9 +61,9 @@ void DeviceContext::SetBrush(int colour, int opacity)
     float opacityValue;
 
     switch (opacity) {
-        case AxSOLID: opacityValue = 1.0; break;
-        case AxTRANSPARENT: opacityValue = 0.0; break;
-        default: opacityValue = 1.0; // solid brush by default
+        case AxSOLID: opacityValue=1.0; break;
+        case AxTRANSPARENT: opacityValue=0.0; break;
+        default: opacityValue=1.0; // solid brush by default
     }
 
     m_brushStack.push(Brush(colour, opacityValue));
@@ -103,27 +103,27 @@ void DeviceContext::ResetFont()
 void DeviceContext::DeactivateGraphic()
 {
     assert(!m_isDeactivatedX && !m_isDeactivatedY);
-    m_isDeactivatedX = true;
-    m_isDeactivatedY = true;
+    m_isDeactivatedX=true;
+    m_isDeactivatedY=true;
 }
 
 void DeviceContext::DeactivateGraphicX()
 {
     assert(!m_isDeactivatedX && !m_isDeactivatedY);
-    m_isDeactivatedX = true;
+    m_isDeactivatedX=true;
 }
 
 void DeviceContext::DeactivateGraphicY()
 {
     assert(!m_isDeactivatedX && !m_isDeactivatedY);
-    m_isDeactivatedY = true;
+    m_isDeactivatedY=true;
 }
 
 void DeviceContext::ReactivateGraphic()
 {
     assert(m_isDeactivatedX || m_isDeactivatedY);
-    m_isDeactivatedY = false;
-    m_isDeactivatedX = false;
+    m_isDeactivatedY=false;
+    m_isDeactivatedX=false;
 }
 
 void DeviceContext::GetTextExtent(const std::string &string, TextExtend *extend, bool typeSize)
@@ -137,25 +137,25 @@ void DeviceContext::GetTextExtent(const std::wstring &string, TextExtend *extend
     assert(m_fontStack.top());
     assert(extend);
 
-    extend->m_width = 0;
-    extend->m_height = 0;
+    extend->m_width=0;
+    extend->m_height=0;
 
     if (typeSize) {
         AddGlyphToTextExtend(Resources::GetTextGlyph(L'p'), extend);
         AddGlyphToTextExtend(Resources::GetTextGlyph(L'M'), extend);
-        extend->m_width = 0;
+        extend->m_width=0;
     }
 
-    Glyph *unkown = Resources::GetTextGlyph(L'o');
+    Glyph *unkown=Resources::GetTextGlyph(L'o');
 
-    for (unsigned int i = 0; i < string.length(); ++i) {
-        wchar_t c = string[i];
-        Glyph *glyph = Resources::GetTextGlyph(c);
+    for (unsigned int i=0; i < string.length(); ++i) {
+        wchar_t c=string[i];
+        Glyph *glyph=Resources::GetTextGlyph(c);
         if (!glyph) {
-            glyph = Resources::GetGlyph(c);
+            glyph=Resources::GetGlyph(c);
         }
         if (!glyph) {
-            glyph = unkown;
+            glyph=unkown;
         }
         AddGlyphToTextExtend(glyph, extend);
     }
@@ -166,12 +166,12 @@ void DeviceContext::GetSmuflTextExtent(const std::wstring &string, TextExtend *e
     assert(m_fontStack.top());
     assert(extend);
 
-    extend->m_width = 0;
-    extend->m_height = 0;
+    extend->m_width=0;
+    extend->m_height=0;
 
-    for (unsigned int i = 0; i < string.length(); ++i) {
-        wchar_t c = string[i];
-        Glyph *glyph = Resources::GetGlyph(c);
+    for (unsigned int i=0; i < string.length(); ++i) {
+        wchar_t c=string[i];
+        Glyph *glyph=Resources::GetGlyph(c);
         if (!glyph) {
             continue;
         }
@@ -189,27 +189,27 @@ void DeviceContext::AddGlyphToTextExtend(Glyph *glyph, TextExtend *extend)
 
     glyph->GetBoundingBox(x, y, partialWidth, partialHeight);
 
-    tmp = partialWidth * m_fontStack.top()->GetPointSize();
-    partialWidth = ceil(tmp / (double)glyph->GetUnitsPerEm());
-    tmp = partialHeight * m_fontStack.top()->GetPointSize();
-    partialHeight = ceil(tmp / (double)glyph->GetUnitsPerEm());
-    tmp = y * m_fontStack.top()->GetPointSize();
-    y = ceil(tmp / (double)glyph->GetUnitsPerEm());
+    tmp=partialWidth * m_fontStack.top()->GetPointSize();
+    partialWidth=ceil(tmp / (double)glyph->GetUnitsPerEm());
+    tmp=partialHeight * m_fontStack.top()->GetPointSize();
+    partialHeight=ceil(tmp / (double)glyph->GetUnitsPerEm());
+    tmp=y * m_fontStack.top()->GetPointSize();
+    y=ceil(tmp / (double)glyph->GetUnitsPerEm());
     // Following lines were commented out because result of these assignemens were not used (dead store)
-    // tmp = x * m_fontStack.top()->GetPointSize();
-    // x = ceil(tmp / (double)glyph->GetUnitsPerEm());
+    // tmp=x * m_fontStack.top()->GetPointSize();
+    // x=ceil(tmp / (double)glyph->GetUnitsPerEm());
 
-    advX = glyph->GetHorizAdvX();
-    tmp = advX * m_fontStack.top()->GetPointSize();
-    advX = ceil(tmp / (double)glyph->GetUnitsPerEm());
+    advX=glyph->GetHorizAdvX();
+    tmp=advX * m_fontStack.top()->GetPointSize();
+    advX=ceil(tmp / (double)glyph->GetUnitsPerEm());
 
     // Changed because the width should only be the sum of advX
     // Alternatively we could add what is below 0 for the first and what is beyond the advx for the last
     // extend->m_width += std::max(partialWidth + x, advX);
     extend->m_width += (advX == 0) ? partialWidth : advX;
-    extend->m_height = std::max(partialHeight, extend->m_height);
-    extend->m_ascent = std::max(partialHeight + y, extend->m_ascent);
-    extend->m_descent = std::max(-y, extend->m_descent);
+    extend->m_height=std::max(partialHeight, extend->m_height);
+    extend->m_ascent=std::max(partialHeight + y, extend->m_ascent);
+    extend->m_descent=std::max(-y, extend->m_descent);
 }
 
 } // namespace vrv

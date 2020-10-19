@@ -47,7 +47,7 @@ public:
     bool SetClef(std::string elementId, std::string shape);
     bool Split(std::string elementId, int x);
     bool Remove(std::string elementId);
-    bool Resize(std::string elementId, int ulx, int uly, int lrx, int lry, float resize = NAN);
+    bool Resize(std::string elementId, int ulx, int uly, int lrx, int lry, float resize=NAN);
     bool Group(std::string groupType, std::vector<std::string> elementIds);
     bool Ungroup(std::string groupType, std::vector<std::string> elementIds);
     bool ChangeGroup(std::string elementId, std::string contour);
@@ -83,8 +83,8 @@ protected:
      * Helper functions for editor actions.
      */
     ///@{
-    bool AdjustPitchFromPosition(Object *obj, Clef *clef = NULL);
-    bool AdjustClefLineFromPosition(Clef *clef, Staff *staff = NULL);
+    bool AdjustPitchFromPosition(Object *obj, Clef *clef=NULL);
+    bool AdjustClefLineFromPosition(Clef *clef, Staff *staff=NULL);
     ///@}
 
 private:
@@ -101,13 +101,13 @@ struct ClosestBB {
     int x;
     int y;
 
-    int distanceToBB(int ulx, int uly, int lrx, int lry, double rotate = 0)
+    int distanceToBB(int ulx, int uly, int lrx, int lry, double rotate=0)
     {
-        int offset = (x - ulx) * tan(rotate * M_PI / 180.0);
-        uly = uly - offset;
-        lry = lry - offset;
-        int xDiff = std::max((ulx > x ? ulx - x : 0), (x > lrx ? x - lrx : 0));
-        int yDiff = std::max((uly > y ? uly - y : 0), (y > lry ? y - lry : 0));
+        int offset=(x - ulx) * tan(rotate * M_PI / 180.0);
+        uly=uly - offset;
+        lry=lry - offset;
+        int xDiff=std::max((ulx > x ? ulx - x : 0), (x > lrx ? x - lrx : 0));
+        int yDiff=std::max((uly > y ? uly - y : 0), (y > lry ? y - lry : 0));
 
         return sqrt(xDiff * xDiff + yDiff * yDiff);
     }
@@ -115,13 +115,13 @@ struct ClosestBB {
     bool operator()(Object *a, Object *b)
     {
         if (!a->GetFacsimileInterface() || !b->GetFacsimileInterface()) return true;
-        Zone *zoneA = a->GetFacsimileInterface()->GetZone();
-        Zone *zoneB = b->GetFacsimileInterface()->GetZone();
+        Zone *zoneA=a->GetFacsimileInterface()->GetZone();
+        Zone *zoneB=b->GetFacsimileInterface()->GetZone();
 
         int distA
-            = distanceToBB(zoneA->GetUlx(), zoneA->GetUly(), zoneA->GetLrx(), zoneA->GetLry(), zoneA->GetRotate());
+           =distanceToBB(zoneA->GetUlx(), zoneA->GetUly(), zoneA->GetLrx(), zoneA->GetLry(), zoneA->GetRotate());
         int distB
-            = distanceToBB(zoneB->GetUlx(), zoneB->GetUly(), zoneB->GetLrx(), zoneB->GetLry(), zoneB->GetRotate());
+           =distanceToBB(zoneB->GetUlx(), zoneB->GetUly(), zoneB->GetLrx(), zoneB->GetLry(), zoneB->GetRotate());
         return (distA < distB);
     }
 };
@@ -134,24 +134,24 @@ struct StaffSort {
     bool operator()(Object *a, Object *b)
     {
         if (!a->GetFacsimileInterface() || !b->GetFacsimileInterface()) return true;
-        Zone *zoneA = a->GetFacsimileInterface()->GetZone();
-        Zone *zoneB = b->GetFacsimileInterface()->GetZone();
+        Zone *zoneA=a->GetFacsimileInterface()->GetZone();
+        Zone *zoneB=b->GetFacsimileInterface()->GetZone();
 
         int aLowest, bLowest, aHighest, bHighest;
 
-        aLowest = zoneA->GetRotate() < 0
+        aLowest=zoneA->GetRotate() < 0
             ? zoneA->GetLry()
             : zoneA->GetLry() + (zoneA->GetLrx() - zoneA->GetUlx()) * tan(zoneA->GetRotate() * M_PI / 180.0);
 
-        aHighest = zoneA->GetRotate() < 0
+        aHighest=zoneA->GetRotate() < 0
             ? zoneA->GetUly()
             : zoneA->GetUly() - (zoneA->GetLrx() - zoneA->GetUlx()) * tan(zoneA->GetRotate() * M_PI / 180.0);
 
-        bLowest = zoneB->GetRotate() < 0
+        bLowest=zoneB->GetRotate() < 0
             ? zoneB->GetLry()
             : zoneB->GetLry() + (zoneB->GetLrx() - zoneB->GetUlx()) * tan(zoneB->GetRotate() * M_PI / 180.0);
 
-        bHighest = zoneB->GetRotate() < 0
+        bHighest=zoneB->GetRotate() < 0
             ? zoneB->GetUly()
             : zoneB->GetUly() - (zoneB->GetLrx() - zoneB->GetUlx()) * tan(zoneB->GetRotate() * M_PI / 180.0);
 

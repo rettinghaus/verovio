@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPlace(data_PLACEMENT place_) { m_place = place_; }
+    void SetPlace(data_PLACEMENT place_) { m_place=place_; }
     data_PLACEMENT GetPlace() const { return m_place; }
     bool HasPlace() const;
     /** Getter for reference (for alternate type only) */
@@ -87,31 +87,31 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetArrow(data_BOOLEAN arrow_) { m_arrow = arrow_; }
+    void SetArrow(data_BOOLEAN arrow_) { m_arrow=arrow_; }
     data_BOOLEAN GetArrow() const { return m_arrow; }
     bool HasArrow() const;
     //
-    void SetArrowShape(data_LINESTARTENDSYMBOL arrowShape_) { m_arrowShape = arrowShape_; }
+    void SetArrowShape(data_LINESTARTENDSYMBOL arrowShape_) { m_arrowShape=arrowShape_; }
     data_LINESTARTENDSYMBOL GetArrowShape() const { return m_arrowShape; }
     bool HasArrowShape() const;
     //
-    void SetArrowSize(int arrowSize_) { m_arrowSize = arrowSize_; }
+    void SetArrowSize(int arrowSize_) { m_arrowSize=arrowSize_; }
     int GetArrowSize() const { return m_arrowSize; }
     bool HasArrowSize() const;
     //
-    void SetArrowColor(std::string arrowColor_) { m_arrowColor = arrowColor_; }
+    void SetArrowColor(std::string arrowColor_) { m_arrowColor=arrowColor_; }
     std::string GetArrowColor() const { return m_arrowColor; }
     bool HasArrowColor() const;
     //
-    void SetArrowFillcolor(std::string arrowFillcolor_) { m_arrowFillcolor = arrowFillcolor_; }
+    void SetArrowFillcolor(std::string arrowFillcolor_) { m_arrowFillcolor=arrowFillcolor_; }
     std::string GetArrowFillcolor() const { return m_arrowFillcolor; }
     bool HasArrowFillcolor() const;
     //
-    void SetLineForm(data_LINEFORM lineForm_) { m_lineForm = lineForm_; }
+    void SetLineForm(data_LINEFORM lineForm_) { m_lineForm=lineForm_; }
     data_LINEFORM GetLineForm() const { return m_lineForm; }
     bool HasLineForm() const;
     //
-    void SetLineWidth(data_LINEWIDTH lineWidth_) { m_lineWidth = lineWidth_; }
+    void SetLineWidth(data_LINEWIDTH lineWidth_) { m_lineWidth=lineWidth_; }
     data_LINEWIDTH GetLineWidth() const { return m_lineWidth; }
     bool HasLineWidth() const;
     /** Getter for reference (for alternate type only) */
@@ -161,15 +161,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLen(double len_) { m_len = len_; }
+    void SetLen(double len_) { m_len=len_; }
     double GetLen() const { return m_len; }
     bool HasLen() const;
     //
-    void SetMethod(data_BARMETHOD method_) { m_method = method_; }
+    void SetMethod(data_BARMETHOD method_) { m_method=method_; }
     data_BARMETHOD GetMethod() const { return m_method; }
     bool HasMethod() const;
     //
-    void SetPlace(int place_) { m_place = place_; }
+    void SetPlace(int place_) { m_place=place_; }
     int GetPlace() const { return m_place; }
     bool HasPlace() const;
     ///@}
@@ -213,15 +213,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBeamColor(std::string beamColor_) { m_beamColor = beamColor_; }
+    void SetBeamColor(std::string beamColor_) { m_beamColor=beamColor_; }
     std::string GetBeamColor() const { return m_beamColor; }
     bool HasBeamColor() const;
     //
-    void SetBeamRend(beamingVis_BEAMREND beamRend_) { m_beamRend = beamRend_; }
+    void SetBeamRend(beamingVis_BEAMREND beamRend_) { m_beamRend=beamRend_; }
     beamingVis_BEAMREND GetBeamRend() const { return m_beamRend; }
     bool HasBeamRend() const;
     //
-    void SetBeamSlope(double beamSlope_) { m_beamSlope = beamSlope_; }
+    void SetBeamSlope(double beamSlope_) { m_beamSlope=beamSlope_; }
     double GetBeamSlope() const { return m_beamSlope; }
     bool HasBeamSlope() const;
     ///@}
@@ -261,7 +261,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSlash(data_BEATRPT_REND slash_) { m_slash = slash_; }
+    void SetSlash(data_BEATRPT_REND slash_) { m_slash=slash_; }
     data_BEATRPT_REND GetSlash() const { return m_slash; }
     bool HasSlash() const;
     ///@}
@@ -297,7 +297,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCluster(data_CLUSTER cluster_) { m_cluster = cluster_; }
+    void SetCluster(data_CLUSTER cluster_) { m_cluster=cluster_; }
     data_CLUSTER GetCluster() const { return m_cluster; }
     bool HasCluster() const;
     ///@}
@@ -338,11 +338,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetClefColor(std::string clefColor_) { m_clefColor = clefColor_; }
+    void SetClefColor(std::string clefColor_) { m_clefColor=clefColor_; }
     std::string GetClefColor() const { return m_clefColor; }
     bool HasClefColor() const;
     //
-    void SetClefVisible(data_BOOLEAN clefVisible_) { m_clefVisible = clefVisible_; }
+    void SetClefVisible(data_BOOLEAN clefVisible_) { m_clefVisible=clefVisible_; }
     data_BOOLEAN GetClefVisible() const { return m_clefVisible; }
     bool HasClefVisible() const;
     ///@}
@@ -380,11 +380,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(episemaVis_FORM form_) { m_form = form_; }
+    void SetForm(episemaVis_FORM form_) { m_form=form_; }
     episemaVis_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     //
-    void SetPlace(data_EVENTREL place_) { m_place = place_; }
+    void SetPlace(data_EVENTREL place_) { m_place=place_; }
     data_EVENTREL GetPlace() const { return m_place; }
     bool HasPlace() const;
     ///@}
@@ -422,15 +422,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBeams(int beams_) { m_beams = beams_; }
+    void SetBeams(int beams_) { m_beams=beams_; }
     int GetBeams() const { return m_beams; }
     bool HasBeams() const;
     //
-    void SetBeamsFloat(int beamsFloat_) { m_beamsFloat = beamsFloat_; }
+    void SetBeamsFloat(int beamsFloat_) { m_beamsFloat=beamsFloat_; }
     int GetBeamsFloat() const { return m_beamsFloat; }
     bool HasBeamsFloat() const;
     //
-    void SetFloatGap(data_MEASUREMENTABS floatGap_) { m_floatGap = floatGap_; }
+    void SetFloatGap(data_MEASUREMENTABS floatGap_) { m_floatGap=floatGap_; }
     data_MEASUREMENTABS GetFloatGap() const { return m_floatGap; }
     bool HasFloatGap() const;
     ///@}
@@ -470,11 +470,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(fermataVis_FORM form_) { m_form = form_; }
+    void SetForm(fermataVis_FORM form_) { m_form=form_; }
     fermataVis_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     //
-    void SetShape(fermataVis_SHAPE shape_) { m_shape = shape_; }
+    void SetShape(fermataVis_SHAPE shape_) { m_shape=shape_; }
     fermataVis_SHAPE GetShape() const { return m_shape; }
     bool HasShape() const;
     ///@}
@@ -512,7 +512,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOrient(fingGrpVis_ORIENT orient_) { m_orient = orient_; }
+    void SetOrient(fingGrpVis_ORIENT orient_) { m_orient=orient_; }
     fingGrpVis_ORIENT GetOrient() const { return m_orient; }
     bool HasOrient() const;
     ///@}
@@ -548,7 +548,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOpening(data_MEASUREMENTABS opening_) { m_opening = opening_; }
+    void SetOpening(data_MEASUREMENTABS opening_) { m_opening=opening_; }
     data_MEASUREMENTABS GetOpening() const { return m_opening; }
     bool HasOpening() const;
     ///@}
@@ -587,7 +587,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetRendgrid(harmVis_RENDGRID rendgrid_) { m_rendgrid = rendgrid_; }
+    void SetRendgrid(harmVis_RENDGRID rendgrid_) { m_rendgrid=rendgrid_; }
     harmVis_RENDGRID GetRendgrid() const { return m_rendgrid; }
     bool HasRendgrid() const;
     ///@}
@@ -623,11 +623,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPlace(data_EVENTREL place_) { m_place = place_; }
+    void SetPlace(data_EVENTREL place_) { m_place=place_; }
     data_EVENTREL GetPlace() const { return m_place; }
     bool HasPlace() const;
     //
-    void SetTilt(data_COMPASSDIRECTION tilt_) { m_tilt = tilt_; }
+    void SetTilt(data_COMPASSDIRECTION tilt_) { m_tilt=tilt_; }
     data_COMPASSDIRECTION GetTilt() const { return m_tilt; }
     bool HasTilt() const;
     ///@}
@@ -665,7 +665,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSigShowchange(data_BOOLEAN sigShowchange_) { m_sigShowchange = sigShowchange_; }
+    void SetSigShowchange(data_BOOLEAN sigShowchange_) { m_sigShowchange=sigShowchange_; }
     data_BOOLEAN GetSigShowchange() const { return m_sigShowchange; }
     bool HasSigShowchange() const;
     ///@}
@@ -701,11 +701,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetKeysigShow(data_BOOLEAN keysigShow_) { m_keysigShow = keysigShow_; }
+    void SetKeysigShow(data_BOOLEAN keysigShow_) { m_keysigShow=keysigShow_; }
     data_BOOLEAN GetKeysigShow() const { return m_keysigShow; }
     bool HasKeysigShow() const;
     //
-    void SetKeysigShowchange(data_BOOLEAN keysigShowchange_) { m_keysigShowchange = keysigShowchange_; }
+    void SetKeysigShowchange(data_BOOLEAN keysigShowchange_) { m_keysigShowchange=keysigShowchange_; }
     data_BOOLEAN GetKeysigShowchange() const { return m_keysigShowchange; }
     bool HasKeysigShowchange() const;
     ///@}
@@ -743,29 +743,29 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(data_LINEFORM form_) { m_form = form_; }
+    void SetForm(data_LINEFORM form_) { m_form=form_; }
     data_LINEFORM GetForm() const { return m_form; }
     bool HasForm() const;
     //
-    void SetWidth(data_LINEWIDTH width_) { m_width = width_; }
+    void SetWidth(data_LINEWIDTH width_) { m_width=width_; }
     data_LINEWIDTH GetWidth() const { return m_width; }
     bool HasWidth() const;
     /** Getter for reference (for alternate type only) */
     data_LINEWIDTH *GetWidthAlternate() { return &m_width; }
     //
-    void SetEndsym(data_LINESTARTENDSYMBOL endsym_) { m_endsym = endsym_; }
+    void SetEndsym(data_LINESTARTENDSYMBOL endsym_) { m_endsym=endsym_; }
     data_LINESTARTENDSYMBOL GetEndsym() const { return m_endsym; }
     bool HasEndsym() const;
     //
-    void SetEndsymSize(int endsymSize_) { m_endsymSize = endsymSize_; }
+    void SetEndsymSize(int endsymSize_) { m_endsymSize=endsymSize_; }
     int GetEndsymSize() const { return m_endsymSize; }
     bool HasEndsymSize() const;
     //
-    void SetStartsym(data_LINESTARTENDSYMBOL startsym_) { m_startsym = startsym_; }
+    void SetStartsym(data_LINESTARTENDSYMBOL startsym_) { m_startsym=startsym_; }
     data_LINESTARTENDSYMBOL GetStartsym() const { return m_startsym; }
     bool HasStartsym() const;
     //
-    void SetStartsymSize(int startsymSize_) { m_startsymSize = startsymSize_; }
+    void SetStartsymSize(int startsymSize_) { m_startsymSize=startsymSize_; }
     int GetStartsymSize() const { return m_startsymSize; }
     bool HasStartsymSize() const;
     ///@}
@@ -811,11 +811,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCurve(liquescentVis_CURVE curve_) { m_curve = curve_; }
+    void SetCurve(liquescentVis_CURVE curve_) { m_curve=curve_; }
     liquescentVis_CURVE GetCurve() const { return m_curve; }
     bool HasCurve() const;
     //
-    void SetLooped(data_BOOLEAN looped_) { m_looped = looped_; }
+    void SetLooped(data_BOOLEAN looped_) { m_looped=looped_; }
     data_BOOLEAN GetLooped() const { return m_looped; }
     bool HasLooped() const;
     ///@}
@@ -853,19 +853,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(mensurVis_FORM form_) { m_form = form_; }
+    void SetForm(mensurVis_FORM form_) { m_form=form_; }
     mensurVis_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     //
-    void SetOrient(data_ORIENTATION orient_) { m_orient = orient_; }
+    void SetOrient(data_ORIENTATION orient_) { m_orient=orient_; }
     data_ORIENTATION GetOrient() const { return m_orient; }
     bool HasOrient() const;
     //
-    void SetDot(data_BOOLEAN dot_) { m_dot = dot_; }
+    void SetDot(data_BOOLEAN dot_) { m_dot=dot_; }
     data_BOOLEAN GetDot() const { return m_dot; }
     bool HasDot() const;
     //
-    void SetSign(data_MENSURATIONSIGN sign_) { m_sign = sign_; }
+    void SetSign(data_MENSURATIONSIGN sign_) { m_sign=sign_; }
     data_MENSURATIONSIGN GetSign() const { return m_sign; }
     bool HasSign() const;
     ///@}
@@ -907,23 +907,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMensurColor(std::string mensurColor_) { m_mensurColor = mensurColor_; }
+    void SetMensurColor(std::string mensurColor_) { m_mensurColor=mensurColor_; }
     std::string GetMensurColor() const { return m_mensurColor; }
     bool HasMensurColor() const;
     //
-    void SetMensurForm(mensuralVis_MENSURFORM mensurForm_) { m_mensurForm = mensurForm_; }
+    void SetMensurForm(mensuralVis_MENSURFORM mensurForm_) { m_mensurForm=mensurForm_; }
     mensuralVis_MENSURFORM GetMensurForm() const { return m_mensurForm; }
     bool HasMensurForm() const;
     //
-    void SetMensurLoc(int mensurLoc_) { m_mensurLoc = mensurLoc_; }
+    void SetMensurLoc(int mensurLoc_) { m_mensurLoc=mensurLoc_; }
     int GetMensurLoc() const { return m_mensurLoc; }
     bool HasMensurLoc() const;
     //
-    void SetMensurOrient(data_ORIENTATION mensurOrient_) { m_mensurOrient = mensurOrient_; }
+    void SetMensurOrient(data_ORIENTATION mensurOrient_) { m_mensurOrient=mensurOrient_; }
     data_ORIENTATION GetMensurOrient() const { return m_mensurOrient; }
     bool HasMensurOrient() const;
     //
-    void SetMensurSize(data_FONTSIZE mensurSize_) { m_mensurSize = mensurSize_; }
+    void SetMensurSize(data_FONTSIZE mensurSize_) { m_mensurSize=mensurSize_; }
     data_FONTSIZE GetMensurSize() const { return m_mensurSize; }
     bool HasMensurSize() const;
     /** Getter for reference (for alternate type only) */
@@ -972,7 +972,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(data_METERFORM form_) { m_form = form_; }
+    void SetForm(data_METERFORM form_) { m_form=form_; }
     data_METERFORM GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}
@@ -1008,11 +1008,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMeterForm(data_METERFORM meterForm_) { m_meterForm = meterForm_; }
+    void SetMeterForm(data_METERFORM meterForm_) { m_meterForm=meterForm_; }
     data_METERFORM GetMeterForm() const { return m_meterForm; }
     bool HasMeterForm() const;
     //
-    void SetMeterShowchange(data_BOOLEAN meterShowchange_) { m_meterShowchange = meterShowchange_; }
+    void SetMeterShowchange(data_BOOLEAN meterShowchange_) { m_meterShowchange=meterShowchange_; }
     data_BOOLEAN GetMeterShowchange() const { return m_meterShowchange; }
     bool HasMeterShowchange() const;
     ///@}
@@ -1053,7 +1053,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBlock(data_BOOLEAN block_) { m_block = block_; }
+    void SetBlock(data_BOOLEAN block_) { m_block=block_; }
     data_BOOLEAN GetBlock() const { return m_block; }
     bool HasBlock() const;
     ///@}
@@ -1093,7 +1093,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFolium(pbVis_FOLIUM folium_) { m_folium = folium_; }
+    void SetFolium(pbVis_FOLIUM folium_) { m_folium=folium_; }
     pbVis_FOLIUM GetFolium() const { return m_folium; }
     bool HasFolium() const;
     ///@}
@@ -1132,7 +1132,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(pedalVis_FORM form_) { m_form = form_; }
+    void SetForm(pedalVis_FORM form_) { m_form=form_; }
     pedalVis_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}
@@ -1168,7 +1168,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetWaves(int waves_) { m_waves = waves_; }
+    void SetWaves(int waves_) { m_waves=waves_; }
     int GetWaves() const { return m_waves; }
     bool HasWaves() const;
     ///@}
@@ -1204,7 +1204,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(sbVis_FORM form_) { m_form = form_; }
+    void SetForm(sbVis_FORM form_) { m_form=form_; }
     sbVis_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}
@@ -1240,7 +1240,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVuHeight(std::string vuHeight_) { m_vuHeight = vuHeight_; }
+    void SetVuHeight(std::string vuHeight_) { m_vuHeight=vuHeight_; }
     std::string GetVuHeight() const { return m_vuHeight; }
     bool HasVuHeight() const;
     ///@}
@@ -1280,7 +1280,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetRestart(data_BOOLEAN restart_) { m_restart = restart_; }
+    void SetRestart(data_BOOLEAN restart_) { m_restart=restart_; }
     data_BOOLEAN GetRestart() const { return m_restart; }
     bool HasRestart() const;
     ///@}
@@ -1316,7 +1316,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPlace(data_EVENTREL place_) { m_place = place_; }
+    void SetPlace(data_EVENTREL place_) { m_place=place_; }
     data_EVENTREL GetPlace() const { return m_place; }
     bool HasPlace() const;
     ///@}
@@ -1352,7 +1352,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCompressable(data_BOOLEAN compressable_) { m_compressable = compressable_; }
+    void SetCompressable(data_BOOLEAN compressable_) { m_compressable=compressable_; }
     data_BOOLEAN GetCompressable() const { return m_compressable; }
     bool HasCompressable() const;
     ///@}
@@ -1391,23 +1391,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetGridShow(data_BOOLEAN gridShow_) { m_gridShow = gridShow_; }
+    void SetGridShow(data_BOOLEAN gridShow_) { m_gridShow=gridShow_; }
     data_BOOLEAN GetGridShow() const { return m_gridShow; }
     bool HasGridShow() const;
     //
-    void SetLayerscheme(data_LAYERSCHEME layerscheme_) { m_layerscheme = layerscheme_; }
+    void SetLayerscheme(data_LAYERSCHEME layerscheme_) { m_layerscheme=layerscheme_; }
     data_LAYERSCHEME GetLayerscheme() const { return m_layerscheme; }
     bool HasLayerscheme() const;
     //
-    void SetLinesColor(std::string linesColor_) { m_linesColor = linesColor_; }
+    void SetLinesColor(std::string linesColor_) { m_linesColor=linesColor_; }
     std::string GetLinesColor() const { return m_linesColor; }
     bool HasLinesColor() const;
     //
-    void SetLinesVisible(data_BOOLEAN linesVisible_) { m_linesVisible = linesVisible_; }
+    void SetLinesVisible(data_BOOLEAN linesVisible_) { m_linesVisible=linesVisible_; }
     data_BOOLEAN GetLinesVisible() const { return m_linesVisible; }
     bool HasLinesVisible() const;
     //
-    void SetSpacing(data_MEASUREMENTREL spacing_) { m_spacing = spacing_; }
+    void SetSpacing(data_MEASUREMENTREL spacing_) { m_spacing=spacing_; }
     data_MEASUREMENTREL GetSpacing() const { return m_spacing; }
     bool HasSpacing() const;
     ///@}
@@ -1457,7 +1457,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBarThru(data_BOOLEAN barThru_) { m_barThru = barThru_; }
+    void SetBarThru(data_BOOLEAN barThru_) { m_barThru=barThru_; }
     data_BOOLEAN GetBarThru() const { return m_barThru; }
     bool HasBarThru() const;
     ///@}
@@ -1496,19 +1496,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetBracketPlace(data_STAFFREL_basic bracketPlace_) { m_bracketPlace = bracketPlace_; }
+    void SetBracketPlace(data_STAFFREL_basic bracketPlace_) { m_bracketPlace=bracketPlace_; }
     data_STAFFREL_basic GetBracketPlace() const { return m_bracketPlace; }
     bool HasBracketPlace() const;
     //
-    void SetBracketVisible(data_BOOLEAN bracketVisible_) { m_bracketVisible = bracketVisible_; }
+    void SetBracketVisible(data_BOOLEAN bracketVisible_) { m_bracketVisible=bracketVisible_; }
     data_BOOLEAN GetBracketVisible() const { return m_bracketVisible; }
     bool HasBracketVisible() const;
     //
-    void SetDurVisible(data_BOOLEAN durVisible_) { m_durVisible = durVisible_; }
+    void SetDurVisible(data_BOOLEAN durVisible_) { m_durVisible=durVisible_; }
     data_BOOLEAN GetDurVisible() const { return m_durVisible; }
     bool HasDurVisible() const;
     //
-    void SetNumFormat(tupletVis_NUMFORMAT numFormat_) { m_numFormat = numFormat_; }
+    void SetNumFormat(tupletVis_NUMFORMAT numFormat_) { m_numFormat=numFormat_; }
     tupletVis_NUMFORMAT GetNumFormat() const { return m_numFormat; }
     bool HasNumFormat() const;
     ///@}

@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSurface(std::string surface_) { m_surface = surface_; }
+    void SetSurface(std::string surface_) { m_surface=surface_; }
     std::string GetSurface() const { return m_surface; }
     bool HasSurface() const;
     ///@}

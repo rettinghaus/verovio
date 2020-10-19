@@ -27,7 +27,7 @@ class TimestampAttr;
  * For example, we align notes and rests (default) together, clefs separately, etc.
  */
 enum AlignmentType {
-    ALIGNMENT_MEASURE_START = 0,
+    ALIGNMENT_MEASURE_START=0,
     // Non-justifiable
     ALIGNMENT_SCOREDEF_CLEF,
     ALIGNMENT_SCOREDEF_KEYSIG,
@@ -73,7 +73,7 @@ public:
      */
     ///@{
     Alignment();
-    Alignment(double time, AlignmentType type = ALIGNMENT_DEFAULT);
+    Alignment(double time, AlignmentType type=ALIGNMENT_DEFAULT);
     virtual ~Alignment();
     virtual void Reset();
     virtual ClassId GetClassId() const { return ALIGNMENT; }
@@ -101,7 +101,7 @@ public:
      * @name Set and get the time value of the alignment
      */
     ///@{
-    void SetTime(double time) { m_time = time; }
+    void SetTime(double time) { m_time=time; }
     double GetTime() const { return m_time; }
     ///@}
 
@@ -116,7 +116,7 @@ public:
      * @name Set and get the type of the alignment
      */
     ///@{
-    void SetType(AlignmentType type) { m_type = type; }
+    void SetType(AlignmentType type) { m_type=type; }
     AlignmentType GetType() const { return m_type; }
     ///@}
 
@@ -147,7 +147,7 @@ public:
      * Return the AlignmentReference holding the element.
      * If staffN is provided, uses the AlignmentReference->GetN() to accelerate the search.
      */
-    AlignmentReference *GetReferenceWithElement(LayerElement *element, int staffN = VRV_UNSET);
+    AlignmentReference *GetReferenceWithElement(LayerElement *element, int staffN=VRV_UNSET);
 
     /**
      * Add an accidental to the accidSpace of the AlignmentReference holding it.
@@ -388,7 +388,7 @@ protected:
     /**
      * Add an alignment at the appropriate position (at the end if -1)
      */
-    void AddAlignment(Alignment *alignment, int idx = -1);
+    void AddAlignment(Alignment *alignment, int idx=-1);
 
 private:
     //
@@ -563,7 +563,7 @@ public:
      * @name Setter and getter for the width of the group of grace notes
      */
     ///@{
-    void SetWidth(int totalWidth) { m_totalWidth = totalWidth; }
+    void SetWidth(int totalWidth) { m_totalWidth=totalWidth; }
     int GetWidth() const { return m_totalWidth; }
     ///@}
 

@@ -49,27 +49,27 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPos(data_STEMPOSITION pos_) { m_pos = pos_; }
+    void SetPos(data_STEMPOSITION pos_) { m_pos=pos_; }
     data_STEMPOSITION GetPos() const { return m_pos; }
     bool HasPos() const;
     //
-    void SetLength(data_MEASUREMENTABS length_) { m_length = length_; }
+    void SetLength(data_MEASUREMENTABS length_) { m_length=length_; }
     data_MEASUREMENTABS GetLength() const { return m_length; }
     bool HasLength() const;
     //
-    void SetForm(data_STEMFORM_mensural form_) { m_form = form_; }
+    void SetForm(data_STEMFORM_mensural form_) { m_form=form_; }
     data_STEMFORM_mensural GetForm() const { return m_form; }
     bool HasForm() const;
     //
-    void SetDir(data_STEMDIRECTION dir_) { m_dir = dir_; }
+    void SetDir(data_STEMDIRECTION dir_) { m_dir=dir_; }
     data_STEMDIRECTION GetDir() const { return m_dir; }
     bool HasDir() const;
     //
-    void SetFlagPos(data_FLAGPOS_mensural flagPos_) { m_flagPos = flagPos_; }
+    void SetFlagPos(data_FLAGPOS_mensural flagPos_) { m_flagPos=flagPos_; }
     data_FLAGPOS_mensural GetFlagPos() const { return m_flagPos; }
     bool HasFlagPos() const;
     //
-    void SetFlagForm(data_FLAGFORM_mensural flagForm_) { m_flagForm = flagForm_; }
+    void SetFlagForm(data_FLAGFORM_mensural flagForm_) { m_flagForm=flagForm_; }
     data_FLAGFORM_mensural GetFlagForm() const { return m_flagForm; }
     bool HasFlagForm() const;
     ///@}
@@ -121,7 +121,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDurQuality(data_DURQUALITY_mensural durQuality_) { m_durQuality = durQuality_; }
+    void SetDurQuality(data_DURQUALITY_mensural durQuality_) { m_durQuality=durQuality_; }
     data_DURQUALITY_mensural GetDurQuality() const { return m_durQuality; }
     bool HasDurQuality() const;
     ///@}
@@ -161,7 +161,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(data_LIGATUREFORM form_) { m_form = form_; }
+    void SetForm(data_LIGATUREFORM form_) { m_form=form_; }
     data_LIGATUREFORM GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}
@@ -197,23 +197,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMensurDot(data_BOOLEAN mensurDot_) { m_mensurDot = mensurDot_; }
+    void SetMensurDot(data_BOOLEAN mensurDot_) { m_mensurDot=mensurDot_; }
     data_BOOLEAN GetMensurDot() const { return m_mensurDot; }
     bool HasMensurDot() const;
     //
-    void SetMensurSign(data_MENSURATIONSIGN mensurSign_) { m_mensurSign = mensurSign_; }
+    void SetMensurSign(data_MENSURATIONSIGN mensurSign_) { m_mensurSign=mensurSign_; }
     data_MENSURATIONSIGN GetMensurSign() const { return m_mensurSign; }
     bool HasMensurSign() const;
     //
-    void SetMensurSlash(int mensurSlash_) { m_mensurSlash = mensurSlash_; }
+    void SetMensurSlash(int mensurSlash_) { m_mensurSlash=mensurSlash_; }
     int GetMensurSlash() const { return m_mensurSlash; }
     bool HasMensurSlash() const;
     //
-    void SetProportNum(int proportNum_) { m_proportNum = proportNum_; }
+    void SetProportNum(int proportNum_) { m_proportNum=proportNum_; }
     int GetProportNum() const { return m_proportNum; }
     bool HasProportNum() const;
     //
-    void SetProportNumbase(int proportNumbase_) { m_proportNumbase = proportNumbase_; }
+    void SetProportNumbase(int proportNumbase_) { m_proportNumbase=proportNumbase_; }
     int GetProportNumbase() const { return m_proportNumbase; }
     bool HasProportNumbase() const;
     ///@}
@@ -268,23 +268,23 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetModusmaior(data_MODUSMAIOR modusmaior_) { m_modusmaior = modusmaior_; }
+    void SetModusmaior(data_MODUSMAIOR modusmaior_) { m_modusmaior=modusmaior_; }
     data_MODUSMAIOR GetModusmaior() const { return m_modusmaior; }
     bool HasModusmaior() const;
     //
-    void SetModusminor(data_MODUSMINOR modusminor_) { m_modusminor = modusminor_; }
+    void SetModusminor(data_MODUSMINOR modusminor_) { m_modusminor=modusminor_; }
     data_MODUSMINOR GetModusminor() const { return m_modusminor; }
     bool HasModusminor() const;
     //
-    void SetProlatio(data_PROLATIO prolatio_) { m_prolatio = prolatio_; }
+    void SetProlatio(data_PROLATIO prolatio_) { m_prolatio=prolatio_; }
     data_PROLATIO GetProlatio() const { return m_prolatio; }
     bool HasProlatio() const;
     //
-    void SetTempus(data_TEMPUS tempus_) { m_tempus = tempus_; }
+    void SetTempus(data_TEMPUS tempus_) { m_tempus=tempus_; }
     data_TEMPUS GetTempus() const { return m_tempus; }
     bool HasTempus() const;
     //
-    void SetDivisio(data_DIVISIO divisio_) { m_divisio = divisio_; }
+    void SetDivisio(data_DIVISIO divisio_) { m_divisio=divisio_; }
     data_DIVISIO GetDivisio() const { return m_divisio; }
     bool HasDivisio() const;
     ///@}
@@ -328,7 +328,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetLig(noteAnlMensural_LIG lig_) { m_lig = lig_; }
+    void SetLig(noteAnlMensural_LIG lig_) { m_lig=lig_; }
     noteAnlMensural_LIG GetLig() const { return m_lig; }
     bool HasLig() const;
     ///@}
@@ -364,7 +364,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetSpaces(int spaces_) { m_spaces = spaces_; }
+    void SetSpaces(int spaces_) { m_spaces=spaces_; }
     int GetSpaces() const { return m_spaces; }
     bool HasSpaces() const;
     ///@}
@@ -400,7 +400,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetStemForm(data_STEMFORM_mensural stemForm_) { m_stemForm = stemForm_; }
+    void SetStemForm(data_STEMFORM_mensural stemForm_) { m_stemForm=stemForm_; }
     data_STEMFORM_mensural GetStemForm() const { return m_stemForm; }
     bool HasStemForm() const;
     ///@}

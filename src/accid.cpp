@@ -62,7 +62,7 @@ std::wstring Accid::GetSymbolStr() const
 {
     if (!this->HasAccid()) return L"";
 
-    wchar_t symc = GetAccidGlyph(this->GetAccid());
+    wchar_t symc=GetAccidGlyph(this->GetAccid());
     std::wstring symbolStr;
 
     if (this->HasEnclose()) {
@@ -90,16 +90,16 @@ bool Accid::AdjustX(LayerElement *element, Doc *doc, int staffSize, std::vector<
 
     if (this == element) return false;
 
-    int verticalMargin = 1 * doc->GetDrawingStemWidth(staffSize);
-    int horizontalMargin = 2 * doc->GetDrawingStemWidth(staffSize);
+    int verticalMargin=1 * doc->GetDrawingStemWidth(staffSize);
+    int horizontalMargin=2 * doc->GetDrawingStemWidth(staffSize);
 
-    if (element->Is(NOTE)) horizontalMargin = 3 * doc->GetDrawingStemWidth(staffSize);
+    if (element->Is(NOTE)) horizontalMargin=3 * doc->GetDrawingStemWidth(staffSize);
 
     if (!this->VerticalSelfOverlap(element, verticalMargin)) return false;
 
     // Look for identical accidentals that needs to remain superimposed
     if (element->Is(ACCID) && (this->GetDrawingY() == element->GetDrawingY())) {
-        Accid *accid = vrv_cast<Accid *>(element);
+        Accid *accid=vrv_cast<Accid *>(element);
         assert(accid);
         if (this->GetSymbolStr() == accid->GetSymbolStr()) {
             // There is the same accidental, so we leave it a the same place
@@ -117,11 +117,11 @@ bool Accid::AdjustX(LayerElement *element, Doc *doc, int staffSize, std::vector<
         }
     }
 
-    int xRelShift = 0;
+    int xRelShift=0;
     if (element->Is(STEM))
-        xRelShift = this->GetSelfRight() - element->GetSelfLeft() + horizontalMargin;
+        xRelShift=this->GetSelfRight() - element->GetSelfLeft() + horizontalMargin;
     else
-        xRelShift = this->HorizontalRightOverlap(element, doc, horizontalMargin, verticalMargin);
+        xRelShift=this->HorizontalRightOverlap(element, doc, horizontalMargin, verticalMargin);
 
     // Move only to the left
     if (xRelShift > 0) {
@@ -131,7 +131,7 @@ bool Accid::AdjustX(LayerElement *element, Doc *doc, int staffSize, std::vector<
             std::vector<Accid *> leftAccidsSubset;
             std::vector<Accid *>::iterator iter;
             // Recursively adjust all accidental that are on the left because enough space was previousy available
-            for (iter = leftAccids.begin(); iter != leftAccids.end(); ++iter) {
+            for (iter=leftAccids.begin(); iter != leftAccids.end(); ++iter) {
                 this->AdjustX(dynamic_cast<LayerElement *>(*iter), doc, staffSize, leftAccidsSubset);
             }
         }
@@ -143,30 +143,30 @@ bool Accid::AdjustX(LayerElement *element, Doc *doc, int staffSize, std::vector<
 
 wchar_t Accid::GetAccidGlyph(data_ACCIDENTAL_WRITTEN accid)
 {
-    int symc = SMUFL_E261_accidentalNatural;
+    int symc=SMUFL_E261_accidentalNatural;
     switch (accid) {
-        case ACCIDENTAL_WRITTEN_s: symc = SMUFL_E262_accidentalSharp; break;
-        case ACCIDENTAL_WRITTEN_f: symc = SMUFL_E260_accidentalFlat; break;
-        case ACCIDENTAL_WRITTEN_ss: symc = SMUFL_E269_accidentalSharpSharp; break;
-        case ACCIDENTAL_WRITTEN_x: symc = SMUFL_E263_accidentalDoubleSharp; break;
-        case ACCIDENTAL_WRITTEN_ff: symc = SMUFL_E264_accidentalDoubleFlat; break;
-        case ACCIDENTAL_WRITTEN_sx: symc = SMUFL_E265_accidentalTripleSharp; break; // Missing in SMuFL
-        case ACCIDENTAL_WRITTEN_xs: symc = SMUFL_E265_accidentalTripleSharp; break;
-        case ACCIDENTAL_WRITTEN_ts: symc = SMUFL_E265_accidentalTripleSharp; break; // Missing in SMuFL
-        case ACCIDENTAL_WRITTEN_tf: symc = SMUFL_E266_accidentalTripleFlat; break;
-        case ACCIDENTAL_WRITTEN_n: symc = SMUFL_E261_accidentalNatural; break;
-        case ACCIDENTAL_WRITTEN_nf: symc = SMUFL_E267_accidentalNaturalFlat; break;
-        case ACCIDENTAL_WRITTEN_ns: symc = SMUFL_E268_accidentalNaturalSharp; break;
-        case ACCIDENTAL_WRITTEN_su: symc = SMUFL_E274_accidentalThreeQuarterTonesSharpArrowUp; break;
-        case ACCIDENTAL_WRITTEN_sd: symc = SMUFL_E275_accidentalQuarterToneSharpArrowDown; break;
-        case ACCIDENTAL_WRITTEN_fu: symc = SMUFL_E270_accidentalQuarterToneFlatArrowUp; break;
-        case ACCIDENTAL_WRITTEN_fd: symc = SMUFL_E271_accidentalThreeQuarterTonesFlatArrowDown; break;
-        case ACCIDENTAL_WRITTEN_nu: symc = SMUFL_E272_accidentalQuarterToneSharpNaturalArrowUp; break;
-        case ACCIDENTAL_WRITTEN_nd: symc = SMUFL_E273_accidentalQuarterToneFlatNaturalArrowDown; break;
-        case ACCIDENTAL_WRITTEN_1qf: symc = SMUFL_E280_accidentalQuarterToneFlatStein; break;
-        case ACCIDENTAL_WRITTEN_3qf: symc = SMUFL_E281_accidentalThreeQuarterTonesFlatZimmermann; break;
-        case ACCIDENTAL_WRITTEN_1qs: symc = SMUFL_E282_accidentalQuarterToneSharpStein; break;
-        case ACCIDENTAL_WRITTEN_3qs: symc = SMUFL_E283_accidentalThreeQuarterTonesSharpStein; break;
+        case ACCIDENTAL_WRITTEN_s: symc=SMUFL_E262_accidentalSharp; break;
+        case ACCIDENTAL_WRITTEN_f: symc=SMUFL_E260_accidentalFlat; break;
+        case ACCIDENTAL_WRITTEN_ss: symc=SMUFL_E269_accidentalSharpSharp; break;
+        case ACCIDENTAL_WRITTEN_x: symc=SMUFL_E263_accidentalDoubleSharp; break;
+        case ACCIDENTAL_WRITTEN_ff: symc=SMUFL_E264_accidentalDoubleFlat; break;
+        case ACCIDENTAL_WRITTEN_sx: symc=SMUFL_E265_accidentalTripleSharp; break; // Missing in SMuFL
+        case ACCIDENTAL_WRITTEN_xs: symc=SMUFL_E265_accidentalTripleSharp; break;
+        case ACCIDENTAL_WRITTEN_ts: symc=SMUFL_E265_accidentalTripleSharp; break; // Missing in SMuFL
+        case ACCIDENTAL_WRITTEN_tf: symc=SMUFL_E266_accidentalTripleFlat; break;
+        case ACCIDENTAL_WRITTEN_n: symc=SMUFL_E261_accidentalNatural; break;
+        case ACCIDENTAL_WRITTEN_nf: symc=SMUFL_E267_accidentalNaturalFlat; break;
+        case ACCIDENTAL_WRITTEN_ns: symc=SMUFL_E268_accidentalNaturalSharp; break;
+        case ACCIDENTAL_WRITTEN_su: symc=SMUFL_E274_accidentalThreeQuarterTonesSharpArrowUp; break;
+        case ACCIDENTAL_WRITTEN_sd: symc=SMUFL_E275_accidentalQuarterToneSharpArrowDown; break;
+        case ACCIDENTAL_WRITTEN_fu: symc=SMUFL_E270_accidentalQuarterToneFlatArrowUp; break;
+        case ACCIDENTAL_WRITTEN_fd: symc=SMUFL_E271_accidentalThreeQuarterTonesFlatArrowDown; break;
+        case ACCIDENTAL_WRITTEN_nu: symc=SMUFL_E272_accidentalQuarterToneSharpNaturalArrowUp; break;
+        case ACCIDENTAL_WRITTEN_nd: symc=SMUFL_E273_accidentalQuarterToneFlatNaturalArrowDown; break;
+        case ACCIDENTAL_WRITTEN_1qf: symc=SMUFL_E280_accidentalQuarterToneFlatStein; break;
+        case ACCIDENTAL_WRITTEN_3qf: symc=SMUFL_E281_accidentalThreeQuarterTonesFlatZimmermann; break;
+        case ACCIDENTAL_WRITTEN_1qs: symc=SMUFL_E282_accidentalQuarterToneSharpStein; break;
+        case ACCIDENTAL_WRITTEN_3qs: symc=SMUFL_E283_accidentalThreeQuarterTonesSharpStein; break;
         default: break;
     }
     return symc;
@@ -190,8 +190,8 @@ int Accid::ResetHorizontalAlignment(FunctorParams *functorParams)
     LayerElement::ResetHorizontalAlignment(functorParams);
     PositionInterface::InterfaceResetHorizontalAlignment(functorParams, this);
 
-    m_isDrawingOctave = false;
-    m_drawingOctave = NULL;
+    m_isDrawingOctave=false;
+    m_drawingOctave=NULL;
 
     return FUNCTOR_CONTINUE;
 }

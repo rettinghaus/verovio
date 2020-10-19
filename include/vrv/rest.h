@@ -18,13 +18,13 @@ namespace vrv {
 
 class TransPitch;
 
-enum RestLayer { RL_UNSET = -1, RL_sameLayer, RL_otherLayer };
+enum RestLayer { RL_UNSET=-1, RL_sameLayer, RL_otherLayer };
 
-enum RestAccidental { RA_UNSET = -1, RA_none, RA_s, RA_f, RA_x, RA_n };
+enum RestAccidental { RA_UNSET=-1, RA_none, RA_s, RA_f, RA_x, RA_n };
 
-enum RestLayerPlace { RLP_UNSET = -1, RLP_restOnTopLayer, RLP_restOnBottomLayer };
+enum RestLayerPlace { RLP_UNSET=-1, RLP_restOnTopLayer, RLP_restOnBottomLayer };
 
-enum RestNotePlace { RNP_UNSET = -1, RNP_noteInSpace, RNP_noteOnLine };
+enum RestNotePlace { RNP_UNSET=-1, RNP_noteInSpace, RNP_noteOnLine };
 
 //----------------------------------------------------------------------------
 // Rest

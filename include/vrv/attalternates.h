@@ -26,7 +26,7 @@ namespace vrv {
  * Since it can contain different subtype we need a dedicated class for it.
  */
 
-enum FontSizeType { FONTSIZE_NONE = 0, FONTSIZE_fontSizeNumeric, FONTSIZE_term, FONTSIZE_percent };
+enum FontSizeType { FONTSIZE_NONE=0, FONTSIZE_fontSizeNumeric, FONTSIZE_term, FONTSIZE_percent };
 
 class data_FONTSIZE {
 public:
@@ -35,10 +35,10 @@ public:
 
     void Reset(FontSizeType type)
     {
-        m_type = type;
-        m_fontSizeNumeric = VRV_UNSET;
-        m_term = FONTSIZETERM_NONE;
-        m_percent = 0;
+        m_type=type;
+        m_fontSizeNumeric=VRV_UNSET;
+        m_term=FONTSIZETERM_NONE;
+        m_percent=0;
     }
 
     FontSizeType GetType() const { return m_type; }
@@ -47,21 +47,21 @@ public:
     void SetFontSizeNumeric(data_FONTSIZENUMERIC value)
     {
         Reset(FONTSIZE_fontSizeNumeric);
-        m_fontSizeNumeric = value;
+        m_fontSizeNumeric=value;
     }
 
     data_FONTSIZETERM GetTerm() const { return m_term; }
     void SetTerm(data_FONTSIZETERM value)
     {
         Reset(FONTSIZE_term);
-        m_term = value;
+        m_term=value;
     }
 
     data_PERCENT GetPercent() const { return m_percent; }
     void SetPercent(data_PERCENT value)
     {
         Reset(FONTSIZE_percent);
-        m_percent = value;
+        m_percent=value;
     }
 
     bool HasValue() const
@@ -95,7 +95,7 @@ protected:
  * Since it can contain different subtype we need a dedicated class for it.
  */
 
-enum LinewidthType { LINEWIDTHTYPE_NONE = 0, LINEWIDTHTYPE_lineWidthTerm, LINEWIDTHTYPE_measurementAbs };
+enum LinewidthType { LINEWIDTHTYPE_NONE=0, LINEWIDTHTYPE_lineWidthTerm, LINEWIDTHTYPE_measurementAbs };
 
 class data_LINEWIDTH {
 public:
@@ -104,9 +104,9 @@ public:
 
     void Reset(LinewidthType type)
     {
-        m_type = type;
-        m_lineWidthTerm = LINEWIDTHTERM_NONE;
-        m_measurementAbs = VRV_UNSET;
+        m_type=type;
+        m_lineWidthTerm=LINEWIDTHTERM_NONE;
+        m_measurementAbs=VRV_UNSET;
     }
 
     LinewidthType GetType() const { return m_type; }
@@ -115,14 +115,14 @@ public:
     void SetLineWidthTerm(data_LINEWIDTHTERM value)
     {
         Reset(LINEWIDTHTYPE_lineWidthTerm);
-        m_lineWidthTerm = value;
+        m_lineWidthTerm=value;
     }
 
     data_MEASUREMENTABS GetMeasurementAbs() const { return m_measurementAbs; }
     void SetMeasurementAbs(data_MEASUREMENTABS value)
     {
         Reset(LINEWIDTHTYPE_measurementAbs);
-        m_measurementAbs = value;
+        m_measurementAbs=value;
     }
 
     bool HasValue() const
@@ -153,7 +153,7 @@ protected:
  * Since it can contain different subtype we need a dedicated class for it.
  */
 
-enum MidivalueNameType { MIDIVALUENAMETYPE_NONE = 0, MIDIVALUENAMETYPE_midivalue, MIDIVALUENAMETYPE_mcname };
+enum MidivalueNameType { MIDIVALUENAMETYPE_NONE=0, MIDIVALUENAMETYPE_midivalue, MIDIVALUENAMETYPE_mcname };
 
 class data_MIDIVALUE_NAME {
 public:
@@ -162,9 +162,9 @@ public:
 
     void Reset(MidivalueNameType type)
     {
-        m_type = type;
-        m_midivalue = -1;
-        m_ncname = "";
+        m_type=type;
+        m_midivalue=-1;
+        m_ncname="";
     }
 
     MidivalueNameType GetType() const { return m_type; }
@@ -173,14 +173,14 @@ public:
     void SetMidivalue(data_MIDIVALUE value)
     {
         Reset(MIDIVALUENAMETYPE_midivalue);
-        m_midivalue = value;
+        m_midivalue=value;
     }
 
     data_NCNAME GetNcname() const { return m_ncname; }
     void SetNcname(data_NCNAME value)
     {
         Reset(MIDIVALUENAMETYPE_mcname);
-        m_ncname = value;
+        m_ncname=value;
     }
 
     bool HasValue() const
@@ -211,7 +211,7 @@ protected:
  * Since it can contain different subtype we need a dedicated class for it.
  */
 
-enum MidivaluePanType { MIDIVALUEPANTYPE_NONE = 0, MIDIVALUEPANTYPE_midivalue, MIDIVALUEPANTYPE_percentLimitedSigned };
+enum MidivaluePanType { MIDIVALUEPANTYPE_NONE=0, MIDIVALUEPANTYPE_midivalue, MIDIVALUEPANTYPE_percentLimitedSigned };
 
 class data_MIDIVALUE_PAN {
 public:
@@ -220,9 +220,9 @@ public:
 
     void Reset(MidivaluePanType type)
     {
-        m_type = type;
-        m_midivalue = -1;
-        m_percentLimitedSigned = VRV_UNSET;
+        m_type=type;
+        m_midivalue=-1;
+        m_percentLimitedSigned=VRV_UNSET;
     }
 
     MidivaluePanType GetType() const { return m_type; }
@@ -231,14 +231,14 @@ public:
     void SetMidivalue(data_MIDIVALUE value)
     {
         Reset(MIDIVALUEPANTYPE_midivalue);
-        m_midivalue = value;
+        m_midivalue=value;
     }
 
     data_PERCENT_LIMITED_SIGNED GetPercentLimitedSigned() const { return m_percentLimitedSigned; }
     void SetPercentLimitedSigned(data_PERCENT_LIMITED_SIGNED value)
     {
         Reset(MIDIVALUEPANTYPE_percentLimitedSigned);
-        m_percentLimitedSigned = value;
+        m_percentLimitedSigned=value;
     }
 
     bool HasValue() const
@@ -273,7 +273,7 @@ protected:
  * Since it can contain different subtype we need a dedicated class for it.
  */
 
-enum PlacementType { PLACEMENT_NONE = 0, PLACEMENT_staffRel, PLACEMENT_nonStaffPlace, PLACEMENT_nmtoken };
+enum PlacementType { PLACEMENT_NONE=0, PLACEMENT_staffRel, PLACEMENT_nonStaffPlace, PLACEMENT_nmtoken };
 
 class data_PLACEMENT {
 public:
@@ -282,10 +282,10 @@ public:
 
     void Reset(PlacementType type)
     {
-        m_type = type;
-        m_staffRel = data_STAFFREL();
-        m_nonStaffPlace = NONSTAFFPLACE_NONE;
-        m_nmtoken = "";
+        m_type=type;
+        m_staffRel=data_STAFFREL();
+        m_nonStaffPlace=NONSTAFFPLACE_NONE;
+        m_nmtoken="";
     }
 
     PlacementType GetType() const { return m_type; }
@@ -294,7 +294,7 @@ public:
     void SetStaffRel(data_STAFFREL value)
     {
         Reset(PLACEMENT_staffRel);
-        m_staffRel = value;
+        m_staffRel=value;
     }
     data_STAFFREL *GetStaffRelAtlernate() { return &m_staffRel; }
 
@@ -302,14 +302,14 @@ public:
     void SetNonStaffPlace(data_NONSTAFFPLACE value)
     {
         Reset(PLACEMENT_nonStaffPlace);
-        m_nonStaffPlace = value;
+        m_nonStaffPlace=value;
     }
 
     std::string GetNMToken() const { return m_nmtoken; }
     void SetNMToken(std::string value)
     {
         Reset(PLACEMENT_nmtoken);
-        m_nmtoken = value;
+        m_nmtoken=value;
     }
 
     bool HasValue() const

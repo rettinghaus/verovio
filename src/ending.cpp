@@ -75,7 +75,7 @@ bool Ending::IsSupportedChild(Object *child)
 
 int Ending::ConvertToPageBased(FunctorParams *functorParams)
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
+    ConvertToPageBasedParams *params=vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
     assert(params);
 
     this->MoveItselfTo(params->m_pageBasedSystem);
@@ -85,7 +85,7 @@ int Ending::ConvertToPageBased(FunctorParams *functorParams)
 
 int Ending::ConvertToPageBasedEnd(FunctorParams *functorParams)
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
+    ConvertToPageBasedParams *params=vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
     assert(params);
 
     ConvertToPageBasedBoundary(this, params->m_pageBasedSystem);
@@ -95,7 +95,7 @@ int Ending::ConvertToPageBasedEnd(FunctorParams *functorParams)
 
 int Ending::PrepareBoundaries(FunctorParams *functorParams)
 {
-    PrepareBoundariesParams *params = vrv_params_cast<PrepareBoundariesParams *>(functorParams);
+    PrepareBoundariesParams *params=vrv_params_cast<PrepareBoundariesParams *>(functorParams);
     assert(params);
 
     // Endings should always have an BoundaryEnd
@@ -103,7 +103,7 @@ int Ending::PrepareBoundaries(FunctorParams *functorParams)
 
     this->BoundaryStartInterface::InterfacePrepareBoundaries(functorParams);
 
-    params->m_currentEnding = this;
+    params->m_currentEnding=this;
 
     return FUNCTOR_CONTINUE;
 }
@@ -119,7 +119,7 @@ int Ending::ResetDrawing(FunctorParams *functorParams)
 
 int Ending::CastOffSystems(FunctorParams *functorParams)
 {
-    CastOffSystemsParams *params = vrv_params_cast<CastOffSystemsParams *>(functorParams);
+    CastOffSystemsParams *params=vrv_params_cast<CastOffSystemsParams *>(functorParams);
     assert(params);
 
     // Since the functor returns FUNCTOR_SIBLINGS we should never go lower than the system children
@@ -129,7 +129,7 @@ int Ending::CastOffSystems(FunctorParams *functorParams)
     // We want to move the measure to the currentSystem. However, we cannot use DetachChild
     // from the content System because this screws up the iterator. Relinquish gives up
     // the ownership of the Measure - the contentSystem will be deleted afterwards.
-    Ending *ending = dynamic_cast<Ending *>(params->m_contentSystem->Relinquish(this->GetIdx()));
+    Ending *ending=dynamic_cast<Ending *>(params->m_contentSystem->Relinquish(this->GetIdx()));
     // move as pending since we want it at the beginning of the system in case of system break coming
     params->m_pendingObjects.push_back(ending);
 
@@ -138,7 +138,7 @@ int Ending::CastOffSystems(FunctorParams *functorParams)
 
 int Ending::CastOffEncoding(FunctorParams *functorParams)
 {
-    CastOffEncodingParams *params = vrv_params_cast<CastOffEncodingParams *>(functorParams);
+    CastOffEncodingParams *params=vrv_params_cast<CastOffEncodingParams *>(functorParams);
     assert(params);
 
     MoveItselfTo(params->m_currentSystem);
@@ -148,7 +148,7 @@ int Ending::CastOffEncoding(FunctorParams *functorParams)
 
 int Ending::PrepareFloatingGrps(FunctorParams *functorParams)
 {
-    PrepareFloatingGrpsParams *params = vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
+    PrepareFloatingGrpsParams *params=vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
     assert(params);
 
     if (params->m_previousEnding) {
@@ -159,7 +159,7 @@ int Ending::PrepareFloatingGrps(FunctorParams *functorParams)
         this->SetDrawingGrpId(params->m_previousEnding->GetDrawingGrpId());
         // Also set the previous ending to NULL to the grpId is _not_ incremented at the next measure
         // We need this because three or more endings might have to be grouped together
-        params->m_previousEnding = NULL;
+        params->m_previousEnding=NULL;
     }
 
     return FUNCTOR_CONTINUE;

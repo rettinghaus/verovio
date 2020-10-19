@@ -165,9 +165,9 @@ public:
      */
     ///@{
     int GetDrawingXRelLeft() { return m_drawingXRelLeft; }
-    void SetDrawingXRelLeft(int drawingXRelLeft) { m_drawingXRelLeft = drawingXRelLeft; }
+    void SetDrawingXRelLeft(int drawingXRelLeft) { m_drawingXRelLeft=drawingXRelLeft; }
     int GetDrawingXRelRight() { return m_drawingXRelRight; }
-    void SetDrawingXRelRight(int drawingXRelRight) { m_drawingXRelRight = drawingXRelRight; }
+    void SetDrawingXRelRight(int drawingXRelRight) { m_drawingXRelRight=drawingXRelRight; }
     ///@}
 
     /**
@@ -188,7 +188,7 @@ public:
      */
     ///@{
     TupletNum *GetAlignedNum() { return m_alignedNum; }
-    void SetAlignedNum(TupletNum *alignedNum) { m_alignedNum = alignedNum; }
+    void SetAlignedNum(TupletNum *alignedNum) { m_alignedNum=alignedNum; }
     ///@}
 
     //----------//
@@ -263,7 +263,7 @@ public:
      */
     ///@{
     int GetDrawingYMid();
-    int GetDrawingXMid(Doc *doc = NULL);
+    int GetDrawingXMid(Doc *doc=NULL);
     ///@}
 
     /**
@@ -339,9 +339,9 @@ public:
      */
     ///@{
     data_STEMDIRECTION GetDrawingStemDir() { return m_drawingStemDir; }
-    void SetDrawingStemDir(data_STEMDIRECTION drawingStemDir) { m_drawingStemDir = drawingStemDir; }
+    void SetDrawingStemDir(data_STEMDIRECTION drawingStemDir) { m_drawingStemDir=drawingStemDir; }
     int GetDrawingStemLen() { return m_drawingStemLen; }
-    void SetDrawingStemLen(int drawingStemLen) { m_drawingStemLen = drawingStemLen; }
+    void SetDrawingStemLen(int drawingStemLen) { m_drawingStemLen=drawingStemLen; }
     ///@}
 
     /**
@@ -349,7 +349,7 @@ public:
      */
     ///@{
     bool IsVirtual() const { return m_isVirtual; }
-    void IsVirtual(bool isVirtual) { m_isVirtual = isVirtual; }
+    void IsVirtual(bool isVirtual) { m_isVirtual=isVirtual; }
     ///@}
 
     //----------//

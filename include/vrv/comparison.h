@@ -21,7 +21,7 @@
 
 namespace vrv {
 
-enum DurExtreme { LONGEST = 0, SHORTEST };
+enum DurExtreme { LONGEST=0, SHORTEST };
 
 //----------------------------------------------------------------------------
 // Comparison
@@ -30,8 +30,8 @@ enum DurExtreme { LONGEST = 0, SHORTEST };
 class Comparison {
 
 public:
-    virtual bool operator()(Object *object) = 0;
-    virtual bool MatchesType(Object *object) = 0;
+    virtual bool operator()(Object *object)=0;
+    virtual bool MatchesType(Object *object)=0;
 };
 
 //----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ public:
 class ClassIdComparison : public Comparison {
 
 public:
-    ClassIdComparison(ClassId classId) { m_classId = classId; }
+    ClassIdComparison(ClassId classId) { m_classId=classId; }
 
     virtual bool operator()(Object *object)
     {
@@ -72,7 +72,7 @@ protected:
 class ClassIdsComparison : public Comparison {
 
 public:
-    ClassIdsComparison(const std::vector<ClassId> &classIds) { m_classIds = classIds; }
+    ClassIdsComparison(const std::vector<ClassId> &classIds) { m_classIds=classIds; }
 
     virtual bool operator()(Object *object)
     {
@@ -95,7 +95,7 @@ protected:
 class InterfaceComparison : public Comparison {
 
 public:
-    InterfaceComparison(InterfaceId interfaceId) { m_interfaceId = interfaceId; }
+    InterfaceComparison(InterfaceId interfaceId) { m_interfaceId=interfaceId; }
 
     virtual bool operator()(Object *object)
     {
@@ -120,13 +120,13 @@ class PointingToComparison : public ClassIdComparison {
 public:
     PointingToComparison(ClassId classId, Object *pointingTo) : ClassIdComparison(classId)
     {
-        m_pointingTo = pointingTo;
+        m_pointingTo=pointingTo;
     }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
-        TimePointInterface *interface = object->GetTimePointInterface();
+        TimePointInterface *interface=object->GetTimePointInterface();
         if (!interface) return false;
         return (interface->GetStart() == m_pointingTo);
     }
@@ -166,7 +166,7 @@ public:
 class IsEmptyComparison : public ClassIdComparison {
 
 public:
-    IsEmptyComparison(ClassId classId, bool reverse = false) : ClassIdComparison(classId) { m_reverse = reverse; }
+    IsEmptyComparison(ClassId classId, bool reverse=false) : ClassIdComparison(classId) { m_reverse=reverse; }
 
     virtual bool operator()(Object *object)
     {
@@ -214,16 +214,16 @@ public:
 class AttNIntegerComparison : public ClassIdComparison {
 
 public:
-    AttNIntegerComparison(ClassId classId, const int n) : ClassIdComparison(classId) { m_n = n; }
+    AttNIntegerComparison(ClassId classId, const int n) : ClassIdComparison(classId) { m_n=n; }
 
-    void SetN(int n) { m_n = n; }
+    void SetN(int n) { m_n=n; }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
         // This should not happen, but just in case
         if (!object->HasAttClass(ATT_NINTEGER)) return false;
-        AttNInteger *element = dynamic_cast<AttNInteger *>(object);
+        AttNInteger *element=dynamic_cast<AttNInteger *>(object);
         assert(element);
         return (element->GetN() == m_n);
     }
@@ -242,16 +242,16 @@ private:
 class AttNIntegerAnyComparison : public ClassIdComparison {
 
 public:
-    AttNIntegerAnyComparison(ClassId classId, std::vector<int> ns) : ClassIdComparison(classId) { m_ns = ns; }
+    AttNIntegerAnyComparison(ClassId classId, std::vector<int> ns) : ClassIdComparison(classId) { m_ns=ns; }
 
-    void SetNs(std::vector<int> ns) { m_ns = ns; }
+    void SetNs(std::vector<int> ns) { m_ns=ns; }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
         // This should not happen, but just in case
         if (!object->HasAttClass(ATT_NINTEGER)) return false;
-        AttNInteger *element = dynamic_cast<AttNInteger *>(object);
+        AttNInteger *element=dynamic_cast<AttNInteger *>(object);
         assert(element);
         return (std::find(m_ns.begin(), m_ns.end(), element->GetN()) != m_ns.end());
     }
@@ -270,16 +270,16 @@ private:
 class AttNNumberLikeComparison : public ClassIdComparison {
 
 public:
-    AttNNumberLikeComparison(ClassId classId, const std::string n) : ClassIdComparison(classId) { m_n = n; }
+    AttNNumberLikeComparison(ClassId classId, const std::string n) : ClassIdComparison(classId) { m_n=n; }
 
-    void SetN(std::string n) { m_n = n; }
+    void SetN(std::string n) { m_n=n; }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
         // This should not happen, but just in case
         if (!object->HasAttClass(ATT_NNUMBERLIKE)) return false;
-        AttNNumberLike *element = dynamic_cast<AttNNumberLike *>(object);
+        AttNNumberLike *element=dynamic_cast<AttNNumberLike *>(object);
         assert(element);
         return (element->GetN() == m_n);
     }
@@ -302,25 +302,25 @@ class AttDurExtremeComparison : public ClassIdComparison {
 public:
     AttDurExtremeComparison(DurExtreme extremeType) : ClassIdComparison(OBJECT)
     {
-        m_extremeType = extremeType;
+        m_extremeType=extremeType;
         if (m_extremeType == LONGEST)
-            m_extremeDur = -VRV_UNSET;
+            m_extremeDur=-VRV_UNSET;
         else
-            m_extremeDur = VRV_UNSET;
+            m_extremeDur=VRV_UNSET;
     }
 
     virtual bool operator()(Object *object)
     {
         if (!object->HasInterface(INTERFACE_DURATION)) return false;
-        DurationInterface *interface = dynamic_cast<DurationInterface *>(object);
+        DurationInterface *interface=dynamic_cast<DurationInterface *>(object);
         assert(interface);
         if (interface->HasDur()) {
             if ((m_extremeType == LONGEST) && (interface->GetActualDur() < m_extremeDur)) {
-                m_extremeDur = interface->GetActualDur();
+                m_extremeDur=interface->GetActualDur();
                 return true;
             }
             else if ((m_extremeType == SHORTEST) && (interface->GetActualDur() > m_extremeDur)) {
-                m_extremeDur = interface->GetActualDur();
+                m_extremeDur=interface->GetActualDur();
                 return true;
             }
         }
@@ -342,14 +342,14 @@ private:
 class ArticPartTypeComparison : public ClassIdComparison {
 
 public:
-    ArticPartTypeComparison(const ArticPartType type) : ClassIdComparison(ARTIC_PART) { m_type = type; }
+    ArticPartTypeComparison(const ArticPartType type) : ClassIdComparison(ARTIC_PART) { m_type=type; }
 
-    void SetType(ArticPartType type) { m_type = type; }
+    void SetType(ArticPartType type) { m_type=type; }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
-        ArticPart *articPart = vrv_cast<ArticPart *>(object);
+        ArticPart *articPart=vrv_cast<ArticPart *>(object);
         assert(articPart);
         return (articPart->GetType() == m_type);
     }
@@ -368,14 +368,14 @@ private:
 class MeasureAlignerTypeComparison : public ClassIdComparison {
 
 public:
-    MeasureAlignerTypeComparison(const AlignmentType type) : ClassIdComparison(ALIGNMENT) { m_type = type; }
+    MeasureAlignerTypeComparison(const AlignmentType type) : ClassIdComparison(ALIGNMENT) { m_type=type; }
 
-    void SetType(AlignmentType type) { m_type = type; }
+    void SetType(AlignmentType type) { m_type=type; }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
-        Alignment *alignment = vrv_cast<Alignment *>(object);
+        Alignment *alignment=vrv_cast<Alignment *>(object);
         assert(alignment);
         return (alignment->GetType() == m_type);
     }
@@ -394,14 +394,14 @@ private:
 class MeasureOnsetOffsetComparison : public ClassIdComparison {
 
 public:
-    MeasureOnsetOffsetComparison(const int time) : ClassIdComparison(MEASURE) { m_time = time; }
+    MeasureOnsetOffsetComparison(const int time) : ClassIdComparison(MEASURE) { m_time=time; }
 
-    void SetTime(int time) { m_time = time; }
+    void SetTime(int time) { m_time=time; }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
-        Measure *measure = vrv_cast<Measure *>(object);
+        Measure *measure=vrv_cast<Measure *>(object);
         assert(measure);
         return (measure->EnclosesTime(m_time) > 0);
     }
@@ -420,14 +420,14 @@ private:
 class NoteOnsetOffsetComparison : public ClassIdComparison {
 
 public:
-    NoteOnsetOffsetComparison(const int time) : ClassIdComparison(NOTE) { m_time = time; }
+    NoteOnsetOffsetComparison(const int time) : ClassIdComparison(NOTE) { m_time=time; }
 
-    void SetTime(int time) { m_time = time; }
+    void SetTime(int time) { m_time=time; }
 
     virtual bool operator()(Object *object)
     {
         if (!MatchesType(object)) return false;
-        Note *note = vrv_cast<Note *>(object);
+        Note *note=vrv_cast<Note *>(object);
         assert(note);
         return ((m_time >= note->GetRealTimeOnsetMilliseconds()) && (m_time <= note->GetRealTimeOffsetMilliseconds()));
     }
@@ -448,18 +448,18 @@ class VisibleStaffDefOrGrpObject : public ClassIdsComparison {
 public:
     VisibleStaffDefOrGrpObject() : ClassIdsComparison({ STAFFDEF, STAFFGRP }) {}
 
-    void Skip(const Object *objectToExclude) { m_objectToExclude = objectToExclude; }
+    void Skip(const Object *objectToExclude) { m_objectToExclude=objectToExclude; }
 
     virtual bool operator()(Object *object)
     {
         if (object == m_objectToExclude || !ClassIdsComparison::operator()(object)) return false;
 
         if (object->Is(STAFFDEF)) {
-            StaffDef *staffDef = dynamic_cast<StaffDef *>(object);
+            StaffDef *staffDef=dynamic_cast<StaffDef *>(object);
             return staffDef && staffDef->GetDrawingVisibility() != OPTIMIZATION_HIDDEN;
         }
 
-        StaffGrp *staffGrp = dynamic_cast<StaffGrp *>(object);
+        StaffGrp *staffGrp=dynamic_cast<StaffGrp *>(object);
         return staffGrp && staffGrp->GetDrawingVisibility() != OPTIMIZATION_HIDDEN;
     }
 

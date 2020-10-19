@@ -36,7 +36,7 @@ public:
      */
     ///@{
     double GetActualDurPos() const { return m_actualDurPos; }
-    void SetDrawingPos(double pos) { m_actualDurPos = pos; }
+    void SetDrawingPos(double pos) { m_actualDurPos=pos; }
     ///@}
 
     /**

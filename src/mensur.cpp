@@ -20,8 +20,8 @@
 
 namespace vrv {
 
-int Mensur::s_num = 3;
-int Mensur::s_numBase = 2;
+int Mensur::s_num=3;
+int Mensur::s_numBase=2;
 
 //----------------------------------------------------------------------------
 // Mensur
@@ -61,10 +61,10 @@ void Mensur::Reset()
 
 int Mensur::LayerCountInTimeSpan(FunctorParams *functorParams)
 {
-    LayerCountInTimeSpanParams *params = vrv_params_cast<LayerCountInTimeSpanParams *>(functorParams);
+    LayerCountInTimeSpanParams *params=vrv_params_cast<LayerCountInTimeSpanParams *>(functorParams);
     assert(params);
 
-    params->m_mensur = this;
+    params->m_mensur=this;
 
     return FUNCTOR_CONTINUE;
 }

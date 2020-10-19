@@ -40,8 +40,8 @@ void Dot::Reset()
     ResetColor();
     ResetDotLog();
 
-    m_drawingNote = NULL;
-    m_drawingNextElement = NULL;
+    m_drawingNote=NULL;
+    m_drawingNextElement=NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -50,11 +50,11 @@ void Dot::Reset()
 
 int Dot::PreparePointersByLayer(FunctorParams *functorParams)
 {
-    PreparePointersByLayerParams *params = vrv_params_cast<PreparePointersByLayerParams *>(functorParams);
+    PreparePointersByLayerParams *params=vrv_params_cast<PreparePointersByLayerParams *>(functorParams);
     assert(params);
 
-    m_drawingNote = params->m_currentNote;
-    params->m_lastDot = this;
+    m_drawingNote=params->m_currentNote;
+    params->m_lastDot=this;
 
     return FUNCTOR_CONTINUE;
 }
@@ -65,8 +65,8 @@ int Dot::ResetDrawing(FunctorParams *functorParams)
     LayerElement::ResetDrawing(functorParams);
     PositionInterface::InterfaceResetDrawing(functorParams, this);
 
-    this->m_drawingNote = NULL;
-    this->m_drawingNextElement = NULL;
+    this->m_drawingNote=NULL;
+    this->m_drawingNextElement=NULL;
 
     return FUNCTOR_CONTINUE;
 }

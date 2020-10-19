@@ -23,11 +23,11 @@ namespace smf {
 //
 
 Binasc::Binasc(void) {
-	m_bytesQ    = 1; // for printing HEX bytes when converting to ASCII
-	m_commentsQ = 0; // for printing text comments when converting to ASCII
-	m_midiQ     = 0; // for printing ASCII as parsed MIDI file.
-	m_maxLineLength = 75;
-	m_maxLineBytes  = 25;
+	m_bytesQ   =1; // for printing HEX bytes when converting to ASCII
+	m_commentsQ=0; // for printing text comments when converting to ASCII
+	m_midiQ    =0; // for printing ASCII as parsed MIDI file.
+	m_maxLineLength=75;
+	m_maxLineBytes =25;
 }
 
 
@@ -52,9 +52,9 @@ Binasc::~Binasc() {
 
 int Binasc::setLineLength(int length) {
 	if (length < 1) {
-		m_maxLineLength = 75;
+		m_maxLineLength=75;
 	} else {
-		m_maxLineLength = length;
+		m_maxLineLength=length;
 	}
 	return m_maxLineLength;
 }
@@ -82,9 +82,9 @@ int Binasc::getLineLength(void) {
 
 int Binasc::setLineBytes(int length) {
 	if (length < 1) {
-		m_maxLineBytes = 25;
+		m_maxLineBytes=25;
 	} else {
-		m_maxLineBytes = length;
+		m_maxLineBytes=length;
 	}
 	return m_maxLineBytes;
 }
@@ -109,7 +109,7 @@ int Binasc::getLineBytes(void) {
 //
 
 void Binasc::setComments(int state) {
-	m_commentsQ = state ? 1 : 0;
+	m_commentsQ=state ? 1 : 0;
 }
 
 
@@ -143,7 +143,7 @@ int Binasc::getComments(void) {
 //
 
 void Binasc::setBytes(int state) {
-	m_bytesQ = state ? 1 : 0;
+	m_bytesQ=state ? 1 : 0;
 }
 
 
@@ -173,7 +173,7 @@ int Binasc::getBytes(void) {
 //
 
 void Binasc::setMidi(int state) {
-	m_midiQ = state ? 1 : 0;
+	m_midiQ=state ? 1 : 0;
 }
 
 
@@ -224,7 +224,7 @@ int Binasc::writeToBinary(const std::string& outfile,
 		return 0;
 	}
 
-	int status = writeToBinary(output, input);
+	int status=writeToBinary(output, input);
 	input.close();
 	output.close();
 	return status;
@@ -240,7 +240,7 @@ int Binasc::writeToBinary(const std::string& outfile, std::istream& input) {
 		return 0;
 	}
 
-	int status = writeToBinary(output, input);
+	int status=writeToBinary(output, input);
 	output.close();
 	return status;
 }
@@ -255,20 +255,20 @@ int Binasc::writeToBinary(std::ostream& out, const std::string& infile) {
 		return 0;
 	}
 
-	int status = writeToBinary(out, input);
+	int status=writeToBinary(out, input);
 	input.close();
 	return status;
 }
 
 
 int Binasc::writeToBinary(std::ostream& out, std::istream& input) {
-	char inputLine[1024] = {0};    // current line being processed
-	int  lineNum = 0;              // current line number
+	char inputLine[1024]={0};    // current line being processed
+	int  lineNum=0;              // current line number
 
 	input.getline(inputLine, 1024, '\n');
 	lineNum++;
 	while (!input.eof()) {
-		int status = processLine(out, inputLine, lineNum);
+		int status=processLine(out, inputLine, lineNum);
 		if (!status) {
 			return 0;
 		}
@@ -303,7 +303,7 @@ int Binasc::readFromBinary(const std::string& outfile, const std::string& infile
 		return 0;
 	}
 
-	int status = readFromBinary(output, input);
+	int status=readFromBinary(output, input);
 	input.close();
 	output.close();
 	return status;
@@ -319,7 +319,7 @@ int Binasc::readFromBinary(const std::string& outfile, std::istream& input) {
 		return 0;
 	}
 
-	int status = readFromBinary(output, input);
+	int status=readFromBinary(output, input);
 	output.close();
 	return status;
 }
@@ -334,7 +334,7 @@ int Binasc::readFromBinary(std::ostream& out, const std::string& infile) {
 		return 0;
 	}
 
-	int status = readFromBinary(out, input);
+	int status=readFromBinary(out, input);
 	input.close();
 	return status;
 }
@@ -343,13 +343,13 @@ int Binasc::readFromBinary(std::ostream& out, const std::string& infile) {
 int Binasc::readFromBinary(std::ostream& out, std::istream& input) {
 	int status;
 	if (m_midiQ) {
-		status = outputStyleMidi(out, input);
+		status=outputStyleMidi(out, input);
 	} else if (!m_bytesQ) {
-		status = outputStyleAscii(out, input);
+		status=outputStyleAscii(out, input);
 	} else if (m_bytesQ && m_commentsQ) {
-		status = outputStyleBoth(out, input);
+		status=outputStyleBoth(out, input);
 	} else {
-		status = outputStyleBinary(out, input);
+		status=outputStyleBinary(out, input);
 	}
 	return status;
 }
@@ -369,39 +369,39 @@ int Binasc::readFromBinary(std::ostream& out, std::istream& input) {
 //
 
 int Binasc::outputStyleAscii(std::ostream& out, std::istream& input) {
-	uchar outputWord[256] = {0};   // storage for current word
-	int index     = 0;             // current length of word
-	int lineCount = 0;             // current length of line
-	int type      = 0;             // 0=space, 1=printable
+	uchar outputWord[256]={0};   // storage for current word
+	int index    =0;             // current length of word
+	int lineCount=0;             // current length of line
+	int type     =0;             // 0=space, 1=printable
 	uchar ch;                      // current input byte
 
-	ch = input.get();
+	ch=input.get();
 	while (!input.eof()) {
-		int lastType = type;
-		type = (isprint(ch) && !isspace(ch)) ? 1 : 0;
+		int lastType=type;
+		type=(isprint(ch) && !isspace(ch)) ? 1 : 0;
 
 		if ((type == 1) && (lastType == 0)) {
 			// start of a new word.  check where to put old word
 			if (index + lineCount >= m_maxLineLength) {  // put on next line
-				outputWord[index] = '\0';
+				outputWord[index]='\0';
 				out << '\n' << outputWord;
-				lineCount = index;
-				index = 0;
+				lineCount=index;
+				index=0;
 			} else {                                   // put on current line
-				outputWord[index] = '\0';
+				outputWord[index]='\0';
 				if (lineCount != 0) {
 					out << ' ';
 					lineCount++;
 				}
 				out << outputWord;
 				lineCount += index;
-				index = 0;
+				index=0;
 			}
 		}
 		if (type == 1) {
-			outputWord[index++] = ch;
+			outputWord[index++]=ch;
 		}
-		ch = input.get();
+		ch=input.get();
 	}
 
 	if (index != 0) {
@@ -420,10 +420,10 @@ int Binasc::outputStyleAscii(std::ostream& out, std::istream& input) {
 //
 
 int Binasc::outputStyleBinary(std::ostream& out, std::istream& input) {
-	int currentByte = 0;    // current byte output in line
+	int currentByte=0;    // current byte output in line
 	uchar ch;               // current input byte
 
-	ch = input.get();
+	ch=input.get();
 	if (input.eof()) {
 		std::cerr << "End of the file right away!" << std::endl;
 		return 0;
@@ -437,9 +437,9 @@ int Binasc::outputStyleBinary(std::ostream& out, std::istream& input) {
 		currentByte++;
 		if (currentByte >= m_maxLineBytes) {
 			out << '\n';
-			currentByte = 0;
+			currentByte=0;
 		}
-		ch = input.get();
+		ch=input.get();
 	}
 
 	if (currentByte != 0) {
@@ -458,15 +458,15 @@ int Binasc::outputStyleBinary(std::ostream& out, std::istream& input) {
 //
 
 int Binasc::outputStyleBoth(std::ostream& out, std::istream& input) {
-	uchar asciiLine[256] = {0};    // storage for output line
-	int currentByte = 0;           // current byte output in line
-	int index = 0;                 // current character in asciiLine
+	uchar asciiLine[256]={0};    // storage for output line
+	int currentByte=0;           // current byte output in line
+	int index=0;                 // current character in asciiLine
 	uchar ch;                      // current input byte
 
-	ch = input.get();
+	ch=input.get();
 	while (!input.eof()) {
 		if (index == 0) {
-			asciiLine[index++] = ';';
+			asciiLine[index++]=';';
 			out << ' ';
 		}
 		if (ch < 0x10) {
@@ -475,27 +475,27 @@ int Binasc::outputStyleBoth(std::ostream& out, std::istream& input) {
 		out << std::hex << (int)ch << ' ';
 		currentByte++;
 
-		asciiLine[index++] = ' ';
+		asciiLine[index++]=' ';
 		if (isprint(ch)) {
-			asciiLine[index++] = ch;
+			asciiLine[index++]=ch;
 		} else {
-			asciiLine[index++] = ' ';
+			asciiLine[index++]=' ';
 		}
-		asciiLine[index++] = ' ';
+		asciiLine[index++]=' ';
 
 		if (currentByte >= m_maxLineBytes) {
 			out << '\n';
-			asciiLine[index] = '\0';
+			asciiLine[index]='\0';
 			out << asciiLine << "\n\n";
-			currentByte = 0;
-			index = 0;
+			currentByte=0;
+			index=0;
 		}
-		ch = input.get();
+		ch=input.get();
 	}
 
 	if (currentByte != 0) {
 		out << '\n';
-		asciiLine[index] = '\0';
+		asciiLine[index]='\0';
 		out << asciiLine << '\n' << std::endl;
 	}
 
@@ -511,9 +511,9 @@ int Binasc::outputStyleBoth(std::ostream& out, std::istream& input) {
 
 int Binasc::processLine(std::ostream& out, const std::string& input,
 		int lineCount) {
-	int status = 1;
-	int i = 0;
-	int length = (int)input.size();
+	int status=1;
+	int i=0;
+	int length=(int)input.size();
 	std::string word;
 	while (i<length) {
 		if ((input[i] == ';') || (input[i] == '#') || (input[i] == '/')) {
@@ -525,29 +525,29 @@ int Binasc::processLine(std::ostream& out, const std::string& input,
 			i++;
 			continue;
 		} else if (input[i] == '+') {
-			i = getWord(word, input, " \n\t", i);
-			status = processAsciiWord(out, word, lineCount);
+			i=getWord(word, input, " \n\t", i);
+			status=processAsciiWord(out, word, lineCount);
 		} else if (input[i] == '"') {
-			i = getWord(word, input, "\"", i);
-			status = processStringWord(out, word, lineCount);
+			i=getWord(word, input, "\"", i);
+			status=processStringWord(out, word, lineCount);
 		} else if (input[i] == 'v') {
-			i = getWord(word, input, " \n\t", i);
-			status = processVlvWord(out, word, lineCount);
+			i=getWord(word, input, " \n\t", i);
+			status=processVlvWord(out, word, lineCount);
 		} else if (input[i] == 'p') {
-			i = getWord(word, input, " \n\t", i);
-			status = processMidiPitchBendWord(out, word, lineCount);
+			i=getWord(word, input, " \n\t", i);
+			status=processMidiPitchBendWord(out, word, lineCount);
 		} else if (input[i] == 't') {
-			i = getWord(word, input, " \n\t", i);
-			status = processMidiTempoWord(out, word, lineCount);
+			i=getWord(word, input, " \n\t", i);
+			status=processMidiTempoWord(out, word, lineCount);
 		} else {
-			i = getWord(word, input, " \n\t", i);
+			i=getWord(word, input, " \n\t", i);
 			if (word.find('\'') != std::string::npos) {
-				status = processDecimalWord(out, word, lineCount);
+				status=processDecimalWord(out, word, lineCount);
 			} else if ((word.find(',') != std::string::npos)
 					|| (word.size() > 2)) {
-				status = processBinaryWord(out, word, lineCount);
+				status=processBinaryWord(out, word, lineCount);
 			} else {
-				status = processHexWord(out, word, lineCount);
+				status=processHexWord(out, word, lineCount);
 			}
 		}
 
@@ -571,11 +571,11 @@ int Binasc::processLine(std::ostream& out, const std::string& input,
 int Binasc::getWord(std::string& word, const std::string& input,
 		const std::string& terminators, int index) {
 	word.resize(0);
-	int i = index;
-	int escape = 0;
-	int ecount = 0;
+	int i=index;
+	int escape=0;
+	int ecount=0;
 	if (terminators.find('"') != std::string::npos) {
-		escape = 1;
+		escape=1;
 	}
 	while (i < (int)input.size()) {
 		if (escape && input[i] == '\"') {
@@ -608,15 +608,15 @@ int Binasc::getWord(std::string& word, const std::string& input,
 //
 
 int Binasc::getVLV(std::istream& infile, int& trackbytes) {
-	int output = 0;
-	uchar ch = 0;
+	int output=0;
+	uchar ch=0;
 	infile.read((char*)&ch, 1);
 	trackbytes++;
-	output = (output << 7) | (0x7f & ch);
+	output=(output << 7) | (0x7f & ch);
 	while (ch >= 0x80) {
 		infile.read((char*)&ch, 1);
 		trackbytes++;
-		output = (output << 7) | (0x7f & ch);
+		output=(output << 7) | (0x7f & ch);
 	}
 	return output;
 }
@@ -634,7 +634,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 		int& trackbytes, int& command) {
 
 	// Read and print Variable Length Value for delta ticks
-	int vlv = getVLV(infile, trackbytes);
+	int vlv=getVLV(infile, trackbytes);
 
 	std::stringstream output;
 
@@ -642,8 +642,8 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 
 	std::string comment;
 
-	int status = 1;
-	uchar ch = 0;
+	int status=1;
+	uchar ch=0;
 	char byte1, byte2;
 	infile.read((char*)&ch, 1);
 	trackbytes++;
@@ -653,17 +653,17 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 	} else {
 		// midi command byte
 		output << std::hex << (int)ch;
-		command = ch;
+		command=ch;
 		infile.read((char*)&ch, 1);
 		trackbytes++;
 	}
-	byte1 = ch;
+	byte1=ch;
 	switch (command & 0xf0) {
 		case 0x80:    // note-off: 2 bytes
 			output << " '" << std::dec << (int)byte1;
 			infile.read((char*)&ch, 1);
 			trackbytes++;
-			byte2 = ch;
+			byte2=ch;
 			output << " '" << std::dec << (int)byte2;
 			if (m_commentsQ) {
 				comment += "note-off " + keyToPitchName(byte1);
@@ -673,7 +673,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 			output << " '" << std::dec << (int)byte1;
 			infile.read((char*)&ch, 1);
 			trackbytes++;
-			byte2 = ch;
+			byte2=ch;
 			output << " '" << std::dec << (int)byte2;
 			if (m_commentsQ) {
 				if (byte2 == 0) {
@@ -687,7 +687,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 			output << " '" << std::dec << (int)byte1;
 			infile.read((char*)&ch, 1);
 			trackbytes++;
-			byte2 = ch;
+			byte2=ch;
 			output << " '" << std::dec << (int)byte2;
 			if (m_commentsQ) {
 				comment += "after-touch";
@@ -697,7 +697,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 			output << " '" << std::dec << (int)byte1;
 			infile.read((char*)&ch, 1);
 			trackbytes++;
-			byte2 = ch;
+			byte2=ch;
 			output << " '" << std::dec << (int)byte2;
 			if (m_commentsQ) {
 				comment += "controller";
@@ -707,7 +707,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 			output << " '" << std::dec << (int)byte1;
 			infile.read((char*)&ch, 1);
 			trackbytes++;
-			byte2 = ch;
+			byte2=ch;
 			output << " '" << std::dec << (int)byte2;
 			if (m_commentsQ) {
 				comment += "pitch-bend";
@@ -738,7 +738,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 					{
 					infile.putback(byte1);
 					trackbytes--;
-					int length = getVLV(infile, trackbytes);
+					int length=getVLV(infile, trackbytes);
 					output << " v" << std::dec << length;
 					for (int i=0; i<length; i++) {
 						infile.read((char*)&ch, 1);
@@ -781,9 +781,9 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 					break;
 				case 0xff:  // meta message
 					{
-					int metatype = ch;
+					int metatype=ch;
 					output << " " << std::hex << metatype;
-					int length = getVLV(infile, trackbytes);
+					int length=getVLV(infile, trackbytes);
 					output << " v" << std::dec << length;
 					switch (metatype) {
 
@@ -792,10 +792,10 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 						   {
 						   infile.read((char*)&ch, 1);
 						   trackbytes++;
-						   int number = ch;
+						   int number=ch;
 						   infile.read((char*)&ch, 1);
 						   trackbytes++;
-						   number = (number << 8) | ch;
+						   number=(number << 8) | ch;
 						   output << " 2'" << number;
 						   }
 						   break;
@@ -811,17 +811,17 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 						case 0x51: // Tempo
 						    // display tempo as "t" word.
 						    {
-						    int number = 0;
+						    int number=0;
 						    infile.read((char*)&ch, 1);
 						    trackbytes++;
-						    number = (number << 8) | ch;
+						    number=(number << 8) | ch;
 						    infile.read((char*)&ch, 1);
 						    trackbytes++;
-						    number = (number << 8) | ch;
+						    number=(number << 8) | ch;
 						    infile.read((char*)&ch, 1);
 						    trackbytes++;
-						    number = (number << 8) | ch;
-						    double tempo = 1000000.0 / number * 60.0;
+						    number=(number << 8) | ch;
+						    double tempo=1000000.0 / number * 60.0;
 						    output << " t" << tempo;
 						    }
 						    break;
@@ -915,7 +915,7 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 						case 0x59: comment += "key signature";       break;
 						case 0x7f: comment += "system exclusive";    break;
 						case 0x2f:
-						   status = 0;
+						   status=0;
 						   comment += "end-of-track";
 						   break;
 						default:
@@ -945,8 +945,8 @@ int Binasc::readMidiEvent(std::ostream& out, std::istream& infile,
 //
 
 std::string Binasc::keyToPitchName(int key) {
-	int pc = key % 12;
-	int octave = key / 12 - 1;
+	int pc=key % 12;
+	int octave=key / 12 - 1;
 	std::stringstream output;
 	switch (pc) {
 		case  0: output << "C";  break;
@@ -975,7 +975,7 @@ std::string Binasc::keyToPitchName(int key) {
 //
 
 int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
-	uchar ch = 0;                      // current input byte
+	uchar ch=0;                      // current input byte
 	std::stringstream tempout;
 	input.read((char*)&ch, 1);
 
@@ -1002,11 +1002,11 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 
 	// The next four bytes are a big-endian byte count for the header
 	// which should nearly always be "6".
-	int headersize = 0;
-	input.read((char*)&ch, 1); headersize = (headersize << 8) | ch;
-	input.read((char*)&ch, 1); headersize = (headersize << 8) | ch;
-	input.read((char*)&ch, 1); headersize = (headersize << 8) | ch;
-	input.read((char*)&ch, 1); headersize = (headersize << 8) | ch;
+	int headersize=0;
+	input.read((char*)&ch, 1); headersize=(headersize << 8) | ch;
+	input.read((char*)&ch, 1); headersize=(headersize << 8) | ch;
+	input.read((char*)&ch, 1); headersize=(headersize << 8) | ch;
+	input.read((char*)&ch, 1); headersize=(headersize << 8) | ch;
 	tempout << "4'" << headersize;
 	if (m_commentsQ) {
 		tempout << "\t\t\t; bytes to follow in header chunk";
@@ -1014,11 +1014,11 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 	tempout << std::endl;
 
 	// First number in header is two-byte file type.
-	int filetype = 0;
+	int filetype=0;
 	input.read((char*)&ch, 1);
-	filetype = (filetype << 8) | ch;
+	filetype=(filetype << 8) | ch;
 	input.read((char*)&ch, 1);
-	filetype = (filetype << 8) | ch;
+	filetype=(filetype << 8) | ch;
 	tempout << "2'" << filetype;
 	if (m_commentsQ) {
 		tempout << "\t\t\t; file format: Type-" << filetype << " (";
@@ -1033,11 +1033,11 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 	tempout << std::endl;
 
 	// Second number in header is two-byte trackcount.
-	int trackcount = 0;
+	int trackcount=0;
 	input.read((char*)&ch, 1);
-	trackcount = (trackcount << 8) | ch;
+	trackcount=(trackcount << 8) | ch;
 	input.read((char*)&ch, 1);
-	trackcount = (trackcount << 8) | ch;
+	trackcount=(trackcount << 8) | ch;
 	tempout << "2'" << trackcount;
 	if (m_commentsQ) {
 		tempout << "\t\t\t; number of tracks";
@@ -1048,8 +1048,8 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 	// regular: top bit is 0: number of ticks per quarter note
 	// SMPTE:   top bit is 1: first byte is negative frames, second is
 	//          ticks per frame.
-	uchar byte1 = 0;
-	uchar byte2 = 0;
+	uchar byte1=0;
+	uchar byte2=0;
 	input.read((char*)&byte1, 1);
 	input.read((char*)&byte2, 1);
 	if (byte1 & 0x80) {
@@ -1066,9 +1066,9 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 		tempout << std::endl;
 	} else {
 		// regular divisions
-		int divisions = 0;
-		divisions = (divisions << 8) | byte1;
-		divisions = (divisions << 8) | byte2;
+		int divisions=0;
+		divisions=(divisions << 8) | byte1;
+		divisions=(divisions << 8) | byte2;
 		tempout << "2'" << divisions;
 		if (m_commentsQ) {
 			tempout << "\t\t\t; ticks per quarter note";
@@ -1110,19 +1110,19 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 		tempout << std::endl;
 
 		// The next four bytes are a big-endian byte count for the track
-		int tracksize = 0;
-		input.read((char*)&ch, 1); tracksize = (tracksize << 8) | ch;
-		input.read((char*)&ch, 1); tracksize = (tracksize << 8) | ch;
-		input.read((char*)&ch, 1); tracksize = (tracksize << 8) | ch;
-		input.read((char*)&ch, 1); tracksize = (tracksize << 8) | ch;
+		int tracksize=0;
+		input.read((char*)&ch, 1); tracksize=(tracksize << 8) | ch;
+		input.read((char*)&ch, 1); tracksize=(tracksize << 8) | ch;
+		input.read((char*)&ch, 1); tracksize=(tracksize << 8) | ch;
+		input.read((char*)&ch, 1); tracksize=(tracksize << 8) | ch;
 		tempout << "4'" << tracksize;
 		if (m_commentsQ) {
 			tempout << "\t\t\t; bytes to follow in track chunk";
 		}
 		tempout << std::endl;
 
-		int trackbytes = 0;
-		int command = 0;
+		int trackbytes=0;
+		int command=0;
 
 		// process MIDI events until the end of the track
 		while (readMidiEvent(tempout, input, trackbytes, command)) {
@@ -1153,13 +1153,13 @@ int Binasc::outputStyleMidi(std::ostream& out, std::istream& input) {
 
 int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 		int lineNum) {
-	int length = (int)word.size();        // length of ascii binary number
-	int byteCount = -1;              // number of bytes to output
-	int quoteIndex = -1;             // index of decimal specifier
-	int signIndex = -1;              // index of any sign for number
-	int periodIndex = -1;            // index of period for floating point
-	int endianIndex = -1;            // index of little endian specifier
-	int i = 0;
+	int length=(int)word.size();        // length of ascii binary number
+	int byteCount=-1;              // number of bytes to output
+	int quoteIndex=-1;             // index of decimal specifier
+	int signIndex=-1;              // index of any sign for number
+	int periodIndex=-1;            // index of period for floating point
+	int endianIndex=-1;            // index of little endian specifier
+	int i=0;
 
 	// make sure that all characters are valid
 	for (i=0; i<length; i++) {
@@ -1171,7 +1171,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 					std::cerr << "extra quote in decimal number" << std::endl;
 					return 0;
 				} else {
-					quoteIndex = i;
+					quoteIndex=i;
 				}
 				break;
 			case '-':
@@ -1182,7 +1182,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 						  << std::endl;
 					return 0;
 				} else {
-					signIndex = i;
+					signIndex=i;
 				}
 				if (i == 0 || word[i-1] != '\'') {
 					std::cerr << "Error on line " << lineNum << " at token: " << word
@@ -1204,7 +1204,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 					std::cerr << "extra period in decimal number" << std::endl;
 					return 0;
 				} else {
-					periodIndex = i;
+					periodIndex=i;
 				}
 				break;
 			case 'u':
@@ -1221,7 +1221,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 					std::cerr << "extra \"u\" in decimal number" << std::endl;
 					return 0;
 				} else {
-					endianIndex = i;
+					endianIndex=i;
 				}
 				break;
 			case '8':
@@ -1233,7 +1233,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 						  << "decimal number" << std::endl;
 					return 0;
 				} else if (quoteIndex == -1) {
-					byteCount = word[i] - '0';
+					byteCount=word[i] - '0';
 				}
 				break;
 			case '0': case '5': case '6': case '7': case '9':
@@ -1279,14 +1279,14 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 	// default size for floating point numbers is 4 bytes
 	if (periodIndex != -1) {
 		if (byteCount == -1) {
-			byteCount = 4;
+			byteCount=4;
 		}
 	}
 
 	// process any floating point numbers possibilities
 	if (periodIndex != -1) {
-		double doubleOutput = atof(&word[quoteIndex+1]);
-		float  floatOutput  = (float)doubleOutput;
+		double doubleOutput=atof(&word[quoteIndex+1]);
+		float  floatOutput =(float)doubleOutput;
 		switch (byteCount) {
 			case 4:
 			  if (endianIndex == -1) {
@@ -1319,19 +1319,19 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 	// the byte if the size of the decimal number is not specified
 	if (byteCount == -1) {
 		if (signIndex != -1) {
-			long tempLong = atoi(&word[quoteIndex + 1]);
+			long tempLong=atoi(&word[quoteIndex + 1]);
 			if (tempLong > 127 || tempLong < -128) {
 				std::cerr << "Error on line " << lineNum << " at token: " << word
 					  << std::endl;
 				std::cerr << "Decimal number out of range from -128 to 127" << std::endl;
 				return 0;
 			}
-			char charOutput = (char)tempLong;
+			char charOutput=(char)tempLong;
 			out << charOutput;
 			return 1;
 		} else {
-			ulong tempLong = (ulong)atoi(&word[quoteIndex + 1]);
-			uchar ucharOutput = (uchar)tempLong;
+			ulong tempLong=(ulong)atoi(&word[quoteIndex + 1]);
+			uchar ucharOutput=(uchar)tempLong;
 			if (tempLong > 255) { // || (tempLong < 0)) {
 				std::cerr << "Error on line " << lineNum << " at token: " << word
 					  << std::endl;
@@ -1347,21 +1347,21 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 	switch (byteCount) {
 		case 1:
 			if (signIndex != -1) {
-				long tempLong = atoi(&word[quoteIndex + 1]);
-				char charOutput = (char)tempLong;
+				long tempLong=atoi(&word[quoteIndex + 1]);
+				char charOutput=(char)tempLong;
 				out << charOutput;
 				return 1;
 			} else {
-				ulong tempLong = (ulong)atoi(&word[quoteIndex + 1]);
-				uchar ucharOutput = (uchar)tempLong;
+				ulong tempLong=(ulong)atoi(&word[quoteIndex + 1]);
+				uchar ucharOutput=(uchar)tempLong;
 				out << ucharOutput;
 				return 1;
 			}
 			break;
 		case 2:
 			if (signIndex != -1) {
-				long tempLong = atoi(&word[quoteIndex + 1]);
-				short shortOutput = (short)tempLong;
+				long tempLong=atoi(&word[quoteIndex + 1]);
+				short shortOutput=(short)tempLong;
 				if (endianIndex == -1) {
 					writeBigEndianShort(out, shortOutput);
 				} else {
@@ -1369,8 +1369,8 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 				}
 				return 1;
 			} else {
-				ulong tempLong = (ulong)atoi(&word[quoteIndex + 1]);
-				ushort ushortOutput = (ushort)tempLong;
+				ulong tempLong=(ulong)atoi(&word[quoteIndex + 1]);
+				ushort ushortOutput=(ushort)tempLong;
 				if (endianIndex == -1) {
 					writeBigEndianUShort(out, ushortOutput);
 				} else {
@@ -1388,10 +1388,10 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 					  << std::endl;
 				return 0;
 			}
-			ulong tempLong = (ulong)atoi(&word[quoteIndex + 1]);
-			uchar byte1 = (uchar)((tempLong & 0x00ff0000) >> 16);
-			uchar byte2 = (uchar)((tempLong & 0x0000ff00) >> 8);
-			uchar byte3 = (uchar)((tempLong & 0x000000ff));
+			ulong tempLong=(ulong)atoi(&word[quoteIndex + 1]);
+			uchar byte1=(uchar)((tempLong & 0x00ff0000) >> 16);
+			uchar byte2=(uchar)((tempLong & 0x0000ff00) >> 8);
+			uchar byte3=(uchar)((tempLong & 0x000000ff));
 			if (endianIndex == -1) {
 				out << byte1;
 				out << byte2;
@@ -1406,7 +1406,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 			break;
 		case 4:
 			if (signIndex != -1) {
-				long tempLong = atoi(&word[quoteIndex + 1]);
+				long tempLong=atoi(&word[quoteIndex + 1]);
 				if (endianIndex == -1) {
 					writeBigEndianLong(out, tempLong);
 				} else {
@@ -1414,7 +1414,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 				}
 				return 1;
 			} else {
-				ulong tempuLong = (ulong)atoi(&word[quoteIndex + 1]);
+				ulong tempuLong=(ulong)atoi(&word[quoteIndex + 1]);
 				if (endianIndex == -1) {
 					writeBigEndianULong(out, tempuLong);
 				} else {
@@ -1443,7 +1443,7 @@ int Binasc::processDecimalWord(std::ostream& out, const std::string& word,
 
 int Binasc::processHexWord(std::ostream& out, const std::string& word,
 		int lineNum) {
-	int length = (int)word.size();
+	int length=(int)word.size();
 	uchar outputByte;
 
 	if (length > 2) {
@@ -1458,7 +1458,7 @@ int Binasc::processHexWord(std::ostream& out, const std::string& word,
 		return 0;
 	}
 
-	outputByte = (uchar)strtol(word.c_str(), (char**)NULL, 16);
+	outputByte=(uchar)strtol(word.c_str(), (char**)NULL, 16);
 	out << outputByte;
 	return 1;
 }
@@ -1487,7 +1487,7 @@ int Binasc::processStringWord(std::ostream& out, const std::string& word,
 
 int Binasc::processAsciiWord(std::ostream& out, const std::string& word,
 		int lineNum) {
-	int length = (int)word.size();
+	int length=(int)word.size();
 	uchar outputByte;
 
 	if (word[0] != '+') {
@@ -1504,9 +1504,9 @@ int Binasc::processAsciiWord(std::ostream& out, const std::string& word,
 	}
 
 	if (length == 2) {
-		outputByte = (uchar)word[1];
+		outputByte=(uchar)word[1];
 	} else {
-		outputByte = ' ';
+		outputByte=' ';
 	}
 	out << outputByte;
 	return 1;
@@ -1522,11 +1522,11 @@ int Binasc::processAsciiWord(std::ostream& out, const std::string& word,
 
 int Binasc::processBinaryWord(std::ostream& out, const std::string& word,
 		int lineNum) {
-	int length = (int)word.size();        // length of ascii binary number
-	int commaIndex = -1;             // index location of comma in number
-	int leftDigits = -1;             // number of digits to left of comma
-	int rightDigits = -1;            // number of digits to right of comma
-	int i = 0;
+	int length=(int)word.size();        // length of ascii binary number
+	int commaIndex=-1;             // index location of comma in number
+	int leftDigits=-1;             // number of digits to left of comma
+	int rightDigits=-1;            // number of digits to right of comma
+	int i=0;
 
 	// make sure that all characters are valid
 	for (i=0; i<length; i++) {
@@ -1537,7 +1537,7 @@ int Binasc::processBinaryWord(std::ostream& out, const std::string& word,
 				std::cerr << "extra comma in binary number" << std::endl;
 				return 0;
 			} else {
-				commaIndex = i;
+				commaIndex=i;
 			}
 		} else if (!(word[i] == '1' || word[i] == '0')) {
 			std::cerr << "Error on line " << lineNum << " at token: " << word
@@ -1564,8 +1564,8 @@ int Binasc::processBinaryWord(std::ostream& out, const std::string& word,
 	// figure out how many digits there are in binary number
 	// number must be able to fit into one byte.
 	if (commaIndex != -1) {
-		leftDigits = commaIndex;
-		rightDigits = length - commaIndex - 1;
+		leftDigits=commaIndex;
+		rightDigits=length - commaIndex - 1;
 	} else if (length > 8) {
 		std::cerr << "Error on line " << lineNum << " at token: " << word
 			  << std::endl;
@@ -1588,24 +1588,24 @@ int Binasc::processBinaryWord(std::ostream& out, const std::string& word,
 
 	// OK, we have a valid binary number, so calculate the byte
 
-	uchar output = 0;
+	uchar output=0;
 
 	// if no comma in binary number
 	if (commaIndex == -1) {
 		for (i=0; i<length; i++) {
-			output = output << 1;
+			output=output << 1;
 			output |= word[i] - '0';
 		}
 	}
 	// if comma in binary number
 	else {
 		for (i=0; i<leftDigits; i++) {
-			output = output << 1;
+			output=output << 1;
 			output |= word[i] - '0';
 		}
-		output = output << (4-rightDigits);
+		output=output << (4-rightDigits);
 		for (i=0+commaIndex+1; i<rightDigits+commaIndex+1; i++) {
-			output = output << 1;
+			output=output << 1;
 			output |= word[i] - '0';
 		}
 	}
@@ -1642,20 +1642,20 @@ int Binasc::processVlvWord(std::ostream& out, const std::string& word,
 			  << std::endl;
 		return 0;
 	}
-	ulong value = atoi(&word[1]);
+	ulong value=atoi(&word[1]);
 
 	uchar byte[5];
-	byte[0] = (value >> 28) & 0x7f;
-	byte[1] = (value >> 21) & 0x7f;
-	byte[2] = (value >> 14) & 0x7f;
-	byte[3] = (value >>  7) & 0x7f;
-	byte[4] = (value >>  0) & 0x7f;
+	byte[0]=(value >> 28) & 0x7f;
+	byte[1]=(value >> 21) & 0x7f;
+	byte[2]=(value >> 14) & 0x7f;
+	byte[3]=(value >>  7) & 0x7f;
+	byte[4]=(value >>  0) & 0x7f;
 
 	int i;
-	int flag = 0;
+	int flag=0;
 	for (i=0; i<4; i++) {
 		if (byte[i] != 0) {
-			flag = 1;
+			flag=1;
 		}
 		if (flag) {
 			byte[i] |= 0x80;
@@ -1694,17 +1694,17 @@ int Binasc::processMidiTempoWord(std::ostream& out, const std::string& word,
 			  << "a floating-point number" << std::endl;
 		return 0;
 	}
-	double value = strtod(&word[1], NULL);
+	double value=strtod(&word[1], NULL);
 
 	if (value < 0.0) {
-		value = -value;
+		value=-value;
 	}
 
-	int intval = int(60.0 * 1000000.0 / value + 0.5);
+	int intval=int(60.0 * 1000000.0 / value + 0.5);
 
-	uchar byte0 = intval & 0xff;
-	uchar byte1 = (intval >>  8) & 0xff;
-	uchar byte2 = (intval >> 16) & 0xff;
+	uchar byte0=intval & 0xff;
+	uchar byte1=(intval >>  8) & 0xff;
+	uchar byte2=(intval >> 16) & 0xff;
 	out << byte2 << byte1 << byte0;
 	return 1;
 }
@@ -1735,18 +1735,18 @@ int Binasc::processMidiPitchBendWord(std::ostream& out, const std::string& word,
 			  << "a floating-point number" << std::endl;
 		return 0;
 	}
-	double value = strtod(&word[1], NULL);
+	double value=strtod(&word[1], NULL);
 
 	if (value > 1.0) {
-		value = 1.0;
+		value=1.0;
 	}
 	if (value < -1.0) {
-		value = -1.0;
+		value=-1.0;
 	}
 
-	int intval = (int)(((1 << 13)-0.5)  * (value + 1.0) + 0.5);
-	uchar LSB = intval & 0x7f;
-	uchar MSB = (intval >>  7) & 0x7f;
+	int intval=(int)(((1 << 13)-0.5)  * (value + 1.0) + 0.5);
+	uchar LSB=intval & 0x7f;
+	uchar MSB=(intval >>  7) & 0x7f;
 	out << LSB << MSB;
 	return 1;
 }
@@ -1765,7 +1765,7 @@ int Binasc::processMidiPitchBendWord(std::ostream& out, const std::string& word,
 
 std::ostream& Binasc::writeLittleEndianUShort(std::ostream& out, ushort value) {
 	union { char bytes[2]; ushort us; } data;
-	data.us = value;
+	data.us=value;
 	out << data.bytes[0];
 	out << data.bytes[1];
 	return out;
@@ -1780,7 +1780,7 @@ std::ostream& Binasc::writeLittleEndianUShort(std::ostream& out, ushort value) {
 
 std::ostream& Binasc::writeBigEndianUShort(std::ostream& out, ushort value) {
 	union { char bytes[2]; ushort us; } data;
-	data.us = value;
+	data.us=value;
 	out << data.bytes[1];
 	out << data.bytes[0];
 	return out;
@@ -1795,7 +1795,7 @@ std::ostream& Binasc::writeBigEndianUShort(std::ostream& out, ushort value) {
 
 std::ostream& Binasc::writeLittleEndianShort(std::ostream& out, short value) {
 	union { char bytes[2]; short s; } data;
-	data.s = value;
+	data.s=value;
 	out << data.bytes[0];
 	out << data.bytes[1];
 	return out;
@@ -1810,7 +1810,7 @@ std::ostream& Binasc::writeLittleEndianShort(std::ostream& out, short value) {
 
 std::ostream& Binasc::writeBigEndianShort(std::ostream& out, short value) {
 	union { char bytes[2]; short s; } data;
-	data.s = value;
+	data.s=value;
 	out << data.bytes[1];
 	out << data.bytes[0];
 	return out;
@@ -1825,7 +1825,7 @@ std::ostream& Binasc::writeBigEndianShort(std::ostream& out, short value) {
 
 std::ostream& Binasc::writeLittleEndianULong(std::ostream& out, ulong value) {
 	union { char bytes[4]; ulong ul; } data;
-	data.ul = value;
+	data.ul=value;
 	out << data.bytes[0];
 	out << data.bytes[1];
 	out << data.bytes[2];
@@ -1842,7 +1842,7 @@ std::ostream& Binasc::writeLittleEndianULong(std::ostream& out, ulong value) {
 
 std::ostream& Binasc::writeBigEndianULong(std::ostream& out, ulong value) {
 	union { char bytes[4]; long ul; } data;
-	data.ul = value;
+	data.ul=value;
 	out << data.bytes[3];
 	out << data.bytes[2];
 	out << data.bytes[1];
@@ -1859,7 +1859,7 @@ std::ostream& Binasc::writeBigEndianULong(std::ostream& out, ulong value) {
 
 std::ostream& Binasc::writeLittleEndianLong(std::ostream& out, long value) {
 	union { char bytes[4]; long l; } data;
-	data.l = value;
+	data.l=value;
 	out << data.bytes[0];
 	out << data.bytes[1];
 	out << data.bytes[2];
@@ -1876,7 +1876,7 @@ std::ostream& Binasc::writeLittleEndianLong(std::ostream& out, long value) {
 
 std::ostream& Binasc::writeBigEndianLong(std::ostream& out, long value) {
 	union { char bytes[4]; long l; } data;
-	data.l = value;
+	data.l=value;
 	out << data.bytes[3];
 	out << data.bytes[2];
 	out << data.bytes[1];
@@ -1894,7 +1894,7 @@ std::ostream& Binasc::writeBigEndianLong(std::ostream& out, long value) {
 
 std::ostream& Binasc::writeBigEndianFloat(std::ostream& out, float value) {
 	union { char bytes[4]; float f; } data;
-	data.f = value;
+	data.f=value;
 	out << data.bytes[3];
 	out << data.bytes[2];
 	out << data.bytes[1];
@@ -1911,7 +1911,7 @@ std::ostream& Binasc::writeBigEndianFloat(std::ostream& out, float value) {
 
 std::ostream& Binasc::writeLittleEndianFloat(std::ostream& out, float value) {
 	union { char bytes[4]; float f; } data;
-	data.f = value;
+	data.f=value;
 	out << data.bytes[0];
 	out << data.bytes[1];
 	out << data.bytes[2];
@@ -1928,7 +1928,7 @@ std::ostream& Binasc::writeLittleEndianFloat(std::ostream& out, float value) {
 
 std::ostream& Binasc::writeBigEndianDouble(std::ostream& out, double value) {
 	union { char bytes[8]; double d; } data;
-	data.d = value;
+	data.d=value;
 	out << data.bytes[7];
 	out << data.bytes[6];
 	out << data.bytes[5];
@@ -1949,7 +1949,7 @@ std::ostream& Binasc::writeBigEndianDouble(std::ostream& out, double value) {
 
 std::ostream& Binasc::writeLittleEndianDouble(std::ostream& out, double value) {
 	union { char bytes[8]; double d; } data;
-	data.d = value;
+	data.d=value;
 	out << data.bytes[0];
 	out << data.bytes[1];
 	out << data.bytes[2];

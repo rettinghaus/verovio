@@ -40,7 +40,7 @@ public:
      * Reset method resets all attribute classes
      */
     ///@{
-    Staff(int n = 1);
+    Staff(int n=1);
     virtual ~Staff();
     virtual Object *Clone() const { return new Staff(*this); }
     virtual void Reset();

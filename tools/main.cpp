@@ -38,7 +38,7 @@ std::string basename(std::string const &pathname)
 
 std::string removeExtension(std::string const &filename)
 {
-    std::string::const_reverse_iterator pivot = std::find(filename.rbegin(), filename.rend(), '.');
+    std::string::const_reverse_iterator pivot=std::find(filename.rbegin(), filename.rend(), '.');
     return pivot == filename.rend() ? filename : std::string(filename.begin(), pivot.base() - 1);
 }
 
@@ -47,9 +47,9 @@ std::string fromCamelCase(const std::string &s)
     std::regex regExp1("(.)([A-Z][a-z]+)");
     std::regex regExp2("([a-z0-9])([A-Z])");
 
-    std::string result = s;
-    result = std::regex_replace(result, regExp1, "$1-$2");
-    result = std::regex_replace(result, regExp2, "$1-$2");
+    std::string result=s;
+    result=std::regex_replace(result, regExp1, "$1-$2");
+    result=std::regex_replace(result, regExp2, "$1-$2");
 
     std::transform(result.begin(), result.end(), result.begin(), ::tolower);
     return result;
@@ -62,11 +62,11 @@ std::string toCamelCase(const std::string &s)
     std::string result;
 
     while (getline(iss, token, '-')) {
-        token[0] = toupper(token[0]);
+        token[0]=toupper(token[0]);
         result += token;
     }
 
-    result[0] = tolower(result[0]);
+    result[0]=tolower(result[0]);
 
     return result;
 }
@@ -121,26 +121,26 @@ void display_usage()
     std::cout << "--remove-ids           Remove in the MEI output XML IDs that are not referenced " << std::endl;
 
     vrv::Options options;
-    std::vector<vrv::OptionGrp *> *grp = options.GetGrps();
+    std::vector<vrv::OptionGrp *> *grp=options.GetGrps();
     std::vector<vrv::OptionGrp *>::iterator grpIter;
 
-    for (grpIter = grp->begin(); grpIter != grp->end(); ++grpIter) {
+    for (grpIter=grp->begin(); grpIter != grp->end(); ++grpIter) {
 
         // Options with long forms only
         std::cout << std::endl << (*grpIter)->GetLabel() << std::endl;
-        const std::vector<vrv::Option *> *options = (*grpIter)->GetOptions();
+        const std::vector<vrv::Option *> *options=(*grpIter)->GetOptions();
         std::vector<vrv::Option *>::const_iterator iter;
 
-        for (iter = options->begin(); iter != options->end(); ++iter) {
+        for (iter=options->begin(); iter != options->end(); ++iter) {
 
-            std::string option = fromCamelCase((*iter)->GetKey());
+            std::string option=fromCamelCase((*iter)->GetKey());
 
-            const vrv::OptionDbl *optDbl = dynamic_cast<const vrv::OptionDbl *>(*iter);
-            const vrv::OptionInt *optInt = dynamic_cast<const vrv::OptionInt *>(*iter);
-            const vrv::OptionIntMap *optIntMap = dynamic_cast<const vrv::OptionIntMap *>(*iter);
-            const vrv::OptionString *optString = dynamic_cast<const vrv::OptionString *>(*iter);
-            const vrv::OptionArray *optArray = dynamic_cast<const vrv::OptionArray *>(*iter);
-            const vrv::OptionBool *optBool = dynamic_cast<const vrv::OptionBool *>(*iter);
+            const vrv::OptionDbl *optDbl=dynamic_cast<const vrv::OptionDbl *>(*iter);
+            const vrv::OptionInt *optInt=dynamic_cast<const vrv::OptionInt *>(*iter);
+            const vrv::OptionIntMap *optIntMap=dynamic_cast<const vrv::OptionIntMap *>(*iter);
+            const vrv::OptionString *optString=dynamic_cast<const vrv::OptionString *>(*iter);
+            const vrv::OptionArray *optArray=dynamic_cast<const vrv::OptionArray *>(*iter);
+            const vrv::OptionBool *optBool=dynamic_cast<const vrv::OptionBool *>(*iter);
 
             if (optDbl) {
                 option.append(" <f>");
@@ -194,14 +194,14 @@ int main(int argc, char **argv)
     std::string infile;
     std::string svgdir;
     std::string outfile;
-    std::string outformat = "svg";
-    bool std_output = false;
-    bool remove_ids = false;
+    std::string outformat="svg";
+    bool std_output=false;
+    bool remove_ids=false;
 
-    int all_pages = 0;
-    int page = 1;
-    int show_help = 0;
-    int show_version = 0;
+    int all_pages=0;
+    int page=1;
+    int show_help=0;
+    int show_version=0;
 
     // Create the toolkit instance without loading the font because
     // the resource path might be specified in the parameters
@@ -215,7 +215,7 @@ int main(int argc, char **argv)
     }
 
     static struct option base_options[]
-        = { { "all-pages", no_argument, 0, 'a' },
+       ={ { "all-pages", no_argument, 0, 'a' },
             { "from", required_argument, 0, 'f' },
             { "help", no_argument, 0, 'h' },
             { "outfile", required_argument, 0, 'o' },
@@ -230,54 +230,54 @@ int main(int argc, char **argv)
             { 0, 0, 0, 0 }
         };
 
-    int baseSize = sizeof(base_options) / sizeof(option);
+    int baseSize=sizeof(base_options) / sizeof(option);
 
-    vrv::Options *options = toolkit.GetOptions();
-    const vrv::MapOfStrOptions *params = options->GetItems();
-    int mapSize = (int)params->size();
+    vrv::Options *options=toolkit.GetOptions();
+    const vrv::MapOfStrOptions *params=options->GetItems();
+    int mapSize=(int)params->size();
 
     struct option *long_options;
-    int i = 0;
-    long_options = (struct option *)malloc(sizeof(struct option) * (baseSize + mapSize));
+    int i=0;
+    long_options=(struct option *)malloc(sizeof(struct option) * (baseSize + mapSize));
 
     // A vector of string for storing names as const char* for long_options
     std::vector<std::string> optNames;
     optNames.reserve(mapSize);
 
     vrv::MapOfStrOptions::const_iterator iter;
-    for (iter = params->begin(); iter != params->end(); ++iter) {
+    for (iter=params->begin(); iter != params->end(); ++iter) {
         // Double check that back and forth convertion is correct
         assert(toCamelCase(fromCamelCase(iter->first)) == iter->first);
 
         optNames.push_back(fromCamelCase(iter->first));
-        long_options[i].name = optNames.at(i).c_str();
-        vrv::OptionBool *optBool = dynamic_cast<vrv::OptionBool *>(iter->second);
-        long_options[i].has_arg = (optBool) ? no_argument : required_argument;
-        long_options[i].flag = 0;
-        long_options[i].val = 0;
+        long_options[i].name=optNames.at(i).c_str();
+        vrv::OptionBool *optBool=dynamic_cast<vrv::OptionBool *>(iter->second);
+        long_options[i].has_arg=(optBool) ? no_argument : required_argument;
+        long_options[i].flag=0;
+        long_options[i].val=0;
         i++;
     }
 
     // Concatenate the base options
     assert(i == mapSize);
     for (; i < mapSize + baseSize; ++i) {
-        long_options[i].name = base_options[i - mapSize].name;
-        long_options[i].has_arg = base_options[i - mapSize].has_arg;
-        long_options[i].flag = base_options[i - mapSize].flag;
-        long_options[i].val = base_options[i - mapSize].val;
+        long_options[i].name=base_options[i - mapSize].name;
+        long_options[i].has_arg=base_options[i - mapSize].has_arg;
+        long_options[i].flag=base_options[i - mapSize].flag;
+        long_options[i].val=base_options[i - mapSize].val;
     }
 
     int c;
     std::string key;
-    int option_index = 0;
-    vrv::Option *opt = NULL;
-    vrv::OptionBool *optBool = NULL;
-    while ((c = getopt_long(argc, argv, "ab:f:hmo:p:r:s:t:vx:", long_options, &option_index)) != -1) {
+    int option_index=0;
+    vrv::Option *opt=NULL;
+    vrv::OptionBool *optBool=NULL;
+    while ((c=getopt_long(argc, argv, "ab:f:hmo:p:r:s:t:vx:", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
-                key = long_options[option_index].name;
-                opt = params->at(toCamelCase(key));
-                optBool = dynamic_cast<vrv::OptionBool *>(opt);
+                key=long_options[option_index].name;
+                opt=params->at(toCamelCase(key));
+                optBool=dynamic_cast<vrv::OptionBool *>(opt);
                 if (optBool) {
                     optBool->SetValue(true);
                 }
@@ -293,7 +293,7 @@ int main(int argc, char **argv)
                 }
                 break;
 
-            case 'a': all_pages = 1; break;
+            case 'a': all_pages=1; break;
 
             case 'b':
                 vrv::LogWarning("Option -b and --border is deprecated; use --page-margin-bottom, --page-margin-left, "
@@ -313,18 +313,18 @@ int main(int argc, char **argv)
                 
             case 'm':
                 if (!strcmp(long_options[option_index].name, "remove-ids")) {
-                    remove_ids = true;
+                    remove_ids=true;
                 }
                 break;
 
-            case 'o': outfile = std::string(optarg); break;
+            case 'o': outfile=std::string(optarg); break;
 
-            case 'p': page = atoi(optarg); break;
+            case 'p': page=atoi(optarg); break;
 
             case 'r': vrv::Resources::SetPath(optarg); break;
 
             case 't':
-                outformat = std::string(optarg);
+                outformat=std::string(optarg);
                 toolkit.SetOutputTo(std::string(optarg));
                 break;
 
@@ -334,7 +334,7 @@ int main(int argc, char **argv)
                 }
                 break;
 
-            case 'v': show_version = 1; break;
+            case 'v': show_version=1; break;
 
             case 'x': vrv::Object::SeedUuid(atoi(optarg)); break;
 
@@ -358,7 +358,7 @@ int main(int argc, char **argv)
     }
 
     if (optind <= argc - 1) {
-        infile = std::string(argv[optind]);
+        infile=std::string(argv[optind]);
     }
     else {
         std::cerr << "Incorrect number of arguments: expected one input file but found none." << std::endl << std::endl;
@@ -407,14 +407,14 @@ int main(int argc, char **argv)
 
     // Hardcode svg ext for now
     if (outfile.empty()) {
-        outfile = removeExtension(infile);
+        outfile=removeExtension(infile);
     }
     else if (outfile == "-") {
         // DisableLog();
-        std_output = true;
+        std_output=true;
     }
     else {
-        outfile = removeExtension(outfile);
+        outfile=removeExtension(outfile);
     }
 
     // Load the std input or load the file
@@ -448,16 +448,16 @@ int main(int argc, char **argv)
         }
     }
 
-    int from = page;
-    int to = page + 1;
+    int from=page;
+    int to=page + 1;
     if (all_pages) {
-        to = toolkit.GetPageCount() + 1;
+        to=toolkit.GetPageCount() + 1;
     }
 
     if (outformat == "svg") {
         int p;
-        for (p = from; p < to; ++p) {
-            std::string cur_outfile = outfile;
+        for (p=from; p < to; ++p) {
+            std::string cur_outfile=outfile;
             if (all_pages) {
                 cur_outfile += vrv::StringFormat("_%03d", p);
             }
@@ -533,11 +533,11 @@ int main(int argc, char **argv)
         }
     }
     else {
-        const char *scoreBased = (outformat == "mei") ? "true" : "false";
-        const char *removeIds = (remove_ids) ? "true" : "false";
+        const char *scoreBased=(outformat == "mei") ? "true" : "false";
+        const char *removeIds=(remove_ids) ? "true" : "false";
         outfile += ".mei";
         if (all_pages) {
-            std::string params = vrv::StringFormat("{'scoreBased': %s, 'removeIds': %s}", scoreBased, removeIds);
+            std::string params=vrv::StringFormat("{'scoreBased': %s, 'removeIds': %s}", scoreBased, removeIds);
             if (std_output) {
                 std::string output;
                 std::cout << toolkit.GetMEI(params);
@@ -551,7 +551,7 @@ int main(int argc, char **argv)
             }
         }
         else {
-            std::string params = vrv::StringFormat("{'scoreBased': %s, 'pageNo': %d, 'removeIds': %s}", scoreBased, page, removeIds);
+            std::string params=vrv::StringFormat("{'scoreBased': %s, 'pageNo': %d, 'removeIds': %s}", scoreBased, page, removeIds);
             if (std_output) {
                 std::cout << toolkit.GetMEI(params);
             }

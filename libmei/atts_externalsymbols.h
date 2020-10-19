@@ -49,19 +49,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetGlyphAuth(std::string glyphAuth_) { m_glyphAuth = glyphAuth_; }
+    void SetGlyphAuth(std::string glyphAuth_) { m_glyphAuth=glyphAuth_; }
     std::string GetGlyphAuth() const { return m_glyphAuth; }
     bool HasGlyphAuth() const;
     //
-    void SetGlyphName(std::string glyphName_) { m_glyphName = glyphName_; }
+    void SetGlyphName(std::string glyphName_) { m_glyphName=glyphName_; }
     std::string GetGlyphName() const { return m_glyphName; }
     bool HasGlyphName() const;
     //
-    void SetGlyphNum(data_HEXNUM glyphNum_) { m_glyphNum = glyphNum_; }
+    void SetGlyphNum(data_HEXNUM glyphNum_) { m_glyphNum=glyphNum_; }
     data_HEXNUM GetGlyphNum() const { return m_glyphNum; }
     bool HasGlyphNum() const;
     //
-    void SetGlyphUri(std::string glyphUri_) { m_glyphUri = glyphUri_; }
+    void SetGlyphUri(std::string glyphUri_) { m_glyphUri=glyphUri_; }
     std::string GetGlyphUri() const { return m_glyphUri; }
     bool HasGlyphUri() const;
     ///@}

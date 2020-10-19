@@ -95,27 +95,27 @@ public:
     //
 private:
     std::string m_filename;
-    Mdiv *m_mdiv = NULL;
-    Clef *m_clef = NULL;
-    KeySig *m_key = NULL;
-    MeterSig *m_meter = NULL;
-    Layer *m_layer = NULL;
+    Mdiv *m_mdiv=NULL;
+    Clef *m_clef=NULL;
+    KeySig *m_key=NULL;
+    MeterSig *m_meter=NULL;
+    Layer *m_layer=NULL;
 
     data_DURATION m_durDefault; // todo: switch to MEI
     std::string m_ID;
     int m_unitDur;
     std::pair<data_BARRENDITION, data_BARRENDITION> m_barLines
-        = std::make_pair(BARRENDITION_NONE, BARRENDITION_NONE); //
+       =std::make_pair(BARRENDITION_NONE, BARRENDITION_NONE); //
     /*
      * ABC variables with default values
      */
-    char m_decoration = '!';
-    char m_linebreak = '$';
-    int m_lineNum = 1;
-    int m_broken = 0;
-    int m_gracecount = 0;
-    int m_stafflines = 5;
-    int m_transpose = 0;
+    char m_decoration='!';
+    char m_linebreak='$';
+    int m_lineNum=1;
+    int m_broken=0;
+    int m_gracecount=0;
+    int m_stafflines=5;
+    int m_transpose=0;
     /*
      * ABC metadata stacks
      */
@@ -139,7 +139,7 @@ private:
     std::vector<data_ARTICULATION> m_artic;
     std::vector<std::string> m_dynam;
     std::string m_ornam;
-    data_STAFFREL m_fermata = STAFFREL_NONE;
+    data_STAFFREL m_fermata=STAFFREL_NONE;
     /*
      * The stack of control elements to be added at the end of each measure
      */

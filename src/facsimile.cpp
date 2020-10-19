@@ -51,11 +51,11 @@ int Facsimile::GetMaxX()
     ListOfObjects surfaces;
     this->FindAllDescendantByComparison(&surfaces, &ac);
 
-    int max = 0;
-    for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter) {
-        Surface *surface = vrv_cast<Surface *>(*iter);
+    int max=0;
+    for (auto iter=surfaces.begin(); iter != surfaces.end(); ++iter) {
+        Surface *surface=vrv_cast<Surface *>(*iter);
         assert(surface);
-        max = (surface->GetMaxX() > max) ? surface->GetMaxX() : max;
+        max=(surface->GetMaxX() > max) ? surface->GetMaxX() : max;
     }
     return max;
 }
@@ -66,11 +66,11 @@ int Facsimile::GetMaxY()
     ListOfObjects surfaces;
     this->FindAllDescendantByComparison(&surfaces, &ac);
 
-    int max = 0;
-    for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter) {
-        Surface *surface = vrv_cast<Surface *>(*iter);
+    int max=0;
+    for (auto iter=surfaces.begin(); iter != surfaces.end(); ++iter) {
+        Surface *surface=vrv_cast<Surface *>(*iter);
         assert(surface);
-        max = (surface->GetMaxY() > max) ? surface->GetMaxY() : max;
+        max=(surface->GetMaxY() > max) ? surface->GetMaxY() : max;
     }
     return max;
 }

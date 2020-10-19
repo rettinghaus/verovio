@@ -39,7 +39,7 @@ void MRpt::Reset()
 {
     LayerElement::Reset();
 
-    m_drawingMeasureCount = 0;
+    m_drawingMeasureCount=0;
 }
 
 //----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ void MRpt::Reset()
 
 int MRpt::GenerateMIDI(FunctorParams *functorParams)
 {
-    // GenerateMIDIParams *params = vrv_params_cast<GenerateMIDIParams *>(functorParams);
+    // GenerateMIDIParams *params=vrv_params_cast<GenerateMIDIParams *>(functorParams);
     // assert(params);
 
     LogWarning("MRpt produces empty MIDI output");
@@ -58,7 +58,7 @@ int MRpt::GenerateMIDI(FunctorParams *functorParams)
 
 int MRpt::PrepareRpt(FunctorParams *functorParams)
 {
-    PrepareRptParams *params = vrv_params_cast<PrepareRptParams *>(functorParams);
+    PrepareRptParams *params=vrv_params_cast<PrepareRptParams *>(functorParams);
     assert(params);
 
     // If multiNumber is not true, nothing needs to be done
@@ -68,13 +68,13 @@ int MRpt::PrepareRpt(FunctorParams *functorParams)
 
     // If this is the first one, number has to be 2
     if (params->m_currentMRpt == NULL) {
-        this->m_drawingMeasureCount = 2;
+        this->m_drawingMeasureCount=2;
     }
     // Otherwise increment it
     else {
-        this->m_drawingMeasureCount = params->m_currentMRpt->m_drawingMeasureCount + 1;
+        this->m_drawingMeasureCount=params->m_currentMRpt->m_drawingMeasureCount + 1;
     }
-    params->m_currentMRpt = this;
+    params->m_currentMRpt=this;
     return FUNCTOR_CONTINUE;
 }
 

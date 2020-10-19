@@ -43,8 +43,8 @@ void TextElement::Reset()
     ResetLabelled();
     ResetTyped();
 
-    m_drawingYRel = 0;
-    m_drawingXRel = 0;
+    m_drawingYRel=0;
+    m_drawingXRel=0;
 }
 
 int TextElement::GetDrawingX() const
@@ -52,13 +52,13 @@ int TextElement::GetDrawingX() const
     // No cache for text elements
 
     // First get the first layerElement parent (if any) and use its position if they share the same alignment
-    Object *textElement = this->GetFirstAncestorInRange(TEXT_ELEMENT, TEXT_ELEMENT_max);
+    Object *textElement=this->GetFirstAncestorInRange(TEXT_ELEMENT, TEXT_ELEMENT_max);
     if (textElement) {
         return (textElement->GetDrawingX() + this->GetDrawingXRel());
     }
 
     // Otherwise get the running element parent - no cast to RunningElement is necessary
-    Object *runningElement = this->GetFirstAncestorInRange(RUNNING_ELEMENT, RUNNING_ELEMENT_max);
+    Object *runningElement=this->GetFirstAncestorInRange(RUNNING_ELEMENT, RUNNING_ELEMENT_max);
     if (runningElement) {
         return (runningElement->GetDrawingX() + this->GetDrawingXRel());
     }
@@ -71,13 +71,13 @@ int TextElement::GetDrawingY() const
     // No cache for text elements
 
     // First get the first layerElement parent (if any) and use its position if they share the same alignment
-    Object *textElement = this->GetFirstAncestorInRange(TEXT_ELEMENT, TEXT_ELEMENT_max);
+    Object *textElement=this->GetFirstAncestorInRange(TEXT_ELEMENT, TEXT_ELEMENT_max);
     if (textElement) {
         return (textElement->GetDrawingY() + this->GetDrawingYRel());
     }
 
     // Otherwise get the running element parent - no cast to RunningElement is necessary
-    Object *runningElement = this->GetFirstAncestorInRange(RUNNING_ELEMENT, RUNNING_ELEMENT_max);
+    Object *runningElement=this->GetFirstAncestorInRange(RUNNING_ELEMENT, RUNNING_ELEMENT_max);
     if (runningElement) {
         return (runningElement->GetDrawingY() + this->GetDrawingYRel());
     }
@@ -89,13 +89,13 @@ int TextElement::GetDrawingY() const
 void TextElement::SetDrawingXRel(int drawingXRel)
 {
     ResetCachedDrawingX();
-    m_drawingXRel = drawingXRel;
+    m_drawingXRel=drawingXRel;
 }
 
 void TextElement::SetDrawingYRel(int drawingYRel)
 {
     ResetCachedDrawingY();
-    m_drawingYRel = drawingYRel;
+    m_drawingYRel=drawingYRel;
 }
 
 //----------------------------------------------------------------------------

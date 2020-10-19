@@ -67,7 +67,7 @@ public:
      */
     ///@{
     int GetDrawingGrpId() const { return m_drawingGrpId; }
-    void SetDrawingGrpId(int drawingGrpId) { m_drawingGrpId = drawingGrpId; }
+    void SetDrawingGrpId(int drawingGrpId) { m_drawingGrpId=drawingGrpId; }
     int SetDrawingGrpObject(void *drawingGrpObject);
     ///@}
 
@@ -281,7 +281,7 @@ public:
      * Calculate the adjustment needed for an element for the curve not to overlap with it.
      * Discard will be true if the element already fits.
      */
-    int CalcAdjustment(BoundingBox *boundingBox, bool &discard, int margin = 0);
+    int CalcAdjustment(BoundingBox *boundingBox, bool &discard, int margin=0);
 
     /**
      * @name Getters for the current parameters
@@ -343,8 +343,8 @@ public:
     ///@{
     CurveSpannedElement()
     {
-        m_boundingBox = NULL;
-        m_discarded = false;
+        m_boundingBox=NULL;
+        m_discarded=false;
     }
     virtual ~CurveSpannedElement(){};
 

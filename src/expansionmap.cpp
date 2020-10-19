@@ -40,7 +40,7 @@ void ExpansionMap::Expand(const xsdAnyURI_List &expansionList, xsdAnyURI_List &e
 {
     assert(prevSect);
     // find all siblings of expansion element to know what in MEI file
-    const vrv::ArrayOfObjects *expansionSiblings = prevSect->GetParent()->GetChildren();
+    const vrv::ArrayOfObjects *expansionSiblings=prevSect->GetParent()->GetChildren();
     assert(expansionSiblings);
     std::vector<std::string> reductionList;
     for (auto o : *expansionSiblings) {
@@ -48,20 +48,20 @@ void ExpansionMap::Expand(const xsdAnyURI_List &expansionList, xsdAnyURI_List &e
     }
 
     for (std::string s : expansionList) {
-        if (s.rfind("#", 0) == 0) s = s.substr(1, s.size() - 1); // remove trailing hash from reference
-        Object *currSect = prevSect->GetParent()->FindDescendantByUuid(s); // find section pointer of reference string
+        if (s.rfind("#", 0) == 0) s=s.substr(1, s.size() - 1); // remove trailing hash from reference
+        Object *currSect=prevSect->GetParent()->FindDescendantByUuid(s); // find section pointer of reference string
         if (!currSect) {
             return;
         }
         if (currSect->Is(EXPANSION)) { // if reference is itself an expansion, resolve it recursively
             // remove parent from reductionList, if expansion
-            for (auto it = begin(reductionList); it != end(reductionList);) {
+            for (auto it=begin(reductionList); it != end(reductionList);) {
                 if ((*it).compare(currSect->GetParent()->GetUuid()) == 0)
-                    it = reductionList.erase(it);
+                    it=reductionList.erase(it);
                 else
                     ++it;
             }
-            Expansion *currExpansion = vrv_cast<Expansion *>(currSect);
+            Expansion *currExpansion=vrv_cast<Expansion *>(currSect);
             assert(currExpansion);
             Expand(currExpansion->GetPlist(), existingList, currSect);
         }
@@ -70,7 +70,7 @@ void ExpansionMap::Expand(const xsdAnyURI_List &expansionList, xsdAnyURI_List &e
                 != existingList.end()) { // section exists in list
 
                 // clone current section/ending/rdg/lem and rename it, adding -"rend2" for the first repetition etc.
-                Object *clonedObject = currSect->Clone();
+                Object *clonedObject=currSect->Clone();
                 clonedObject->CloneReset();
                 clonedObject->SetUuid(currSect->GetUuid() + "-rend"
                     + std::to_string(GetExpansionIdsForElement(currSect->GetUuid()).size() + 1));
@@ -82,7 +82,7 @@ void ExpansionMap::Expand(const xsdAnyURI_List &expansionList, xsdAnyURI_List &e
                 std::vector<std::string> clonedIds;
                 clonedIds.push_back(clonedObject->GetUuid());
                 this->GetUuidList(clonedObject, clonedIds);
-                for (int i = 0; (i < (int)oldIds.size()) && (i < (int)clonedIds.size()); i++) {
+                for (int i=0; (i < (int)oldIds.size()) && (i < (int)clonedIds.size()); i++) {
                     this->AddExpandedIdToExpansionMap(oldIds.at(i), clonedIds.at(i));
                 }
 
@@ -91,17 +91,17 @@ void ExpansionMap::Expand(const xsdAnyURI_List &expansionList, xsdAnyURI_List &e
 
                 assert(prevSect->GetParent());
                 prevSect->GetParent()->InsertAfter(prevSect, clonedObject);
-                prevSect = clonedObject;
+                prevSect=clonedObject;
             }
             else { // add to existingList, remember previous element, but do nothing else
-                prevSect = currSect;
+                prevSect=currSect;
                 existingList.push_back(s);
             }
 
             // remove s from reductionList
-            for (auto it = begin(reductionList); it != end(reductionList);) {
+            for (auto it=begin(reductionList); it != end(reductionList);) {
                 if ((*it).compare(s) == 0)
-                    it = reductionList.erase(it);
+                    it=reductionList.erase(it);
                 else
                     ++it;
             }
@@ -109,15 +109,15 @@ void ExpansionMap::Expand(const xsdAnyURI_List &expansionList, xsdAnyURI_List &e
     }
     // make unused sections hidden
     for (std::string r : reductionList) {
-        Object *currSect = prevSect->GetParent()->FindDescendantByUuid(r);
+        Object *currSect=prevSect->GetParent()->FindDescendantByUuid(r);
         assert(currSect);
         if (currSect->Is(ENDING) || currSect->Is(SECTION)) {
-            SystemElement *tmp = dynamic_cast<SystemElement *>(currSect);
-            tmp->m_visibility = Hidden;
+            SystemElement *tmp=dynamic_cast<SystemElement *>(currSect);
+            tmp->m_visibility=Hidden;
         }
         else if (currSect->Is(LEM) || currSect->Is(RDG)) {
-            EditorialElement *tmp = dynamic_cast<EditorialElement *>(currSect);
-            tmp->m_visibility = Hidden;
+            EditorialElement *tmp=dynamic_cast<EditorialElement *>(currSect);
+            tmp->m_visibility=Hidden;
         }
     }
 }
@@ -127,71 +127,71 @@ bool ExpansionMap::UpdateIds(Object *object)
     for (Object *o : *object->GetChildren()) {
         o->IsExpansion(true);
         if (o->HasInterface(INTERFACE_TIME_POINT)) {
-            TimePointInterface *interface = o->GetTimePointInterface();
+            TimePointInterface *interface=o->GetTimePointInterface();
             assert(interface);
             // @startid
-            std::string oldStartId = interface->GetStartid();
-            if (oldStartId.rfind("#", 0) == 0) oldStartId = oldStartId.substr(1, oldStartId.size() - 1);
-            std::string newStartId = GetExpansionIdsForElement(oldStartId).back();
+            std::string oldStartId=interface->GetStartid();
+            if (oldStartId.rfind("#", 0) == 0) oldStartId=oldStartId.substr(1, oldStartId.size() - 1);
+            std::string newStartId=GetExpansionIdsForElement(oldStartId).back();
             if (!newStartId.empty()) interface->SetStartid("#" + newStartId);
         }
         if (o->HasInterface(INTERFACE_TIME_SPANNING)) {
-            TimeSpanningInterface *interface = o->GetTimeSpanningInterface();
+            TimeSpanningInterface *interface=o->GetTimeSpanningInterface();
             assert(interface);
             // @startid
-            std::string oldStartId = interface->GetStartid();
-            if (oldStartId.rfind("#", 0) == 0) oldStartId = oldStartId.substr(1, oldStartId.size() - 1);
-            std::string newStartId = GetExpansionIdsForElement(oldStartId).back();
+            std::string oldStartId=interface->GetStartid();
+            if (oldStartId.rfind("#", 0) == 0) oldStartId=oldStartId.substr(1, oldStartId.size() - 1);
+            std::string newStartId=GetExpansionIdsForElement(oldStartId).back();
             if (!newStartId.empty()) interface->SetStartid("#" + newStartId);
             // @endid
-            oldStartId = interface->GetEndid();
-            if (oldStartId.rfind("#", 0) == 0) oldStartId = oldStartId.substr(1, oldStartId.size() - 1);
-            std::string newEndId = GetExpansionIdsForElement(oldStartId).back();
+            oldStartId=interface->GetEndid();
+            if (oldStartId.rfind("#", 0) == 0) oldStartId=oldStartId.substr(1, oldStartId.size() - 1);
+            std::string newEndId=GetExpansionIdsForElement(oldStartId).back();
             if (!newEndId.empty()) interface->SetEndid("#" + newEndId);
         }
         if (o->HasInterface(INTERFACE_PLIST)) {
-            PlistInterface *interface = o->GetPlistInterface(); // @plist
+            PlistInterface *interface=o->GetPlistInterface(); // @plist
             assert(interface);
-            xsdAnyURI_List oldList = interface->GetPlist();
+            xsdAnyURI_List oldList=interface->GetPlist();
             xsdAnyURI_List newList;
             for (std::string oldRefString : oldList) {
-                if (oldRefString.rfind("#", 0) == 0) oldRefString = oldRefString.substr(1, oldRefString.size() - 1);
+                if (oldRefString.rfind("#", 0) == 0) oldRefString=oldRefString.substr(1, oldRefString.size() - 1);
                 newList.push_back("#" + GetExpansionIdsForElement(oldRefString).back());
             }
             interface->SetPlist(newList);
         }
         else if (o->HasInterface(INTERFACE_LINKING)) {
-            LinkingInterface *interface = o->GetLinkingInterface();
+            LinkingInterface *interface=o->GetLinkingInterface();
             assert(interface);
             // @sameas
-            std::string oldIdString = interface->GetSameas();
-            if (oldIdString.rfind("#", 0) == 0) oldIdString = oldIdString.substr(1, oldIdString.size() - 1);
-            std::string newIdString = GetExpansionIdsForElement(oldIdString).back();
+            std::string oldIdString=interface->GetSameas();
+            if (oldIdString.rfind("#", 0) == 0) oldIdString=oldIdString.substr(1, oldIdString.size() - 1);
+            std::string newIdString=GetExpansionIdsForElement(oldIdString).back();
             if (!newIdString.empty()) interface->SetSameas("#" + newIdString);
             // @next
-            oldIdString = interface->GetNext();
-            if (oldIdString.rfind("#", 0) == 0) oldIdString = oldIdString.substr(1, oldIdString.size() - 1);
-            newIdString = GetExpansionIdsForElement(oldIdString).back();
+            oldIdString=interface->GetNext();
+            if (oldIdString.rfind("#", 0) == 0) oldIdString=oldIdString.substr(1, oldIdString.size() - 1);
+            newIdString=GetExpansionIdsForElement(oldIdString).back();
             if (!newIdString.empty()) interface->SetNext("#" + newIdString);
             // @prev
-            oldIdString = interface->GetPrev();
-            if (oldIdString.rfind("#", 0) == 0) oldIdString = oldIdString.substr(1, oldIdString.size() - 1);
-            newIdString = GetExpansionIdsForElement(oldIdString).back();
+            oldIdString=interface->GetPrev();
+            if (oldIdString.rfind("#", 0) == 0) oldIdString=oldIdString.substr(1, oldIdString.size() - 1);
+            newIdString=GetExpansionIdsForElement(oldIdString).back();
             if (!newIdString.empty()) interface->SetPrev("#" + newIdString);
             // @copyof
-            oldIdString = interface->GetCopyof();
-            if (oldIdString.rfind("#", 0) == 0) oldIdString = oldIdString.substr(1, oldIdString.size() - 1);
-            newIdString = GetExpansionIdsForElement(oldIdString).back();
+            oldIdString=interface->GetCopyof();
+            if (oldIdString.rfind("#", 0) == 0) oldIdString=oldIdString.substr(1, oldIdString.size() - 1);
+            newIdString=GetExpansionIdsForElement(oldIdString).back();
             if (!newIdString.empty()) interface->SetCopyof("#" + newIdString);
             // @corresp
-            oldIdString = interface->GetCorresp();
-            if (oldIdString.rfind("#", 0) == 0) oldIdString = oldIdString.substr(1, oldIdString.size() - 1);
-            newIdString = GetExpansionIdsForElement(oldIdString).back();
+            oldIdString=interface->GetCorresp();
+            if (oldIdString.rfind("#", 0) == 0) oldIdString=oldIdString.substr(1, oldIdString.size() - 1);
+            newIdString=GetExpansionIdsForElement(oldIdString).back();
             if (!newIdString.empty()) interface->SetCorresp("#" + newIdString);
             // @synch
-            oldIdString = interface->GetSynch();
-            if (oldIdString.rfind("#", 0) == 0) oldIdString = oldIdString.substr(1, oldIdString.size() - 1);
-            newIdString = GetExpansionIdsForElement(oldIdString).back();
+            oldIdString=interface->GetSynch();
+            if (oldIdString.rfind("#", 0) == 0) oldIdString=oldIdString.substr(1, oldIdString.size() - 1);
+            newIdString=GetExpansionIdsForElement(oldIdString).back();
             if (!newIdString.empty()) interface->SetSynch("#" + newIdString);
         }
         UpdateIds(o);
@@ -201,7 +201,7 @@ bool ExpansionMap::UpdateIds(Object *object)
 
 bool ExpansionMap::AddExpandedIdToExpansionMap(const std::string &origXmlId, std::string newXmlId)
 {
-    auto list = m_map.find(origXmlId);
+    auto list=m_map.find(origXmlId);
     if (list != m_map.end()) {
         list->second.push_back(newXmlId); // add to existing key
         for (std::string s : list->second) {

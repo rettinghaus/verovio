@@ -63,14 +63,14 @@ void Pedal::Reset()
     ResetPlacement();
     ResetVerticalGroup();
 
-    m_endsWithBounce = false;
+    m_endsWithBounce=false;
 }
 
 wchar_t Pedal::GetPedalGlyph() const
 {
     // If there is glyph.num, prioritize it, otherwise check other attributes
     if (HasGlyphNum()) {
-        wchar_t code = GetGlyphNum();
+        wchar_t code=GetGlyphNum();
         if (NULL != Resources::GetGlyph(code)) return code;
     }
 
@@ -83,15 +83,15 @@ wchar_t Pedal::GetPedalGlyph() const
 
 int Pedal::GenerateMIDI(FunctorParams *functorParams)
 {
-    GenerateMIDIParams *params = vrv_params_cast<GenerateMIDIParams *>(functorParams);
+    GenerateMIDIParams *params=vrv_params_cast<GenerateMIDIParams *>(functorParams);
     assert(params);
 
     // Sameas not taken into account for now
     if (!HasDir()) return FUNCTOR_CONTINUE;
 
-    double pedalTime = GetStart()->GetAlignment()->GetTime() * DURATION_4 / DUR_MAX;
-    double starttime = params->m_totalTime + pedalTime;
-    int tpq = params->m_midiFile->getTPQ();
+    double pedalTime=GetStart()->GetAlignment()->GetTime() * DURATION_4 / DUR_MAX;
+    double starttime=params->m_totalTime + pedalTime;
+    int tpq=params->m_midiFile->getTPQ();
 
     // todo: check pedal @func to switch between sustain/soften/damper pedals?
     switch (GetDir()) {
@@ -113,7 +113,7 @@ int Pedal::GenerateMIDI(FunctorParams *functorParams)
 
 int Pedal::PrepareFloatingGrps(FunctorParams *functorParams)
 {
-    PrepareFloatingGrpsParams *params = vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
+    PrepareFloatingGrpsParams *params=vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
     assert(params);
 
     if (this->HasVgrp()) {
@@ -127,11 +127,11 @@ int Pedal::PrepareFloatingGrps(FunctorParams *functorParams)
         if (this->GetDir() == pedalLog_DIR_bounce) {
             params->m_pedalLine->EndsWithBounce(true);
         }
-        params->m_pedalLine = NULL;
+        params->m_pedalLine=NULL;
     }
 
     if ((this->GetDir() != pedalLog_DIR_up) && (this->GetForm() == pedalVis_FORM_line)) {
-        params->m_pedalLine = this;
+        params->m_pedalLine=this;
     }
 
     return FUNCTOR_CONTINUE;

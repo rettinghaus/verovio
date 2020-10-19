@@ -98,7 +98,7 @@ public:
      * This stays STEMDIRECTION_NONE with on single layer in the staff.
      */
     ///@{
-    void SetDrawingStemDir(data_STEMDIRECTION stemDirection) { m_drawingStemDir = stemDirection; }
+    void SetDrawingStemDir(data_STEMDIRECTION stemDirection) { m_drawingStemDir=stemDirection; }
     data_STEMDIRECTION GetDrawingStemDir(LayerElement *element);
     data_STEMDIRECTION GetDrawingStemDir(const ArrayOfBeamElementCoords *coords);
     ///@}
@@ -140,7 +140,7 @@ public:
     void SetDrawingStaffDefValues(StaffDef *currentStaffDef);
 
     bool DrawKeySigCancellation() const { return m_drawKeySigCancellation; }
-    void SetDrawKeySigCancellation(bool drawKeySigCancellation) { m_drawKeySigCancellation = drawKeySigCancellation; }
+    void SetDrawKeySigCancellation(bool drawKeySigCancellation) { m_drawKeySigCancellation=drawKeySigCancellation; }
     Clef *GetStaffDefClef() { return m_staffDefClef; }
     KeySig *GetStaffDefKeySig() { return m_staffDefKeySig; }
     Mensur *GetStaffDefMensur() { return m_staffDefMensur; }
@@ -153,7 +153,7 @@ public:
     void SetDrawingCautionValues(StaffDef *currentStaffDef);
 
     bool DrawCautionKeySigCancel() const { return m_drawCautionKeySigCancel; }
-    void SetDrawCautionKeySigCancel(bool drawCautionKeySig) { m_drawCautionKeySigCancel = drawCautionKeySig; }
+    void SetDrawCautionKeySigCancel(bool drawCautionKeySig) { m_drawCautionKeySigCancel=drawCautionKeySig; }
     Clef *GetCautionStaffDefClef() { return m_cautionStaffDefClef; }
     KeySig *GetCautionStaffDefKeySig() { return m_cautionStaffDefKeySig; }
     Mensur *GetCautionStaffDefMensur() { return m_cautionStaffDefMensur; }

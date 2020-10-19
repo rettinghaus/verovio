@@ -65,23 +65,23 @@ PAEOutput::~PAEOutput() {}
 
 bool PAEOutput::Export(std::string &output)
 {
-    m_docScoreDef = true;
-    m_mensural = false;
-    m_skip = false;
-    m_layerN = -1;
-    m_staffN = -1;
-    m_currentOct = -1;
-    m_currentDur = -1;
-    m_currentDots = -1;
-    m_grace = false;
+    m_docScoreDef=true;
+    m_mensural=false;
+    m_skip=false;
+    m_layerN=-1;
+    m_staffN=-1;
+    m_currentOct=-1;
+    m_currentDur=-1;
+    m_currentDots=-1;
+    m_grace=false;
 
     m_doc->m_mdivScoreDef.Save(this);
 
-    m_docScoreDef = false;
+    m_docScoreDef=false;
 
     m_doc->Save(this);
 
-    output = m_streamStringOutput.str();
+    output=m_streamStringOutput.str();
 
     return true;
 }
@@ -189,10 +189,10 @@ void PAEOutput::WriteStaffDef(StaffDef *staffDef)
 
     if (m_staffN != -1) return;
 
-    m_staffN = staffDef->GetN();
+    m_staffN=staffDef->GetN();
 
     if (staffDef->HasNotationtype() && staffDef->GetNotationtype() == NOTATIONTYPE_mensural) {
-        m_mensural = true;
+        m_mensural=true;
     }
 }
 
@@ -200,7 +200,7 @@ void PAEOutput::WriteMeasure(Measure *measure)
 {
     assert(measure);
 
-    m_currentMeasure = measure;
+    m_currentMeasure=measure;
 }
 
 void PAEOutput::WriteMeasureEnd(Measure *measure)
@@ -209,12 +209,12 @@ void PAEOutput::WriteMeasureEnd(Measure *measure)
 
     std::string barLine;
     switch (measure->GetRight()) {
-        case (BARRENDITION_rptend): barLine = "://"; break;
-        case (BARRENDITION_rptboth): barLine = "://:"; break;
-        case (BARRENDITION_rptstart): barLine = "//:"; break;
-        case (BARRENDITION_dbl): barLine = "//"; break;
-        case (BARRENDITION_invis): barLine = ""; break;
-        default: barLine = "/";
+        case (BARRENDITION_rptend): barLine="://"; break;
+        case (BARRENDITION_rptboth): barLine="://:"; break;
+        case (BARRENDITION_rptstart): barLine="//:"; break;
+        case (BARRENDITION_dbl): barLine="//"; break;
+        case (BARRENDITION_invis): barLine=""; break;
+        default: barLine="/";
     }
 
     m_streamStringOutput << barLine;
@@ -225,11 +225,11 @@ void PAEOutput::WriteStaff(Staff *staff)
     assert(staff);
 
     if (m_staffN == staff->GetN()) {
-        m_skip = false;
+        m_skip=false;
         return;
     }
 
-    m_skip = true;
+    m_skip=true;
 }
 
 void PAEOutput::WriteLayer(Layer *layer)
@@ -237,15 +237,15 @@ void PAEOutput::WriteLayer(Layer *layer)
     assert(layer);
 
     if (m_layerN == -1) {
-        m_layerN = layer->GetN();
+        m_layerN=layer->GetN();
         m_streamStringOutput << "@data:";
-        m_skip = false;
+        m_skip=false;
         return;
     }
 
     // second layer in the staff
     if (!m_skip && (m_layerN != layer->GetN())) {
-        m_skip = true;
+        m_skip=true;
         return;
     }
 }
@@ -266,14 +266,14 @@ void PAEOutput::WriteBeam(Beam *beam)
 
     if (m_skip) return;
 
-    m_grace = false;
+    m_grace=false;
 
     ClassIdsComparison matchType({ NOTE, CHORD });
     ArrayOfObjects children;
-    LayerElement *child = dynamic_cast<LayerElement *>(beam->FindDescendantByComparison(&matchType));
+    LayerElement *child=dynamic_cast<LayerElement *>(beam->FindDescendantByComparison(&matchType));
     if (child && child->IsGraceNote()) {
         m_streamStringOutput << "qq";
-        m_grace = true;
+        m_grace=true;
     }
 
     m_streamStringOutput << "{";
@@ -289,7 +289,7 @@ void PAEOutput::WriteBeamEnd(Beam *beam)
 
     if (m_grace) {
         m_streamStringOutput << "r";
-        m_grace = false;
+        m_grace=false;
     }
 }
 
@@ -311,23 +311,23 @@ void PAEOutput::WriteClef(Clef *clef)
 
     if (m_skip) return;
 
-    std::string outStart = (m_docScoreDef) ? "@clef:" : " %";
-    std::string outEnd = (m_docScoreDef) ? "\n" : " ";
+    std::string outStart=(m_docScoreDef) ? "@clef:" : " %";
+    std::string outEnd=(m_docScoreDef) ? "\n" : " ";
 
     std::string shape;
     if ((clef->GetShape() == CLEFSHAPE_G) && (clef->GetDis() == OCTAVE_DIS_8)) {
-        shape = "g";
+        shape="g";
     }
     else {
         switch (clef->GetShape()) {
-            case (CLEFSHAPE_C): shape = "C"; break;
-            case (CLEFSHAPE_F): shape = "F"; break;
-            case (CLEFSHAPE_G): shape = "G"; break;
-            default: shape = "G";
+            case (CLEFSHAPE_C): shape="C"; break;
+            case (CLEFSHAPE_F): shape="F"; break;
+            case (CLEFSHAPE_G): shape="G"; break;
+            default: shape="G";
         }
     }
-    std::string sign = (m_mensural) ? "+" : "-";
-    std::string line = StringFormat("%d", clef->GetLine());
+    std::string sign=(m_mensural) ? "+" : "-";
+    std::string line=StringFormat("%d", clef->GetLine());
 
     m_streamStringOutput << outStart << shape << sign << line << outEnd;
 }
@@ -345,15 +345,15 @@ void PAEOutput::WriteKeySig(KeySig *keySig)
 
     if (m_skip) return;
 
-    std::string outStart = (m_docScoreDef) ? "@keysig:" : " $";
-    std::string outEnd = (m_docScoreDef) ? "\n" : " ";
+    std::string outStart=(m_docScoreDef) ? "@keysig:" : " $";
+    std::string outEnd=(m_docScoreDef) ? "\n" : " ";
 
-    data_ACCIDENTAL_WRITTEN accidType = keySig->GetSig().second;
+    data_ACCIDENTAL_WRITTEN accidType=keySig->GetSig().second;
     std::string sig;
     sig.push_back((accidType == ACCIDENTAL_WRITTEN_s) ? 'x' : 'b');
-    for (int i = 0; i < keySig->GetSig().first; ++i) {
-        data_PITCHNAME pname = KeySig::GetAccidPnameAt(accidType, i);
-        std::string pnameStr = keySig->AttTyped::PitchnameToStr(pname);
+    for (int i=0; i < keySig->GetSig().first; ++i) {
+        data_PITCHNAME pname=KeySig::GetAccidPnameAt(accidType, i);
+        std::string pnameStr=keySig->AttTyped::PitchnameToStr(pname);
         sig.push_back(std::toupper(pnameStr.at(0)));
     }
 
@@ -366,8 +366,8 @@ void PAEOutput::WriteMensur(Mensur *mensur)
 
     if (m_skip) return;
 
-    std::string outStart = (m_docScoreDef) ? "@timesig:" : " @";
-    std::string outEnd = (m_docScoreDef) ? "\n" : " ";
+    std::string outStart=(m_docScoreDef) ? "@timesig:" : " @";
+    std::string outEnd=(m_docScoreDef) ? "\n" : " ";
 
     m_streamStringOutput << outStart << outEnd;
 }
@@ -378,18 +378,18 @@ void PAEOutput::WriteMeterSig(MeterSig *meterSig)
 
     if (m_skip) return;
 
-    std::string outStart = (m_docScoreDef) ? "@timesig:" : " @";
-    std::string outEnd = (m_docScoreDef) ? "\n" : " ";
+    std::string outStart=(m_docScoreDef) ? "@timesig:" : " @";
+    std::string outEnd=(m_docScoreDef) ? "\n" : " ";
 
     std::string sig;
     if (meterSig->HasSym()) {
-        sig = (meterSig->GetSym() == METERSIGN_common) ? "c" : "c/";
+        sig=(meterSig->GetSym() == METERSIGN_common) ? "c" : "c/";
     }
     else if (meterSig->GetForm() == METERFORM_num) {
-        sig = StringFormat("%d", meterSig->GetCount());
+        sig=StringFormat("%d", meterSig->GetCount());
     }
     else if (meterSig->HasCount() && meterSig->GetUnit()) {
-        sig = StringFormat("%d/%d", meterSig->GetCount(), meterSig->GetUnit());
+        sig=StringFormat("%d/%d", meterSig->GetCount(), meterSig->GetUnit());
     }
 
     m_streamStringOutput << outStart << sig << outEnd;
@@ -423,7 +423,7 @@ void PAEOutput::WriteNote(Note *note)
     std::string oct;
 
     // For chords, only output the top note
-    Chord *chord = note->IsChordTone();
+    Chord *chord=note->IsChordTone();
     if (chord) {
         if (note != chord->GetTopNote()) return;
     }
@@ -433,44 +433,44 @@ void PAEOutput::WriteNote(Note *note)
     }
 
     if (note->GetOct() != m_currentOct) {
-        m_currentOct = note->GetOct();
-        char octSign = (m_currentOct > 3) ? '\'' : ',';
-        int signCount = (m_currentOct > 3) ? (m_currentOct - 3) : (4 - m_currentOct);
+        m_currentOct=note->GetOct();
+        char octSign=(m_currentOct > 3) ? '\'' : ',';
+        int signCount=(m_currentOct > 3) ? (m_currentOct - 3) : (4 - m_currentOct);
         m_streamStringOutput << std::string(signCount, octSign);
     }
 
-    Accid *noteAccid = dynamic_cast<Accid *>(note->FindDescendantByType(ACCID));
+    Accid *noteAccid=dynamic_cast<Accid *>(note->FindDescendantByType(ACCID));
     if (noteAccid) {
         std::string accid;
         switch (noteAccid->GetAccid()) {
-            case (ACCIDENTAL_WRITTEN_s): accid = "x"; break;
-            case (ACCIDENTAL_WRITTEN_f): accid = "b"; break;
-            case (ACCIDENTAL_WRITTEN_ss): accid = "xx"; break;
-            case (ACCIDENTAL_WRITTEN_x): accid = "xx"; break;
-            case (ACCIDENTAL_WRITTEN_ff): accid = "bb"; break;
-            case (ACCIDENTAL_WRITTEN_n): accid = "n"; break;
-            default: accid = "";
+            case (ACCIDENTAL_WRITTEN_s): accid="x"; break;
+            case (ACCIDENTAL_WRITTEN_f): accid="b"; break;
+            case (ACCIDENTAL_WRITTEN_ss): accid="xx"; break;
+            case (ACCIDENTAL_WRITTEN_x): accid="xx"; break;
+            case (ACCIDENTAL_WRITTEN_ff): accid="bb"; break;
+            case (ACCIDENTAL_WRITTEN_n): accid="n"; break;
+            default: accid="";
         }
         m_streamStringOutput << accid;
     }
 
     PointingToComparison pointingToComparisonFermata(FERMATA, note);
     Fermata *fermata
-        = dynamic_cast<Fermata *>(m_currentMeasure->FindDescendantByComparison(&pointingToComparisonFermata, 1));
+       =dynamic_cast<Fermata *>(m_currentMeasure->FindDescendantByComparison(&pointingToComparisonFermata, 1));
     if (fermata) m_streamStringOutput << "(";
 
-    std::string pname = note->AttPitch::PitchnameToStr(note->GetPname());
+    std::string pname=note->AttPitch::PitchnameToStr(note->GetPname());
     std::transform(pname.begin(), pname.end(), pname.begin(), ::toupper);
     m_streamStringOutput << pname;
 
     if (fermata) m_streamStringOutput << ")";
 
     PointingToComparison pointingToComparisonTrill(TRILL, note);
-    Trill *trill = dynamic_cast<Trill *>(m_currentMeasure->FindDescendantByComparison(&pointingToComparisonTrill, 1));
+    Trill *trill=dynamic_cast<Trill *>(m_currentMeasure->FindDescendantByComparison(&pointingToComparisonTrill, 1));
     if (trill) m_streamStringOutput << "t";
 
     PointingToComparison pointingToComparisonTie(TIE, note);
-    Tie *tie = dynamic_cast<Tie *>(m_currentMeasure->FindDescendantByComparison(&pointingToComparisonTie, 1));
+    Tie *tie=dynamic_cast<Tie *>(m_currentMeasure->FindDescendantByComparison(&pointingToComparisonTie, 1));
     if (tie) m_streamStringOutput << "+";
 }
 
@@ -499,31 +499,31 @@ void PAEOutput::WriteTuplet(Tuplet *tuplet)
 {
     assert(tuplet);
 
-    Staff *staff = vrv_cast<Staff *>(tuplet->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(tuplet->GetFirstAncestor(STAFF));
     assert(staff);
 
-    double content = tuplet->GetContentAlignmentDuration(NULL, NULL, true, staff->m_drawingNotationType);
-    // content = DUR_MAX / 2^(dur - 2)
-    int tupletDur = (content != 0.0) ? log2(DUR_MAX / content) + 2 : 4;
+    double content=tuplet->GetContentAlignmentDuration(NULL, NULL, true, staff->m_drawingNotationType);
+    // content=DUR_MAX / 2^(dur - 2)
+    int tupletDur=(content != 0.0) ? log2(DUR_MAX / content) + 2 : 4;
     // We should be looking for dotted values
 
     std::string dur;
     switch (tupletDur) {
-        case (DUR_LG): dur = "0"; break;
-        case (DUR_BR): dur = "9"; break;
-        case (DUR_1): dur = "1"; break;
-        case (DUR_2): dur = "2"; break;
-        case (DUR_4): dur = "4"; break;
-        case (DUR_8): dur = "8"; break;
-        case (DUR_16): dur = "6"; break;
-        case (DUR_32): dur = "3"; break;
-        case (DUR_64): dur = "5"; break;
-        case (DUR_128): dur = "7"; break;
-        default: LogWarning("Unsupported tuplet duration"); dur = "4";
+        case (DUR_LG): dur="0"; break;
+        case (DUR_BR): dur="9"; break;
+        case (DUR_1): dur="1"; break;
+        case (DUR_2): dur="2"; break;
+        case (DUR_4): dur="4"; break;
+        case (DUR_8): dur="8"; break;
+        case (DUR_16): dur="6"; break;
+        case (DUR_32): dur="3"; break;
+        case (DUR_64): dur="5"; break;
+        case (DUR_128): dur="7"; break;
+        default: LogWarning("Unsupported tuplet duration"); dur="4";
     }
 
     // For duration to be written within the tuplet
-    m_currentDur = -1;
+    m_currentDur=-1;
     m_streamStringOutput << dur << "(";
 }
 
@@ -539,29 +539,29 @@ void PAEOutput::WriteDur(DurationInterface *interface)
     assert(interface);
 
     if ((interface->GetDur() != m_currentDur) || (interface->GetDots() != m_currentDots)) {
-        m_currentDur = interface->GetDur();
-        m_currentDots = (interface->HasDots()) ? interface->GetDots() : 0;
+        m_currentDur=interface->GetDur();
+        m_currentDots=(interface->HasDots()) ? interface->GetDots() : 0;
         std::string dur;
         switch (m_currentDur) {
-            case (DURATION_long): dur = "0"; break;
-            case (DURATION_breve): dur = "9"; break;
-            case (DURATION_1): dur = "1"; break;
-            case (DURATION_2): dur = "2"; break;
-            case (DURATION_4): dur = "4"; break;
-            case (DURATION_8): dur = "8"; break;
-            case (DURATION_16): dur = "6"; break;
-            case (DURATION_32): dur = "3"; break;
-            case (DURATION_64): dur = "5"; break;
-            case (DURATION_128): dur = "7"; break;
-            case (DURATION_maxima): dur = "0"; break;
-            case (DURATION_longa): dur = "0"; break;
-            case (DURATION_brevis): dur = "9"; break;
-            case (DURATION_semibrevis): dur = "1"; break;
-            case (DURATION_minima): dur = "2"; break;
-            case (DURATION_semiminima): dur = "4"; break;
-            case (DURATION_fusa): dur = "8"; break;
-            case (DURATION_semifusa): dur = "6"; break;
-            default: LogWarning("Unsupported duration"); dur = "4";
+            case (DURATION_long): dur="0"; break;
+            case (DURATION_breve): dur="9"; break;
+            case (DURATION_1): dur="1"; break;
+            case (DURATION_2): dur="2"; break;
+            case (DURATION_4): dur="4"; break;
+            case (DURATION_8): dur="8"; break;
+            case (DURATION_16): dur="6"; break;
+            case (DURATION_32): dur="3"; break;
+            case (DURATION_64): dur="5"; break;
+            case (DURATION_128): dur="7"; break;
+            case (DURATION_maxima): dur="0"; break;
+            case (DURATION_longa): dur="0"; break;
+            case (DURATION_brevis): dur="9"; break;
+            case (DURATION_semibrevis): dur="1"; break;
+            case (DURATION_minima): dur="2"; break;
+            case (DURATION_semiminima): dur="4"; break;
+            case (DURATION_fusa): dur="8"; break;
+            case (DURATION_semifusa): dur="6"; break;
+            default: LogWarning("Unsupported duration"); dur="4";
         }
         m_streamStringOutput << dur;
         m_streamStringOutput << std::string(m_currentDots, '.');
@@ -591,16 +591,16 @@ void PAEOutput::WriteGrace(AttGraced *attGraced)
 #define BEAM_TERMINAL 0x04
 
 // User interface variables:
-int debugQ = 0; // used with --debug option
-int stdoutQ = 0;
-char outdir[1024] = { 0 }; // used with -d option
-char extension[1024] = { 0 }; // used with -e option
-char hum2abc[1024] = { 0 }; // used with -a option
-int quietQ = 0; // used with -q option
-int quiet2Q = 0; // used with -Q option
+int debugQ=0; // used with --debug option
+int stdoutQ=0;
+char outdir[1024]={ 0 }; // used with -d option
+char extension[1024]={ 0 }; // used with -e option
+char hum2abc[1024]={ 0 }; // used with -a option
+int quietQ=0; // used with -q option
+int quiet2Q=0; // used with -Q option
 
 // Global variables:
-char data_line[10001] = { 0 };
+char data_line[10001]={ 0 };
 #define MAX_DATA_LEN 1024 // One line of the pae file would not be that long!
 char data_key[MAX_DATA_LEN];
 char data_value[MAX_DATA_LEN]; // ditto as above
@@ -615,16 +615,16 @@ PAEInput::PAEInput(Doc *doc)
     : // This is pretty bad. We open a bad fileoinputstream as we don't use it
     Input(doc)
 {
-    m_staff = NULL;
-    m_measure = NULL;
-    m_layer = NULL;
-    m_tie = NULL;
-    m_is_in_chord = false;
-    m_is_mensural = false;
+    m_staff=NULL;
+    m_measure=NULL;
+    m_layer=NULL;
+    m_tie=NULL;
+    m_is_in_chord=false;
+    m_is_mensural=false;
 
-    m_currentKeySig = NULL;
-    m_tieAccid.first = PITCHNAME_NONE;
-    m_tieAccid.second = ACCIDENTAL_WRITTEN_NONE;
+    m_currentKeySig=NULL;
+    m_tieAccid.first=PITCHNAME_NONE;
+    m_tieAccid.second=ACCIDENTAL_WRITTEN_NONE;
 }
 
 PAEInput::~PAEInput() {}
@@ -648,40 +648,40 @@ bool PAEInput::Import(const std::string &pae)
 void PAEInput::parsePlainAndEasy(std::istream &infile)
 {
     // buffers
-    char c_clef[1024] = { 0 };
-    char c_key[1024] = { 0 };
-    char c_keysig[1024] = { 0 };
-    char c_timesig[1024] = { 0 };
-    char c_alttimesig[1024] = { 0 };
-    char incipit[10001] = { 0 };
-    int in_beam = 0;
+    char c_clef[1024]={ 0 };
+    char c_key[1024]={ 0 };
+    char c_keysig[1024]={ 0 };
+    char c_timesig[1024]={ 0 };
+    char c_alttimesig[1024]={ 0 };
+    char incipit[10001]={ 0 };
+    int in_beam=0;
 
     std::string s_key;
     pae::Measure current_measure;
     pae::Note current_note;
-    Clef *staffDefClef = NULL;
-    MeterSig *scoreDefMeterSig = NULL;
-    Mensur *scoreDefMensur = NULL;
-    KeySig *scoreDefKeySig = NULL;
+    Clef *staffDefClef=NULL;
+    MeterSig *scoreDefMeterSig=NULL;
+    Mensur *scoreDefMensur=NULL;
+    KeySig *scoreDefKeySig=NULL;
 
     std::vector<pae::Measure> staff;
 
     m_doc->Reset();
     m_doc->SetType(Raw);
     // The mdiv
-    Mdiv *mdiv = new Mdiv();
-    mdiv->m_visibility = Visible;
+    Mdiv *mdiv=new Mdiv();
+    mdiv->m_visibility=Visible;
     m_doc->AddChild(mdiv);
     // The score
-    Score *score = new Score();
+    Score *score=new Score();
     mdiv->AddChild(score);
     // the section
-    Section *section = new Section();
+    Section *section=new Section();
     score->AddChild(section);
 
     // add minimal scoreDef
-    StaffGrp *staffGrp = new StaffGrp();
-    StaffDef *staffDef = new StaffDef();
+    StaffGrp *staffGrp=new StaffGrp();
+    StaffDef *staffDef=new StaffDef();
     staffDef->SetN(1);
     staffDef->SetLines(5);
     staffGrp->AddChild(staffDef);
@@ -718,61 +718,61 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
     }
 
     if (strlen(c_clef)) {
-        Clef *c = new Clef;
+        Clef *c=new Clef;
         getClefInfo(c_clef, c); // do we need to put a default clef?
         if (!staffDefClef)
-            staffDefClef = c;
+            staffDefClef=c;
         else
-            current_measure.clef = c;
+            current_measure.clef=c;
     }
 
     if (strlen(c_keysig)) {
-        KeySig *k = new KeySig();
+        KeySig *k=new KeySig();
         // Make it an attribute for now
         k->IsAttribute(true);
         getKeyInfo(c_keysig, k);
         if (!scoreDefKeySig) {
-            scoreDefKeySig = k;
+            scoreDefKeySig=k;
         }
         else {
             if (current_measure.key) {
                 delete current_measure.key;
             }
-            current_measure.key = k;
+            current_measure.key=k;
         }
     }
     if (strlen(c_timesig)) {
         if (m_is_mensural) {
-            Mensur *mensur = new Mensur();
+            Mensur *mensur=new Mensur();
             getTimeInfo(c_timesig, NULL, mensur);
             if (!scoreDefMensur) {
-                scoreDefMensur = mensur;
+                scoreDefMensur=mensur;
             }
             else {
                 if (current_measure.mensur) {
                     delete current_measure.mensur;
                 }
-                current_measure.mensur = mensur;
+                current_measure.mensur=mensur;
             }
         }
         else {
-            MeterSig *meter = new MeterSig;
+            MeterSig *meter=new MeterSig;
             getTimeInfo(c_timesig, meter, NULL);
             if (!scoreDefMeterSig) {
-                scoreDefMeterSig = meter;
+                scoreDefMeterSig=meter;
             }
             else {
                 if (current_measure.meter) {
                     delete current_measure.meter;
                 }
-                current_measure.meter = meter;
+                current_measure.meter=meter;
             }
         }
     }
 
     // read the incipit string
-    int length = (int)strlen(incipit);
-    int i = 0;
+    int length=(int)strlen(incipit);
+    int i=0;
     while (i < length) {
         // eat the input...
 
@@ -791,7 +791,7 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
             i += getDurations(incipit, &current_measure, i);
         }
 
-        // accidentals (1 = n; 2 = x; 3 = xx; 4 = b; 5 = bb)
+        // accidentals (1=n; 2=x; 3=xx; 4=b; 5=bb)
         else if (incipit[i] == 'n' || incipit[i] == 'x' || incipit[i] == 'b') {
             i += getAccidental(incipit, &current_note.accidental, i);
         }
@@ -799,20 +799,20 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
         //
         // beaming starts
         else if (incipit[i] == '{') {
-            // current_note.beam = 1;
+            // current_note.beam=1;
             if (current_note.tuplet_note > 0)
-                current_note.beam = BEAM_TUPLET;
+                current_note.beam=BEAM_TUPLET;
             else
-                current_note.beam = BEAM_INITIAL;
+                current_note.beam=BEAM_INITIAL;
             in_beam++;
         }
 
         // beaming ends
         else if (incipit[i] == '}' && in_beam > 0) {
             if (!current_measure.notes.empty()) {
-                current_measure.notes.at(current_measure.notes.size() - 1).beam = BEAM_TERMINAL;
+                current_measure.notes.at(current_measure.notes.size() - 1).beam=BEAM_TERMINAL;
             }
-            current_note.beam = 0;
+            current_note.beam=0;
             in_beam--;
         }
 
@@ -841,7 +841,7 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
 
         // end of appogiatura
         else if (incipit[i] == 'r') {
-            current_note.appoggiatura = 0; // should not have to be done, but just in case
+            current_note.appoggiatura=0; // should not have to be done, but just in case
         }
 
         // note and rest
@@ -862,15 +862,15 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
 
         // measure repetition
         else if ((incipit[i] == 'i') && staff.size() > 0) {
-            pae::Measure last_measure = staff[staff.size() - 1];
-            current_measure.notes = last_measure.notes;
-            current_measure.wholerest = last_measure.wholerest;
+            pae::Measure last_measure=staff[staff.size() - 1];
+            current_measure.notes=last_measure.notes;
+            current_measure.wholerest=last_measure.wholerest;
         }
 
         // barLine
         else if ((incipit[i] == ':') || (incipit[i] == '/')) {
             i += getBarLine(incipit, &current_measure.barLine, i);
-            current_measure.abbreviation_offset = 0; // just in case...
+            current_measure.abbreviation_offset=0; // just in case...
             staff.push_back(current_measure);
             current_measure.reset();
             if (m_currentKeySig) m_currentKeySig->FillMap(m_currentAccids);
@@ -878,11 +878,11 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
 
         // clef change
         else if ((incipit[i] == '%') && (i + 1 < length)) {
-            Clef *c = new Clef;
+            Clef *c=new Clef;
             i += getClefInfo(incipit, c, i + 1);
             //
             if (!staffDefClef) {
-                staffDefClef = c;
+                staffDefClef=c;
             }
             // If there are no notes yet in the measure
             // attach this clef change to the measure
@@ -890,58 +890,58 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
                 // If a clef was already assigned, remove it
                 if (current_measure.clef) delete current_measure.clef;
 
-                current_measure.clef = c;
+                current_measure.clef=c;
             }
             else {
                 // as above
                 if (current_note.clef) delete current_note.clef;
 
-                current_note.clef = c;
+                current_note.clef=c;
             }
         }
 
         // time signature change
         else if ((incipit[i] == '@') && (i + 1 < length)) {
             if (m_is_mensural) {
-                Mensur *mensur = new Mensur();
+                Mensur *mensur=new Mensur();
                 i += getTimeInfo(incipit, NULL, mensur, i + 1);
                 if (current_note.mensur) {
                     delete current_note.mensur;
                 }
-                current_note.mensur = mensur;
+                current_note.mensur=mensur;
             }
             else {
-                MeterSig *meter = new MeterSig;
+                MeterSig *meter=new MeterSig;
                 i += getTimeInfo(incipit, meter, NULL, i + 1);
                 if (current_measure.notes.size() == 0) {
                     if (current_measure.meter) {
                         delete current_measure.meter;
                     }
                     // When will this be deleted? Potential memory leak? LP
-                    current_measure.meter = meter;
+                    current_measure.meter=meter;
                 }
                 else {
                     if (current_note.meter) {
                         delete current_note.meter;
                     }
-                    current_note.meter = meter;
+                    current_note.meter=meter;
                 }
             }
         }
 
         // key signature change
         else if ((incipit[i] == '$') && (i + 1 < length)) {
-            KeySig *k = new KeySig();
+            KeySig *k=new KeySig();
             // Make it an attribute for now
             k->IsAttribute(true);
             i += getKeyInfo(incipit, k, i + 1);
             if (current_measure.notes.size() == 0) {
                 if (current_measure.key) delete current_measure.key;
-                current_measure.key = k;
+                current_measure.key=k;
             }
             else {
                 if (current_note.key) delete current_note.key;
-                current_note.key = k;
+                current_note.key=k;
             }
         }
 
@@ -950,37 +950,37 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
 
     // we need to add the last measure if it has no barLine at the end
     if (current_measure.notes.size() != 0) {
-        // current_measure.barLine = "=-";
+        // current_measure.barLine="=-";
         staff.push_back(current_measure);
         current_measure.notes.clear();
     }
 
-    int measure_count = 1;
+    int measure_count=1;
 
     std::vector<pae::Measure>::iterator it;
-    for (it = staff.begin(); it < staff.end(); ++it) {
+    for (it=staff.begin(); it < staff.end(); ++it) {
 
-        m_staff = new Staff(1);
-        m_measure = new Measure(true, measure_count);
-        m_layer = new Layer();
+        m_staff=new Staff(1);
+        m_measure=new Measure(true, measure_count);
+        m_layer=new Layer();
         m_layer->SetN(1);
 
         m_staff->AddChild(m_layer);
         m_measure->AddChild(m_staff);
 
-        pae::Measure obj = *it;
+        pae::Measure obj=*it;
 
         // Add a score def if we have a new key sig or meter sig
         if (obj.key || obj.meter) {
-            ScoreDef *scoreDef = new ScoreDef();
+            ScoreDef *scoreDef=new ScoreDef();
             if (obj.key) {
                 scoreDef->AddChild(obj.key);
-                obj.key = NULL;
+                obj.key=NULL;
             }
             if (obj.meter) {
                 obj.meter->IsAttribute(true);
                 scoreDef->AddChild(obj.meter);
-                obj.meter = NULL;
+                obj.meter=NULL;
             }
             section->AddChild(scoreDef);
         }
@@ -1017,7 +1017,7 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
 
     if (m_tie != NULL) {
         delete m_tie;
-        m_tie = NULL;
+        m_tie=NULL;
     }
 
     m_doc->ConvertToPageBasedDoc();
@@ -1030,10 +1030,10 @@ void PAEInput::parsePlainAndEasy(std::istream &infile)
 #define BASE_OCT 4
 int PAEInput::getOctave(const char *incipit, char *octave, int index)
 {
-    int i = index;
-    int length = (int)strlen(incipit);
+    int i=index;
+    int length=(int)strlen(incipit);
     if (incipit[i] == '\'') {
-        *octave = BASE_OCT;
+        *octave=BASE_OCT;
         while ((i + 1 < length) && (incipit[i + 1] == '\'')) {
             (*octave)++;
             i++;
@@ -1041,7 +1041,7 @@ int PAEInput::getOctave(const char *incipit, char *octave, int index)
     }
     else if (incipit[i] == ',') {
         // negative octave
-        *octave = BASE_OCT - 1;
+        *octave=BASE_OCT - 1;
         while ((i + 1 < length) && (incipit[i + 1] == ',')) {
             (*octave)--;
             i++;
@@ -1059,53 +1059,53 @@ int PAEInput::getOctave(const char *incipit, char *octave, int index)
 int PAEInput::getDuration(const char *incipit, data_DURATION *duration, int *dot, int index)
 {
 
-    int i = index;
-    int length = (int)strlen(incipit);
+    int i=index;
+    int length=(int)strlen(incipit);
 
     if (m_is_mensural) {
         switch (incipit[i]) {
-            case '0': *duration = DURATION_longa; break;
-            case '1': *duration = DURATION_semibrevis; break;
-            case '2': *duration = DURATION_minima; break;
+            case '0': *duration=DURATION_longa; break;
+            case '1': *duration=DURATION_semibrevis; break;
+            case '2': *duration=DURATION_minima; break;
             case '3':
-                *duration = DURATION_breve;
+                *duration=DURATION_breve;
                 LogWarning("Duration 3 unsupported with mensural notation, using breve instead");
                 break;
-            case '4': *duration = DURATION_semiminima; break;
+            case '4': *duration=DURATION_semiminima; break;
             case '5':
-                *duration = DURATION_breve;
+                *duration=DURATION_breve;
                 LogWarning("Duration 5 unsupported with mensural notation, using breve instead");
                 break;
-            case '6': *duration = DURATION_semifusa; break;
-            case '7': *duration = DURATION_breve; break;
-            case '8': *duration = DURATION_fusa; break;
-            case '9': *duration = DURATION_brevis; break;
+            case '6': *duration=DURATION_semifusa; break;
+            case '7': *duration=DURATION_breve; break;
+            case '8': *duration=DURATION_fusa; break;
+            case '9': *duration=DURATION_brevis; break;
         }
     }
     else {
         switch (incipit[i]) {
-            case '0': *duration = DURATION_long; break;
-            case '1': *duration = DURATION_1; break;
-            case '2': *duration = DURATION_2; break;
-            case '3': *duration = DURATION_32; break;
-            case '4': *duration = DURATION_4; break;
-            case '5': *duration = DURATION_64; break;
-            case '6': *duration = DURATION_16; break;
-            case '7': *duration = DURATION_128; break;
-            case '8': *duration = DURATION_8; break;
-            case '9': *duration = DURATION_breve; break;
+            case '0': *duration=DURATION_long; break;
+            case '1': *duration=DURATION_1; break;
+            case '2': *duration=DURATION_2; break;
+            case '3': *duration=DURATION_32; break;
+            case '4': *duration=DURATION_4; break;
+            case '5': *duration=DURATION_64; break;
+            case '6': *duration=DURATION_16; break;
+            case '7': *duration=DURATION_128; break;
+            case '8': *duration=DURATION_8; break;
+            case '9': *duration=DURATION_breve; break;
         }
     }
 
-    *dot = 0;
+    *dot=0;
     while ((i + 1 < length) && (incipit[i + 1] == '.')) {
         (*dot)++;
         i++;
     }
     if ((*dot == 1) && (incipit[i] == 7)) {
         // neumatic notation
-        *duration = DURATION_breve;
-        *dot = 0;
+        *duration=DURATION_breve;
+        *dot=0;
         LogWarning("Plaine & Easie import: neumatic notation unsupported, using breve instead");
     }
 
@@ -1119,17 +1119,17 @@ int PAEInput::getDuration(const char *incipit, data_DURATION *duration, int *dot
 
 int PAEInput::getDurations(const char *incipit, pae::Measure *measure, int index)
 {
-    int i = index;
-    int length = (int)strlen(incipit);
+    int i=index;
+    int length=(int)strlen(incipit);
 
-    measure->durations_offset = 0;
+    measure->durations_offset=0;
     measure->durations.clear();
     measure->dots.clear();
 
-    // int j = 0;
+    // int j=0;
     do {
         int dot;
-        data_DURATION dur = DURATION_4;
+        data_DURATION dur=DURATION_4;
         // measure->dots.setSize(j+1);
         i += getDuration(incipit, &dur, &dot, i);
         measure->durations.push_back(dur);
@@ -1153,23 +1153,23 @@ int PAEInput::getDurations(const char *incipit, pae::Measure *measure, int index
 
 int PAEInput::getAccidental(const char *incipit, data_ACCIDENTAL_WRITTEN *accident, int index)
 {
-    int i = index;
-    int length = (int)strlen(incipit);
+    int i=index;
+    int length=(int)strlen(incipit);
 
     if (incipit[i] == 'n') {
-        *accident = ACCIDENTAL_WRITTEN_n;
+        *accident=ACCIDENTAL_WRITTEN_n;
     }
     else if (incipit[i] == 'x') {
-        *accident = ACCIDENTAL_WRITTEN_s;
+        *accident=ACCIDENTAL_WRITTEN_s;
         if ((i + 1 < length) && (incipit[i + 1] == 'x')) {
-            *accident = ACCIDENTAL_WRITTEN_x;
+            *accident=ACCIDENTAL_WRITTEN_x;
             i++;
         }
     }
     else if (incipit[i] == 'b') {
-        *accident = ACCIDENTAL_WRITTEN_f;
+        *accident=ACCIDENTAL_WRITTEN_f;
         if ((i + 1 < length) && (incipit[i + 1] == 'b')) {
-            *accident = ACCIDENTAL_WRITTEN_ff;
+            *accident=ACCIDENTAL_WRITTEN_ff;
             i++;
         }
     }
@@ -1183,8 +1183,8 @@ int PAEInput::getAccidental(const char *incipit, data_ACCIDENTAL_WRITTEN *accide
 
 int PAEInput::getTupletFermata(const char *incipit, pae::Note *note, int index)
 {
-    int i = index;
-    int length = (int)strlen(incipit);
+    int i=index;
+    int length=(int)strlen(incipit);
 
     // Detect if it is a fermata or a tuplet.
     //
@@ -1192,16 +1192,16 @@ int PAEInput::getTupletFermata(const char *incipit, pae::Note *note, int index)
     // Previously these were extended regex syntax, but this case
     // is the same in ECMAScript syntax.
     std::regex exp("^([^)]*[ABCDEFG-][^)]*[ABCDEFG-][^)]*)", std::regex_constants::ECMAScript);
-    bool is_tuplet = regex_search(incipit + i, exp);
+    bool is_tuplet=regex_search(incipit + i, exp);
 
     if (is_tuplet) {
-        int t = i;
-        int tuplet_val = 3; // triplets are default
-        int tuplet_notes = 0;
+        int t=i;
+        int tuplet_val=3; // triplets are default
+        int tuplet_notes=0;
         char *buf;
 
         // create the buffer so we can convert the tuplet nr to int
-        buf = (char *)malloc(length + 1); // allocate it with space for 0x00
+        buf=(char *)malloc(length + 1); // allocate it with space for 0x00
         memset(buf, 0x00, length + 1); // wipe it up
 
         // move until we find the ;
@@ -1222,7 +1222,7 @@ int PAEInput::getTupletFermata(const char *incipit, pae::Note *note, int index)
 
         // We detected a ';', get the value of the tuplet (otherwise 3 by default)
         if ((t < length) && incipit[t] != ')') {
-            int t2 = 0;
+            int t2=0;
             // t + 1 should point to the number
             t++; // move one char to the number
             while (((t + t2) < length) && (incipit[t + t2] != ')')) {
@@ -1235,26 +1235,26 @@ int PAEInput::getTupletFermata(const char *incipit, pae::Note *note, int index)
                 }
 
                 // copy the number char-by-char
-                buf[t2] = incipit[t + t2];
+                buf[t2]=incipit[t + t2];
                 t2++;
             }
 
-            tuplet_val = atoi(buf);
+            tuplet_val=atoi(buf);
         }
 
-        // this is the first note, the total number of notes = tuplet_val
-        note->tuplet_notes = tuplet_notes;
+        // this is the first note, the total number of notes=tuplet_val
+        note->tuplet_notes=tuplet_notes;
         // but also the note counter
-        note->tuplet_note = tuplet_notes;
+        note->tuplet_note=tuplet_notes;
         // the tuplet val (3 or after ;)
-        note->tuplet_val = tuplet_val;
+        note->tuplet_val=tuplet_val;
         free(buf); // dispose of the buffer
     }
     else {
         if (note->tuplet_notes > 0) {
             LogWarning("Plaine & Easie import: fermatas within tuplets won't be handled correctly");
         }
-        note->fermata = true;
+        note->fermata=true;
     }
 
     return i - index;
@@ -1267,12 +1267,12 @@ int PAEInput::getTupletFermata(const char *incipit, pae::Note *note, int index)
 // this can be deleted in the future?
 int PAEInput::getTupletFermataEnd(const char *incipit, pae::Note *note, int index)
 {
-    int i = index;
-    // int length = strlen(incipit);
+    int i=index;
+    // int length=strlen(incipit);
 
     // TODO: fermatas inside tuplets won't be currently handled correctly
     if (note->tuplet_notes != 1) {
-        note->fermata = false;
+        note->fermata=false;
     }
 
     return i - index;
@@ -1285,20 +1285,20 @@ int PAEInput::getTupletFermataEnd(const char *incipit, pae::Note *note, int inde
 
 int PAEInput::getGraceNote(const char *incipit, pae::Note *note, int index)
 {
-    int i = index;
-    int length = (int)strlen(incipit);
+    int i=index;
+    int length=(int)strlen(incipit);
 
     // acciaccatura
     if (incipit[i] == 'g') {
-        note->acciaccatura = true;
+        note->acciaccatura=true;
     }
 
     // appoggiatura
     else if (incipit[i] == 'q') {
-        note->appoggiatura = 1;
+        note->appoggiatura=1;
         if ((i + 1 < length) && (incipit[i + 1] == 'q')) {
             i++;
-            int r = i;
+            int r=i;
             while ((r < length) && (incipit[r] != 'r')) {
                 if ((incipit[r] - 'A' >= 0) && (incipit[r] - 'A' < 7)) {
                     note->appoggiatura++;
@@ -1317,17 +1317,17 @@ int PAEInput::getGraceNote(const char *incipit, pae::Note *note, int index)
 
 data_PITCHNAME PAEInput::getPitch(char c_note)
 {
-    data_PITCHNAME pitch = PITCHNAME_c;
+    data_PITCHNAME pitch=PITCHNAME_c;
 
     switch (c_note) {
-        case 'A': pitch = PITCHNAME_a; break;
-        case 'B': pitch = PITCHNAME_b; break;
-        case 'C': pitch = PITCHNAME_c; break;
-        case 'D': pitch = PITCHNAME_d; break;
-        case 'E': pitch = PITCHNAME_e; break;
-        case 'F': pitch = PITCHNAME_f; break;
-        case 'G': pitch = PITCHNAME_g; break;
-        case '-': pitch = PITCHNAME_NONE; break;
+        case 'A': pitch=PITCHNAME_a; break;
+        case 'B': pitch=PITCHNAME_b; break;
+        case 'C': pitch=PITCHNAME_c; break;
+        case 'D': pitch=PITCHNAME_d; break;
+        case 'E': pitch=PITCHNAME_e; break;
+        case 'F': pitch=PITCHNAME_f; break;
+        case 'G': pitch=PITCHNAME_g; break;
+        case '-': pitch=PITCHNAME_NONE; break;
         default: break;
     }
     return pitch;
@@ -1340,8 +1340,8 @@ data_PITCHNAME PAEInput::getPitch(char c_note)
 
 int PAEInput::getTimeInfo(const char *incipit, MeterSig *meter, Mensur *mensur, int index)
 {
-    int i = index;
-    int length = (int)strlen(incipit);
+    int i=index;
+    int length=(int)strlen(incipit);
 
     if (!meter && !mensur) {
         return 0;
@@ -1457,19 +1457,19 @@ int PAEInput::getClefInfo(const char *incipit, Clef *mclef, int index)
 {
     // a clef is maximum 3 character length
     // go through the 3 character and retrieve the letter (clef) and the line
-    int length = (int)strlen(incipit);
-    int i = 0;
-    char clef = 'G';
-    char line = '2';
+    int length=(int)strlen(incipit);
+    int i=0;
+    char clef='G';
+    char line='2';
     while ((index < length) && (i < 3)) {
         if (i == 0) {
-            clef = incipit[index];
+            clef=incipit[index];
         }
         else if (i == 2) {
-            line = incipit[index];
+            line=incipit[index];
         }
         if (incipit[index] == '+') {
-            m_is_mensural = true;
+            m_is_mensural=true;
         }
         i++;
         index++;
@@ -1497,7 +1497,7 @@ int PAEInput::getClefInfo(const char *incipit, Clef *mclef, int index)
         LogDebug("Plaine & Easie import: undefined clef %c", clef);
     }
 
-    // measure->clef = mclef;
+    // measure->clef=mclef;
 
     return i;
 }
@@ -1509,10 +1509,10 @@ int PAEInput::getClefInfo(const char *incipit, Clef *mclef, int index)
 
 int PAEInput::getWholeRest(const char *incipit, int *wholerest, int index)
 {
-    int length = (int)strlen(incipit);
-    int i = index;
+    int length=(int)strlen(incipit);
+    int i=index;
 
-    *wholerest = 1;
+    *wholerest=1;
     if ((i + 1 < length) && isdigit(incipit[i + 1])) {
         sscanf(&(incipit[i + 1]), "%d", wholerest);
         char buf[10];
@@ -1539,47 +1539,47 @@ int PAEInput::getWholeRest(const char *incipit, int *wholerest, int index)
 int PAEInput::getBarLine(const char *incipit, data_BARRENDITION *output, int index)
 {
 
-    bool is_barline_rptboth = false;
-    bool is_barline_rptend = false;
-    bool is_barline_rptstart = false;
-    bool is_barline_dbl = false;
+    bool is_barline_rptboth=false;
+    bool is_barline_rptend=false;
+    bool is_barline_rptstart=false;
+    bool is_barline_dbl=false;
 
     if (strncmp(incipit + index, "://:", 4) == 0) {
-        is_barline_rptboth = true;
+        is_barline_rptboth=true;
     }
 
     if (strncmp(incipit + index, "://", 3) == 0) {
-        is_barline_rptend = true;
+        is_barline_rptend=true;
     }
 
     if (strncmp(incipit + index, "//:", 3) == 0) {
-        is_barline_rptstart = true;
+        is_barline_rptstart=true;
     }
 
     if (strncmp(incipit + index, "//", 2) == 0) {
-        is_barline_dbl = true;
+        is_barline_dbl=true;
     }
 
-    int i = 0; // number of characters
+    int i=0; // number of characters
     if (is_barline_rptboth) {
-        *output = BARRENDITION_rptboth;
-        i = 3;
+        *output=BARRENDITION_rptboth;
+        i=3;
     }
     else if (is_barline_rptstart) {
-        *output = BARRENDITION_rptstart;
-        i = 2;
+        *output=BARRENDITION_rptstart;
+        i=2;
     }
     else if (is_barline_rptend) {
-        *output = BARRENDITION_rptend;
-        i = 2;
+        *output=BARRENDITION_rptend;
+        i=2;
     }
     else if (is_barline_dbl) {
-        *output = BARRENDITION_dbl;
-        i = 1;
+        *output=BARRENDITION_dbl;
+        i=1;
     }
     else {
-        *output = BARRENDITION_single;
-        i = 0;
+        *output=BARRENDITION_single;
+        i=0;
     }
     return i;
 }
@@ -1591,21 +1591,21 @@ int PAEInput::getBarLine(const char *incipit, data_BARRENDITION *output, int ind
 
 int PAEInput::getAbbreviation(const char *incipit, pae::Measure *measure, int index)
 {
-    int length = (int)strlen(incipit);
-    int i = index;
+    int length=(int)strlen(incipit);
+    int i=index;
 
     if (measure->abbreviation_offset == -1) { // start
-        measure->abbreviation_offset = (int)measure->notes.size();
+        measure->abbreviation_offset=(int)measure->notes.size();
     }
     else { //
-        int abbreviation_stop = (int)measure->notes.size();
+        int abbreviation_stop=(int)measure->notes.size();
         while ((i + 1 < length) && (incipit[i + 1] == 'f')) {
             i++;
-            for (int j = measure->abbreviation_offset; j < abbreviation_stop; ++j) {
+            for (int j=measure->abbreviation_offset; j < abbreviation_stop; ++j) {
                 measure->notes.push_back(measure->notes.at(j));
             }
         }
-        measure->abbreviation_offset = -1;
+        measure->abbreviation_offset=-1;
     }
 
     return i - index;
@@ -1620,38 +1620,38 @@ int PAEInput::getKeyInfo(const char *incipit, KeySig *key, int index)
 {
     key->Reset();
 
-    int alt_nr = 0;
-    std::string m_keySigString = "";
+    int alt_nr=0;
+    std::string m_keySigString="";
 
     // at the key information line, extract data
-    int length = (int)strlen(incipit);
-    int i = index;
-    bool end_of_keysig = false;
-    bool enclosed = false;
-    bool has_enclosed = false;
+    int length=(int)strlen(incipit);
+    int i=index;
+    bool end_of_keysig=false;
+    bool enclosed=false;
+    bool has_enclosed=false;
     std::vector<bool> enclosedAccids;
     enclosedAccids.resize(7);
-    bool cancel = false;
-    data_ACCIDENTAL_WRITTEN alterationType = ACCIDENTAL_WRITTEN_NONE;
+    bool cancel=false;
+    data_ACCIDENTAL_WRITTEN alterationType=ACCIDENTAL_WRITTEN_NONE;
     while ((i < length) && (!end_of_keysig)) {
         switch (incipit[i]) {
             case 'b':
-                alt_nr = 0;
-                alterationType = ACCIDENTAL_WRITTEN_f;
+                alt_nr=0;
+                alterationType=ACCIDENTAL_WRITTEN_f;
                 break;
             case 'x':
-                alt_nr = 0;
-                alterationType = ACCIDENTAL_WRITTEN_s;
+                alt_nr=0;
+                alterationType=ACCIDENTAL_WRITTEN_s;
                 break;
             case 'n':
-                alt_nr = 0;
-                cancel = true;
+                alt_nr=0;
+                cancel=true;
                 break;
             case '[':
-                enclosed = true;
-                has_enclosed = true;
+                enclosed=true;
+                has_enclosed=true;
                 break;
-            case ']': enclosed = false; break;
+            case ']': enclosed=false; break;
             case 'F':
             case 'C':
             case 'G':
@@ -1659,25 +1659,25 @@ int PAEInput::getKeyInfo(const char *incipit, KeySig *key, int index)
             case 'A':
             case 'E':
             case 'B': alt_nr++; break;
-            default: end_of_keysig = true; break;
+            default: end_of_keysig=true; break;
         }
         if (!end_of_keysig) {
             if (alt_nr < 7) {
-                enclosedAccids.at(alt_nr) = enclosed;
+                enclosedAccids.at(alt_nr)=enclosed;
             }
             i++;
         }
     }
 
     // Just in case
-    alt_nr = std::min(6, alt_nr);
+    alt_nr=std::min(6, alt_nr);
 
     if (alterationType != ACCIDENTAL_WRITTEN_NONE) {
         if (has_enclosed == true) {
             key->IsAttribute(false);
-            for (int i = 0; i < alt_nr; ++i) {
-                KeyAccid *keyAccid = new KeyAccid();
-                data_PITCHNAME pname = (alterationType == ACCIDENTAL_WRITTEN_f) ? KeySig::s_pnameForFlats[i]
+            for (int i=0; i < alt_nr; ++i) {
+                KeyAccid *keyAccid=new KeyAccid();
+                data_PITCHNAME pname=(alterationType == ACCIDENTAL_WRITTEN_f) ? KeySig::s_pnameForFlats[i]
                                                                                 : KeySig::s_pnameForSharps[i];
                 keyAccid->SetPname(pname);
                 keyAccid->SetAccid(alterationType);
@@ -1698,7 +1698,7 @@ int PAEInput::getKeyInfo(const char *incipit, KeySig *key, int index)
         key->SetSig(std::make_pair(0, ACCIDENTAL_WRITTEN_n));
     }
 
-    m_currentKeySig = key;
+    m_currentKeySig=key;
     key->FillMap(m_currentAccids);
 
     return i - index;
@@ -1712,27 +1712,27 @@ int PAEInput::getKeyInfo(const char *incipit, KeySig *key, int index)
 int PAEInput::getNote(const char *incipit, pae::Note *note, pae::Measure *measure, int index)
 {
     int oct;
-    int i = index;
+    int i=index;
     int app;
     int tuplet_num;
 
     if (note->acciaccatura) {
         // acciaccaturas are always eights regardless
         // and have no dots
-        note->duration = DURATION_8;
+        note->duration=DURATION_8;
     }
     else {
         if (measure->durations.size() == 0) {
-            note->duration = DURATION_4;
-            note->dots = 0;
+            note->duration=DURATION_4;
+            note->dots=0;
             LogWarning("Plaine & Easie import: found note before duration was specified");
         }
         else {
-            note->duration = measure->durations.at(measure->durations_offset);
-            note->dots = measure->dots.at(measure->durations_offset);
+            note->duration=measure->durations.at(measure->durations_offset);
+            note->dots=measure->dots.at(measure->durations_offset);
         }
     }
-    note->pitch = getPitch(incipit[i]);
+    note->pitch=getPitch(incipit[i]);
 
     // If necessary pass the accid from the tied note (could be from the previous measure)
     if (m_tieAccid.first != PITCHNAME_NONE) {
@@ -1742,11 +1742,11 @@ int PAEInput::getNote(const char *incipit, pae::Note *note, pae::Measure *measur
             }
         }
         else if (m_tieAccid.second != ACCIDENTAL_WRITTEN_NONE) {
-            m_currentAccids[m_tieAccid.first] = m_tieAccid.second;
+            m_currentAccids[m_tieAccid.first]=m_tieAccid.second;
         }
     }
-    m_tieAccid.first = PITCHNAME_NONE;
-    m_tieAccid.second = ACCIDENTAL_WRITTEN_NONE;
+    m_tieAccid.first=PITCHNAME_NONE;
+    m_tieAccid.second=ACCIDENTAL_WRITTEN_NONE;
 
     // Natural in front of the note, remove it from the current list
     if (note->accidental == ACCIDENTAL_WRITTEN_n) {
@@ -1756,78 +1756,78 @@ int PAEInput::getNote(const char *incipit, pae::Note *note, pae::Measure *measur
     }
     // Not a natural in front of the note, add it to the current list
     else if (note->accidental != ACCIDENTAL_WRITTEN_NONE) {
-        m_currentAccids[note->pitch] = note->accidental;
+        m_currentAccids[note->pitch]=note->accidental;
     }
 
     // Nothing in front of the note, but something in the list - make it an accid.ges
     if ((note->accidental == ACCIDENTAL_WRITTEN_NONE) && (m_currentAccids.count(note->pitch) != 0)) {
-        note->accidental = m_currentAccids.at(note->pitch);
-        note->accidGes = true;
+        note->accidental=m_currentAccids.at(note->pitch);
+        note->accidGes=true;
     }
 
     // lookout, hack. If a rest (PITCHNAME_NONE val) then create rest object.
     // it will be added instead of the note
     if (note->pitch == PITCHNAME_NONE) {
-        note->rest = true;
+        note->rest=true;
     }
 
     // chord
     if (regex_search(incipit + i + 1, std::regex("^[^A-G]*\\^"))) {
-        note->chord = true;
+        note->chord=true;
     }
 
     // tie
     if (regex_search(incipit + i + 1, std::regex("^[^A-G]*\\+"))) {
-        note->tie = true;
+        note->tie=true;
         if (note->accidental) {
-            m_tieAccid.first = note->pitch;
-            m_tieAccid.second = note->accidental;
+            m_tieAccid.first=note->pitch;
+            m_tieAccid.second=note->accidental;
         }
     }
     else {
-        m_tieAccid.first = PITCHNAME_NONE;
-        m_tieAccid.second = ACCIDENTAL_WRITTEN_NONE;
+        m_tieAccid.first=PITCHNAME_NONE;
+        m_tieAccid.second=ACCIDENTAL_WRITTEN_NONE;
     }
 
     // trills
     if (regex_search(incipit + i + 1, std::regex("^[^A-G]*t"))) {
-        note->trill = true;
+        note->trill=true;
     }
 
-    oct = note->octave;
+    oct=note->octave;
     measure->notes.push_back(*note);
 
-    app = note->appoggiatura;
-    tuplet_num = note->tuplet_note;
+    app=note->appoggiatura;
+    tuplet_num=note->tuplet_note;
 
     // Reset note to defaults
     note->clear();
 
     // write back the values we need to save
-    note->octave = oct; // save octave
+    note->octave=oct; // save octave
 
     // tuplets. Decrease the current number if we are in a tuplet
     // i.e. tuplet_num > 0
     // al the other values just need to be in the first note
     if (tuplet_num > 0) {
-        note->tuplet_note = --tuplet_num;
+        note->tuplet_note=--tuplet_num;
     }
 
     // grace notes
-    note->acciaccatura = false;
+    note->acciaccatura=false;
     if (app > 0) {
-        note->appoggiatura = --app;
+        note->appoggiatura=--app;
     }
     // durations
     if (measure->durations.size() > 0) {
         measure->durations_offset++;
         if (measure->durations_offset >= (int)measure->durations.size()) {
-            measure->durations_offset = 0;
+            measure->durations_offset=0;
         }
     }
 
-    note->fermata = false; // only one note per fermata;
-    note->trill = false;
+    note->fermata=false; // only one note per fermata;
+    note->trill=false;
 
     return i - index;
 }
@@ -1845,11 +1845,11 @@ void PAEInput::convertMeasure(pae::Measure *measure)
 
     if (measure->wholerest > 0) {
         if (measure->wholerest == 1) {
-            MRest *mRest = new MRest;
+            MRest *mRest=new MRest;
             m_layer->AddChild(mRest);
         }
         else {
-            MultiRest *multiRest = new MultiRest();
+            MultiRest *multiRest=new MultiRest();
             multiRest->SetNum(measure->wholerest);
             m_layer->AddChild(multiRest);
         }
@@ -1857,8 +1857,8 @@ void PAEInput::convertMeasure(pae::Measure *measure)
 
     m_nested_objects.clear();
 
-    for (unsigned int i = 0; i < measure->notes.size(); ++i) {
-        pae::Note *note = &measure->notes.at(i);
+    for (unsigned int i=0; i < measure->notes.size(); ++i) {
+        pae::Note *note=&measure->notes.at(i);
         parseNote(note);
     }
 
@@ -1872,7 +1872,7 @@ void PAEInput::parseNote(pae::Note *note)
     LayerElement *element;
 
     if (note->rest) {
-        Rest *rest = new Rest();
+        Rest *rest=new Rest();
 
         rest->SetDur(note->duration);
 
@@ -1881,20 +1881,20 @@ void PAEInput::parseNote(pae::Note *note)
         }
 
         if (note->fermata) {
-            Fermata *fermata = new Fermata();
+            Fermata *fermata=new Fermata();
             fermata->SetStartid("#" + rest->GetUuid());
             m_measure->AddChild(fermata);
         }
 
-        element = rest;
+        element=rest;
     }
     else {
-        Note *mnote = new Note();
+        Note *mnote=new Note();
 
         mnote->SetPname(note->pitch);
         mnote->SetOct(note->octave);
         if (note->accidental != ACCIDENTAL_WRITTEN_NONE) {
-            Accid *accid = new Accid();
+            Accid *accid=new Accid();
             if (note->accidGes) {
                 accid->SetAccidGes(Att::AccidentalWrittenToGestural(note->accidental));
             }
@@ -1919,29 +1919,29 @@ void PAEInput::parseNote(pae::Note *note)
         }
 
         if (note->fermata) {
-            Fermata *fermata = new Fermata();
+            Fermata *fermata=new Fermata();
             fermata->SetStartid("#" + mnote->GetUuid());
             m_measure->AddChild(fermata);
         }
 
         if (note->trill) {
-            Trill *trill = new Trill();
+            Trill *trill=new Trill();
             trill->SetStartid("#" + mnote->GetUuid());
             m_measure->AddChild(trill);
         }
 
         if (m_tie != NULL) {
             m_tie->SetEndid("#" + mnote->GetUuid());
-            m_tie = NULL;
+            m_tie=NULL;
         }
 
         if (note->tie) {
-            m_tie = new Tie();
+            m_tie=new Tie();
             m_tie->SetStartid("#" + mnote->GetUuid());
             m_measure->AddChild(m_tie);
         }
 
-        element = mnote;
+        element=mnote;
     }
 
     // Does this note have a clef change? push it before everything else
@@ -1967,7 +1967,7 @@ void PAEInput::parseNote(pae::Note *note)
     // this case is simpler. NOTE a note can not be acciacctura AND appoggiatura
     // Acciaccatura rests do not exist
     if (note->acciaccatura && (element->Is(NOTE))) {
-        Note *mnote = vrv_cast<Note *>(element);
+        Note *mnote=vrv_cast<Note *>(element);
         assert(mnote);
         mnote->SetDur(DURATION_8);
         mnote->SetGrace(GRACE_unacc);
@@ -1975,7 +1975,7 @@ void PAEInput::parseNote(pae::Note *note)
     }
 
     if ((note->appoggiatura > 0) && (element->Is(NOTE))) {
-        Note *mnote = vrv_cast<Note *>(element);
+        Note *mnote=vrv_cast<Note *>(element);
         assert(mnote);
         mnote->SetGrace(GRACE_acc);
         mnote->SetStemDir(STEMDIRECTION_up);
@@ -1988,7 +1988,7 @@ void PAEInput::parseNote(pae::Note *note)
     // we have a tuplet, the tuplet_note is > 0
     // which means we are counting a tuplet
     if (note->tuplet_note > 0 && note->tuplet_notes == note->tuplet_note) { // first elem in tuplet
-        Tuplet *newTuplet = new Tuplet();
+        Tuplet *newTuplet=new Tuplet();
         newTuplet->SetNum(note->tuplet_val);
         newTuplet->SetNumbase(2);
         pushContainer(newTuplet);
@@ -2000,15 +2000,15 @@ void PAEInput::parseNote(pae::Note *note)
 
     // note in a chord
     if (note->chord) {
-        Note *mnote = dynamic_cast<Note *>(element);
+        Note *mnote=dynamic_cast<Note *>(element);
         assert(mnote);
         // first note?
         if (!m_is_in_chord) {
-            Chord *chord = new Chord();
+            Chord *chord=new Chord();
             chord->SetDots(mnote->GetDots());
             chord->SetDur(mnote->GetDur());
             pushContainer(chord);
-            m_is_in_chord = true;
+            m_is_in_chord=true;
         }
         mnote->ResetAugmentDots();
         mnote->ResetDurationLogical();
@@ -2019,7 +2019,7 @@ void PAEInput::parseNote(pae::Note *note)
 
     // Add mensural dot
     if (m_is_mensural && note->dots > 0) {
-        Dot *dot = new Dot();
+        Dot *dot=new Dot();
         addLayerElement(dot);
     }
 
@@ -2036,12 +2036,12 @@ void PAEInput::parseNote(pae::Note *note)
 
     // last note of a chord
     if (!note->chord && m_is_in_chord) {
-        Note *mnote = dynamic_cast<Note *>(element);
+        Note *mnote=dynamic_cast<Note *>(element);
         assert(mnote);
         mnote->ResetAugmentDots();
         mnote->ResetDurationLogical();
         popContainer();
-        m_is_in_chord = false;
+        m_is_in_chord=false;
     }
 }
 
@@ -2092,12 +2092,12 @@ void PAEInput::getAtRecordKeyValue(char *key, char *value, const char *input)
         index++;                                                                                                       \
     }
 
-    char MARKER = '@';
-    char SEPARATOR = ':';
-    char EMPTY = '\0';
+    char MARKER='@';
+    char SEPARATOR=':';
+    char EMPTY='\0';
 
-    int length = (int)strlen(input);
-    int count = 0;
+    int length=(int)strlen(input);
+    int count=0;
 
     // zero out strings
     memset(key, EMPTY, MAX_DATA_LEN);
@@ -2108,7 +2108,7 @@ void PAEInput::getAtRecordKeyValue(char *key, char *value, const char *input)
     }
 
     char ch;
-    int index = 0;
+    int index=0;
 
     // find starting @ symbol (ignoring any starting space)
     SKIPSPACE
@@ -2124,18 +2124,18 @@ void PAEInput::getAtRecordKeyValue(char *key, char *value, const char *input)
         if (isspace(input[index])) {
             continue;
         }
-        ch = input[index];
+        ch=input[index];
 
         // Should never happen
         if (count >= MAX_DATA_LEN) return;
 
-        key[count] = ch;
+        key[count]=ch;
         count++;
         index++;
     }
     // check to see if valid format: (:) must be the current character
     if (input[index] != SEPARATOR) {
-        key[0] = EMPTY;
+        key[0]=EMPTY;
         return;
     }
     index++;
@@ -2148,9 +2148,9 @@ void PAEInput::getAtRecordKeyValue(char *key, char *value, const char *input)
 
     // Truncate string to first space
     size_t i;
-    for (i = strlen(value) - 2; i > 0; i--) {
+    for (i=strlen(value) - 2; i > 0; i--) {
         if (isspace(value[i])) {
-            value[i] = EMPTY;
+            value[i]=EMPTY;
             continue;
         }
         break;

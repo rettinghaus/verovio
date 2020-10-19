@@ -58,7 +58,7 @@ public:
      */
     ///@{
     bool EndsWithBounce() const { return m_endsWithBounce; }
-    void EndsWithBounce(bool endsWithBounce) { m_endsWithBounce = endsWithBounce; }
+    void EndsWithBounce(bool endsWithBounce) { m_endsWithBounce=endsWithBounce; }
     ///@}
 
     /**

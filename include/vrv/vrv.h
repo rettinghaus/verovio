@@ -43,7 +43,7 @@ void DisableLog();
  * Member and functions specific to emscripten loging that uses a vector of string to buffer the logs.
  */
 #ifdef __EMSCRIPTEN__
-enum consoleLogLevel { CONSOLE_LOG = 0, CONSOLE_INFO, CONSOLE_WARN, CONSOLE_ERROR, CONSOLE_DEBUG };
+enum consoleLogLevel { CONSOLE_LOG=0, CONSOLE_INFO, CONSOLE_WARN, CONSOLE_ERROR, CONSOLE_DEBUG };
 extern std::vector<std::string> logBuffer;
 bool LogBufferContains(const std::string &s);
 void AppendLogBuffer(bool checkDuplicate, std::string message, consoleLogLevel level);
@@ -111,7 +111,7 @@ extern bool noLog;
  */
 extern struct timeval start;
 void LogElapsedTimeStart();
-void LogElapsedTimeEnd(const char *msg = "unspecified operation");
+void LogElapsedTimeEnd(const char *msg="unspecified operation");
 
 /**
  * Method that simply checks if the Object is not NULL
@@ -130,16 +130,16 @@ bool Check(Object *object);
 
 class Resources {
 public:
-    using StyleAttributes = std::pair<data_FONTWEIGHT, data_FONTSTYLE>;
-    using GlyphMap = std::map<wchar_t, Glyph>;
-    using GlyphTextMap = std::map<StyleAttributes, GlyphMap>;
+    using StyleAttributes=std::pair<data_FONTWEIGHT, data_FONTSTYLE>;
+    using GlyphMap=std::map<wchar_t, Glyph>;
+    using GlyphTextMap=std::map<StyleAttributes, GlyphMap>;
     /**
      * @name Setters and getters for static environment variables
      */
     ///@{
     /** Resource path */
     static std::string GetPath() { return s_path; }
-    static void SetPath(const std::string &path) { s_path = path; }
+    static void SetPath(const std::string &path) { s_path=path; }
     /** Init the SMufL music and text fonts */
     static bool InitFonts();
     /** Init the text font (bounding boxes and ASCII only) */
@@ -147,7 +147,7 @@ public:
     /** Select a particular music font */
     static bool SetMusicFont(const std::string &fontName);
     /** Select a particular text font */
-    static bool SetTextFont(const std::string &fontName, const bool usePostfixes = true);
+    static bool SetTextFont(const std::string &fontName, const bool usePostfixes=true);
     /** Returns the glyph (if exists) for the current SMuFL font */
     static Glyph *GetGlyph(wchar_t smuflCode);
     /** Set current text style*/

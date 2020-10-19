@@ -61,13 +61,13 @@ public:
     ///@{
     DeviceContext()
     {
-        m_isDeactivatedX = false;
-        m_isDeactivatedY = false;
-        m_width = 0;
-        m_height = 0;
-        m_contentHeight = 0;
-        m_userScaleX = 1.0;
-        m_userScaleY = 1.0;
+        m_isDeactivatedX=false;
+        m_isDeactivatedY=false;
+        m_width=0;
+        m_height=0;
+        m_contentHeight=0;
+        m_userScaleX=1.0;
+        m_userScaleY=1.0;
     }
     virtual ~DeviceContext(){};
     virtual ClassId GetClassId() const;
@@ -79,15 +79,15 @@ public:
      * Non-virtual methods cannot be overridden and manage the width, height and user-scale
      */
     ///@{
-    void SetWidth(int width) { m_width = width; }
-    void SetHeight(int height) { m_height = height; }
-    void SetContentHeight(int height) { m_contentHeight = height; }
+    void SetWidth(int width) { m_width=width; }
+    void SetHeight(int height) { m_height=height; }
+    void SetContentHeight(int height) { m_contentHeight=height; }
     void SetUserScale(double scaleX, double scaleY)
     {
-        m_userScaleX = scaleX;
-        m_userScaleY = scaleY;
+        m_userScaleX=scaleX;
+        m_userScaleY=scaleY;
     }
-    void SetDefaultFontName(const std::string &defaultFontName) { m_defaultFontName = defaultFontName; }
+    void SetDefaultFontName(const std::string &defaultFontName) { m_defaultFontName=defaultFontName; }
     int GetWidth() const { return m_width; }
     int GetHeight() const { return m_height; }
     int GetContentHeight() const { return m_contentHeight; }
@@ -101,17 +101,17 @@ public:
      */
     ///@{
     void SetBrush(int colour, int opacity);
-    void SetPen(int colour, int width, int opacity, int dashLength = 0, int lineCap = 0);
+    void SetPen(int colour, int width, int opacity, int dashLength=0, int lineCap=0);
     void SetFont(FontInfo *font);
     void ResetBrush();
     void ResetPen();
     void ResetFont();
-    virtual void SetBackground(int colour, int style = AxSOLID) = 0;
-    virtual void SetBackgroundImage(void *image, double opacity = 1.0) = 0;
-    virtual void SetBackgroundMode(int mode) = 0;
-    virtual void SetTextForeground(int colour) = 0;
-    virtual void SetTextBackground(int colour) = 0;
-    virtual void SetLogicalOrigin(int x, int y) = 0;
+    virtual void SetBackground(int colour, int style=AxSOLID)=0;
+    virtual void SetBackgroundImage(void *image, double opacity=1.0)=0;
+    virtual void SetBackgroundMode(int mode)=0;
+    virtual void SetTextForeground(int colour)=0;
+    virtual void SetTextBackground(int colour)=0;
+    virtual void SetLogicalOrigin(int x, int y)=0;
     ///}
 
     /**
@@ -133,31 +133,31 @@ public:
      * @name Getters
      */
     ///@{
-    virtual Point GetLogicalOrigin() = 0;
+    virtual Point GetLogicalOrigin()=0;
     ///@}
 
     /**
      * @name Drawing methods
      */
     ///@{
-    virtual void DrawSimpleBezierPath(Point bezier[4]) = 0;
-    virtual void DrawComplexBezierPath(Point bezier1[4], Point bezier2[4]) = 0;
-    virtual void DrawCircle(int x, int y, int radius) = 0;
-    virtual void DrawEllipse(int x, int y, int width, int height) = 0;
-    virtual void DrawEllipticArc(int x, int y, int width, int height, double start, double end) = 0;
-    virtual void DrawLine(int x1, int y1, int x2, int y2) = 0;
-    virtual void DrawPolygon(int n, Point points[], int xoffset = 0, int yoffset = 0, int fill_style = AxODDEVEN_RULE)
-        = 0;
-    virtual void DrawRectangle(int x, int y, int width, int height) = 0;
-    virtual void DrawRotatedText(const std::string &text, int x, int y, double angle) = 0;
-    virtual void DrawRoundedRectangle(int x, int y, int width, int height, int radius) = 0;
-    virtual void DrawText(const std::string &text, const std::wstring wtext = L"", int x = VRV_UNSET, int y = VRV_UNSET,
-        int width = VRV_UNSET, int height = VRV_UNSET)
-        = 0;
-    virtual void DrawMusicText(const std::wstring &text, int x, int y, bool setSmuflGlyph = false) = 0;
-    virtual void DrawSpline(int n, Point points[]) = 0;
-    virtual void DrawSvgShape(int x, int y, int width, int height, pugi::xml_node svg) = 0;
-    virtual void DrawBackgroundImage(int x = 0, int y = 0) = 0;
+    virtual void DrawSimpleBezierPath(Point bezier[4])=0;
+    virtual void DrawComplexBezierPath(Point bezier1[4], Point bezier2[4])=0;
+    virtual void DrawCircle(int x, int y, int radius)=0;
+    virtual void DrawEllipse(int x, int y, int width, int height)=0;
+    virtual void DrawEllipticArc(int x, int y, int width, int height, double start, double end)=0;
+    virtual void DrawLine(int x1, int y1, int x2, int y2)=0;
+    virtual void DrawPolygon(int n, Point points[], int xoffset=0, int yoffset=0, int fill_style=AxODDEVEN_RULE)
+       =0;
+    virtual void DrawRectangle(int x, int y, int width, int height)=0;
+    virtual void DrawRotatedText(const std::string &text, int x, int y, double angle)=0;
+    virtual void DrawRoundedRectangle(int x, int y, int width, int height, int radius)=0;
+    virtual void DrawText(const std::string &text, const std::wstring wtext=L"", int x=VRV_UNSET, int y=VRV_UNSET,
+        int width=VRV_UNSET, int height=VRV_UNSET)
+       =0;
+    virtual void DrawMusicText(const std::wstring &text, int x, int y, bool setSmuflGlyph=false)=0;
+    virtual void DrawSpline(int n, Point points[])=0;
+    virtual void DrawSvgShape(int x, int y, int width, int height, pugi::xml_node svg)=0;
+    virtual void DrawBackgroundImage(int x=0, int y=0)=0;
     ///@}
 
     /**
@@ -172,16 +172,16 @@ public:
      * Font can be changed between called for DrawText
      */
     ///@{
-    virtual void StartText(int x, int y, data_HORIZONTALALIGNMENT alignment = HORIZONTALALIGNMENT_left) = 0;
-    virtual void EndText() = 0;
+    virtual void StartText(int x, int y, data_HORIZONTALALIGNMENT alignment=HORIZONTALALIGNMENT_left)=0;
+    virtual void EndText()=0;
 
     /**
      * @name Move a text to the specified position, for example when starting a new line.
      * These methods should be called only between a StartText and EndText call.
      */
     ///@{
-    virtual void MoveTextTo(int x, int y, data_HORIZONTALALIGNMENT alignment) = 0;
-    virtual void MoveTextVerticallyTo(int y) = 0;
+    virtual void MoveTextTo(int x, int y, data_HORIZONTALALIGNMENT alignment)=0;
+    virtual void MoveTextVerticallyTo(int y)=0;
     ///@}
 
     /**
@@ -205,9 +205,9 @@ public:
      */
     ///@{
     virtual void StartGraphic(
-        Object *object, std::string gClass, std::string gId, bool primary = true, bool preprend = false)
-        = 0;
-    virtual void EndGraphic(Object *object, View *view) = 0;
+        Object *object, std::string gClass, std::string gId, bool primary=true, bool preprend=false)
+       =0;
+    virtual void EndGraphic(Object *object, View *view)=0;
     ///@}
 
     /**
@@ -215,7 +215,7 @@ public:
      * For example, the method can be used for grouping shapes in <g></g> in SVG
      */
     ///@{
-    virtual void StartCustomGraphic(std::string name, std::string gClass = "", std::string gId = ""){};
+    virtual void StartCustomGraphic(std::string name, std::string gClass="", std::string gId=""){};
     virtual void EndCustomGraphic(){};
     ///@}
 
@@ -224,8 +224,8 @@ public:
      * The methods can be used to the output together, for example for a Beam
      */
     ///@{
-    virtual void ResumeGraphic(Object *object, std::string gId) = 0;
-    virtual void EndResumedGraphic(Object *object, View *view) = 0;
+    virtual void ResumeGraphic(Object *object, std::string gId)=0;
+    virtual void EndResumedGraphic(Object *object, View *view)=0;
     ///@}
 
     /**
@@ -245,15 +245,15 @@ public:
      * This should be called only once per graphic and before drawing anything in it.
      */
     ///@{
-    virtual void RotateGraphic(Point const &orig, double angle) = 0;
+    virtual void RotateGraphic(Point const &orig, double angle)=0;
     ///@}
 
     /**
      * @name Method for starting and ending page
      */
     ///@{
-    virtual void StartPage() = 0;
-    virtual void EndPage() = 0;
+    virtual void StartPage()=0;
+    virtual void EndPage()=0;
     ///@}
 
     /** Colour conversion method **/
@@ -287,7 +287,7 @@ protected:
     bool m_isDeactivatedX;
     bool m_isDeactivatedY;
 
-    Zone *m_facsimile = NULL;
+    Zone *m_facsimile=NULL;
 
     /** stores default font for global styling*/
     std::string m_defaultFontName;

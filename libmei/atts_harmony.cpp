@@ -41,26 +41,26 @@ AttHarmLog::~AttHarmLog()
 
 void AttHarmLog::ResetHarmLog()
 {
-    m_chordref = "";
+    m_chordref="";
 }
 
 bool AttHarmLog::ReadHarmLog(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("chordref")) {
         this->SetChordref(StrToStr(element.attribute("chordref").value()));
         element.remove_attribute("chordref");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttHarmLog::WriteHarmLog(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasChordref()) {
-        element.append_attribute("chordref") = StrToStr(this->GetChordref()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("chordref")=StrToStr(this->GetChordref()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -75,7 +75,7 @@ bool AttHarmLog::HasChordref() const
 bool Att::SetHarmony(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_HARMLOG)) {
-        AttHarmLog *att = dynamic_cast<AttHarmLog *>(element);
+        AttHarmLog *att=dynamic_cast<AttHarmLog *>(element);
         assert(att);
         if (attrType == "chordref") {
             att->SetChordref(att->StrToStr(attrValue));
@@ -89,7 +89,7 @@ bool Att::SetHarmony(Object *element, const std::string &attrType, const std::st
 void Att::GetHarmony(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_HARMLOG)) {
-        const AttHarmLog *att = dynamic_cast<const AttHarmLog *>(element);
+        const AttHarmLog *att=dynamic_cast<const AttHarmLog *>(element);
         assert(att);
         if (att->HasChordref()) {
             attributes->push_back(std::make_pair("chordref", att->StrToStr(att->GetChordref())));

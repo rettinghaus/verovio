@@ -50,15 +50,15 @@ void Tie::Reset()
 
 int Tie::ResolveMIDITies(FunctorParams *)
 {
-    Note *note1 = dynamic_cast<Note *>(this->GetStart());
-    Note *note2 = dynamic_cast<Note *>(this->GetEnd());
+    Note *note1=dynamic_cast<Note *>(this->GetStart());
+    Note *note2=dynamic_cast<Note *>(this->GetEnd());
 
     if (!note1 || !note2) {
         return FUNCTOR_CONTINUE;
     }
 
-    double sttd2 = note2->GetScoreTimeTiedDuration();
-    double std2 = note2->GetScoreTimeDuration();
+    double sttd2=note2->GetScoreTimeTiedDuration();
+    double std2=note2->GetScoreTimeDuration();
 
     if (sttd2 > 0.0) {
         note1->SetScoreTimeTiedDuration(sttd2 + std2);
@@ -73,10 +73,10 @@ int Tie::ResolveMIDITies(FunctorParams *)
 
 int Tie::FindSpannedLayerElements(FunctorParams *functorParams)
 {
-    FindSpannedLayerElementsParams *params = vrv_params_cast<FindSpannedLayerElementsParams *>(functorParams);
+    FindSpannedLayerElementsParams *params=vrv_params_cast<FindSpannedLayerElementsParams *>(functorParams);
     assert(params);
 
-    FloatingPositioner *positioner = params->m_slur->GetCorrespFloatingPositioner(this);
+    FloatingPositioner *positioner=params->m_slur->GetCorrespFloatingPositioner(this);
 
     if (!positioner) {
         return FUNCTOR_CONTINUE;

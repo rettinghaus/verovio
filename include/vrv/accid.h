@@ -53,9 +53,9 @@ public:
      * @name Set and get drawing octave flag
      */
     ///@{
-    void SetDrawingOctave(bool isDrawingOctave) { m_isDrawingOctave = isDrawingOctave; }
+    void SetDrawingOctave(bool isDrawingOctave) { m_isDrawingOctave=isDrawingOctave; }
     bool GetDrawingOctave() const { return m_isDrawingOctave; }
-    void SetDrawingOctaveAccid(Accid *drawingOctave) { m_drawingOctave = drawingOctave; }
+    void SetDrawingOctaveAccid(Accid *drawingOctave) { m_drawingOctave=drawingOctave; }
     Accid *GetDrawingOctaveAccid() const { return m_drawingOctave; }
     ///@}
 

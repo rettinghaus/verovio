@@ -137,7 +137,7 @@ public:
      * @name Set and get the type of the alignment
      */
     ///@{
-    void SetType(ArticPartType type) { m_type = type; }
+    void SetType(ArticPartType type) { m_type=type; }
     ArticPartType GetType() const { return m_type; }
     ///@}
 

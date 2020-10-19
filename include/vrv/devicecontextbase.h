@@ -27,11 +27,11 @@ namespace vrv {
 #define AxLIGHT_GREY 127 << 16 | 127 << 8 | 127
 
 /*  Polygon filling mode */
-enum { AxODDEVEN_RULE = 1, AxWINDING_RULE };
+enum { AxODDEVEN_RULE=1, AxWINDING_RULE };
 
 enum {
     /*  Pen styles */
-    AxSOLID = 100,
+    AxSOLID=100,
     AxDOT,
     AxLONG_DASH,
     AxSHORT_DASH,
@@ -58,15 +58,15 @@ public:
     }
 
     int GetColour() const { return m_penColour; }
-    void SetColour(int colour) { m_penColour = colour; }
+    void SetColour(int colour) { m_penColour=colour; }
     int GetWidth() const { return m_penWidth; }
-    void SetWidth(int width) { m_penWidth = width; }
+    void SetWidth(int width) { m_penWidth=width; }
     int GetDashLength() const { return m_dashLength; }
-    void SetDashLength(int dashLength) { m_dashLength = dashLength; }
+    void SetDashLength(int dashLength) { m_dashLength=dashLength; }
     int GetLineCap() const { return m_lineCap; }
-    void SetLineCap(int lineCap) { m_lineCap = lineCap; }
+    void SetLineCap(int lineCap) { m_lineCap=lineCap; }
     float GetOpacity() const { return m_penOpacity; }
-    void SetOpacity(float opacity) { m_penOpacity = opacity; }
+    void SetOpacity(float opacity) { m_penOpacity=opacity; }
 
 private:
     int m_penColour, m_penWidth, m_dashLength, m_lineCap;
@@ -79,9 +79,9 @@ public:
     Brush(int colour, float opacity) : m_brushColour(colour), m_brushOpacity(opacity) {}
 
     int GetColour() const { return m_brushColour; }
-    void SetColour(int colour) { m_brushColour = colour; }
+    void SetColour(int colour) { m_brushColour=colour; }
     float GetOpacity() const { return m_brushOpacity; }
-    void SetOpacity(float opacity) { m_brushOpacity = opacity; }
+    void SetOpacity(float opacity) { m_brushOpacity=opacity; }
 
 private:
     int m_brushColour;
@@ -100,15 +100,15 @@ class FontInfo {
 public:
     FontInfo()
     {
-        m_pointSize = 0;
-        m_family = 0; // was wxFONTFAMILY_DEFAULT;
-        m_style = FONTSTYLE_NONE;
-        m_weight = FONTWEIGHT_NONE;
-        m_underlined = false;
-        m_supSubScript = false;
+        m_pointSize=0;
+        m_family=0; // was wxFONTFAMILY_DEFAULT;
+        m_style=FONTSTYLE_NONE;
+        m_weight=FONTWEIGHT_NONE;
+        m_underlined=false;
+        m_supSubScript=false;
         m_faceName.clear();
-        m_encoding = 0; // was wxFONTENCODING_DEFAULT;
-        m_widthToHeightRatio = 1.0;
+        m_encoding=0; // was wxFONTENCODING_DEFAULT;
+        m_widthToHeightRatio=1.0;
     }
     virtual ~FontInfo(){};
 
@@ -123,15 +123,15 @@ public:
     int GetEncoding() { return m_encoding; }
     float GetWidthToHeightRatio() { return m_widthToHeightRatio; }
 
-    void SetPointSize(int pointSize) { m_pointSize = pointSize; }
-    void SetStyle(data_FONTSTYLE style) { m_style = style; }
-    void SetWeight(data_FONTWEIGHT weight) { m_weight = weight; }
-    void SetUnderlined(bool underlined) { m_underlined = underlined; }
-    void SetSupSubScript(bool supSubScript) { m_supSubScript = supSubScript; }
-    void SetFaceName(const char *faceName) { m_faceName = faceName; }
-    void SetFamily(int family) { m_family = family; }
-    void SetEncoding(int encoding) { m_encoding = encoding; }
-    void SetWidthToHeightRatio(float ratio) { m_widthToHeightRatio = ratio; }
+    void SetPointSize(int pointSize) { m_pointSize=pointSize; }
+    void SetStyle(data_FONTSTYLE style) { m_style=style; }
+    void SetWeight(data_FONTWEIGHT weight) { m_weight=weight; }
+    void SetUnderlined(bool underlined) { m_underlined=underlined; }
+    void SetSupSubScript(bool supSubScript) { m_supSubScript=supSubScript; }
+    void SetFaceName(const char *faceName) { m_faceName=faceName; }
+    void SetFamily(int family) { m_family=family; }
+    void SetEncoding(int encoding) { m_encoding=encoding; }
+    void SetWidthToHeightRatio(float ratio) { m_widthToHeightRatio=ratio; }
 
 private:
     int m_pointSize;

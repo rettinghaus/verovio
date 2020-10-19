@@ -66,7 +66,7 @@ void View::DrawRoundedLine(DeviceContext *dc, int x1, int y1, int x2, int y2, in
 void View::DrawVerticalSegmentedLine(DeviceContext *dc, int x1, SegmentedLine &line, int width, int dashLength)
 {
     int i, start, end;
-    for (i = 0; i < line.GetSegmentCount(); i++) {
+    for (i=0; i < line.GetSegmentCount(); i++) {
         line.GetStartEnd(start, end, i);
         DrawVerticalLine(dc, start, end, x1, width, dashLength);
     }
@@ -75,7 +75,7 @@ void View::DrawVerticalSegmentedLine(DeviceContext *dc, int x1, SegmentedLine &l
 void View::DrawHorizontalSegmentedLine(DeviceContext *dc, int y1, SegmentedLine &line, int width, int dashLength)
 {
     int i, start, end;
-    for (i = 0; i < line.GetSegmentCount(); i++) {
+    for (i=0; i < line.GetSegmentCount(); i++) {
         line.GetStartEnd(start, end, i);
         DrawHorizontalLine(dc, start, end, y1, width, dashLength);
     }
@@ -141,15 +141,15 @@ void View::DrawObliquePolygon(DeviceContext *dc, int x1, int y1, int x2, int y2,
     dc->SetPen(m_currentColour, 0, AxSOLID);
     dc->SetBrush(m_currentColour, AxSOLID);
 
-    height = ToDeviceContextX(height);
-    p[0].x = ToDeviceContextX(x1);
-    p[0].y = ToDeviceContextY(y1);
-    p[1].x = ToDeviceContextX(x2);
-    p[1].y = ToDeviceContextY(y2);
-    p[2].x = p[1].x;
-    p[2].y = p[1].y - height;
-    p[3].x = p[0].x;
-    p[3].y = p[0].y - height;
+    height=ToDeviceContextX(height);
+    p[0].x=ToDeviceContextX(x1);
+    p[0].y=ToDeviceContextY(y1);
+    p[1].x=ToDeviceContextX(x2);
+    p[1].y=ToDeviceContextY(y2);
+    p[2].x=p[1].x;
+    p[2].y=p[1].y - height;
+    p[3].x=p[0].x;
+    p[3].y=p[0].y - height;
 
     dc->DrawPolygon(4, p);
 
@@ -169,16 +169,16 @@ void View::DrawDiamond(DeviceContext *dc, int x1, int y1, int height, int width,
     else
         dc->SetBrush(m_currentColour, AxTRANSPARENT);
 
-    int dHeight = ToDeviceContextX(height);
-    int dWidth = ToDeviceContextX(width);
-    p[0].x = ToDeviceContextX(x1);
-    p[0].y = ToDeviceContextY(y1);
-    p[1].x = ToDeviceContextX(x1 + dWidth / 2);
-    p[1].y = ToDeviceContextY(y1 + dHeight / 2);
-    p[2].x = p[0].x + dWidth;
-    p[2].y = p[0].y;
-    p[3].x = ToDeviceContextX(x1 + dWidth / 2);
-    p[3].y = ToDeviceContextY(y1 - dHeight / 2);
+    int dHeight=ToDeviceContextX(height);
+    int dWidth=ToDeviceContextX(width);
+    p[0].x=ToDeviceContextX(x1);
+    p[0].y=ToDeviceContextY(y1);
+    p[1].x=ToDeviceContextX(x1 + dWidth / 2);
+    p[1].y=ToDeviceContextY(y1 + dHeight / 2);
+    p[2].x=p[0].x + dWidth;
+    p[2].y=p[0].y;
+    p[3].x=ToDeviceContextX(x1 + dWidth / 2);
+    p[3].y=ToDeviceContextY(y1 - dHeight / 2);
 
     dc->DrawPolygon(4, p);
 
@@ -188,7 +188,7 @@ void View::DrawDiamond(DeviceContext *dc, int x1, int y1, int height, int width,
 
 void View::DrawDot(DeviceContext *dc, int x, int y, int staffSize)
 {
-    const int r = std::max(ToDeviceContextX(m_doc->GetDrawingDoubleUnit(staffSize) / 5), 2);
+    const int r=std::max(ToDeviceContextX(m_doc->GetDrawingDoubleUnit(staffSize) / 5), 2);
 
     dc->SetPen(m_currentColour, 0, AxSOLID);
     dc->SetBrush(m_currentColour, AxSOLID);
@@ -226,14 +226,14 @@ void View::DrawSmuflLine(
 
     if (length <= 0) return;
 
-    const int startWidth = (start == 0) ? 0 : m_doc->GetGlyphAdvX(start, staffSize, dimin);
-    const int endWidth = (end == 0) ? 0 : m_doc->GetGlyphAdvX(end, staffSize, dimin);
-    int fillWidth = m_doc->GetGlyphAdvX(fill, staffSize, dimin);
+    const int startWidth=(start == 0) ? 0 : m_doc->GetGlyphAdvX(start, staffSize, dimin);
+    const int endWidth=(end == 0) ? 0 : m_doc->GetGlyphAdvX(end, staffSize, dimin);
+    int fillWidth=m_doc->GetGlyphAdvX(fill, staffSize, dimin);
 
-    if (fillWidth == 0) fillWidth = m_doc->GetGlyphWidth(fill, staffSize, dimin);
+    if (fillWidth == 0) fillWidth=m_doc->GetGlyphWidth(fill, staffSize, dimin);
 
     // We add half a fill length for an average shorter / longer line result
-    const int count = (length + fillWidth / 2 - startWidth - endWidth) / fillWidth;
+    const int count=(length + fillWidth / 2 - startWidth - endWidth) / fillWidth;
 
     dc->SetBrush(m_currentColour, AxSOLID);
     dc->SetFont(m_doc->GetDrawingSmuflFont(staffSize, dimin));
@@ -244,7 +244,7 @@ void View::DrawSmuflLine(
         str.push_back(start);
     }
 
-    for (int i = 0; i < count; ++i) {
+    for (int i=0; i < count; ++i) {
         str.push_back(fill);
     }
 
@@ -263,7 +263,7 @@ void View::DrawSmuflString(DeviceContext *dc, int x, int y, std::wstring s, data
 {
     assert(dc);
 
-    int xDC = ToDeviceContextX(x);
+    int xDC=ToDeviceContextX(x);
 
     dc->SetBrush(m_currentColour, AxSOLID);
     dc->SetFont(m_doc->GetDrawingSmuflFont(staffSize, dimin));
@@ -294,15 +294,15 @@ void View::DrawThickBezierCurve(
 
     BoundingBox::CalcThickBezier(bezier, thickness, angle, bez1, bez2);
 
-    bez1[0] = ToDeviceContext(bez1[0]);
-    bez1[1] = ToDeviceContext(bez1[1]);
-    bez1[2] = ToDeviceContext(bez1[2]);
-    bez1[3] = ToDeviceContext(bez1[3]);
+    bez1[0]=ToDeviceContext(bez1[0]);
+    bez1[1]=ToDeviceContext(bez1[1]);
+    bez1[2]=ToDeviceContext(bez1[2]);
+    bez1[3]=ToDeviceContext(bez1[3]);
 
-    bez2[0] = ToDeviceContext(bez2[0]);
-    bez2[1] = ToDeviceContext(bez2[1]);
-    bez2[2] = ToDeviceContext(bez2[2]);
-    bez2[3] = ToDeviceContext(bez2[3]);
+    bez2[0]=ToDeviceContext(bez2[0]);
+    bez2[1]=ToDeviceContext(bez2[1]);
+    bez2[2]=ToDeviceContext(bez2[2]);
+    bez2[3]=ToDeviceContext(bez2[3]);
 
     // Actually draw it
     if (penStyle == AxSOLID) {

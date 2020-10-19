@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAccidGes(data_ACCIDENTAL_GESTURAL accidGes_) { m_accidGes = accidGes_; }
+    void SetAccidGes(data_ACCIDENTAL_GESTURAL accidGes_) { m_accidGes=accidGes_; }
     data_ACCIDENTAL_GESTURAL GetAccidGes() const { return m_accidGes; }
     bool HasAccidGes() const;
     ///@}
@@ -85,7 +85,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetArticGes(data_ARTICULATION articGes_) { m_articGes = articGes_; }
+    void SetArticGes(data_ARTICULATION articGes_) { m_articGes=articGes_; }
     data_ARTICULATION GetArticGes() const { return m_articGes; }
     bool HasArticGes() const;
     ///@}
@@ -121,7 +121,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAmount(double amount_) { m_amount = amount_; }
+    void SetAmount(double amount_) { m_amount=amount_; }
     double GetAmount() const { return m_amount; }
     bool HasAmount() const;
     ///@}
@@ -161,27 +161,27 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetDurGes(data_DURATION durGes_) { m_durGes = durGes_; }
+    void SetDurGes(data_DURATION durGes_) { m_durGes=durGes_; }
     data_DURATION GetDurGes() const { return m_durGes; }
     bool HasDurGes() const;
     //
-    void SetDotsGes(int dotsGes_) { m_dotsGes = dotsGes_; }
+    void SetDotsGes(int dotsGes_) { m_dotsGes=dotsGes_; }
     int GetDotsGes() const { return m_dotsGes; }
     bool HasDotsGes() const;
     //
-    void SetDurMetrical(double durMetrical_) { m_durMetrical = durMetrical_; }
+    void SetDurMetrical(double durMetrical_) { m_durMetrical=durMetrical_; }
     double GetDurMetrical() const { return m_durMetrical; }
     bool HasDurMetrical() const;
     //
-    void SetDurPpq(int durPpq_) { m_durPpq = durPpq_; }
+    void SetDurPpq(int durPpq_) { m_durPpq=durPpq_; }
     int GetDurPpq() const { return m_durPpq; }
     bool HasDurPpq() const;
     //
-    void SetDurReal(double durReal_) { m_durReal = durReal_; }
+    void SetDurReal(double durReal_) { m_durReal=durReal_; }
     double GetDurReal() const { return m_durReal; }
     bool HasDurReal() const;
     //
-    void SetDurRecip(std::string durRecip_) { m_durRecip = durRecip_; }
+    void SetDurRecip(std::string durRecip_) { m_durRecip=durRecip_; }
     std::string GetDurRecip() const { return m_durRecip; }
     bool HasDurRecip() const;
     ///@}
@@ -236,15 +236,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOctGes(data_OCTAVE octGes_) { m_octGes = octGes_; }
+    void SetOctGes(data_OCTAVE octGes_) { m_octGes=octGes_; }
     data_OCTAVE GetOctGes() const { return m_octGes; }
     bool HasOctGes() const;
     //
-    void SetPnameGes(data_PITCHNAME pnameGes_) { m_pnameGes = pnameGes_; }
+    void SetPnameGes(data_PITCHNAME pnameGes_) { m_pnameGes=pnameGes_; }
     data_PITCHNAME GetPnameGes() const { return m_pnameGes; }
     bool HasPnameGes() const;
     //
-    void SetPnum(int pnum_) { m_pnum = pnum_; }
+    void SetPnum(int pnum_) { m_pnum=pnum_; }
     int GetPnum() const { return m_pnum; }
     bool HasPnum() const;
     ///@}
@@ -284,19 +284,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetExtremis(noteGes_EXTREMIS extremis_) { m_extremis = extremis_; }
+    void SetExtremis(noteGes_EXTREMIS extremis_) { m_extremis=extremis_; }
     noteGes_EXTREMIS GetExtremis() const { return m_extremis; }
     bool HasExtremis() const;
     //
-    void SetOctGes(data_OCTAVE octGes_) { m_octGes = octGes_; }
+    void SetOctGes(data_OCTAVE octGes_) { m_octGes=octGes_; }
     data_OCTAVE GetOctGes() const { return m_octGes; }
     bool HasOctGes() const;
     //
-    void SetPnameGes(data_PITCHNAME pnameGes_) { m_pnameGes = pnameGes_; }
+    void SetPnameGes(data_PITCHNAME pnameGes_) { m_pnameGes=pnameGes_; }
     data_PITCHNAME GetPnameGes() const { return m_pnameGes; }
     bool HasPnameGes() const;
     //
-    void SetPnum(int pnum_) { m_pnum = pnum_; }
+    void SetPnum(int pnum_) { m_pnum=pnum_; }
     int GetPnum() const { return m_pnum; }
     bool HasPnum() const;
     ///@}
@@ -338,15 +338,15 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTunePname(data_PITCHNAME tunePname_) { m_tunePname = tunePname_; }
+    void SetTunePname(data_PITCHNAME tunePname_) { m_tunePname=tunePname_; }
     data_PITCHNAME GetTunePname() const { return m_tunePname; }
     bool HasTunePname() const;
     //
-    void SetTuneHz(double tuneHz_) { m_tuneHz = tuneHz_; }
+    void SetTuneHz(double tuneHz_) { m_tuneHz=tuneHz_; }
     double GetTuneHz() const { return m_tuneHz; }
     bool HasTuneHz() const;
     //
-    void SetTuneTemper(data_TEMPERAMENT tuneTemper_) { m_tuneTemper = tuneTemper_; }
+    void SetTuneTemper(data_TEMPERAMENT tuneTemper_) { m_tuneTemper=tuneTemper_; }
     data_TEMPERAMENT GetTuneTemper() const { return m_tuneTemper; }
     bool HasTuneTemper() const;
     ///@}
@@ -386,7 +386,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAttacca(data_BOOLEAN attacca_) { m_attacca = attacca_; }
+    void SetAttacca(data_BOOLEAN attacca_) { m_attacca=attacca_; }
     data_BOOLEAN GetAttacca() const { return m_attacca; }
     bool HasAttacca() const;
     ///@}
@@ -425,11 +425,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAzimuth(double azimuth_) { m_azimuth = azimuth_; }
+    void SetAzimuth(double azimuth_) { m_azimuth=azimuth_; }
     double GetAzimuth() const { return m_azimuth; }
     bool HasAzimuth() const;
     //
-    void SetElevation(double elevation_) { m_elevation = elevation_; }
+    void SetElevation(double elevation_) { m_elevation=elevation_; }
     double GetElevation() const { return m_elevation; }
     bool HasElevation() const;
     ///@}
@@ -467,11 +467,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTstampGes(double tstampGes_) { m_tstampGes = tstampGes_; }
+    void SetTstampGes(double tstampGes_) { m_tstampGes=tstampGes_; }
     double GetTstampGes() const { return m_tstampGes; }
     bool HasTstampGes() const;
     //
-    void SetTstampReal(std::string tstampReal_) { m_tstampReal = tstampReal_; }
+    void SetTstampReal(std::string tstampReal_) { m_tstampReal=tstampReal_; }
     std::string GetTstampReal() const { return m_tstampReal; }
     bool HasTstampReal() const;
     ///@}
@@ -512,11 +512,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetTstamp2Ges(data_MEASUREBEAT tstamp2Ges_) { m_tstamp2Ges = tstamp2Ges_; }
+    void SetTstamp2Ges(data_MEASUREBEAT tstamp2Ges_) { m_tstamp2Ges=tstamp2Ges_; }
     data_MEASUREBEAT GetTstamp2Ges() const { return m_tstamp2Ges; }
     bool HasTstamp2Ges() const;
     //
-    void SetTstamp2Real(std::string tstamp2Real_) { m_tstamp2Real = tstamp2Real_; }
+    void SetTstamp2Real(std::string tstamp2Real_) { m_tstamp2Real=tstamp2Real_; }
     std::string GetTstamp2Real() const { return m_tstamp2Real; }
     bool HasTstamp2Real() const;
     ///@}

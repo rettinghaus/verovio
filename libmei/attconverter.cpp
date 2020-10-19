@@ -32,18 +32,18 @@ std::string AttConverter::AccidentalGesturalToStr(data_ACCIDENTAL_GESTURAL data)
 {
     std::string value;
     switch (data) {
-        case ACCIDENTAL_GESTURAL_s: value = "s"; break;
-        case ACCIDENTAL_GESTURAL_f: value = "f"; break;
-        case ACCIDENTAL_GESTURAL_ss: value = "ss"; break;
-        case ACCIDENTAL_GESTURAL_ff: value = "ff"; break;
-        case ACCIDENTAL_GESTURAL_n: value = "n"; break;
-        case ACCIDENTAL_GESTURAL_su: value = "su"; break;
-        case ACCIDENTAL_GESTURAL_sd: value = "sd"; break;
-        case ACCIDENTAL_GESTURAL_fu: value = "fu"; break;
-        case ACCIDENTAL_GESTURAL_fd: value = "fd"; break;
+        case ACCIDENTAL_GESTURAL_s: value="s"; break;
+        case ACCIDENTAL_GESTURAL_f: value="f"; break;
+        case ACCIDENTAL_GESTURAL_ss: value="ss"; break;
+        case ACCIDENTAL_GESTURAL_ff: value="ff"; break;
+        case ACCIDENTAL_GESTURAL_n: value="n"; break;
+        case ACCIDENTAL_GESTURAL_su: value="su"; break;
+        case ACCIDENTAL_GESTURAL_sd: value="sd"; break;
+        case ACCIDENTAL_GESTURAL_fu: value="fu"; break;
+        case ACCIDENTAL_GESTURAL_fd: value="fd"; break;
         default:
             LogWarning("Unknown value '%d' for data.ACCIDENTAL.GESTURAL", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -69,31 +69,31 @@ std::string AttConverter::AccidentalWrittenToStr(data_ACCIDENTAL_WRITTEN data) c
 {
     std::string value;
     switch (data) {
-        case ACCIDENTAL_WRITTEN_s: value = "s"; break;
-        case ACCIDENTAL_WRITTEN_f: value = "f"; break;
-        case ACCIDENTAL_WRITTEN_ss: value = "ss"; break;
-        case ACCIDENTAL_WRITTEN_x: value = "x"; break;
-        case ACCIDENTAL_WRITTEN_ff: value = "ff"; break;
-        case ACCIDENTAL_WRITTEN_xs: value = "xs"; break;
-        case ACCIDENTAL_WRITTEN_sx: value = "sx"; break;
-        case ACCIDENTAL_WRITTEN_ts: value = "ts"; break;
-        case ACCIDENTAL_WRITTEN_tf: value = "tf"; break;
-        case ACCIDENTAL_WRITTEN_n: value = "n"; break;
-        case ACCIDENTAL_WRITTEN_nf: value = "nf"; break;
-        case ACCIDENTAL_WRITTEN_ns: value = "ns"; break;
-        case ACCIDENTAL_WRITTEN_su: value = "su"; break;
-        case ACCIDENTAL_WRITTEN_sd: value = "sd"; break;
-        case ACCIDENTAL_WRITTEN_fu: value = "fu"; break;
-        case ACCIDENTAL_WRITTEN_fd: value = "fd"; break;
-        case ACCIDENTAL_WRITTEN_nu: value = "nu"; break;
-        case ACCIDENTAL_WRITTEN_nd: value = "nd"; break;
-        case ACCIDENTAL_WRITTEN_1qf: value = "1qf"; break;
-        case ACCIDENTAL_WRITTEN_3qf: value = "3qf"; break;
-        case ACCIDENTAL_WRITTEN_1qs: value = "1qs"; break;
-        case ACCIDENTAL_WRITTEN_3qs: value = "3qs"; break;
+        case ACCIDENTAL_WRITTEN_s: value="s"; break;
+        case ACCIDENTAL_WRITTEN_f: value="f"; break;
+        case ACCIDENTAL_WRITTEN_ss: value="ss"; break;
+        case ACCIDENTAL_WRITTEN_x: value="x"; break;
+        case ACCIDENTAL_WRITTEN_ff: value="ff"; break;
+        case ACCIDENTAL_WRITTEN_xs: value="xs"; break;
+        case ACCIDENTAL_WRITTEN_sx: value="sx"; break;
+        case ACCIDENTAL_WRITTEN_ts: value="ts"; break;
+        case ACCIDENTAL_WRITTEN_tf: value="tf"; break;
+        case ACCIDENTAL_WRITTEN_n: value="n"; break;
+        case ACCIDENTAL_WRITTEN_nf: value="nf"; break;
+        case ACCIDENTAL_WRITTEN_ns: value="ns"; break;
+        case ACCIDENTAL_WRITTEN_su: value="su"; break;
+        case ACCIDENTAL_WRITTEN_sd: value="sd"; break;
+        case ACCIDENTAL_WRITTEN_fu: value="fu"; break;
+        case ACCIDENTAL_WRITTEN_fd: value="fd"; break;
+        case ACCIDENTAL_WRITTEN_nu: value="nu"; break;
+        case ACCIDENTAL_WRITTEN_nd: value="nd"; break;
+        case ACCIDENTAL_WRITTEN_1qf: value="1qf"; break;
+        case ACCIDENTAL_WRITTEN_3qf: value="3qf"; break;
+        case ACCIDENTAL_WRITTEN_1qs: value="1qs"; break;
+        case ACCIDENTAL_WRITTEN_3qs: value="3qs"; break;
         default:
             LogWarning("Unknown value '%d' for data.ACCIDENTAL.WRITTEN", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -132,42 +132,42 @@ std::string AttConverter::ArticulationToStr(data_ARTICULATION data) const
 {
     std::string value;
     switch (data) {
-        case ARTICULATION_acc: value = "acc"; break;
-        case ARTICULATION_stacc: value = "stacc"; break;
-        case ARTICULATION_ten: value = "ten"; break;
-        case ARTICULATION_stacciss: value = "stacciss"; break;
-        case ARTICULATION_marc: value = "marc"; break;
-        case ARTICULATION_spicc: value = "spicc"; break;
-        case ARTICULATION_doit: value = "doit"; break;
-        case ARTICULATION_scoop: value = "scoop"; break;
-        case ARTICULATION_rip: value = "rip"; break;
-        case ARTICULATION_plop: value = "plop"; break;
-        case ARTICULATION_fall: value = "fall"; break;
-        case ARTICULATION_longfall: value = "longfall"; break;
-        case ARTICULATION_bend: value = "bend"; break;
-        case ARTICULATION_flip: value = "flip"; break;
-        case ARTICULATION_smear: value = "smear"; break;
-        case ARTICULATION_shake: value = "shake"; break;
-        case ARTICULATION_dnbow: value = "dnbow"; break;
-        case ARTICULATION_upbow: value = "upbow"; break;
-        case ARTICULATION_harm: value = "harm"; break;
-        case ARTICULATION_snap: value = "snap"; break;
-        case ARTICULATION_fingernail: value = "fingernail"; break;
-        case ARTICULATION_damp: value = "damp"; break;
-        case ARTICULATION_dampall: value = "dampall"; break;
-        case ARTICULATION_open: value = "open"; break;
-        case ARTICULATION_stop: value = "stop"; break;
-        case ARTICULATION_dbltongue: value = "dbltongue"; break;
-        case ARTICULATION_trpltongue: value = "trpltongue"; break;
-        case ARTICULATION_heel: value = "heel"; break;
-        case ARTICULATION_toe: value = "toe"; break;
-        case ARTICULATION_tap: value = "tap"; break;
-        case ARTICULATION_lhpizz: value = "lhpizz"; break;
-        case ARTICULATION_dot: value = "dot"; break;
-        case ARTICULATION_stroke: value = "stroke"; break;
+        case ARTICULATION_acc: value="acc"; break;
+        case ARTICULATION_stacc: value="stacc"; break;
+        case ARTICULATION_ten: value="ten"; break;
+        case ARTICULATION_stacciss: value="stacciss"; break;
+        case ARTICULATION_marc: value="marc"; break;
+        case ARTICULATION_spicc: value="spicc"; break;
+        case ARTICULATION_doit: value="doit"; break;
+        case ARTICULATION_scoop: value="scoop"; break;
+        case ARTICULATION_rip: value="rip"; break;
+        case ARTICULATION_plop: value="plop"; break;
+        case ARTICULATION_fall: value="fall"; break;
+        case ARTICULATION_longfall: value="longfall"; break;
+        case ARTICULATION_bend: value="bend"; break;
+        case ARTICULATION_flip: value="flip"; break;
+        case ARTICULATION_smear: value="smear"; break;
+        case ARTICULATION_shake: value="shake"; break;
+        case ARTICULATION_dnbow: value="dnbow"; break;
+        case ARTICULATION_upbow: value="upbow"; break;
+        case ARTICULATION_harm: value="harm"; break;
+        case ARTICULATION_snap: value="snap"; break;
+        case ARTICULATION_fingernail: value="fingernail"; break;
+        case ARTICULATION_damp: value="damp"; break;
+        case ARTICULATION_dampall: value="dampall"; break;
+        case ARTICULATION_open: value="open"; break;
+        case ARTICULATION_stop: value="stop"; break;
+        case ARTICULATION_dbltongue: value="dbltongue"; break;
+        case ARTICULATION_trpltongue: value="trpltongue"; break;
+        case ARTICULATION_heel: value="heel"; break;
+        case ARTICULATION_toe: value="toe"; break;
+        case ARTICULATION_tap: value="tap"; break;
+        case ARTICULATION_lhpizz: value="lhpizz"; break;
+        case ARTICULATION_dot: value="dot"; break;
+        case ARTICULATION_stroke: value="stroke"; break;
         default:
             LogWarning("Unknown value '%d' for data.ARTICULATION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -217,12 +217,12 @@ std::string AttConverter::BarmethodToStr(data_BARMETHOD data) const
 {
     std::string value;
     switch (data) {
-        case BARMETHOD_mensur: value = "mensur"; break;
-        case BARMETHOD_staff: value = "staff"; break;
-        case BARMETHOD_takt: value = "takt"; break;
+        case BARMETHOD_mensur: value="mensur"; break;
+        case BARMETHOD_staff: value="staff"; break;
+        case BARMETHOD_takt: value="takt"; break;
         default:
             LogWarning("Unknown value '%d' for data.BARMETHOD", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -242,20 +242,20 @@ std::string AttConverter::BarrenditionToStr(data_BARRENDITION data) const
 {
     std::string value;
     switch (data) {
-        case BARRENDITION_dashed: value = "dashed"; break;
-        case BARRENDITION_dotted: value = "dotted"; break;
-        case BARRENDITION_dbl: value = "dbl"; break;
-        case BARRENDITION_dbldashed: value = "dbldashed"; break;
-        case BARRENDITION_dbldotted: value = "dbldotted"; break;
-        case BARRENDITION_end: value = "end"; break;
-        case BARRENDITION_invis: value = "invis"; break;
-        case BARRENDITION_rptstart: value = "rptstart"; break;
-        case BARRENDITION_rptboth: value = "rptboth"; break;
-        case BARRENDITION_rptend: value = "rptend"; break;
-        case BARRENDITION_single: value = "single"; break;
+        case BARRENDITION_dashed: value="dashed"; break;
+        case BARRENDITION_dotted: value="dotted"; break;
+        case BARRENDITION_dbl: value="dbl"; break;
+        case BARRENDITION_dbldashed: value="dbldashed"; break;
+        case BARRENDITION_dbldotted: value="dbldotted"; break;
+        case BARRENDITION_end: value="end"; break;
+        case BARRENDITION_invis: value="invis"; break;
+        case BARRENDITION_rptstart: value="rptstart"; break;
+        case BARRENDITION_rptboth: value="rptboth"; break;
+        case BARRENDITION_rptend: value="rptend"; break;
+        case BARRENDITION_single: value="single"; break;
         default:
             LogWarning("Unknown value '%d' for data.BARRENDITION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -283,12 +283,12 @@ std::string AttConverter::BeamplaceToStr(data_BEAMPLACE data) const
 {
     std::string value;
     switch (data) {
-        case BEAMPLACE_above: value = "above"; break;
-        case BEAMPLACE_below: value = "below"; break;
-        case BEAMPLACE_mixed: value = "mixed"; break;
+        case BEAMPLACE_above: value="above"; break;
+        case BEAMPLACE_below: value="below"; break;
+        case BEAMPLACE_mixed: value="mixed"; break;
         default:
             LogWarning("Unknown value '%d' for data.BEAMPLACE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -308,22 +308,22 @@ std::string AttConverter::BetypeToStr(data_BETYPE data) const
 {
     std::string value;
     switch (data) {
-        case BETYPE_byte: value = "byte"; break;
-        case BETYPE_smil: value = "smil"; break;
-        case BETYPE_midi: value = "midi"; break;
-        case BETYPE_mmc: value = "mmc"; break;
-        case BETYPE_mtc: value = "mtc"; break;
-        case BETYPE_smpte_25: value = "smpte-25"; break;
-        case BETYPE_smpte_24: value = "smpte-24"; break;
-        case BETYPE_smpte_df30: value = "smpte-df30"; break;
-        case BETYPE_smpte_ndf30: value = "smpte-ndf30"; break;
-        case BETYPE_smpte_df29_97: value = "smpte-df29.97"; break;
-        case BETYPE_smpte_ndf29_97: value = "smpte-ndf29.97"; break;
-        case BETYPE_tcf: value = "tcf"; break;
-        case BETYPE_time: value = "time"; break;
+        case BETYPE_byte: value="byte"; break;
+        case BETYPE_smil: value="smil"; break;
+        case BETYPE_midi: value="midi"; break;
+        case BETYPE_mmc: value="mmc"; break;
+        case BETYPE_mtc: value="mtc"; break;
+        case BETYPE_smpte_25: value="smpte-25"; break;
+        case BETYPE_smpte_24: value="smpte-24"; break;
+        case BETYPE_smpte_df30: value="smpte-df30"; break;
+        case BETYPE_smpte_ndf30: value="smpte-ndf30"; break;
+        case BETYPE_smpte_df29_97: value="smpte-df29.97"; break;
+        case BETYPE_smpte_ndf29_97: value="smpte-ndf29.97"; break;
+        case BETYPE_tcf: value="tcf"; break;
+        case BETYPE_time: value="time"; break;
         default:
             LogWarning("Unknown value '%d' for data.BETYPE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -353,11 +353,11 @@ std::string AttConverter::BooleanToStr(data_BOOLEAN data) const
 {
     std::string value;
     switch (data) {
-        case BOOLEAN_true: value = "true"; break;
-        case BOOLEAN_false: value = "false"; break;
+        case BOOLEAN_true: value="true"; break;
+        case BOOLEAN_false: value="false"; break;
         default:
             LogWarning("Unknown value '%d' for data.BOOLEAN", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -376,13 +376,13 @@ std::string AttConverter::CertaintyToStr(data_CERTAINTY data) const
 {
     std::string value;
     switch (data) {
-        case CERTAINTY_high: value = "high"; break;
-        case CERTAINTY_medium: value = "medium"; break;
-        case CERTAINTY_low: value = "low"; break;
-        case CERTAINTY_unknown: value = "unknown"; break;
+        case CERTAINTY_high: value="high"; break;
+        case CERTAINTY_medium: value="medium"; break;
+        case CERTAINTY_low: value="low"; break;
+        case CERTAINTY_unknown: value="unknown"; break;
         default:
             LogWarning("Unknown value '%d' for data.CERTAINTY", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -403,15 +403,15 @@ std::string AttConverter::ClefshapeToStr(data_CLEFSHAPE data) const
 {
     std::string value;
     switch (data) {
-        case CLEFSHAPE_G: value = "G"; break;
-        case CLEFSHAPE_GG: value = "GG"; break;
-        case CLEFSHAPE_F: value = "F"; break;
-        case CLEFSHAPE_C: value = "C"; break;
-        case CLEFSHAPE_perc: value = "perc"; break;
-        case CLEFSHAPE_TAB: value = "TAB"; break;
+        case CLEFSHAPE_G: value="G"; break;
+        case CLEFSHAPE_GG: value="GG"; break;
+        case CLEFSHAPE_F: value="F"; break;
+        case CLEFSHAPE_C: value="C"; break;
+        case CLEFSHAPE_perc: value="perc"; break;
+        case CLEFSHAPE_TAB: value="TAB"; break;
         default:
             LogWarning("Unknown value '%d' for data.CLEFSHAPE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -434,12 +434,12 @@ std::string AttConverter::ClusterToStr(data_CLUSTER data) const
 {
     std::string value;
     switch (data) {
-        case CLUSTER_white: value = "white"; break;
-        case CLUSTER_black: value = "black"; break;
-        case CLUSTER_chromatic: value = "chromatic"; break;
+        case CLUSTER_white: value="white"; break;
+        case CLUSTER_black: value="black"; break;
+        case CLUSTER_chromatic: value="chromatic"; break;
         default:
             LogWarning("Unknown value '%d' for data.CLUSTER", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -459,157 +459,157 @@ std::string AttConverter::ColornamesToStr(data_COLORNAMES data) const
 {
     std::string value;
     switch (data) {
-        case COLORNAMES_aliceblue: value = "aliceblue"; break;
-        case COLORNAMES_antiquewhite: value = "antiquewhite"; break;
-        case COLORNAMES_aqua: value = "aqua"; break;
-        case COLORNAMES_aquamarine: value = "aquamarine"; break;
-        case COLORNAMES_azure: value = "azure"; break;
-        case COLORNAMES_beige: value = "beige"; break;
-        case COLORNAMES_bisque: value = "bisque"; break;
-        case COLORNAMES_black: value = "black"; break;
-        case COLORNAMES_blanchedalmond: value = "blanchedalmond"; break;
-        case COLORNAMES_blue: value = "blue"; break;
-        case COLORNAMES_blueviolet: value = "blueviolet"; break;
-        case COLORNAMES_brown: value = "brown"; break;
-        case COLORNAMES_burlywood: value = "burlywood"; break;
-        case COLORNAMES_cadetblue: value = "cadetblue"; break;
-        case COLORNAMES_chartreuse: value = "chartreuse"; break;
-        case COLORNAMES_chocolate: value = "chocolate"; break;
-        case COLORNAMES_coral: value = "coral"; break;
-        case COLORNAMES_cornflowerblue: value = "cornflowerblue"; break;
-        case COLORNAMES_cornsilk: value = "cornsilk"; break;
-        case COLORNAMES_crimson: value = "crimson"; break;
-        case COLORNAMES_cyan: value = "cyan"; break;
-        case COLORNAMES_darkblue: value = "darkblue"; break;
-        case COLORNAMES_darkcyan: value = "darkcyan"; break;
-        case COLORNAMES_darkgoldenrod: value = "darkgoldenrod"; break;
-        case COLORNAMES_darkgray: value = "darkgray"; break;
-        case COLORNAMES_darkgreen: value = "darkgreen"; break;
-        case COLORNAMES_darkgrey: value = "darkgrey"; break;
-        case COLORNAMES_darkkhaki: value = "darkkhaki"; break;
-        case COLORNAMES_darkmagenta: value = "darkmagenta"; break;
-        case COLORNAMES_darkolivegreen: value = "darkolivegreen"; break;
-        case COLORNAMES_darkorange: value = "darkorange"; break;
-        case COLORNAMES_darkorchid: value = "darkorchid"; break;
-        case COLORNAMES_darkred: value = "darkred"; break;
-        case COLORNAMES_darksalmon: value = "darksalmon"; break;
-        case COLORNAMES_darkseagreen: value = "darkseagreen"; break;
-        case COLORNAMES_darkslateblue: value = "darkslateblue"; break;
-        case COLORNAMES_darkslategray: value = "darkslategray"; break;
-        case COLORNAMES_darkslategrey: value = "darkslategrey"; break;
-        case COLORNAMES_darkturquoise: value = "darkturquoise"; break;
-        case COLORNAMES_darkviolet: value = "darkviolet"; break;
-        case COLORNAMES_deeppink: value = "deeppink"; break;
-        case COLORNAMES_deepskyblue: value = "deepskyblue"; break;
-        case COLORNAMES_dimgray: value = "dimgray"; break;
-        case COLORNAMES_dimgrey: value = "dimgrey"; break;
-        case COLORNAMES_dodgerblue: value = "dodgerblue"; break;
-        case COLORNAMES_firebrick: value = "firebrick"; break;
-        case COLORNAMES_floralwhite: value = "floralwhite"; break;
-        case COLORNAMES_forestgreen: value = "forestgreen"; break;
-        case COLORNAMES_fuchsia: value = "fuchsia"; break;
-        case COLORNAMES_gainsboro: value = "gainsboro"; break;
-        case COLORNAMES_ghostwhite: value = "ghostwhite"; break;
-        case COLORNAMES_gold: value = "gold"; break;
-        case COLORNAMES_goldenrod: value = "goldenrod"; break;
-        case COLORNAMES_gray: value = "gray"; break;
-        case COLORNAMES_green: value = "green"; break;
-        case COLORNAMES_greenyellow: value = "greenyellow"; break;
-        case COLORNAMES_grey: value = "grey"; break;
-        case COLORNAMES_honeydew: value = "honeydew"; break;
-        case COLORNAMES_hotpink: value = "hotpink"; break;
-        case COLORNAMES_indianred: value = "indianred"; break;
-        case COLORNAMES_indigo: value = "indigo"; break;
-        case COLORNAMES_ivory: value = "ivory"; break;
-        case COLORNAMES_khaki: value = "khaki"; break;
-        case COLORNAMES_lavender: value = "lavender"; break;
-        case COLORNAMES_lavenderblush: value = "lavenderblush"; break;
-        case COLORNAMES_lawngreen: value = "lawngreen"; break;
-        case COLORNAMES_lemonchiffon: value = "lemonchiffon"; break;
-        case COLORNAMES_lightblue: value = "lightblue"; break;
-        case COLORNAMES_lightcoral: value = "lightcoral"; break;
-        case COLORNAMES_lightcyan: value = "lightcyan"; break;
-        case COLORNAMES_lightgoldenrodyellow: value = "lightgoldenrodyellow"; break;
-        case COLORNAMES_lightgray: value = "lightgray"; break;
-        case COLORNAMES_lightgreen: value = "lightgreen"; break;
-        case COLORNAMES_lightgrey: value = "lightgrey"; break;
-        case COLORNAMES_lightpink: value = "lightpink"; break;
-        case COLORNAMES_lightsalmon: value = "lightsalmon"; break;
-        case COLORNAMES_lightseagreen: value = "lightseagreen"; break;
-        case COLORNAMES_lightskyblue: value = "lightskyblue"; break;
-        case COLORNAMES_lightslategray: value = "lightslategray"; break;
-        case COLORNAMES_lightslategrey: value = "lightslategrey"; break;
-        case COLORNAMES_lightsteelblue: value = "lightsteelblue"; break;
-        case COLORNAMES_lightyellow: value = "lightyellow"; break;
-        case COLORNAMES_lime: value = "lime"; break;
-        case COLORNAMES_limegreen: value = "limegreen"; break;
-        case COLORNAMES_linen: value = "linen"; break;
-        case COLORNAMES_magenta: value = "magenta"; break;
-        case COLORNAMES_maroon: value = "maroon"; break;
-        case COLORNAMES_mediumaquamarine: value = "mediumaquamarine"; break;
-        case COLORNAMES_mediumblue: value = "mediumblue"; break;
-        case COLORNAMES_mediumorchid: value = "mediumorchid"; break;
-        case COLORNAMES_mediumpurple: value = "mediumpurple"; break;
-        case COLORNAMES_mediumseagreen: value = "mediumseagreen"; break;
-        case COLORNAMES_mediumslateblue: value = "mediumslateblue"; break;
-        case COLORNAMES_mediumspringgreen: value = "mediumspringgreen"; break;
-        case COLORNAMES_mediumturquoise: value = "mediumturquoise"; break;
-        case COLORNAMES_mediumvioletred: value = "mediumvioletred"; break;
-        case COLORNAMES_midnightblue: value = "midnightblue"; break;
-        case COLORNAMES_mintcream: value = "mintcream"; break;
-        case COLORNAMES_mistyrose: value = "mistyrose"; break;
-        case COLORNAMES_moccasin: value = "moccasin"; break;
-        case COLORNAMES_navajowhite: value = "navajowhite"; break;
-        case COLORNAMES_navy: value = "navy"; break;
-        case COLORNAMES_oldlace: value = "oldlace"; break;
-        case COLORNAMES_olive: value = "olive"; break;
-        case COLORNAMES_olivedrab: value = "olivedrab"; break;
-        case COLORNAMES_orange: value = "orange"; break;
-        case COLORNAMES_orangered: value = "orangered"; break;
-        case COLORNAMES_orchid: value = "orchid"; break;
-        case COLORNAMES_palegoldenrod: value = "palegoldenrod"; break;
-        case COLORNAMES_palegreen: value = "palegreen"; break;
-        case COLORNAMES_paleturquoise: value = "paleturquoise"; break;
-        case COLORNAMES_palevioletred: value = "palevioletred"; break;
-        case COLORNAMES_papayawhip: value = "papayawhip"; break;
-        case COLORNAMES_peachpuff: value = "peachpuff"; break;
-        case COLORNAMES_peru: value = "peru"; break;
-        case COLORNAMES_pink: value = "pink"; break;
-        case COLORNAMES_plum: value = "plum"; break;
-        case COLORNAMES_powderblue: value = "powderblue"; break;
-        case COLORNAMES_purple: value = "purple"; break;
-        case COLORNAMES_rebeccapurple: value = "rebeccapurple"; break;
-        case COLORNAMES_red: value = "red"; break;
-        case COLORNAMES_rosybrown: value = "rosybrown"; break;
-        case COLORNAMES_royalblue: value = "royalblue"; break;
-        case COLORNAMES_saddlebrown: value = "saddlebrown"; break;
-        case COLORNAMES_salmon: value = "salmon"; break;
-        case COLORNAMES_sandybrown: value = "sandybrown"; break;
-        case COLORNAMES_seagreen: value = "seagreen"; break;
-        case COLORNAMES_seashell: value = "seashell"; break;
-        case COLORNAMES_sienna: value = "sienna"; break;
-        case COLORNAMES_silver: value = "silver"; break;
-        case COLORNAMES_skyblue: value = "skyblue"; break;
-        case COLORNAMES_slateblue: value = "slateblue"; break;
-        case COLORNAMES_slategray: value = "slategray"; break;
-        case COLORNAMES_slategrey: value = "slategrey"; break;
-        case COLORNAMES_snow: value = "snow"; break;
-        case COLORNAMES_springgreen: value = "springgreen"; break;
-        case COLORNAMES_steelblue: value = "steelblue"; break;
-        case COLORNAMES_tan: value = "tan"; break;
-        case COLORNAMES_teal: value = "teal"; break;
-        case COLORNAMES_thistle: value = "thistle"; break;
-        case COLORNAMES_tomato: value = "tomato"; break;
-        case COLORNAMES_turquoise: value = "turquoise"; break;
-        case COLORNAMES_violet: value = "violet"; break;
-        case COLORNAMES_wheat: value = "wheat"; break;
-        case COLORNAMES_white: value = "white"; break;
-        case COLORNAMES_whitesmoke: value = "whitesmoke"; break;
-        case COLORNAMES_yellow: value = "yellow"; break;
-        case COLORNAMES_yellowgreen: value = "yellowgreen"; break;
+        case COLORNAMES_aliceblue: value="aliceblue"; break;
+        case COLORNAMES_antiquewhite: value="antiquewhite"; break;
+        case COLORNAMES_aqua: value="aqua"; break;
+        case COLORNAMES_aquamarine: value="aquamarine"; break;
+        case COLORNAMES_azure: value="azure"; break;
+        case COLORNAMES_beige: value="beige"; break;
+        case COLORNAMES_bisque: value="bisque"; break;
+        case COLORNAMES_black: value="black"; break;
+        case COLORNAMES_blanchedalmond: value="blanchedalmond"; break;
+        case COLORNAMES_blue: value="blue"; break;
+        case COLORNAMES_blueviolet: value="blueviolet"; break;
+        case COLORNAMES_brown: value="brown"; break;
+        case COLORNAMES_burlywood: value="burlywood"; break;
+        case COLORNAMES_cadetblue: value="cadetblue"; break;
+        case COLORNAMES_chartreuse: value="chartreuse"; break;
+        case COLORNAMES_chocolate: value="chocolate"; break;
+        case COLORNAMES_coral: value="coral"; break;
+        case COLORNAMES_cornflowerblue: value="cornflowerblue"; break;
+        case COLORNAMES_cornsilk: value="cornsilk"; break;
+        case COLORNAMES_crimson: value="crimson"; break;
+        case COLORNAMES_cyan: value="cyan"; break;
+        case COLORNAMES_darkblue: value="darkblue"; break;
+        case COLORNAMES_darkcyan: value="darkcyan"; break;
+        case COLORNAMES_darkgoldenrod: value="darkgoldenrod"; break;
+        case COLORNAMES_darkgray: value="darkgray"; break;
+        case COLORNAMES_darkgreen: value="darkgreen"; break;
+        case COLORNAMES_darkgrey: value="darkgrey"; break;
+        case COLORNAMES_darkkhaki: value="darkkhaki"; break;
+        case COLORNAMES_darkmagenta: value="darkmagenta"; break;
+        case COLORNAMES_darkolivegreen: value="darkolivegreen"; break;
+        case COLORNAMES_darkorange: value="darkorange"; break;
+        case COLORNAMES_darkorchid: value="darkorchid"; break;
+        case COLORNAMES_darkred: value="darkred"; break;
+        case COLORNAMES_darksalmon: value="darksalmon"; break;
+        case COLORNAMES_darkseagreen: value="darkseagreen"; break;
+        case COLORNAMES_darkslateblue: value="darkslateblue"; break;
+        case COLORNAMES_darkslategray: value="darkslategray"; break;
+        case COLORNAMES_darkslategrey: value="darkslategrey"; break;
+        case COLORNAMES_darkturquoise: value="darkturquoise"; break;
+        case COLORNAMES_darkviolet: value="darkviolet"; break;
+        case COLORNAMES_deeppink: value="deeppink"; break;
+        case COLORNAMES_deepskyblue: value="deepskyblue"; break;
+        case COLORNAMES_dimgray: value="dimgray"; break;
+        case COLORNAMES_dimgrey: value="dimgrey"; break;
+        case COLORNAMES_dodgerblue: value="dodgerblue"; break;
+        case COLORNAMES_firebrick: value="firebrick"; break;
+        case COLORNAMES_floralwhite: value="floralwhite"; break;
+        case COLORNAMES_forestgreen: value="forestgreen"; break;
+        case COLORNAMES_fuchsia: value="fuchsia"; break;
+        case COLORNAMES_gainsboro: value="gainsboro"; break;
+        case COLORNAMES_ghostwhite: value="ghostwhite"; break;
+        case COLORNAMES_gold: value="gold"; break;
+        case COLORNAMES_goldenrod: value="goldenrod"; break;
+        case COLORNAMES_gray: value="gray"; break;
+        case COLORNAMES_green: value="green"; break;
+        case COLORNAMES_greenyellow: value="greenyellow"; break;
+        case COLORNAMES_grey: value="grey"; break;
+        case COLORNAMES_honeydew: value="honeydew"; break;
+        case COLORNAMES_hotpink: value="hotpink"; break;
+        case COLORNAMES_indianred: value="indianred"; break;
+        case COLORNAMES_indigo: value="indigo"; break;
+        case COLORNAMES_ivory: value="ivory"; break;
+        case COLORNAMES_khaki: value="khaki"; break;
+        case COLORNAMES_lavender: value="lavender"; break;
+        case COLORNAMES_lavenderblush: value="lavenderblush"; break;
+        case COLORNAMES_lawngreen: value="lawngreen"; break;
+        case COLORNAMES_lemonchiffon: value="lemonchiffon"; break;
+        case COLORNAMES_lightblue: value="lightblue"; break;
+        case COLORNAMES_lightcoral: value="lightcoral"; break;
+        case COLORNAMES_lightcyan: value="lightcyan"; break;
+        case COLORNAMES_lightgoldenrodyellow: value="lightgoldenrodyellow"; break;
+        case COLORNAMES_lightgray: value="lightgray"; break;
+        case COLORNAMES_lightgreen: value="lightgreen"; break;
+        case COLORNAMES_lightgrey: value="lightgrey"; break;
+        case COLORNAMES_lightpink: value="lightpink"; break;
+        case COLORNAMES_lightsalmon: value="lightsalmon"; break;
+        case COLORNAMES_lightseagreen: value="lightseagreen"; break;
+        case COLORNAMES_lightskyblue: value="lightskyblue"; break;
+        case COLORNAMES_lightslategray: value="lightslategray"; break;
+        case COLORNAMES_lightslategrey: value="lightslategrey"; break;
+        case COLORNAMES_lightsteelblue: value="lightsteelblue"; break;
+        case COLORNAMES_lightyellow: value="lightyellow"; break;
+        case COLORNAMES_lime: value="lime"; break;
+        case COLORNAMES_limegreen: value="limegreen"; break;
+        case COLORNAMES_linen: value="linen"; break;
+        case COLORNAMES_magenta: value="magenta"; break;
+        case COLORNAMES_maroon: value="maroon"; break;
+        case COLORNAMES_mediumaquamarine: value="mediumaquamarine"; break;
+        case COLORNAMES_mediumblue: value="mediumblue"; break;
+        case COLORNAMES_mediumorchid: value="mediumorchid"; break;
+        case COLORNAMES_mediumpurple: value="mediumpurple"; break;
+        case COLORNAMES_mediumseagreen: value="mediumseagreen"; break;
+        case COLORNAMES_mediumslateblue: value="mediumslateblue"; break;
+        case COLORNAMES_mediumspringgreen: value="mediumspringgreen"; break;
+        case COLORNAMES_mediumturquoise: value="mediumturquoise"; break;
+        case COLORNAMES_mediumvioletred: value="mediumvioletred"; break;
+        case COLORNAMES_midnightblue: value="midnightblue"; break;
+        case COLORNAMES_mintcream: value="mintcream"; break;
+        case COLORNAMES_mistyrose: value="mistyrose"; break;
+        case COLORNAMES_moccasin: value="moccasin"; break;
+        case COLORNAMES_navajowhite: value="navajowhite"; break;
+        case COLORNAMES_navy: value="navy"; break;
+        case COLORNAMES_oldlace: value="oldlace"; break;
+        case COLORNAMES_olive: value="olive"; break;
+        case COLORNAMES_olivedrab: value="olivedrab"; break;
+        case COLORNAMES_orange: value="orange"; break;
+        case COLORNAMES_orangered: value="orangered"; break;
+        case COLORNAMES_orchid: value="orchid"; break;
+        case COLORNAMES_palegoldenrod: value="palegoldenrod"; break;
+        case COLORNAMES_palegreen: value="palegreen"; break;
+        case COLORNAMES_paleturquoise: value="paleturquoise"; break;
+        case COLORNAMES_palevioletred: value="palevioletred"; break;
+        case COLORNAMES_papayawhip: value="papayawhip"; break;
+        case COLORNAMES_peachpuff: value="peachpuff"; break;
+        case COLORNAMES_peru: value="peru"; break;
+        case COLORNAMES_pink: value="pink"; break;
+        case COLORNAMES_plum: value="plum"; break;
+        case COLORNAMES_powderblue: value="powderblue"; break;
+        case COLORNAMES_purple: value="purple"; break;
+        case COLORNAMES_rebeccapurple: value="rebeccapurple"; break;
+        case COLORNAMES_red: value="red"; break;
+        case COLORNAMES_rosybrown: value="rosybrown"; break;
+        case COLORNAMES_royalblue: value="royalblue"; break;
+        case COLORNAMES_saddlebrown: value="saddlebrown"; break;
+        case COLORNAMES_salmon: value="salmon"; break;
+        case COLORNAMES_sandybrown: value="sandybrown"; break;
+        case COLORNAMES_seagreen: value="seagreen"; break;
+        case COLORNAMES_seashell: value="seashell"; break;
+        case COLORNAMES_sienna: value="sienna"; break;
+        case COLORNAMES_silver: value="silver"; break;
+        case COLORNAMES_skyblue: value="skyblue"; break;
+        case COLORNAMES_slateblue: value="slateblue"; break;
+        case COLORNAMES_slategray: value="slategray"; break;
+        case COLORNAMES_slategrey: value="slategrey"; break;
+        case COLORNAMES_snow: value="snow"; break;
+        case COLORNAMES_springgreen: value="springgreen"; break;
+        case COLORNAMES_steelblue: value="steelblue"; break;
+        case COLORNAMES_tan: value="tan"; break;
+        case COLORNAMES_teal: value="teal"; break;
+        case COLORNAMES_thistle: value="thistle"; break;
+        case COLORNAMES_tomato: value="tomato"; break;
+        case COLORNAMES_turquoise: value="turquoise"; break;
+        case COLORNAMES_violet: value="violet"; break;
+        case COLORNAMES_wheat: value="wheat"; break;
+        case COLORNAMES_white: value="white"; break;
+        case COLORNAMES_whitesmoke: value="whitesmoke"; break;
+        case COLORNAMES_yellow: value="yellow"; break;
+        case COLORNAMES_yellowgreen: value="yellowgreen"; break;
         default:
             LogWarning("Unknown value '%d' for data.COLORNAMES", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -774,17 +774,17 @@ std::string AttConverter::CompassdirectionToStr(data_COMPASSDIRECTION data) cons
 {
     std::string value;
     switch (data) {
-        case COMPASSDIRECTION_n: value = "n"; break;
-        case COMPASSDIRECTION_e: value = "e"; break;
-        case COMPASSDIRECTION_s: value = "s"; break;
-        case COMPASSDIRECTION_w: value = "w"; break;
-        case COMPASSDIRECTION_ne: value = "ne"; break;
-        case COMPASSDIRECTION_nw: value = "nw"; break;
-        case COMPASSDIRECTION_se: value = "se"; break;
-        case COMPASSDIRECTION_sw: value = "sw"; break;
+        case COMPASSDIRECTION_n: value="n"; break;
+        case COMPASSDIRECTION_e: value="e"; break;
+        case COMPASSDIRECTION_s: value="s"; break;
+        case COMPASSDIRECTION_w: value="w"; break;
+        case COMPASSDIRECTION_ne: value="ne"; break;
+        case COMPASSDIRECTION_nw: value="nw"; break;
+        case COMPASSDIRECTION_se: value="se"; break;
+        case COMPASSDIRECTION_sw: value="sw"; break;
         default:
             LogWarning("Unknown value '%d' for data.COMPASSDIRECTION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -809,13 +809,13 @@ std::string AttConverter::CompassdirectionBasicToStr(data_COMPASSDIRECTION_basic
 {
     std::string value;
     switch (data) {
-        case COMPASSDIRECTION_basic_n: value = "n"; break;
-        case COMPASSDIRECTION_basic_e: value = "e"; break;
-        case COMPASSDIRECTION_basic_s: value = "s"; break;
-        case COMPASSDIRECTION_basic_w: value = "w"; break;
+        case COMPASSDIRECTION_basic_n: value="n"; break;
+        case COMPASSDIRECTION_basic_e: value="e"; break;
+        case COMPASSDIRECTION_basic_s: value="s"; break;
+        case COMPASSDIRECTION_basic_w: value="w"; break;
         default:
             LogWarning("Unknown value '%d' for data.COMPASSDIRECTION.basic", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -836,13 +836,13 @@ std::string AttConverter::CompassdirectionExtendedToStr(data_COMPASSDIRECTION_ex
 {
     std::string value;
     switch (data) {
-        case COMPASSDIRECTION_extended_ne: value = "ne"; break;
-        case COMPASSDIRECTION_extended_nw: value = "nw"; break;
-        case COMPASSDIRECTION_extended_se: value = "se"; break;
-        case COMPASSDIRECTION_extended_sw: value = "sw"; break;
+        case COMPASSDIRECTION_extended_ne: value="ne"; break;
+        case COMPASSDIRECTION_extended_nw: value="nw"; break;
+        case COMPASSDIRECTION_extended_se: value="se"; break;
+        case COMPASSDIRECTION_extended_sw: value="sw"; break;
         default:
             LogWarning("Unknown value '%d' for data.COMPASSDIRECTION.extended", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -863,16 +863,16 @@ std::string AttConverter::DivisioToStr(data_DIVISIO data) const
 {
     std::string value;
     switch (data) {
-        case DIVISIO_ternaria: value = "ternaria"; break;
-        case DIVISIO_quaternaria: value = "quaternaria"; break;
-        case DIVISIO_senariaimperf: value = "senariaimperf"; break;
-        case DIVISIO_senariaperf: value = "senariaperf"; break;
-        case DIVISIO_octonaria: value = "octonaria"; break;
-        case DIVISIO_novenaria: value = "novenaria"; break;
-        case DIVISIO_duodenaria: value = "duodenaria"; break;
+        case DIVISIO_ternaria: value="ternaria"; break;
+        case DIVISIO_quaternaria: value="quaternaria"; break;
+        case DIVISIO_senariaimperf: value="senariaimperf"; break;
+        case DIVISIO_senariaperf: value="senariaperf"; break;
+        case DIVISIO_octonaria: value="octonaria"; break;
+        case DIVISIO_novenaria: value="novenaria"; break;
+        case DIVISIO_duodenaria: value="duodenaria"; break;
         default:
             LogWarning("Unknown value '%d' for data.DIVISIO", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -896,23 +896,23 @@ std::string AttConverter::DurationrestsToStr(data_DURATIONRESTS data) const
 {
     std::string value;
     switch (data) {
-        case DURATIONRESTS_long: value = "long"; break;
-        case DURATIONRESTS_breve: value = "breve"; break;
-        case DURATIONRESTS_1: value = "1"; break;
-        case DURATIONRESTS_2: value = "2"; break;
-        case DURATIONRESTS_4: value = "4"; break;
-        case DURATIONRESTS_8: value = "8"; break;
-        case DURATIONRESTS_16: value = "16"; break;
-        case DURATIONRESTS_32: value = "32"; break;
-        case DURATIONRESTS_64: value = "64"; break;
-        case DURATIONRESTS_128: value = "128"; break;
-        case DURATIONRESTS_256: value = "256"; break;
-        case DURATIONRESTS_512: value = "512"; break;
-        case DURATIONRESTS_1024: value = "1024"; break;
-        case DURATIONRESTS_2048: value = "2048"; break;
+        case DURATIONRESTS_long: value="long"; break;
+        case DURATIONRESTS_breve: value="breve"; break;
+        case DURATIONRESTS_1: value="1"; break;
+        case DURATIONRESTS_2: value="2"; break;
+        case DURATIONRESTS_4: value="4"; break;
+        case DURATIONRESTS_8: value="8"; break;
+        case DURATIONRESTS_16: value="16"; break;
+        case DURATIONRESTS_32: value="32"; break;
+        case DURATIONRESTS_64: value="64"; break;
+        case DURATIONRESTS_128: value="128"; break;
+        case DURATIONRESTS_256: value="256"; break;
+        case DURATIONRESTS_512: value="512"; break;
+        case DURATIONRESTS_1024: value="1024"; break;
+        case DURATIONRESTS_2048: value="2048"; break;
         default:
             LogWarning("Unknown value '%d' for data.DURATIONRESTS", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -943,19 +943,19 @@ std::string AttConverter::DurationrestsMensuralToStr(data_DURATIONRESTS_mensural
 {
     std::string value;
     switch (data) {
-        case DURATIONRESTS_mensural_2B: value = "2B"; break;
-        case DURATIONRESTS_mensural_3B: value = "3B"; break;
-        case DURATIONRESTS_mensural_maxima: value = "maxima"; break;
-        case DURATIONRESTS_mensural_longa: value = "longa"; break;
-        case DURATIONRESTS_mensural_brevis: value = "brevis"; break;
-        case DURATIONRESTS_mensural_semibrevis: value = "semibrevis"; break;
-        case DURATIONRESTS_mensural_minima: value = "minima"; break;
-        case DURATIONRESTS_mensural_semiminima: value = "semiminima"; break;
-        case DURATIONRESTS_mensural_fusa: value = "fusa"; break;
-        case DURATIONRESTS_mensural_semifusa: value = "semifusa"; break;
+        case DURATIONRESTS_mensural_2B: value="2B"; break;
+        case DURATIONRESTS_mensural_3B: value="3B"; break;
+        case DURATIONRESTS_mensural_maxima: value="maxima"; break;
+        case DURATIONRESTS_mensural_longa: value="longa"; break;
+        case DURATIONRESTS_mensural_brevis: value="brevis"; break;
+        case DURATIONRESTS_mensural_semibrevis: value="semibrevis"; break;
+        case DURATIONRESTS_mensural_minima: value="minima"; break;
+        case DURATIONRESTS_mensural_semiminima: value="semiminima"; break;
+        case DURATIONRESTS_mensural_fusa: value="fusa"; break;
+        case DURATIONRESTS_mensural_semifusa: value="semifusa"; break;
         default:
             LogWarning("Unknown value '%d' for data.DURATIONRESTS.mensural", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -982,15 +982,15 @@ std::string AttConverter::DurqualityMensuralToStr(data_DURQUALITY_mensural data)
 {
     std::string value;
     switch (data) {
-        case DURQUALITY_mensural_perfecta: value = "perfecta"; break;
-        case DURQUALITY_mensural_imperfecta: value = "imperfecta"; break;
-        case DURQUALITY_mensural_altera: value = "altera"; break;
-        case DURQUALITY_mensural_minor: value = "minor"; break;
-        case DURQUALITY_mensural_maior: value = "maior"; break;
-        case DURQUALITY_mensural_duplex: value = "duplex"; break;
+        case DURQUALITY_mensural_perfecta: value="perfecta"; break;
+        case DURQUALITY_mensural_imperfecta: value="imperfecta"; break;
+        case DURQUALITY_mensural_altera: value="altera"; break;
+        case DURQUALITY_mensural_minor: value="minor"; break;
+        case DURQUALITY_mensural_maior: value="maior"; break;
+        case DURQUALITY_mensural_duplex: value="duplex"; break;
         default:
             LogWarning("Unknown value '%d' for data.DURQUALITY.mensural", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1013,11 +1013,11 @@ std::string AttConverter::EnclosureToStr(data_ENCLOSURE data) const
 {
     std::string value;
     switch (data) {
-        case ENCLOSURE_paren: value = "paren"; break;
-        case ENCLOSURE_brack: value = "brack"; break;
+        case ENCLOSURE_paren: value="paren"; break;
+        case ENCLOSURE_brack: value="brack"; break;
         default:
             LogWarning("Unknown value '%d' for data.ENCLOSURE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1036,17 +1036,17 @@ std::string AttConverter::EventrelToStr(data_EVENTREL data) const
 {
     std::string value;
     switch (data) {
-        case EVENTREL_above: value = "above"; break;
-        case EVENTREL_below: value = "below"; break;
-        case EVENTREL_left: value = "left"; break;
-        case EVENTREL_right: value = "right"; break;
-        case EVENTREL_above_left: value = "above-left"; break;
-        case EVENTREL_above_right: value = "above-right"; break;
-        case EVENTREL_below_left: value = "below-left"; break;
-        case EVENTREL_below_right: value = "below-right"; break;
+        case EVENTREL_above: value="above"; break;
+        case EVENTREL_below: value="below"; break;
+        case EVENTREL_left: value="left"; break;
+        case EVENTREL_right: value="right"; break;
+        case EVENTREL_above_left: value="above-left"; break;
+        case EVENTREL_above_right: value="above-right"; break;
+        case EVENTREL_below_left: value="below-left"; break;
+        case EVENTREL_below_right: value="below-right"; break;
         default:
             LogWarning("Unknown value '%d' for data.EVENTREL", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1071,13 +1071,13 @@ std::string AttConverter::EventrelBasicToStr(data_EVENTREL_basic data) const
 {
     std::string value;
     switch (data) {
-        case EVENTREL_basic_above: value = "above"; break;
-        case EVENTREL_basic_below: value = "below"; break;
-        case EVENTREL_basic_left: value = "left"; break;
-        case EVENTREL_basic_right: value = "right"; break;
+        case EVENTREL_basic_above: value="above"; break;
+        case EVENTREL_basic_below: value="below"; break;
+        case EVENTREL_basic_left: value="left"; break;
+        case EVENTREL_basic_right: value="right"; break;
         default:
             LogWarning("Unknown value '%d' for data.EVENTREL.basic", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1098,13 +1098,13 @@ std::string AttConverter::EventrelExtendedToStr(data_EVENTREL_extended data) con
 {
     std::string value;
     switch (data) {
-        case EVENTREL_extended_above_left: value = "above-left"; break;
-        case EVENTREL_extended_above_right: value = "above-right"; break;
-        case EVENTREL_extended_below_left: value = "below-left"; break;
-        case EVENTREL_extended_below_right: value = "below-right"; break;
+        case EVENTREL_extended_above_left: value="above-left"; break;
+        case EVENTREL_extended_above_right: value="above-right"; break;
+        case EVENTREL_extended_below_left: value="below-left"; break;
+        case EVENTREL_extended_below_right: value="below-right"; break;
         default:
             LogWarning("Unknown value '%d' for data.EVENTREL.extended", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1125,15 +1125,15 @@ std::string AttConverter::FillToStr(data_FILL data) const
 {
     std::string value;
     switch (data) {
-        case FILL_void: value = "void"; break;
-        case FILL_solid: value = "solid"; break;
-        case FILL_top: value = "top"; break;
-        case FILL_bottom: value = "bottom"; break;
-        case FILL_left: value = "left"; break;
-        case FILL_right: value = "right"; break;
+        case FILL_void: value="void"; break;
+        case FILL_solid: value="solid"; break;
+        case FILL_top: value="top"; break;
+        case FILL_bottom: value="bottom"; break;
+        case FILL_left: value="left"; break;
+        case FILL_right: value="right"; break;
         default:
             LogWarning("Unknown value '%d' for data.FILL", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1156,15 +1156,15 @@ std::string AttConverter::FlagformMensuralToStr(data_FLAGFORM_mensural data) con
 {
     std::string value;
     switch (data) {
-        case FLAGFORM_mensural_straight: value = "straight"; break;
-        case FLAGFORM_mensural_angled: value = "angled"; break;
-        case FLAGFORM_mensural_curled: value = "curled"; break;
-        case FLAGFORM_mensural_flared: value = "flared"; break;
-        case FLAGFORM_mensural_extended: value = "extended"; break;
-        case FLAGFORM_mensural_hooked: value = "hooked"; break;
+        case FLAGFORM_mensural_straight: value="straight"; break;
+        case FLAGFORM_mensural_angled: value="angled"; break;
+        case FLAGFORM_mensural_curled: value="curled"; break;
+        case FLAGFORM_mensural_flared: value="flared"; break;
+        case FLAGFORM_mensural_extended: value="extended"; break;
+        case FLAGFORM_mensural_hooked: value="hooked"; break;
         default:
             LogWarning("Unknown value '%d' for data.FLAGFORM.mensural", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1187,12 +1187,12 @@ std::string AttConverter::FlagposMensuralToStr(data_FLAGPOS_mensural data) const
 {
     std::string value;
     switch (data) {
-        case FLAGPOS_mensural_left: value = "left"; break;
-        case FLAGPOS_mensural_right: value = "right"; break;
-        case FLAGPOS_mensural_center: value = "center"; break;
+        case FLAGPOS_mensural_left: value="left"; break;
+        case FLAGPOS_mensural_right: value="right"; break;
+        case FLAGPOS_mensural_center: value="center"; break;
         default:
             LogWarning("Unknown value '%d' for data.FLAGPOS.mensural", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1212,18 +1212,18 @@ std::string AttConverter::FontsizetermToStr(data_FONTSIZETERM data) const
 {
     std::string value;
     switch (data) {
-        case FONTSIZETERM_xx_small: value = "xx-small"; break;
-        case FONTSIZETERM_x_small: value = "x-small"; break;
-        case FONTSIZETERM_small: value = "small"; break;
-        case FONTSIZETERM_normal: value = "normal"; break;
-        case FONTSIZETERM_large: value = "large"; break;
-        case FONTSIZETERM_x_large: value = "x-large"; break;
-        case FONTSIZETERM_xx_large: value = "xx-large"; break;
-        case FONTSIZETERM_smaller: value = "smaller"; break;
-        case FONTSIZETERM_larger: value = "larger"; break;
+        case FONTSIZETERM_xx_small: value="xx-small"; break;
+        case FONTSIZETERM_x_small: value="x-small"; break;
+        case FONTSIZETERM_small: value="small"; break;
+        case FONTSIZETERM_normal: value="normal"; break;
+        case FONTSIZETERM_large: value="large"; break;
+        case FONTSIZETERM_x_large: value="x-large"; break;
+        case FONTSIZETERM_xx_large: value="xx-large"; break;
+        case FONTSIZETERM_smaller: value="smaller"; break;
+        case FONTSIZETERM_larger: value="larger"; break;
         default:
             LogWarning("Unknown value '%d' for data.FONTSIZETERM", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1249,12 +1249,12 @@ std::string AttConverter::FontstyleToStr(data_FONTSTYLE data) const
 {
     std::string value;
     switch (data) {
-        case FONTSTYLE_italic: value = "italic"; break;
-        case FONTSTYLE_normal: value = "normal"; break;
-        case FONTSTYLE_oblique: value = "oblique"; break;
+        case FONTSTYLE_italic: value="italic"; break;
+        case FONTSTYLE_normal: value="normal"; break;
+        case FONTSTYLE_oblique: value="oblique"; break;
         default:
             LogWarning("Unknown value '%d' for data.FONTSTYLE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1274,11 +1274,11 @@ std::string AttConverter::FontweightToStr(data_FONTWEIGHT data) const
 {
     std::string value;
     switch (data) {
-        case FONTWEIGHT_bold: value = "bold"; break;
-        case FONTWEIGHT_normal: value = "normal"; break;
+        case FONTWEIGHT_bold: value="bold"; break;
+        case FONTWEIGHT_normal: value="normal"; break;
         default:
             LogWarning("Unknown value '%d' for data.FONTWEIGHT", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1297,45 +1297,45 @@ std::string AttConverter::FrbrrelationshipToStr(data_FRBRRELATIONSHIP data) cons
 {
     std::string value;
     switch (data) {
-        case FRBRRELATIONSHIP_hasAbridgement: value = "hasAbridgement"; break;
-        case FRBRRELATIONSHIP_isAbridgementOf: value = "isAbridgementOf"; break;
-        case FRBRRELATIONSHIP_hasAdaptation: value = "hasAdaptation"; break;
-        case FRBRRELATIONSHIP_isAdaptationOf: value = "isAdaptationOf"; break;
-        case FRBRRELATIONSHIP_hasAlternate: value = "hasAlternate"; break;
-        case FRBRRELATIONSHIP_isAlternateOf: value = "isAlternateOf"; break;
-        case FRBRRELATIONSHIP_hasArrangement: value = "hasArrangement"; break;
-        case FRBRRELATIONSHIP_isArrangementOf: value = "isArrangementOf"; break;
-        case FRBRRELATIONSHIP_hasComplement: value = "hasComplement"; break;
-        case FRBRRELATIONSHIP_isComplementOf: value = "isComplementOf"; break;
-        case FRBRRELATIONSHIP_hasEmbodiment: value = "hasEmbodiment"; break;
-        case FRBRRELATIONSHIP_isEmbodimentOf: value = "isEmbodimentOf"; break;
-        case FRBRRELATIONSHIP_hasExemplar: value = "hasExemplar"; break;
-        case FRBRRELATIONSHIP_isExemplarOf: value = "isExemplarOf"; break;
-        case FRBRRELATIONSHIP_hasImitation: value = "hasImitation"; break;
-        case FRBRRELATIONSHIP_isImitationOf: value = "isImitationOf"; break;
-        case FRBRRELATIONSHIP_hasPart: value = "hasPart"; break;
-        case FRBRRELATIONSHIP_isPartOf: value = "isPartOf"; break;
-        case FRBRRELATIONSHIP_hasRealization: value = "hasRealization"; break;
-        case FRBRRELATIONSHIP_isRealizationOf: value = "isRealizationOf"; break;
-        case FRBRRELATIONSHIP_hasReconfiguration: value = "hasReconfiguration"; break;
-        case FRBRRELATIONSHIP_isReconfigurationOf: value = "isReconfigurationOf"; break;
-        case FRBRRELATIONSHIP_hasReproduction: value = "hasReproduction"; break;
-        case FRBRRELATIONSHIP_isReproductionOf: value = "isReproductionOf"; break;
-        case FRBRRELATIONSHIP_hasRevision: value = "hasRevision"; break;
-        case FRBRRELATIONSHIP_isRevisionOf: value = "isRevisionOf"; break;
-        case FRBRRELATIONSHIP_hasSuccessor: value = "hasSuccessor"; break;
-        case FRBRRELATIONSHIP_isSuccessorOf: value = "isSuccessorOf"; break;
-        case FRBRRELATIONSHIP_hasSummarization: value = "hasSummarization"; break;
-        case FRBRRELATIONSHIP_isSummarizationOf: value = "isSummarizationOf"; break;
-        case FRBRRELATIONSHIP_hasSupplement: value = "hasSupplement"; break;
-        case FRBRRELATIONSHIP_isSupplementOf: value = "isSupplementOf"; break;
-        case FRBRRELATIONSHIP_hasTransformation: value = "hasTransformation"; break;
-        case FRBRRELATIONSHIP_isTransformationOf: value = "isTransformationOf"; break;
-        case FRBRRELATIONSHIP_hasTranslation: value = "hasTranslation"; break;
-        case FRBRRELATIONSHIP_isTranslationOf: value = "isTranslationOf"; break;
+        case FRBRRELATIONSHIP_hasAbridgement: value="hasAbridgement"; break;
+        case FRBRRELATIONSHIP_isAbridgementOf: value="isAbridgementOf"; break;
+        case FRBRRELATIONSHIP_hasAdaptation: value="hasAdaptation"; break;
+        case FRBRRELATIONSHIP_isAdaptationOf: value="isAdaptationOf"; break;
+        case FRBRRELATIONSHIP_hasAlternate: value="hasAlternate"; break;
+        case FRBRRELATIONSHIP_isAlternateOf: value="isAlternateOf"; break;
+        case FRBRRELATIONSHIP_hasArrangement: value="hasArrangement"; break;
+        case FRBRRELATIONSHIP_isArrangementOf: value="isArrangementOf"; break;
+        case FRBRRELATIONSHIP_hasComplement: value="hasComplement"; break;
+        case FRBRRELATIONSHIP_isComplementOf: value="isComplementOf"; break;
+        case FRBRRELATIONSHIP_hasEmbodiment: value="hasEmbodiment"; break;
+        case FRBRRELATIONSHIP_isEmbodimentOf: value="isEmbodimentOf"; break;
+        case FRBRRELATIONSHIP_hasExemplar: value="hasExemplar"; break;
+        case FRBRRELATIONSHIP_isExemplarOf: value="isExemplarOf"; break;
+        case FRBRRELATIONSHIP_hasImitation: value="hasImitation"; break;
+        case FRBRRELATIONSHIP_isImitationOf: value="isImitationOf"; break;
+        case FRBRRELATIONSHIP_hasPart: value="hasPart"; break;
+        case FRBRRELATIONSHIP_isPartOf: value="isPartOf"; break;
+        case FRBRRELATIONSHIP_hasRealization: value="hasRealization"; break;
+        case FRBRRELATIONSHIP_isRealizationOf: value="isRealizationOf"; break;
+        case FRBRRELATIONSHIP_hasReconfiguration: value="hasReconfiguration"; break;
+        case FRBRRELATIONSHIP_isReconfigurationOf: value="isReconfigurationOf"; break;
+        case FRBRRELATIONSHIP_hasReproduction: value="hasReproduction"; break;
+        case FRBRRELATIONSHIP_isReproductionOf: value="isReproductionOf"; break;
+        case FRBRRELATIONSHIP_hasRevision: value="hasRevision"; break;
+        case FRBRRELATIONSHIP_isRevisionOf: value="isRevisionOf"; break;
+        case FRBRRELATIONSHIP_hasSuccessor: value="hasSuccessor"; break;
+        case FRBRRELATIONSHIP_isSuccessorOf: value="isSuccessorOf"; break;
+        case FRBRRELATIONSHIP_hasSummarization: value="hasSummarization"; break;
+        case FRBRRELATIONSHIP_isSummarizationOf: value="isSummarizationOf"; break;
+        case FRBRRELATIONSHIP_hasSupplement: value="hasSupplement"; break;
+        case FRBRRELATIONSHIP_isSupplementOf: value="isSupplementOf"; break;
+        case FRBRRELATIONSHIP_hasTransformation: value="hasTransformation"; break;
+        case FRBRRELATIONSHIP_isTransformationOf: value="isTransformationOf"; break;
+        case FRBRRELATIONSHIP_hasTranslation: value="hasTranslation"; break;
+        case FRBRRELATIONSHIP_isTranslationOf: value="isTranslationOf"; break;
         default:
             LogWarning("Unknown value '%d' for data.FRBRRELATIONSHIP", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1388,12 +1388,12 @@ std::string AttConverter::GlissandoToStr(data_GLISSANDO data) const
 {
     std::string value;
     switch (data) {
-        case GLISSANDO_i: value = "i"; break;
-        case GLISSANDO_m: value = "m"; break;
-        case GLISSANDO_t: value = "t"; break;
+        case GLISSANDO_i: value="i"; break;
+        case GLISSANDO_m: value="m"; break;
+        case GLISSANDO_t: value="t"; break;
         default:
             LogWarning("Unknown value '%d' for data.GLISSANDO", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1413,12 +1413,12 @@ std::string AttConverter::GraceToStr(data_GRACE data) const
 {
     std::string value;
     switch (data) {
-        case GRACE_acc: value = "acc"; break;
-        case GRACE_unacc: value = "unacc"; break;
-        case GRACE_unknown: value = "unknown"; break;
+        case GRACE_acc: value="acc"; break;
+        case GRACE_unacc: value="unacc"; break;
+        case GRACE_unknown: value="unknown"; break;
         default:
             LogWarning("Unknown value '%d' for data.GRACE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1438,25 +1438,25 @@ std::string AttConverter::HeadshapeToStr(data_HEADSHAPE data) const
 {
     std::string value;
     switch (data) {
-        case HEADSHAPE_quarter: value = "quarter"; break;
-        case HEADSHAPE_half: value = "half"; break;
-        case HEADSHAPE_whole: value = "whole"; break;
-        case HEADSHAPE_backslash: value = "backslash"; break;
-        case HEADSHAPE_circle: value = "circle"; break;
-        case HEADSHAPE_plus: value = "+"; break;
-        case HEADSHAPE_diamond: value = "diamond"; break;
-        case HEADSHAPE_isotriangle: value = "isotriangle"; break;
-        case HEADSHAPE_oval: value = "oval"; break;
-        case HEADSHAPE_piewedge: value = "piewedge"; break;
-        case HEADSHAPE_rectangle: value = "rectangle"; break;
-        case HEADSHAPE_rtriangle: value = "rtriangle"; break;
-        case HEADSHAPE_semicircle: value = "semicircle"; break;
-        case HEADSHAPE_slash: value = "slash"; break;
-        case HEADSHAPE_square: value = "square"; break;
-        case HEADSHAPE_x: value = "x"; break;
+        case HEADSHAPE_quarter: value="quarter"; break;
+        case HEADSHAPE_half: value="half"; break;
+        case HEADSHAPE_whole: value="whole"; break;
+        case HEADSHAPE_backslash: value="backslash"; break;
+        case HEADSHAPE_circle: value="circle"; break;
+        case HEADSHAPE_plus: value="+"; break;
+        case HEADSHAPE_diamond: value="diamond"; break;
+        case HEADSHAPE_isotriangle: value="isotriangle"; break;
+        case HEADSHAPE_oval: value="oval"; break;
+        case HEADSHAPE_piewedge: value="piewedge"; break;
+        case HEADSHAPE_rectangle: value="rectangle"; break;
+        case HEADSHAPE_rtriangle: value="rtriangle"; break;
+        case HEADSHAPE_semicircle: value="semicircle"; break;
+        case HEADSHAPE_slash: value="slash"; break;
+        case HEADSHAPE_square: value="square"; break;
+        case HEADSHAPE_x: value="x"; break;
         default:
             LogWarning("Unknown value '%d' for data.HEADSHAPE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1489,25 +1489,25 @@ std::string AttConverter::HeadshapeListToStr(data_HEADSHAPE_list data) const
 {
     std::string value;
     switch (data) {
-        case HEADSHAPE_list_quarter: value = "quarter"; break;
-        case HEADSHAPE_list_half: value = "half"; break;
-        case HEADSHAPE_list_whole: value = "whole"; break;
-        case HEADSHAPE_list_backslash: value = "backslash"; break;
-        case HEADSHAPE_list_circle: value = "circle"; break;
-        case HEADSHAPE_list_plus: value = "+"; break;
-        case HEADSHAPE_list_diamond: value = "diamond"; break;
-        case HEADSHAPE_list_isotriangle: value = "isotriangle"; break;
-        case HEADSHAPE_list_oval: value = "oval"; break;
-        case HEADSHAPE_list_piewedge: value = "piewedge"; break;
-        case HEADSHAPE_list_rectangle: value = "rectangle"; break;
-        case HEADSHAPE_list_rtriangle: value = "rtriangle"; break;
-        case HEADSHAPE_list_semicircle: value = "semicircle"; break;
-        case HEADSHAPE_list_slash: value = "slash"; break;
-        case HEADSHAPE_list_square: value = "square"; break;
-        case HEADSHAPE_list_x: value = "x"; break;
+        case HEADSHAPE_list_quarter: value="quarter"; break;
+        case HEADSHAPE_list_half: value="half"; break;
+        case HEADSHAPE_list_whole: value="whole"; break;
+        case HEADSHAPE_list_backslash: value="backslash"; break;
+        case HEADSHAPE_list_circle: value="circle"; break;
+        case HEADSHAPE_list_plus: value="+"; break;
+        case HEADSHAPE_list_diamond: value="diamond"; break;
+        case HEADSHAPE_list_isotriangle: value="isotriangle"; break;
+        case HEADSHAPE_list_oval: value="oval"; break;
+        case HEADSHAPE_list_piewedge: value="piewedge"; break;
+        case HEADSHAPE_list_rectangle: value="rectangle"; break;
+        case HEADSHAPE_list_rtriangle: value="rtriangle"; break;
+        case HEADSHAPE_list_semicircle: value="semicircle"; break;
+        case HEADSHAPE_list_slash: value="slash"; break;
+        case HEADSHAPE_list_square: value="square"; break;
+        case HEADSHAPE_list_x: value="x"; break;
         default:
             LogWarning("Unknown value '%d' for data.HEADSHAPE.list", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1540,13 +1540,13 @@ std::string AttConverter::HorizontalalignmentToStr(data_HORIZONTALALIGNMENT data
 {
     std::string value;
     switch (data) {
-        case HORIZONTALALIGNMENT_left: value = "left"; break;
-        case HORIZONTALALIGNMENT_right: value = "right"; break;
-        case HORIZONTALALIGNMENT_center: value = "center"; break;
-        case HORIZONTALALIGNMENT_justify: value = "justify"; break;
+        case HORIZONTALALIGNMENT_left: value="left"; break;
+        case HORIZONTALALIGNMENT_right: value="right"; break;
+        case HORIZONTALALIGNMENT_center: value="center"; break;
+        case HORIZONTALALIGNMENT_justify: value="justify"; break;
         default:
             LogWarning("Unknown value '%d' for data.HORIZONTALALIGNMENT", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1567,14 +1567,14 @@ std::string AttConverter::LayerschemeToStr(data_LAYERSCHEME data) const
 {
     std::string value;
     switch (data) {
-        case LAYERSCHEME_1: value = "1"; break;
-        case LAYERSCHEME_2o: value = "2o"; break;
-        case LAYERSCHEME_2f: value = "2f"; break;
-        case LAYERSCHEME_3o: value = "3o"; break;
-        case LAYERSCHEME_3f: value = "3f"; break;
+        case LAYERSCHEME_1: value="1"; break;
+        case LAYERSCHEME_2o: value="2o"; break;
+        case LAYERSCHEME_2f: value="2f"; break;
+        case LAYERSCHEME_3o: value="3o"; break;
+        case LAYERSCHEME_3f: value="3f"; break;
         default:
             LogWarning("Unknown value '%d' for data.LAYERSCHEME", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1596,11 +1596,11 @@ std::string AttConverter::LigatureformToStr(data_LIGATUREFORM data) const
 {
     std::string value;
     switch (data) {
-        case LIGATUREFORM_recta: value = "recta"; break;
-        case LIGATUREFORM_obliqua: value = "obliqua"; break;
+        case LIGATUREFORM_recta: value="recta"; break;
+        case LIGATUREFORM_obliqua: value="obliqua"; break;
         default:
             LogWarning("Unknown value '%d' for data.LIGATUREFORM", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1619,13 +1619,13 @@ std::string AttConverter::LineformToStr(data_LINEFORM data) const
 {
     std::string value;
     switch (data) {
-        case LINEFORM_dashed: value = "dashed"; break;
-        case LINEFORM_dotted: value = "dotted"; break;
-        case LINEFORM_solid: value = "solid"; break;
-        case LINEFORM_wavy: value = "wavy"; break;
+        case LINEFORM_dashed: value="dashed"; break;
+        case LINEFORM_dotted: value="dotted"; break;
+        case LINEFORM_solid: value="solid"; break;
+        case LINEFORM_wavy: value="wavy"; break;
         default:
             LogWarning("Unknown value '%d' for data.LINEFORM", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1646,29 +1646,29 @@ std::string AttConverter::LinestartendsymbolToStr(data_LINESTARTENDSYMBOL data) 
 {
     std::string value;
     switch (data) {
-        case LINESTARTENDSYMBOL_angledown: value = "angledown"; break;
-        case LINESTARTENDSYMBOL_angleup: value = "angleup"; break;
-        case LINESTARTENDSYMBOL_angleright: value = "angleright"; break;
-        case LINESTARTENDSYMBOL_angleleft: value = "angleleft"; break;
-        case LINESTARTENDSYMBOL_arrow: value = "arrow"; break;
-        case LINESTARTENDSYMBOL_arrowopen: value = "arrowopen"; break;
-        case LINESTARTENDSYMBOL_arrowwhite: value = "arrowwhite"; break;
-        case LINESTARTENDSYMBOL_harpoonleft: value = "harpoonleft"; break;
-        case LINESTARTENDSYMBOL_harpoonright: value = "harpoonright"; break;
-        case LINESTARTENDSYMBOL_H: value = "H"; break;
-        case LINESTARTENDSYMBOL_N: value = "N"; break;
-        case LINESTARTENDSYMBOL_Th: value = "Th"; break;
-        case LINESTARTENDSYMBOL_ThRetro: value = "ThRetro"; break;
-        case LINESTARTENDSYMBOL_ThRetroInv: value = "ThRetroInv"; break;
-        case LINESTARTENDSYMBOL_ThInv: value = "ThInv"; break;
-        case LINESTARTENDSYMBOL_T: value = "T"; break;
-        case LINESTARTENDSYMBOL_TInv: value = "TInv"; break;
-        case LINESTARTENDSYMBOL_CH: value = "CH"; break;
-        case LINESTARTENDSYMBOL_RH: value = "RH"; break;
-        case LINESTARTENDSYMBOL_none: value = "none"; break;
+        case LINESTARTENDSYMBOL_angledown: value="angledown"; break;
+        case LINESTARTENDSYMBOL_angleup: value="angleup"; break;
+        case LINESTARTENDSYMBOL_angleright: value="angleright"; break;
+        case LINESTARTENDSYMBOL_angleleft: value="angleleft"; break;
+        case LINESTARTENDSYMBOL_arrow: value="arrow"; break;
+        case LINESTARTENDSYMBOL_arrowopen: value="arrowopen"; break;
+        case LINESTARTENDSYMBOL_arrowwhite: value="arrowwhite"; break;
+        case LINESTARTENDSYMBOL_harpoonleft: value="harpoonleft"; break;
+        case LINESTARTENDSYMBOL_harpoonright: value="harpoonright"; break;
+        case LINESTARTENDSYMBOL_H: value="H"; break;
+        case LINESTARTENDSYMBOL_N: value="N"; break;
+        case LINESTARTENDSYMBOL_Th: value="Th"; break;
+        case LINESTARTENDSYMBOL_ThRetro: value="ThRetro"; break;
+        case LINESTARTENDSYMBOL_ThRetroInv: value="ThRetroInv"; break;
+        case LINESTARTENDSYMBOL_ThInv: value="ThInv"; break;
+        case LINESTARTENDSYMBOL_T: value="T"; break;
+        case LINESTARTENDSYMBOL_TInv: value="TInv"; break;
+        case LINESTARTENDSYMBOL_CH: value="CH"; break;
+        case LINESTARTENDSYMBOL_RH: value="RH"; break;
+        case LINESTARTENDSYMBOL_none: value="none"; break;
         default:
             LogWarning("Unknown value '%d' for data.LINESTARTENDSYMBOL", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1705,12 +1705,12 @@ std::string AttConverter::LinewidthtermToStr(data_LINEWIDTHTERM data) const
 {
     std::string value;
     switch (data) {
-        case LINEWIDTHTERM_narrow: value = "narrow"; break;
-        case LINEWIDTHTERM_medium: value = "medium"; break;
-        case LINEWIDTHTERM_wide: value = "wide"; break;
+        case LINEWIDTHTERM_narrow: value="narrow"; break;
+        case LINEWIDTHTERM_medium: value="medium"; break;
+        case LINEWIDTHTERM_wide: value="wide"; break;
         default:
             LogWarning("Unknown value '%d' for data.LINEWIDTHTERM", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1730,37 +1730,37 @@ std::string AttConverter::MelodicfunctionToStr(data_MELODICFUNCTION data) const
 {
     std::string value;
     switch (data) {
-        case MELODICFUNCTION_aln: value = "aln"; break;
-        case MELODICFUNCTION_ant: value = "ant"; break;
-        case MELODICFUNCTION_app: value = "app"; break;
-        case MELODICFUNCTION_apt: value = "apt"; break;
-        case MELODICFUNCTION_arp: value = "arp"; break;
-        case MELODICFUNCTION_arp7: value = "arp7"; break;
-        case MELODICFUNCTION_aun: value = "aun"; break;
-        case MELODICFUNCTION_chg: value = "chg"; break;
-        case MELODICFUNCTION_cln: value = "cln"; break;
-        case MELODICFUNCTION_ct: value = "ct"; break;
-        case MELODICFUNCTION_ct7: value = "ct7"; break;
-        case MELODICFUNCTION_cun: value = "cun"; break;
-        case MELODICFUNCTION_cup: value = "cup"; break;
-        case MELODICFUNCTION_et: value = "et"; break;
-        case MELODICFUNCTION_ln: value = "ln"; break;
-        case MELODICFUNCTION_ped: value = "ped"; break;
-        case MELODICFUNCTION_rep: value = "rep"; break;
-        case MELODICFUNCTION_ret: value = "ret"; break;
-        case MELODICFUNCTION_23ret: value = "23ret"; break;
-        case MELODICFUNCTION_78ret: value = "78ret"; break;
-        case MELODICFUNCTION_sus: value = "sus"; break;
-        case MELODICFUNCTION_43sus: value = "43sus"; break;
-        case MELODICFUNCTION_98sus: value = "98sus"; break;
-        case MELODICFUNCTION_76sus: value = "76sus"; break;
-        case MELODICFUNCTION_un: value = "un"; break;
-        case MELODICFUNCTION_un7: value = "un7"; break;
-        case MELODICFUNCTION_upt: value = "upt"; break;
-        case MELODICFUNCTION_upt7: value = "upt7"; break;
+        case MELODICFUNCTION_aln: value="aln"; break;
+        case MELODICFUNCTION_ant: value="ant"; break;
+        case MELODICFUNCTION_app: value="app"; break;
+        case MELODICFUNCTION_apt: value="apt"; break;
+        case MELODICFUNCTION_arp: value="arp"; break;
+        case MELODICFUNCTION_arp7: value="arp7"; break;
+        case MELODICFUNCTION_aun: value="aun"; break;
+        case MELODICFUNCTION_chg: value="chg"; break;
+        case MELODICFUNCTION_cln: value="cln"; break;
+        case MELODICFUNCTION_ct: value="ct"; break;
+        case MELODICFUNCTION_ct7: value="ct7"; break;
+        case MELODICFUNCTION_cun: value="cun"; break;
+        case MELODICFUNCTION_cup: value="cup"; break;
+        case MELODICFUNCTION_et: value="et"; break;
+        case MELODICFUNCTION_ln: value="ln"; break;
+        case MELODICFUNCTION_ped: value="ped"; break;
+        case MELODICFUNCTION_rep: value="rep"; break;
+        case MELODICFUNCTION_ret: value="ret"; break;
+        case MELODICFUNCTION_23ret: value="23ret"; break;
+        case MELODICFUNCTION_78ret: value="78ret"; break;
+        case MELODICFUNCTION_sus: value="sus"; break;
+        case MELODICFUNCTION_43sus: value="43sus"; break;
+        case MELODICFUNCTION_98sus: value="98sus"; break;
+        case MELODICFUNCTION_76sus: value="76sus"; break;
+        case MELODICFUNCTION_un: value="un"; break;
+        case MELODICFUNCTION_un7: value="un7"; break;
+        case MELODICFUNCTION_upt: value="upt"; break;
+        case MELODICFUNCTION_upt7: value="upt7"; break;
         default:
             LogWarning("Unknown value '%d' for data.MELODICFUNCTION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1805,24 +1805,24 @@ std::string AttConverter::MensurationsignToStr(data_MENSURATIONSIGN data) const
 {
     std::string value;
     switch (data) {
-        case MENSURATIONSIGN_C: value = "C"; break;
-        case MENSURATIONSIGN_O: value = "O"; break;
-        case MENSURATIONSIGN_t: value = "t"; break;
-        case MENSURATIONSIGN_q: value = "q"; break;
-        case MENSURATIONSIGN_si: value = "si"; break;
-        case MENSURATIONSIGN_i: value = "i"; break;
-        case MENSURATIONSIGN_sg: value = "sg"; break;
-        case MENSURATIONSIGN_g: value = "g"; break;
-        case MENSURATIONSIGN_sp: value = "sp"; break;
-        case MENSURATIONSIGN_p: value = "p"; break;
-        case MENSURATIONSIGN_sy: value = "sy"; break;
-        case MENSURATIONSIGN_y: value = "y"; break;
-        case MENSURATIONSIGN_n: value = "n"; break;
-        case MENSURATIONSIGN_oc: value = "oc"; break;
-        case MENSURATIONSIGN_d: value = "d"; break;
+        case MENSURATIONSIGN_C: value="C"; break;
+        case MENSURATIONSIGN_O: value="O"; break;
+        case MENSURATIONSIGN_t: value="t"; break;
+        case MENSURATIONSIGN_q: value="q"; break;
+        case MENSURATIONSIGN_si: value="si"; break;
+        case MENSURATIONSIGN_i: value="i"; break;
+        case MENSURATIONSIGN_sg: value="sg"; break;
+        case MENSURATIONSIGN_g: value="g"; break;
+        case MENSURATIONSIGN_sp: value="sp"; break;
+        case MENSURATIONSIGN_p: value="p"; break;
+        case MENSURATIONSIGN_sy: value="sy"; break;
+        case MENSURATIONSIGN_y: value="y"; break;
+        case MENSURATIONSIGN_n: value="n"; break;
+        case MENSURATIONSIGN_oc: value="oc"; break;
+        case MENSURATIONSIGN_d: value="d"; break;
         default:
             LogWarning("Unknown value '%d' for data.MENSURATIONSIGN", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1854,13 +1854,13 @@ std::string AttConverter::MeterformToStr(data_METERFORM data) const
 {
     std::string value;
     switch (data) {
-        case METERFORM_num: value = "num"; break;
-        case METERFORM_denomsym: value = "denomsym"; break;
-        case METERFORM_norm: value = "norm"; break;
-        case METERFORM_invis: value = "invis"; break;
+        case METERFORM_num: value="num"; break;
+        case METERFORM_denomsym: value="denomsym"; break;
+        case METERFORM_norm: value="norm"; break;
+        case METERFORM_invis: value="invis"; break;
         default:
             LogWarning("Unknown value '%d' for data.METERFORM", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1881,11 +1881,11 @@ std::string AttConverter::MetersignToStr(data_METERSIGN data) const
 {
     std::string value;
     switch (data) {
-        case METERSIGN_common: value = "common"; break;
-        case METERSIGN_cut: value = "cut"; break;
+        case METERSIGN_common: value="common"; break;
+        case METERSIGN_cut: value="cut"; break;
         default:
             LogWarning("Unknown value '%d' for data.METERSIGN", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -1904,184 +1904,184 @@ std::string AttConverter::MidinamesToStr(data_MIDINAMES data) const
 {
     std::string value;
     switch (data) {
-        case MIDINAMES_Acoustic_Grand_Piano: value = "Acoustic_Grand_Piano"; break;
-        case MIDINAMES_Bright_Acoustic_Piano: value = "Bright_Acoustic_Piano"; break;
-        case MIDINAMES_Electric_Grand_Piano: value = "Electric_Grand_Piano"; break;
-        case MIDINAMES_Honky_tonk_Piano: value = "Honky-tonk_Piano"; break;
-        case MIDINAMES_Electric_Piano_1: value = "Electric_Piano_1"; break;
-        case MIDINAMES_Electric_Piano_2: value = "Electric_Piano_2"; break;
-        case MIDINAMES_Harpsichord: value = "Harpsichord"; break;
-        case MIDINAMES_Clavi: value = "Clavi"; break;
-        case MIDINAMES_Celesta: value = "Celesta"; break;
-        case MIDINAMES_Glockenspiel: value = "Glockenspiel"; break;
-        case MIDINAMES_Music_Box: value = "Music_Box"; break;
-        case MIDINAMES_Vibraphone: value = "Vibraphone"; break;
-        case MIDINAMES_Marimba: value = "Marimba"; break;
-        case MIDINAMES_Xylophone: value = "Xylophone"; break;
-        case MIDINAMES_Tubular_Bells: value = "Tubular_Bells"; break;
-        case MIDINAMES_Dulcimer: value = "Dulcimer"; break;
-        case MIDINAMES_Drawbar_Organ: value = "Drawbar_Organ"; break;
-        case MIDINAMES_Percussive_Organ: value = "Percussive_Organ"; break;
-        case MIDINAMES_Rock_Organ: value = "Rock_Organ"; break;
-        case MIDINAMES_Church_Organ: value = "Church_Organ"; break;
-        case MIDINAMES_Reed_Organ: value = "Reed_Organ"; break;
-        case MIDINAMES_Accordion: value = "Accordion"; break;
-        case MIDINAMES_Harmonica: value = "Harmonica"; break;
-        case MIDINAMES_Tango_Accordion: value = "Tango_Accordion"; break;
-        case MIDINAMES_Acoustic_Guitar_nylon: value = "Acoustic_Guitar_nylon"; break;
-        case MIDINAMES_Acoustic_Guitar_steel: value = "Acoustic_Guitar_steel"; break;
-        case MIDINAMES_Electric_Guitar_jazz: value = "Electric_Guitar_jazz"; break;
-        case MIDINAMES_Electric_Guitar_clean: value = "Electric_Guitar_clean"; break;
-        case MIDINAMES_Electric_Guitar_muted: value = "Electric_Guitar_muted"; break;
-        case MIDINAMES_Overdriven_Guitar: value = "Overdriven_Guitar"; break;
-        case MIDINAMES_Distortion_Guitar: value = "Distortion_Guitar"; break;
-        case MIDINAMES_Guitar_harmonics: value = "Guitar_harmonics"; break;
-        case MIDINAMES_Acoustic_Bass: value = "Acoustic_Bass"; break;
-        case MIDINAMES_Electric_Bass_finger: value = "Electric_Bass_finger"; break;
-        case MIDINAMES_Electric_Bass_pick: value = "Electric_Bass_pick"; break;
-        case MIDINAMES_Fretless_Bass: value = "Fretless_Bass"; break;
-        case MIDINAMES_Slap_Bass_1: value = "Slap_Bass_1"; break;
-        case MIDINAMES_Slap_Bass_2: value = "Slap_Bass_2"; break;
-        case MIDINAMES_Synth_Bass_1: value = "Synth_Bass_1"; break;
-        case MIDINAMES_Synth_Bass_2: value = "Synth_Bass_2"; break;
-        case MIDINAMES_Violin: value = "Violin"; break;
-        case MIDINAMES_Viola: value = "Viola"; break;
-        case MIDINAMES_Cello: value = "Cello"; break;
-        case MIDINAMES_Contrabass: value = "Contrabass"; break;
-        case MIDINAMES_Tremolo_Strings: value = "Tremolo_Strings"; break;
-        case MIDINAMES_Pizzicato_Strings: value = "Pizzicato_Strings"; break;
-        case MIDINAMES_Orchestral_Harp: value = "Orchestral_Harp"; break;
-        case MIDINAMES_Timpani: value = "Timpani"; break;
-        case MIDINAMES_String_Ensemble_1: value = "String_Ensemble_1"; break;
-        case MIDINAMES_String_Ensemble_2: value = "String_Ensemble_2"; break;
-        case MIDINAMES_SynthStrings_1: value = "SynthStrings_1"; break;
-        case MIDINAMES_SynthStrings_2: value = "SynthStrings_2"; break;
-        case MIDINAMES_Choir_Aahs: value = "Choir_Aahs"; break;
-        case MIDINAMES_Voice_Oohs: value = "Voice_Oohs"; break;
-        case MIDINAMES_Synth_Voice: value = "Synth_Voice"; break;
-        case MIDINAMES_Orchestra_Hit: value = "Orchestra_Hit"; break;
-        case MIDINAMES_Trumpet: value = "Trumpet"; break;
-        case MIDINAMES_Trombone: value = "Trombone"; break;
-        case MIDINAMES_Tuba: value = "Tuba"; break;
-        case MIDINAMES_Muted_Trumpet: value = "Muted_Trumpet"; break;
-        case MIDINAMES_French_Horn: value = "French_Horn"; break;
-        case MIDINAMES_Brass_Section: value = "Brass_Section"; break;
-        case MIDINAMES_SynthBrass_1: value = "SynthBrass_1"; break;
-        case MIDINAMES_SynthBrass_2: value = "SynthBrass_2"; break;
-        case MIDINAMES_Soprano_Sax: value = "Soprano_Sax"; break;
-        case MIDINAMES_Alto_Sax: value = "Alto_Sax"; break;
-        case MIDINAMES_Tenor_Sax: value = "Tenor_Sax"; break;
-        case MIDINAMES_Baritone_Sax: value = "Baritone_Sax"; break;
-        case MIDINAMES_Oboe: value = "Oboe"; break;
-        case MIDINAMES_English_Horn: value = "English_Horn"; break;
-        case MIDINAMES_Bassoon: value = "Bassoon"; break;
-        case MIDINAMES_Clarinet: value = "Clarinet"; break;
-        case MIDINAMES_Piccolo: value = "Piccolo"; break;
-        case MIDINAMES_Flute: value = "Flute"; break;
-        case MIDINAMES_Recorder: value = "Recorder"; break;
-        case MIDINAMES_Pan_Flute: value = "Pan_Flute"; break;
-        case MIDINAMES_Blown_Bottle: value = "Blown_Bottle"; break;
-        case MIDINAMES_Shakuhachi: value = "Shakuhachi"; break;
-        case MIDINAMES_Whistle: value = "Whistle"; break;
-        case MIDINAMES_Ocarina: value = "Ocarina"; break;
-        case MIDINAMES_Lead_1_square: value = "Lead_1_square"; break;
-        case MIDINAMES_Lead_2_sawtooth: value = "Lead_2_sawtooth"; break;
-        case MIDINAMES_Lead_3_calliope: value = "Lead_3_calliope"; break;
-        case MIDINAMES_Lead_4_chiff: value = "Lead_4_chiff"; break;
-        case MIDINAMES_Lead_5_charang: value = "Lead_5_charang"; break;
-        case MIDINAMES_Lead_6_voice: value = "Lead_6_voice"; break;
-        case MIDINAMES_Lead_7_fifths: value = "Lead_7_fifths"; break;
-        case MIDINAMES_Lead_8_bass_and_lead: value = "Lead_8_bass_and_lead"; break;
-        case MIDINAMES_Pad_1_new_age: value = "Pad_1_new_age"; break;
-        case MIDINAMES_Pad_2_warm: value = "Pad_2_warm"; break;
-        case MIDINAMES_Pad_3_polysynth: value = "Pad_3_polysynth"; break;
-        case MIDINAMES_Pad_4_choir: value = "Pad_4_choir"; break;
-        case MIDINAMES_Pad_5_bowed: value = "Pad_5_bowed"; break;
-        case MIDINAMES_Pad_6_metallic: value = "Pad_6_metallic"; break;
-        case MIDINAMES_Pad_7_halo: value = "Pad_7_halo"; break;
-        case MIDINAMES_Pad_8_sweep: value = "Pad_8_sweep"; break;
-        case MIDINAMES_FX_1_rain: value = "FX_1_rain"; break;
-        case MIDINAMES_FX_2_soundtrack: value = "FX_2_soundtrack"; break;
-        case MIDINAMES_FX_3_crystal: value = "FX_3_crystal"; break;
-        case MIDINAMES_FX_4_atmosphere: value = "FX_4_atmosphere"; break;
-        case MIDINAMES_FX_5_brightness: value = "FX_5_brightness"; break;
-        case MIDINAMES_FX_6_goblins: value = "FX_6_goblins"; break;
-        case MIDINAMES_FX_7_echoes: value = "FX_7_echoes"; break;
-        case MIDINAMES_FX_8_sci_fi: value = "FX_8_sci-fi"; break;
-        case MIDINAMES_Sitar: value = "Sitar"; break;
-        case MIDINAMES_Banjo: value = "Banjo"; break;
-        case MIDINAMES_Shamisen: value = "Shamisen"; break;
-        case MIDINAMES_Koto: value = "Koto"; break;
-        case MIDINAMES_Kalimba: value = "Kalimba"; break;
-        case MIDINAMES_Bagpipe: value = "Bagpipe"; break;
-        case MIDINAMES_Fiddle: value = "Fiddle"; break;
-        case MIDINAMES_Shanai: value = "Shanai"; break;
-        case MIDINAMES_Tinkle_Bell: value = "Tinkle_Bell"; break;
-        case MIDINAMES_Agogo: value = "Agogo"; break;
-        case MIDINAMES_Steel_Drums: value = "Steel_Drums"; break;
-        case MIDINAMES_Woodblock: value = "Woodblock"; break;
-        case MIDINAMES_Taiko_Drum: value = "Taiko_Drum"; break;
-        case MIDINAMES_Melodic_Tom: value = "Melodic_Tom"; break;
-        case MIDINAMES_Synth_Drum: value = "Synth_Drum"; break;
-        case MIDINAMES_Reverse_Cymbal: value = "Reverse_Cymbal"; break;
-        case MIDINAMES_Guitar_Fret_Noise: value = "Guitar_Fret_Noise"; break;
-        case MIDINAMES_Breath_Noise: value = "Breath_Noise"; break;
-        case MIDINAMES_Seashore: value = "Seashore"; break;
-        case MIDINAMES_Bird_Tweet: value = "Bird_Tweet"; break;
-        case MIDINAMES_Telephone_Ring: value = "Telephone_Ring"; break;
-        case MIDINAMES_Helicopter: value = "Helicopter"; break;
-        case MIDINAMES_Applause: value = "Applause"; break;
-        case MIDINAMES_Gunshot: value = "Gunshot"; break;
-        case MIDINAMES_Acoustic_Bass_Drum: value = "Acoustic_Bass_Drum"; break;
-        case MIDINAMES_Bass_Drum_1: value = "Bass_Drum_1"; break;
-        case MIDINAMES_Side_Stick: value = "Side_Stick"; break;
-        case MIDINAMES_Acoustic_Snare: value = "Acoustic_Snare"; break;
-        case MIDINAMES_Hand_Clap: value = "Hand_Clap"; break;
-        case MIDINAMES_Electric_Snare: value = "Electric_Snare"; break;
-        case MIDINAMES_Low_Floor_Tom: value = "Low_Floor_Tom"; break;
-        case MIDINAMES_Closed_Hi_Hat: value = "Closed_Hi_Hat"; break;
-        case MIDINAMES_High_Floor_Tom: value = "High_Floor_Tom"; break;
-        case MIDINAMES_Pedal_Hi_Hat: value = "Pedal_Hi-Hat"; break;
-        case MIDINAMES_Low_Tom: value = "Low_Tom"; break;
-        case MIDINAMES_Open_Hi_Hat: value = "Open_Hi-Hat"; break;
-        case MIDINAMES_Low_Mid_Tom: value = "Low-Mid_Tom"; break;
-        case MIDINAMES_Hi_Mid_Tom: value = "Hi-Mid_Tom"; break;
-        case MIDINAMES_Crash_Cymbal_1: value = "Crash_Cymbal_1"; break;
-        case MIDINAMES_High_Tom: value = "High_Tom"; break;
-        case MIDINAMES_Ride_Cymbal_1: value = "Ride_Cymbal_1"; break;
-        case MIDINAMES_Chinese_Cymbal: value = "Chinese_Cymbal"; break;
-        case MIDINAMES_Ride_Bell: value = "Ride_Bell"; break;
-        case MIDINAMES_Tambourine: value = "Tambourine"; break;
-        case MIDINAMES_Splash_Cymbal: value = "Splash_Cymbal"; break;
-        case MIDINAMES_Cowbell: value = "Cowbell"; break;
-        case MIDINAMES_Crash_Cymbal_2: value = "Crash_Cymbal_2"; break;
-        case MIDINAMES_Vibraslap: value = "Vibraslap"; break;
-        case MIDINAMES_Ride_Cymbal_2: value = "Ride_Cymbal_2"; break;
-        case MIDINAMES_Hi_Bongo: value = "Hi_Bongo"; break;
-        case MIDINAMES_Low_Bongo: value = "Low_Bongo"; break;
-        case MIDINAMES_Mute_Hi_Conga: value = "Mute_Hi_Conga"; break;
-        case MIDINAMES_Open_Hi_Conga: value = "Open_Hi_Conga"; break;
-        case MIDINAMES_Low_Conga: value = "Low_Conga"; break;
-        case MIDINAMES_High_Timbale: value = "High_Timbale"; break;
-        case MIDINAMES_Low_Timbale: value = "Low_Timbale"; break;
-        case MIDINAMES_High_Agogo: value = "High_Agogo"; break;
-        case MIDINAMES_Low_Agogo: value = "Low_Agogo"; break;
-        case MIDINAMES_Cabasa: value = "Cabasa"; break;
-        case MIDINAMES_Maracas: value = "Maracas"; break;
-        case MIDINAMES_Short_Whistle: value = "Short_Whistle"; break;
-        case MIDINAMES_Long_Whistle: value = "Long_Whistle"; break;
-        case MIDINAMES_Short_Guiro: value = "Short_Guiro"; break;
-        case MIDINAMES_Long_Guiro: value = "Long_Guiro"; break;
-        case MIDINAMES_Claves: value = "Claves"; break;
-        case MIDINAMES_Hi_Wood_Block: value = "Hi_Wood_Block"; break;
-        case MIDINAMES_Low_Wood_Block: value = "Low_Wood_Block"; break;
-        case MIDINAMES_Mute_Cuica: value = "Mute_Cuica"; break;
-        case MIDINAMES_Open_Cuica: value = "Open_Cuica"; break;
-        case MIDINAMES_Mute_Triangle: value = "Mute_Triangle"; break;
-        case MIDINAMES_Open_Triangle: value = "Open_Triangle"; break;
+        case MIDINAMES_Acoustic_Grand_Piano: value="Acoustic_Grand_Piano"; break;
+        case MIDINAMES_Bright_Acoustic_Piano: value="Bright_Acoustic_Piano"; break;
+        case MIDINAMES_Electric_Grand_Piano: value="Electric_Grand_Piano"; break;
+        case MIDINAMES_Honky_tonk_Piano: value="Honky-tonk_Piano"; break;
+        case MIDINAMES_Electric_Piano_1: value="Electric_Piano_1"; break;
+        case MIDINAMES_Electric_Piano_2: value="Electric_Piano_2"; break;
+        case MIDINAMES_Harpsichord: value="Harpsichord"; break;
+        case MIDINAMES_Clavi: value="Clavi"; break;
+        case MIDINAMES_Celesta: value="Celesta"; break;
+        case MIDINAMES_Glockenspiel: value="Glockenspiel"; break;
+        case MIDINAMES_Music_Box: value="Music_Box"; break;
+        case MIDINAMES_Vibraphone: value="Vibraphone"; break;
+        case MIDINAMES_Marimba: value="Marimba"; break;
+        case MIDINAMES_Xylophone: value="Xylophone"; break;
+        case MIDINAMES_Tubular_Bells: value="Tubular_Bells"; break;
+        case MIDINAMES_Dulcimer: value="Dulcimer"; break;
+        case MIDINAMES_Drawbar_Organ: value="Drawbar_Organ"; break;
+        case MIDINAMES_Percussive_Organ: value="Percussive_Organ"; break;
+        case MIDINAMES_Rock_Organ: value="Rock_Organ"; break;
+        case MIDINAMES_Church_Organ: value="Church_Organ"; break;
+        case MIDINAMES_Reed_Organ: value="Reed_Organ"; break;
+        case MIDINAMES_Accordion: value="Accordion"; break;
+        case MIDINAMES_Harmonica: value="Harmonica"; break;
+        case MIDINAMES_Tango_Accordion: value="Tango_Accordion"; break;
+        case MIDINAMES_Acoustic_Guitar_nylon: value="Acoustic_Guitar_nylon"; break;
+        case MIDINAMES_Acoustic_Guitar_steel: value="Acoustic_Guitar_steel"; break;
+        case MIDINAMES_Electric_Guitar_jazz: value="Electric_Guitar_jazz"; break;
+        case MIDINAMES_Electric_Guitar_clean: value="Electric_Guitar_clean"; break;
+        case MIDINAMES_Electric_Guitar_muted: value="Electric_Guitar_muted"; break;
+        case MIDINAMES_Overdriven_Guitar: value="Overdriven_Guitar"; break;
+        case MIDINAMES_Distortion_Guitar: value="Distortion_Guitar"; break;
+        case MIDINAMES_Guitar_harmonics: value="Guitar_harmonics"; break;
+        case MIDINAMES_Acoustic_Bass: value="Acoustic_Bass"; break;
+        case MIDINAMES_Electric_Bass_finger: value="Electric_Bass_finger"; break;
+        case MIDINAMES_Electric_Bass_pick: value="Electric_Bass_pick"; break;
+        case MIDINAMES_Fretless_Bass: value="Fretless_Bass"; break;
+        case MIDINAMES_Slap_Bass_1: value="Slap_Bass_1"; break;
+        case MIDINAMES_Slap_Bass_2: value="Slap_Bass_2"; break;
+        case MIDINAMES_Synth_Bass_1: value="Synth_Bass_1"; break;
+        case MIDINAMES_Synth_Bass_2: value="Synth_Bass_2"; break;
+        case MIDINAMES_Violin: value="Violin"; break;
+        case MIDINAMES_Viola: value="Viola"; break;
+        case MIDINAMES_Cello: value="Cello"; break;
+        case MIDINAMES_Contrabass: value="Contrabass"; break;
+        case MIDINAMES_Tremolo_Strings: value="Tremolo_Strings"; break;
+        case MIDINAMES_Pizzicato_Strings: value="Pizzicato_Strings"; break;
+        case MIDINAMES_Orchestral_Harp: value="Orchestral_Harp"; break;
+        case MIDINAMES_Timpani: value="Timpani"; break;
+        case MIDINAMES_String_Ensemble_1: value="String_Ensemble_1"; break;
+        case MIDINAMES_String_Ensemble_2: value="String_Ensemble_2"; break;
+        case MIDINAMES_SynthStrings_1: value="SynthStrings_1"; break;
+        case MIDINAMES_SynthStrings_2: value="SynthStrings_2"; break;
+        case MIDINAMES_Choir_Aahs: value="Choir_Aahs"; break;
+        case MIDINAMES_Voice_Oohs: value="Voice_Oohs"; break;
+        case MIDINAMES_Synth_Voice: value="Synth_Voice"; break;
+        case MIDINAMES_Orchestra_Hit: value="Orchestra_Hit"; break;
+        case MIDINAMES_Trumpet: value="Trumpet"; break;
+        case MIDINAMES_Trombone: value="Trombone"; break;
+        case MIDINAMES_Tuba: value="Tuba"; break;
+        case MIDINAMES_Muted_Trumpet: value="Muted_Trumpet"; break;
+        case MIDINAMES_French_Horn: value="French_Horn"; break;
+        case MIDINAMES_Brass_Section: value="Brass_Section"; break;
+        case MIDINAMES_SynthBrass_1: value="SynthBrass_1"; break;
+        case MIDINAMES_SynthBrass_2: value="SynthBrass_2"; break;
+        case MIDINAMES_Soprano_Sax: value="Soprano_Sax"; break;
+        case MIDINAMES_Alto_Sax: value="Alto_Sax"; break;
+        case MIDINAMES_Tenor_Sax: value="Tenor_Sax"; break;
+        case MIDINAMES_Baritone_Sax: value="Baritone_Sax"; break;
+        case MIDINAMES_Oboe: value="Oboe"; break;
+        case MIDINAMES_English_Horn: value="English_Horn"; break;
+        case MIDINAMES_Bassoon: value="Bassoon"; break;
+        case MIDINAMES_Clarinet: value="Clarinet"; break;
+        case MIDINAMES_Piccolo: value="Piccolo"; break;
+        case MIDINAMES_Flute: value="Flute"; break;
+        case MIDINAMES_Recorder: value="Recorder"; break;
+        case MIDINAMES_Pan_Flute: value="Pan_Flute"; break;
+        case MIDINAMES_Blown_Bottle: value="Blown_Bottle"; break;
+        case MIDINAMES_Shakuhachi: value="Shakuhachi"; break;
+        case MIDINAMES_Whistle: value="Whistle"; break;
+        case MIDINAMES_Ocarina: value="Ocarina"; break;
+        case MIDINAMES_Lead_1_square: value="Lead_1_square"; break;
+        case MIDINAMES_Lead_2_sawtooth: value="Lead_2_sawtooth"; break;
+        case MIDINAMES_Lead_3_calliope: value="Lead_3_calliope"; break;
+        case MIDINAMES_Lead_4_chiff: value="Lead_4_chiff"; break;
+        case MIDINAMES_Lead_5_charang: value="Lead_5_charang"; break;
+        case MIDINAMES_Lead_6_voice: value="Lead_6_voice"; break;
+        case MIDINAMES_Lead_7_fifths: value="Lead_7_fifths"; break;
+        case MIDINAMES_Lead_8_bass_and_lead: value="Lead_8_bass_and_lead"; break;
+        case MIDINAMES_Pad_1_new_age: value="Pad_1_new_age"; break;
+        case MIDINAMES_Pad_2_warm: value="Pad_2_warm"; break;
+        case MIDINAMES_Pad_3_polysynth: value="Pad_3_polysynth"; break;
+        case MIDINAMES_Pad_4_choir: value="Pad_4_choir"; break;
+        case MIDINAMES_Pad_5_bowed: value="Pad_5_bowed"; break;
+        case MIDINAMES_Pad_6_metallic: value="Pad_6_metallic"; break;
+        case MIDINAMES_Pad_7_halo: value="Pad_7_halo"; break;
+        case MIDINAMES_Pad_8_sweep: value="Pad_8_sweep"; break;
+        case MIDINAMES_FX_1_rain: value="FX_1_rain"; break;
+        case MIDINAMES_FX_2_soundtrack: value="FX_2_soundtrack"; break;
+        case MIDINAMES_FX_3_crystal: value="FX_3_crystal"; break;
+        case MIDINAMES_FX_4_atmosphere: value="FX_4_atmosphere"; break;
+        case MIDINAMES_FX_5_brightness: value="FX_5_brightness"; break;
+        case MIDINAMES_FX_6_goblins: value="FX_6_goblins"; break;
+        case MIDINAMES_FX_7_echoes: value="FX_7_echoes"; break;
+        case MIDINAMES_FX_8_sci_fi: value="FX_8_sci-fi"; break;
+        case MIDINAMES_Sitar: value="Sitar"; break;
+        case MIDINAMES_Banjo: value="Banjo"; break;
+        case MIDINAMES_Shamisen: value="Shamisen"; break;
+        case MIDINAMES_Koto: value="Koto"; break;
+        case MIDINAMES_Kalimba: value="Kalimba"; break;
+        case MIDINAMES_Bagpipe: value="Bagpipe"; break;
+        case MIDINAMES_Fiddle: value="Fiddle"; break;
+        case MIDINAMES_Shanai: value="Shanai"; break;
+        case MIDINAMES_Tinkle_Bell: value="Tinkle_Bell"; break;
+        case MIDINAMES_Agogo: value="Agogo"; break;
+        case MIDINAMES_Steel_Drums: value="Steel_Drums"; break;
+        case MIDINAMES_Woodblock: value="Woodblock"; break;
+        case MIDINAMES_Taiko_Drum: value="Taiko_Drum"; break;
+        case MIDINAMES_Melodic_Tom: value="Melodic_Tom"; break;
+        case MIDINAMES_Synth_Drum: value="Synth_Drum"; break;
+        case MIDINAMES_Reverse_Cymbal: value="Reverse_Cymbal"; break;
+        case MIDINAMES_Guitar_Fret_Noise: value="Guitar_Fret_Noise"; break;
+        case MIDINAMES_Breath_Noise: value="Breath_Noise"; break;
+        case MIDINAMES_Seashore: value="Seashore"; break;
+        case MIDINAMES_Bird_Tweet: value="Bird_Tweet"; break;
+        case MIDINAMES_Telephone_Ring: value="Telephone_Ring"; break;
+        case MIDINAMES_Helicopter: value="Helicopter"; break;
+        case MIDINAMES_Applause: value="Applause"; break;
+        case MIDINAMES_Gunshot: value="Gunshot"; break;
+        case MIDINAMES_Acoustic_Bass_Drum: value="Acoustic_Bass_Drum"; break;
+        case MIDINAMES_Bass_Drum_1: value="Bass_Drum_1"; break;
+        case MIDINAMES_Side_Stick: value="Side_Stick"; break;
+        case MIDINAMES_Acoustic_Snare: value="Acoustic_Snare"; break;
+        case MIDINAMES_Hand_Clap: value="Hand_Clap"; break;
+        case MIDINAMES_Electric_Snare: value="Electric_Snare"; break;
+        case MIDINAMES_Low_Floor_Tom: value="Low_Floor_Tom"; break;
+        case MIDINAMES_Closed_Hi_Hat: value="Closed_Hi_Hat"; break;
+        case MIDINAMES_High_Floor_Tom: value="High_Floor_Tom"; break;
+        case MIDINAMES_Pedal_Hi_Hat: value="Pedal_Hi-Hat"; break;
+        case MIDINAMES_Low_Tom: value="Low_Tom"; break;
+        case MIDINAMES_Open_Hi_Hat: value="Open_Hi-Hat"; break;
+        case MIDINAMES_Low_Mid_Tom: value="Low-Mid_Tom"; break;
+        case MIDINAMES_Hi_Mid_Tom: value="Hi-Mid_Tom"; break;
+        case MIDINAMES_Crash_Cymbal_1: value="Crash_Cymbal_1"; break;
+        case MIDINAMES_High_Tom: value="High_Tom"; break;
+        case MIDINAMES_Ride_Cymbal_1: value="Ride_Cymbal_1"; break;
+        case MIDINAMES_Chinese_Cymbal: value="Chinese_Cymbal"; break;
+        case MIDINAMES_Ride_Bell: value="Ride_Bell"; break;
+        case MIDINAMES_Tambourine: value="Tambourine"; break;
+        case MIDINAMES_Splash_Cymbal: value="Splash_Cymbal"; break;
+        case MIDINAMES_Cowbell: value="Cowbell"; break;
+        case MIDINAMES_Crash_Cymbal_2: value="Crash_Cymbal_2"; break;
+        case MIDINAMES_Vibraslap: value="Vibraslap"; break;
+        case MIDINAMES_Ride_Cymbal_2: value="Ride_Cymbal_2"; break;
+        case MIDINAMES_Hi_Bongo: value="Hi_Bongo"; break;
+        case MIDINAMES_Low_Bongo: value="Low_Bongo"; break;
+        case MIDINAMES_Mute_Hi_Conga: value="Mute_Hi_Conga"; break;
+        case MIDINAMES_Open_Hi_Conga: value="Open_Hi_Conga"; break;
+        case MIDINAMES_Low_Conga: value="Low_Conga"; break;
+        case MIDINAMES_High_Timbale: value="High_Timbale"; break;
+        case MIDINAMES_Low_Timbale: value="Low_Timbale"; break;
+        case MIDINAMES_High_Agogo: value="High_Agogo"; break;
+        case MIDINAMES_Low_Agogo: value="Low_Agogo"; break;
+        case MIDINAMES_Cabasa: value="Cabasa"; break;
+        case MIDINAMES_Maracas: value="Maracas"; break;
+        case MIDINAMES_Short_Whistle: value="Short_Whistle"; break;
+        case MIDINAMES_Long_Whistle: value="Long_Whistle"; break;
+        case MIDINAMES_Short_Guiro: value="Short_Guiro"; break;
+        case MIDINAMES_Long_Guiro: value="Long_Guiro"; break;
+        case MIDINAMES_Claves: value="Claves"; break;
+        case MIDINAMES_Hi_Wood_Block: value="Hi_Wood_Block"; break;
+        case MIDINAMES_Low_Wood_Block: value="Low_Wood_Block"; break;
+        case MIDINAMES_Mute_Cuica: value="Mute_Cuica"; break;
+        case MIDINAMES_Open_Cuica: value="Open_Cuica"; break;
+        case MIDINAMES_Mute_Triangle: value="Mute_Triangle"; break;
+        case MIDINAMES_Open_Triangle: value="Open_Triangle"; break;
         default:
             LogWarning("Unknown value '%d' for data.MIDINAMES", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2273,17 +2273,17 @@ std::string AttConverter::ModeToStr(data_MODE data) const
 {
     std::string value;
     switch (data) {
-        case MODE_major: value = "major"; break;
-        case MODE_minor: value = "minor"; break;
-        case MODE_dorian: value = "dorian"; break;
-        case MODE_phrygian: value = "phrygian"; break;
-        case MODE_lydian: value = "lydian"; break;
-        case MODE_mixolydian: value = "mixolydian"; break;
-        case MODE_aeolian: value = "aeolian"; break;
-        case MODE_locrian: value = "locrian"; break;
+        case MODE_major: value="major"; break;
+        case MODE_minor: value="minor"; break;
+        case MODE_dorian: value="dorian"; break;
+        case MODE_phrygian: value="phrygian"; break;
+        case MODE_lydian: value="lydian"; break;
+        case MODE_mixolydian: value="mixolydian"; break;
+        case MODE_aeolian: value="aeolian"; break;
+        case MODE_locrian: value="locrian"; break;
         default:
             LogWarning("Unknown value '%d' for data.MODE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2308,18 +2308,18 @@ std::string AttConverter::ModsrelationshipToStr(data_MODSRELATIONSHIP data) cons
 {
     std::string value;
     switch (data) {
-        case MODSRELATIONSHIP_preceding: value = "preceding"; break;
-        case MODSRELATIONSHIP_succeeding: value = "succeeding"; break;
-        case MODSRELATIONSHIP_original: value = "original"; break;
-        case MODSRELATIONSHIP_host: value = "host"; break;
-        case MODSRELATIONSHIP_constituent: value = "constituent"; break;
-        case MODSRELATIONSHIP_otherVersion: value = "otherVersion"; break;
-        case MODSRELATIONSHIP_otherFormat: value = "otherFormat"; break;
-        case MODSRELATIONSHIP_isReferencedBy: value = "isReferencedBy"; break;
-        case MODSRELATIONSHIP_references: value = "references"; break;
+        case MODSRELATIONSHIP_preceding: value="preceding"; break;
+        case MODSRELATIONSHIP_succeeding: value="succeeding"; break;
+        case MODSRELATIONSHIP_original: value="original"; break;
+        case MODSRELATIONSHIP_host: value="host"; break;
+        case MODSRELATIONSHIP_constituent: value="constituent"; break;
+        case MODSRELATIONSHIP_otherVersion: value="otherVersion"; break;
+        case MODSRELATIONSHIP_otherFormat: value="otherFormat"; break;
+        case MODSRELATIONSHIP_isReferencedBy: value="isReferencedBy"; break;
+        case MODSRELATIONSHIP_references: value="references"; break;
         default:
             LogWarning("Unknown value '%d' for data.MODSRELATIONSHIP", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2345,11 +2345,11 @@ std::string AttConverter::MultibreverestsMensuralToStr(data_MULTIBREVERESTS_mens
 {
     std::string value;
     switch (data) {
-        case MULTIBREVERESTS_mensural_2B: value = "2B"; break;
-        case MULTIBREVERESTS_mensural_3B: value = "3B"; break;
+        case MULTIBREVERESTS_mensural_2B: value="2B"; break;
+        case MULTIBREVERESTS_mensural_3B: value="3B"; break;
         default:
             LogWarning("Unknown value '%d' for data.MULTIBREVERESTS.mensural", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2368,22 +2368,22 @@ std::string AttConverter::NonstaffplaceToStr(data_NONSTAFFPLACE data) const
 {
     std::string value;
     switch (data) {
-        case NONSTAFFPLACE_botmar: value = "botmar"; break;
-        case NONSTAFFPLACE_topmar: value = "topmar"; break;
-        case NONSTAFFPLACE_leftmar: value = "leftmar"; break;
-        case NONSTAFFPLACE_rightmar: value = "rightmar"; break;
-        case NONSTAFFPLACE_facing: value = "facing"; break;
-        case NONSTAFFPLACE_overleaf: value = "overleaf"; break;
-        case NONSTAFFPLACE_end: value = "end"; break;
-        case NONSTAFFPLACE_inter: value = "inter"; break;
-        case NONSTAFFPLACE_intra: value = "intra"; break;
-        case NONSTAFFPLACE_super: value = "super"; break;
-        case NONSTAFFPLACE_sub: value = "sub"; break;
-        case NONSTAFFPLACE_inspace: value = "inspace"; break;
-        case NONSTAFFPLACE_superimposed: value = "superimposed"; break;
+        case NONSTAFFPLACE_botmar: value="botmar"; break;
+        case NONSTAFFPLACE_topmar: value="topmar"; break;
+        case NONSTAFFPLACE_leftmar: value="leftmar"; break;
+        case NONSTAFFPLACE_rightmar: value="rightmar"; break;
+        case NONSTAFFPLACE_facing: value="facing"; break;
+        case NONSTAFFPLACE_overleaf: value="overleaf"; break;
+        case NONSTAFFPLACE_end: value="end"; break;
+        case NONSTAFFPLACE_inter: value="inter"; break;
+        case NONSTAFFPLACE_intra: value="intra"; break;
+        case NONSTAFFPLACE_super: value="super"; break;
+        case NONSTAFFPLACE_sub: value="sub"; break;
+        case NONSTAFFPLACE_inspace: value="inspace"; break;
+        case NONSTAFFPLACE_superimposed: value="superimposed"; break;
         default:
             LogWarning("Unknown value '%d' for data.NONSTAFFPLACE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2413,15 +2413,15 @@ std::string AttConverter::NotationtypeToStr(data_NOTATIONTYPE data) const
 {
     std::string value;
     switch (data) {
-        case NOTATIONTYPE_cmn: value = "cmn"; break;
-        case NOTATIONTYPE_mensural: value = "mensural"; break;
-        case NOTATIONTYPE_mensural_black: value = "mensural.black"; break;
-        case NOTATIONTYPE_mensural_white: value = "mensural.white"; break;
-        case NOTATIONTYPE_neume: value = "neume"; break;
-        case NOTATIONTYPE_tab: value = "tab"; break;
+        case NOTATIONTYPE_cmn: value="cmn"; break;
+        case NOTATIONTYPE_mensural: value="mensural"; break;
+        case NOTATIONTYPE_mensural_black: value="mensural.black"; break;
+        case NOTATIONTYPE_mensural_white: value="mensural.white"; break;
+        case NOTATIONTYPE_neume: value="neume"; break;
+        case NOTATIONTYPE_tab: value="tab"; break;
         default:
             LogWarning("Unknown value '%d' for data.NOTATIONTYPE", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2444,19 +2444,19 @@ std::string AttConverter::NoteheadmodifierToStr(data_NOTEHEADMODIFIER data) cons
 {
     std::string value;
     switch (data) {
-        case NOTEHEADMODIFIER_slash: value = "slash"; break;
-        case NOTEHEADMODIFIER_backslash: value = "backslash"; break;
-        case NOTEHEADMODIFIER_vline: value = "vline"; break;
-        case NOTEHEADMODIFIER_hline: value = "hline"; break;
-        case NOTEHEADMODIFIER_centerdot: value = "centerdot"; break;
-        case NOTEHEADMODIFIER_paren: value = "paren"; break;
-        case NOTEHEADMODIFIER_brack: value = "brack"; break;
-        case NOTEHEADMODIFIER_box: value = "box"; break;
-        case NOTEHEADMODIFIER_circle: value = "circle"; break;
-        case NOTEHEADMODIFIER_dblwhole: value = "dblwhole"; break;
+        case NOTEHEADMODIFIER_slash: value="slash"; break;
+        case NOTEHEADMODIFIER_backslash: value="backslash"; break;
+        case NOTEHEADMODIFIER_vline: value="vline"; break;
+        case NOTEHEADMODIFIER_hline: value="hline"; break;
+        case NOTEHEADMODIFIER_centerdot: value="centerdot"; break;
+        case NOTEHEADMODIFIER_paren: value="paren"; break;
+        case NOTEHEADMODIFIER_brack: value="brack"; break;
+        case NOTEHEADMODIFIER_box: value="box"; break;
+        case NOTEHEADMODIFIER_circle: value="circle"; break;
+        case NOTEHEADMODIFIER_dblwhole: value="dblwhole"; break;
         default:
             LogWarning("Unknown value '%d' for data.NOTEHEADMODIFIER", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2483,19 +2483,19 @@ std::string AttConverter::NoteheadmodifierListToStr(data_NOTEHEADMODIFIER_list d
 {
     std::string value;
     switch (data) {
-        case NOTEHEADMODIFIER_list_slash: value = "slash"; break;
-        case NOTEHEADMODIFIER_list_backslash: value = "backslash"; break;
-        case NOTEHEADMODIFIER_list_vline: value = "vline"; break;
-        case NOTEHEADMODIFIER_list_hline: value = "hline"; break;
-        case NOTEHEADMODIFIER_list_centerdot: value = "centerdot"; break;
-        case NOTEHEADMODIFIER_list_paren: value = "paren"; break;
-        case NOTEHEADMODIFIER_list_brack: value = "brack"; break;
-        case NOTEHEADMODIFIER_list_box: value = "box"; break;
-        case NOTEHEADMODIFIER_list_circle: value = "circle"; break;
-        case NOTEHEADMODIFIER_list_dblwhole: value = "dblwhole"; break;
+        case NOTEHEADMODIFIER_list_slash: value="slash"; break;
+        case NOTEHEADMODIFIER_list_backslash: value="backslash"; break;
+        case NOTEHEADMODIFIER_list_vline: value="vline"; break;
+        case NOTEHEADMODIFIER_list_hline: value="hline"; break;
+        case NOTEHEADMODIFIER_list_centerdot: value="centerdot"; break;
+        case NOTEHEADMODIFIER_list_paren: value="paren"; break;
+        case NOTEHEADMODIFIER_list_brack: value="brack"; break;
+        case NOTEHEADMODIFIER_list_box: value="box"; break;
+        case NOTEHEADMODIFIER_list_circle: value="circle"; break;
+        case NOTEHEADMODIFIER_list_dblwhole: value="dblwhole"; break;
         default:
             LogWarning("Unknown value '%d' for data.NOTEHEADMODIFIER.list", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2522,11 +2522,11 @@ std::string AttConverter::OtherstaffToStr(data_OTHERSTAFF data) const
 {
     std::string value;
     switch (data) {
-        case OTHERSTAFF_above: value = "above"; break;
-        case OTHERSTAFF_below: value = "below"; break;
+        case OTHERSTAFF_above: value="above"; break;
+        case OTHERSTAFF_below: value="below"; break;
         default:
             LogWarning("Unknown value '%d' for data.OTHERSTAFF", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2545,54 +2545,54 @@ std::string AttConverter::RelationshipToStr(data_RELATIONSHIP data) const
 {
     std::string value;
     switch (data) {
-        case RELATIONSHIP_hasAbridgement: value = "hasAbridgement"; break;
-        case RELATIONSHIP_isAbridgementOf: value = "isAbridgementOf"; break;
-        case RELATIONSHIP_hasAdaptation: value = "hasAdaptation"; break;
-        case RELATIONSHIP_isAdaptationOf: value = "isAdaptationOf"; break;
-        case RELATIONSHIP_hasAlternate: value = "hasAlternate"; break;
-        case RELATIONSHIP_isAlternateOf: value = "isAlternateOf"; break;
-        case RELATIONSHIP_hasArrangement: value = "hasArrangement"; break;
-        case RELATIONSHIP_isArrangementOf: value = "isArrangementOf"; break;
-        case RELATIONSHIP_hasComplement: value = "hasComplement"; break;
-        case RELATIONSHIP_isComplementOf: value = "isComplementOf"; break;
-        case RELATIONSHIP_hasEmbodiment: value = "hasEmbodiment"; break;
-        case RELATIONSHIP_isEmbodimentOf: value = "isEmbodimentOf"; break;
-        case RELATIONSHIP_hasExemplar: value = "hasExemplar"; break;
-        case RELATIONSHIP_isExemplarOf: value = "isExemplarOf"; break;
-        case RELATIONSHIP_hasImitation: value = "hasImitation"; break;
-        case RELATIONSHIP_isImitationOf: value = "isImitationOf"; break;
-        case RELATIONSHIP_hasPart: value = "hasPart"; break;
-        case RELATIONSHIP_isPartOf: value = "isPartOf"; break;
-        case RELATIONSHIP_hasRealization: value = "hasRealization"; break;
-        case RELATIONSHIP_isRealizationOf: value = "isRealizationOf"; break;
-        case RELATIONSHIP_hasReconfiguration: value = "hasReconfiguration"; break;
-        case RELATIONSHIP_isReconfigurationOf: value = "isReconfigurationOf"; break;
-        case RELATIONSHIP_hasReproduction: value = "hasReproduction"; break;
-        case RELATIONSHIP_isReproductionOf: value = "isReproductionOf"; break;
-        case RELATIONSHIP_hasRevision: value = "hasRevision"; break;
-        case RELATIONSHIP_isRevisionOf: value = "isRevisionOf"; break;
-        case RELATIONSHIP_hasSuccessor: value = "hasSuccessor"; break;
-        case RELATIONSHIP_isSuccessorOf: value = "isSuccessorOf"; break;
-        case RELATIONSHIP_hasSummarization: value = "hasSummarization"; break;
-        case RELATIONSHIP_isSummarizationOf: value = "isSummarizationOf"; break;
-        case RELATIONSHIP_hasSupplement: value = "hasSupplement"; break;
-        case RELATIONSHIP_isSupplementOf: value = "isSupplementOf"; break;
-        case RELATIONSHIP_hasTransformation: value = "hasTransformation"; break;
-        case RELATIONSHIP_isTransformationOf: value = "isTransformationOf"; break;
-        case RELATIONSHIP_hasTranslation: value = "hasTranslation"; break;
-        case RELATIONSHIP_isTranslationOf: value = "isTranslationOf"; break;
-        case RELATIONSHIP_preceding: value = "preceding"; break;
-        case RELATIONSHIP_succeeding: value = "succeeding"; break;
-        case RELATIONSHIP_original: value = "original"; break;
-        case RELATIONSHIP_host: value = "host"; break;
-        case RELATIONSHIP_constituent: value = "constituent"; break;
-        case RELATIONSHIP_otherVersion: value = "otherVersion"; break;
-        case RELATIONSHIP_otherFormat: value = "otherFormat"; break;
-        case RELATIONSHIP_isReferencedBy: value = "isReferencedBy"; break;
-        case RELATIONSHIP_references: value = "references"; break;
+        case RELATIONSHIP_hasAbridgement: value="hasAbridgement"; break;
+        case RELATIONSHIP_isAbridgementOf: value="isAbridgementOf"; break;
+        case RELATIONSHIP_hasAdaptation: value="hasAdaptation"; break;
+        case RELATIONSHIP_isAdaptationOf: value="isAdaptationOf"; break;
+        case RELATIONSHIP_hasAlternate: value="hasAlternate"; break;
+        case RELATIONSHIP_isAlternateOf: value="isAlternateOf"; break;
+        case RELATIONSHIP_hasArrangement: value="hasArrangement"; break;
+        case RELATIONSHIP_isArrangementOf: value="isArrangementOf"; break;
+        case RELATIONSHIP_hasComplement: value="hasComplement"; break;
+        case RELATIONSHIP_isComplementOf: value="isComplementOf"; break;
+        case RELATIONSHIP_hasEmbodiment: value="hasEmbodiment"; break;
+        case RELATIONSHIP_isEmbodimentOf: value="isEmbodimentOf"; break;
+        case RELATIONSHIP_hasExemplar: value="hasExemplar"; break;
+        case RELATIONSHIP_isExemplarOf: value="isExemplarOf"; break;
+        case RELATIONSHIP_hasImitation: value="hasImitation"; break;
+        case RELATIONSHIP_isImitationOf: value="isImitationOf"; break;
+        case RELATIONSHIP_hasPart: value="hasPart"; break;
+        case RELATIONSHIP_isPartOf: value="isPartOf"; break;
+        case RELATIONSHIP_hasRealization: value="hasRealization"; break;
+        case RELATIONSHIP_isRealizationOf: value="isRealizationOf"; break;
+        case RELATIONSHIP_hasReconfiguration: value="hasReconfiguration"; break;
+        case RELATIONSHIP_isReconfigurationOf: value="isReconfigurationOf"; break;
+        case RELATIONSHIP_hasReproduction: value="hasReproduction"; break;
+        case RELATIONSHIP_isReproductionOf: value="isReproductionOf"; break;
+        case RELATIONSHIP_hasRevision: value="hasRevision"; break;
+        case RELATIONSHIP_isRevisionOf: value="isRevisionOf"; break;
+        case RELATIONSHIP_hasSuccessor: value="hasSuccessor"; break;
+        case RELATIONSHIP_isSuccessorOf: value="isSuccessorOf"; break;
+        case RELATIONSHIP_hasSummarization: value="hasSummarization"; break;
+        case RELATIONSHIP_isSummarizationOf: value="isSummarizationOf"; break;
+        case RELATIONSHIP_hasSupplement: value="hasSupplement"; break;
+        case RELATIONSHIP_isSupplementOf: value="isSupplementOf"; break;
+        case RELATIONSHIP_hasTransformation: value="hasTransformation"; break;
+        case RELATIONSHIP_isTransformationOf: value="isTransformationOf"; break;
+        case RELATIONSHIP_hasTranslation: value="hasTranslation"; break;
+        case RELATIONSHIP_isTranslationOf: value="isTranslationOf"; break;
+        case RELATIONSHIP_preceding: value="preceding"; break;
+        case RELATIONSHIP_succeeding: value="succeeding"; break;
+        case RELATIONSHIP_original: value="original"; break;
+        case RELATIONSHIP_host: value="host"; break;
+        case RELATIONSHIP_constituent: value="constituent"; break;
+        case RELATIONSHIP_otherVersion: value="otherVersion"; break;
+        case RELATIONSHIP_otherFormat: value="otherFormat"; break;
+        case RELATIONSHIP_isReferencedBy: value="isReferencedBy"; break;
+        case RELATIONSHIP_references: value="references"; break;
         default:
             LogWarning("Unknown value '%d' for data.RELATIONSHIP", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2654,16 +2654,16 @@ std::string AttConverter::RotationToStr(data_ROTATION data) const
 {
     std::string value;
     switch (data) {
-        case ROTATION_none: value = "none"; break;
-        case ROTATION_down: value = "down"; break;
-        case ROTATION_left: value = "left"; break;
-        case ROTATION_ne: value = "ne"; break;
-        case ROTATION_nw: value = "nw"; break;
-        case ROTATION_se: value = "se"; break;
-        case ROTATION_sw: value = "sw"; break;
+        case ROTATION_none: value="none"; break;
+        case ROTATION_down: value="down"; break;
+        case ROTATION_left: value="left"; break;
+        case ROTATION_ne: value="ne"; break;
+        case ROTATION_nw: value="nw"; break;
+        case ROTATION_se: value="se"; break;
+        case ROTATION_sw: value="sw"; break;
         default:
             LogWarning("Unknown value '%d' for data.ROTATION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2687,16 +2687,16 @@ std::string AttConverter::RotationdirectionToStr(data_ROTATIONDIRECTION data) co
 {
     std::string value;
     switch (data) {
-        case ROTATIONDIRECTION_none: value = "none"; break;
-        case ROTATIONDIRECTION_down: value = "down"; break;
-        case ROTATIONDIRECTION_left: value = "left"; break;
-        case ROTATIONDIRECTION_ne: value = "ne"; break;
-        case ROTATIONDIRECTION_nw: value = "nw"; break;
-        case ROTATIONDIRECTION_se: value = "se"; break;
-        case ROTATIONDIRECTION_sw: value = "sw"; break;
+        case ROTATIONDIRECTION_none: value="none"; break;
+        case ROTATIONDIRECTION_down: value="down"; break;
+        case ROTATIONDIRECTION_left: value="left"; break;
+        case ROTATIONDIRECTION_ne: value="ne"; break;
+        case ROTATIONDIRECTION_nw: value="nw"; break;
+        case ROTATIONDIRECTION_se: value="se"; break;
+        case ROTATIONDIRECTION_sw: value="sw"; break;
         default:
             LogWarning("Unknown value '%d' for data.ROTATIONDIRECTION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2720,38 +2720,38 @@ std::string AttConverter::StaffitemToStr(data_STAFFITEM data) const
 {
     std::string value;
     switch (data) {
-        case STAFFITEM_accid: value = "accid"; break;
-        case STAFFITEM_annot: value = "annot"; break;
-        case STAFFITEM_artic: value = "artic"; break;
-        case STAFFITEM_dir: value = "dir"; break;
-        case STAFFITEM_dynam: value = "dynam"; break;
-        case STAFFITEM_harm: value = "harm"; break;
-        case STAFFITEM_ornam: value = "ornam"; break;
-        case STAFFITEM_sp: value = "sp"; break;
-        case STAFFITEM_stageDir: value = "stageDir"; break;
-        case STAFFITEM_tempo: value = "tempo"; break;
-        case STAFFITEM_beam: value = "beam"; break;
-        case STAFFITEM_bend: value = "bend"; break;
-        case STAFFITEM_bracketSpan: value = "bracketSpan"; break;
-        case STAFFITEM_breath: value = "breath"; break;
-        case STAFFITEM_cpMark: value = "cpMark"; break;
-        case STAFFITEM_fermata: value = "fermata"; break;
-        case STAFFITEM_fing: value = "fing"; break;
-        case STAFFITEM_hairpin: value = "hairpin"; break;
-        case STAFFITEM_harpPedal: value = "harpPedal"; break;
-        case STAFFITEM_lv: value = "lv"; break;
-        case STAFFITEM_mordent: value = "mordent"; break;
-        case STAFFITEM_octave: value = "octave"; break;
-        case STAFFITEM_pedal: value = "pedal"; break;
-        case STAFFITEM_reh: value = "reh"; break;
-        case STAFFITEM_tie: value = "tie"; break;
-        case STAFFITEM_trill: value = "trill"; break;
-        case STAFFITEM_tuplet: value = "tuplet"; break;
-        case STAFFITEM_turn: value = "turn"; break;
-        case STAFFITEM_ligature: value = "ligature"; break;
+        case STAFFITEM_accid: value="accid"; break;
+        case STAFFITEM_annot: value="annot"; break;
+        case STAFFITEM_artic: value="artic"; break;
+        case STAFFITEM_dir: value="dir"; break;
+        case STAFFITEM_dynam: value="dynam"; break;
+        case STAFFITEM_harm: value="harm"; break;
+        case STAFFITEM_ornam: value="ornam"; break;
+        case STAFFITEM_sp: value="sp"; break;
+        case STAFFITEM_stageDir: value="stageDir"; break;
+        case STAFFITEM_tempo: value="tempo"; break;
+        case STAFFITEM_beam: value="beam"; break;
+        case STAFFITEM_bend: value="bend"; break;
+        case STAFFITEM_bracketSpan: value="bracketSpan"; break;
+        case STAFFITEM_breath: value="breath"; break;
+        case STAFFITEM_cpMark: value="cpMark"; break;
+        case STAFFITEM_fermata: value="fermata"; break;
+        case STAFFITEM_fing: value="fing"; break;
+        case STAFFITEM_hairpin: value="hairpin"; break;
+        case STAFFITEM_harpPedal: value="harpPedal"; break;
+        case STAFFITEM_lv: value="lv"; break;
+        case STAFFITEM_mordent: value="mordent"; break;
+        case STAFFITEM_octave: value="octave"; break;
+        case STAFFITEM_pedal: value="pedal"; break;
+        case STAFFITEM_reh: value="reh"; break;
+        case STAFFITEM_tie: value="tie"; break;
+        case STAFFITEM_trill: value="trill"; break;
+        case STAFFITEM_tuplet: value="tuplet"; break;
+        case STAFFITEM_turn: value="turn"; break;
+        case STAFFITEM_ligature: value="ligature"; break;
         default:
             LogWarning("Unknown value '%d' for data.STAFFITEM", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2797,19 +2797,19 @@ std::string AttConverter::StaffitemBasicToStr(data_STAFFITEM_basic data) const
 {
     std::string value;
     switch (data) {
-        case STAFFITEM_basic_accid: value = "accid"; break;
-        case STAFFITEM_basic_annot: value = "annot"; break;
-        case STAFFITEM_basic_artic: value = "artic"; break;
-        case STAFFITEM_basic_dir: value = "dir"; break;
-        case STAFFITEM_basic_dynam: value = "dynam"; break;
-        case STAFFITEM_basic_harm: value = "harm"; break;
-        case STAFFITEM_basic_ornam: value = "ornam"; break;
-        case STAFFITEM_basic_sp: value = "sp"; break;
-        case STAFFITEM_basic_stageDir: value = "stageDir"; break;
-        case STAFFITEM_basic_tempo: value = "tempo"; break;
+        case STAFFITEM_basic_accid: value="accid"; break;
+        case STAFFITEM_basic_annot: value="annot"; break;
+        case STAFFITEM_basic_artic: value="artic"; break;
+        case STAFFITEM_basic_dir: value="dir"; break;
+        case STAFFITEM_basic_dynam: value="dynam"; break;
+        case STAFFITEM_basic_harm: value="harm"; break;
+        case STAFFITEM_basic_ornam: value="ornam"; break;
+        case STAFFITEM_basic_sp: value="sp"; break;
+        case STAFFITEM_basic_stageDir: value="stageDir"; break;
+        case STAFFITEM_basic_tempo: value="tempo"; break;
         default:
             LogWarning("Unknown value '%d' for data.STAFFITEM.basic", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2836,27 +2836,27 @@ std::string AttConverter::StaffitemCmnToStr(data_STAFFITEM_cmn data) const
 {
     std::string value;
     switch (data) {
-        case STAFFITEM_cmn_beam: value = "beam"; break;
-        case STAFFITEM_cmn_bend: value = "bend"; break;
-        case STAFFITEM_cmn_bracketSpan: value = "bracketSpan"; break;
-        case STAFFITEM_cmn_breath: value = "breath"; break;
-        case STAFFITEM_cmn_cpMark: value = "cpMark"; break;
-        case STAFFITEM_cmn_fermata: value = "fermata"; break;
-        case STAFFITEM_cmn_fing: value = "fing"; break;
-        case STAFFITEM_cmn_hairpin: value = "hairpin"; break;
-        case STAFFITEM_cmn_harpPedal: value = "harpPedal"; break;
-        case STAFFITEM_cmn_lv: value = "lv"; break;
-        case STAFFITEM_cmn_mordent: value = "mordent"; break;
-        case STAFFITEM_cmn_octave: value = "octave"; break;
-        case STAFFITEM_cmn_pedal: value = "pedal"; break;
-        case STAFFITEM_cmn_reh: value = "reh"; break;
-        case STAFFITEM_cmn_tie: value = "tie"; break;
-        case STAFFITEM_cmn_trill: value = "trill"; break;
-        case STAFFITEM_cmn_tuplet: value = "tuplet"; break;
-        case STAFFITEM_cmn_turn: value = "turn"; break;
+        case STAFFITEM_cmn_beam: value="beam"; break;
+        case STAFFITEM_cmn_bend: value="bend"; break;
+        case STAFFITEM_cmn_bracketSpan: value="bracketSpan"; break;
+        case STAFFITEM_cmn_breath: value="breath"; break;
+        case STAFFITEM_cmn_cpMark: value="cpMark"; break;
+        case STAFFITEM_cmn_fermata: value="fermata"; break;
+        case STAFFITEM_cmn_fing: value="fing"; break;
+        case STAFFITEM_cmn_hairpin: value="hairpin"; break;
+        case STAFFITEM_cmn_harpPedal: value="harpPedal"; break;
+        case STAFFITEM_cmn_lv: value="lv"; break;
+        case STAFFITEM_cmn_mordent: value="mordent"; break;
+        case STAFFITEM_cmn_octave: value="octave"; break;
+        case STAFFITEM_cmn_pedal: value="pedal"; break;
+        case STAFFITEM_cmn_reh: value="reh"; break;
+        case STAFFITEM_cmn_tie: value="tie"; break;
+        case STAFFITEM_cmn_trill: value="trill"; break;
+        case STAFFITEM_cmn_tuplet: value="tuplet"; break;
+        case STAFFITEM_cmn_turn: value="turn"; break;
         default:
             LogWarning("Unknown value '%d' for data.STAFFITEM.cmn", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2891,10 +2891,10 @@ std::string AttConverter::StaffitemMensuralToStr(data_STAFFITEM_mensural data) c
 {
     std::string value;
     switch (data) {
-        case STAFFITEM_mensural_ligature: value = "ligature"; break;
+        case STAFFITEM_mensural_ligature: value="ligature"; break;
         default:
             LogWarning("Unknown value '%d' for data.STAFFITEM.mensural", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2912,13 +2912,13 @@ std::string AttConverter::StaffrelToStr(data_STAFFREL data) const
 {
     std::string value;
     switch (data) {
-        case STAFFREL_above: value = "above"; break;
-        case STAFFREL_below: value = "below"; break;
-        case STAFFREL_between: value = "between"; break;
-        case STAFFREL_within: value = "within"; break;
+        case STAFFREL_above: value="above"; break;
+        case STAFFREL_below: value="below"; break;
+        case STAFFREL_between: value="between"; break;
+        case STAFFREL_within: value="within"; break;
         default:
             LogWarning("Unknown value '%d' for data.STAFFREL", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2939,11 +2939,11 @@ std::string AttConverter::StaffrelBasicToStr(data_STAFFREL_basic data) const
 {
     std::string value;
     switch (data) {
-        case STAFFREL_basic_above: value = "above"; break;
-        case STAFFREL_basic_below: value = "below"; break;
+        case STAFFREL_basic_above: value="above"; break;
+        case STAFFREL_basic_below: value="below"; break;
         default:
             LogWarning("Unknown value '%d' for data.STAFFREL.basic", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2962,11 +2962,11 @@ std::string AttConverter::StaffrelExtendedToStr(data_STAFFREL_extended data) con
 {
     std::string value;
     switch (data) {
-        case STAFFREL_extended_between: value = "between"; break;
-        case STAFFREL_extended_within: value = "within"; break;
+        case STAFFREL_extended_between: value="between"; break;
+        case STAFFREL_extended_within: value="within"; break;
         default:
             LogWarning("Unknown value '%d' for data.STAFFREL.extended", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -2985,17 +2985,17 @@ std::string AttConverter::StemdirectionToStr(data_STEMDIRECTION data) const
 {
     std::string value;
     switch (data) {
-        case STEMDIRECTION_up: value = "up"; break;
-        case STEMDIRECTION_down: value = "down"; break;
-        case STEMDIRECTION_left: value = "left"; break;
-        case STEMDIRECTION_right: value = "right"; break;
-        case STEMDIRECTION_ne: value = "ne"; break;
-        case STEMDIRECTION_se: value = "se"; break;
-        case STEMDIRECTION_nw: value = "nw"; break;
-        case STEMDIRECTION_sw: value = "sw"; break;
+        case STEMDIRECTION_up: value="up"; break;
+        case STEMDIRECTION_down: value="down"; break;
+        case STEMDIRECTION_left: value="left"; break;
+        case STEMDIRECTION_right: value="right"; break;
+        case STEMDIRECTION_ne: value="ne"; break;
+        case STEMDIRECTION_se: value="se"; break;
+        case STEMDIRECTION_nw: value="nw"; break;
+        case STEMDIRECTION_sw: value="sw"; break;
         default:
             LogWarning("Unknown value '%d' for data.STEMDIRECTION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3020,11 +3020,11 @@ std::string AttConverter::StemdirectionBasicToStr(data_STEMDIRECTION_basic data)
 {
     std::string value;
     switch (data) {
-        case STEMDIRECTION_basic_up: value = "up"; break;
-        case STEMDIRECTION_basic_down: value = "down"; break;
+        case STEMDIRECTION_basic_up: value="up"; break;
+        case STEMDIRECTION_basic_down: value="down"; break;
         default:
             LogWarning("Unknown value '%d' for data.STEMDIRECTION.basic", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3043,15 +3043,15 @@ std::string AttConverter::StemdirectionExtendedToStr(data_STEMDIRECTION_extended
 {
     std::string value;
     switch (data) {
-        case STEMDIRECTION_extended_left: value = "left"; break;
-        case STEMDIRECTION_extended_right: value = "right"; break;
-        case STEMDIRECTION_extended_ne: value = "ne"; break;
-        case STEMDIRECTION_extended_se: value = "se"; break;
-        case STEMDIRECTION_extended_nw: value = "nw"; break;
-        case STEMDIRECTION_extended_sw: value = "sw"; break;
+        case STEMDIRECTION_extended_left: value="left"; break;
+        case STEMDIRECTION_extended_right: value="right"; break;
+        case STEMDIRECTION_extended_ne: value="ne"; break;
+        case STEMDIRECTION_extended_se: value="se"; break;
+        case STEMDIRECTION_extended_nw: value="nw"; break;
+        case STEMDIRECTION_extended_sw: value="sw"; break;
         default:
             LogWarning("Unknown value '%d' for data.STEMDIRECTION.extended", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3074,13 +3074,13 @@ std::string AttConverter::StemformMensuralToStr(data_STEMFORM_mensural data) con
 {
     std::string value;
     switch (data) {
-        case STEMFORM_mensural_circle: value = "circle"; break;
-        case STEMFORM_mensural_oblique: value = "oblique"; break;
-        case STEMFORM_mensural_swallowtail: value = "swallowtail"; break;
-        case STEMFORM_mensural_virgula: value = "virgula"; break;
+        case STEMFORM_mensural_circle: value="circle"; break;
+        case STEMFORM_mensural_oblique: value="oblique"; break;
+        case STEMFORM_mensural_swallowtail: value="swallowtail"; break;
+        case STEMFORM_mensural_virgula: value="virgula"; break;
         default:
             LogWarning("Unknown value '%d' for data.STEMFORM.mensural", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3101,18 +3101,18 @@ std::string AttConverter::StemmodifierToStr(data_STEMMODIFIER data) const
 {
     std::string value;
     switch (data) {
-        case STEMMODIFIER_none: value = "none"; break;
-        case STEMMODIFIER_1slash: value = "1slash"; break;
-        case STEMMODIFIER_2slash: value = "2slash"; break;
-        case STEMMODIFIER_3slash: value = "3slash"; break;
-        case STEMMODIFIER_4slash: value = "4slash"; break;
-        case STEMMODIFIER_5slash: value = "5slash"; break;
-        case STEMMODIFIER_6slash: value = "6slash"; break;
-        case STEMMODIFIER_sprech: value = "sprech"; break;
-        case STEMMODIFIER_z: value = "z"; break;
+        case STEMMODIFIER_none: value="none"; break;
+        case STEMMODIFIER_1slash: value="1slash"; break;
+        case STEMMODIFIER_2slash: value="2slash"; break;
+        case STEMMODIFIER_3slash: value="3slash"; break;
+        case STEMMODIFIER_4slash: value="4slash"; break;
+        case STEMMODIFIER_5slash: value="5slash"; break;
+        case STEMMODIFIER_6slash: value="6slash"; break;
+        case STEMMODIFIER_sprech: value="sprech"; break;
+        case STEMMODIFIER_z: value="z"; break;
         default:
             LogWarning("Unknown value '%d' for data.STEMMODIFIER", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3138,12 +3138,12 @@ std::string AttConverter::StempositionToStr(data_STEMPOSITION data) const
 {
     std::string value;
     switch (data) {
-        case STEMPOSITION_left: value = "left"; break;
-        case STEMPOSITION_right: value = "right"; break;
-        case STEMPOSITION_center: value = "center"; break;
+        case STEMPOSITION_left: value="left"; break;
+        case STEMPOSITION_right: value="right"; break;
+        case STEMPOSITION_center: value="center"; break;
         default:
             LogWarning("Unknown value '%d' for data.STEMPOSITION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3163,13 +3163,13 @@ std::string AttConverter::TemperamentToStr(data_TEMPERAMENT data) const
 {
     std::string value;
     switch (data) {
-        case TEMPERAMENT_equal: value = "equal"; break;
-        case TEMPERAMENT_just: value = "just"; break;
-        case TEMPERAMENT_mean: value = "mean"; break;
-        case TEMPERAMENT_pythagorean: value = "pythagorean"; break;
+        case TEMPERAMENT_equal: value="equal"; break;
+        case TEMPERAMENT_just: value="just"; break;
+        case TEMPERAMENT_mean: value="mean"; break;
+        case TEMPERAMENT_pythagorean: value="pythagorean"; break;
         default:
             LogWarning("Unknown value '%d' for data.TEMPERAMENT", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3190,37 +3190,37 @@ std::string AttConverter::TextrenditionToStr(data_TEXTRENDITION data) const
 {
     std::string value;
     switch (data) {
-        case TEXTRENDITION_quote: value = "quote"; break;
-        case TEXTRENDITION_quotedbl: value = "quotedbl"; break;
-        case TEXTRENDITION_italic: value = "italic"; break;
-        case TEXTRENDITION_oblique: value = "oblique"; break;
-        case TEXTRENDITION_smcaps: value = "smcaps"; break;
-        case TEXTRENDITION_bold: value = "bold"; break;
-        case TEXTRENDITION_bolder: value = "bolder"; break;
-        case TEXTRENDITION_lighter: value = "lighter"; break;
-        case TEXTRENDITION_box: value = "box"; break;
-        case TEXTRENDITION_circle: value = "circle"; break;
-        case TEXTRENDITION_dbox: value = "dbox"; break;
-        case TEXTRENDITION_tbox: value = "tbox"; break;
-        case TEXTRENDITION_bslash: value = "bslash"; break;
-        case TEXTRENDITION_fslash: value = "fslash"; break;
-        case TEXTRENDITION_line_through: value = "line-through"; break;
-        case TEXTRENDITION_none: value = "none"; break;
-        case TEXTRENDITION_overline: value = "overline"; break;
-        case TEXTRENDITION_overstrike: value = "overstrike"; break;
-        case TEXTRENDITION_strike: value = "strike"; break;
-        case TEXTRENDITION_sub: value = "sub"; break;
-        case TEXTRENDITION_sup: value = "sup"; break;
-        case TEXTRENDITION_superimpose: value = "superimpose"; break;
-        case TEXTRENDITION_underline: value = "underline"; break;
-        case TEXTRENDITION_x_through: value = "x-through"; break;
-        case TEXTRENDITION_ltr: value = "ltr"; break;
-        case TEXTRENDITION_rtl: value = "rtl"; break;
-        case TEXTRENDITION_lro: value = "lro"; break;
-        case TEXTRENDITION_rlo: value = "rlo"; break;
+        case TEXTRENDITION_quote: value="quote"; break;
+        case TEXTRENDITION_quotedbl: value="quotedbl"; break;
+        case TEXTRENDITION_italic: value="italic"; break;
+        case TEXTRENDITION_oblique: value="oblique"; break;
+        case TEXTRENDITION_smcaps: value="smcaps"; break;
+        case TEXTRENDITION_bold: value="bold"; break;
+        case TEXTRENDITION_bolder: value="bolder"; break;
+        case TEXTRENDITION_lighter: value="lighter"; break;
+        case TEXTRENDITION_box: value="box"; break;
+        case TEXTRENDITION_circle: value="circle"; break;
+        case TEXTRENDITION_dbox: value="dbox"; break;
+        case TEXTRENDITION_tbox: value="tbox"; break;
+        case TEXTRENDITION_bslash: value="bslash"; break;
+        case TEXTRENDITION_fslash: value="fslash"; break;
+        case TEXTRENDITION_line_through: value="line-through"; break;
+        case TEXTRENDITION_none: value="none"; break;
+        case TEXTRENDITION_overline: value="overline"; break;
+        case TEXTRENDITION_overstrike: value="overstrike"; break;
+        case TEXTRENDITION_strike: value="strike"; break;
+        case TEXTRENDITION_sub: value="sub"; break;
+        case TEXTRENDITION_sup: value="sup"; break;
+        case TEXTRENDITION_superimpose: value="superimpose"; break;
+        case TEXTRENDITION_underline: value="underline"; break;
+        case TEXTRENDITION_x_through: value="x-through"; break;
+        case TEXTRENDITION_ltr: value="ltr"; break;
+        case TEXTRENDITION_rtl: value="rtl"; break;
+        case TEXTRENDITION_lro: value="lro"; break;
+        case TEXTRENDITION_rlo: value="rlo"; break;
         default:
             LogWarning("Unknown value '%d' for data.TEXTRENDITION", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3265,37 +3265,37 @@ std::string AttConverter::TextrenditionlistToStr(data_TEXTRENDITIONLIST data) co
 {
     std::string value;
     switch (data) {
-        case TEXTRENDITIONLIST_quote: value = "quote"; break;
-        case TEXTRENDITIONLIST_quotedbl: value = "quotedbl"; break;
-        case TEXTRENDITIONLIST_italic: value = "italic"; break;
-        case TEXTRENDITIONLIST_oblique: value = "oblique"; break;
-        case TEXTRENDITIONLIST_smcaps: value = "smcaps"; break;
-        case TEXTRENDITIONLIST_bold: value = "bold"; break;
-        case TEXTRENDITIONLIST_bolder: value = "bolder"; break;
-        case TEXTRENDITIONLIST_lighter: value = "lighter"; break;
-        case TEXTRENDITIONLIST_box: value = "box"; break;
-        case TEXTRENDITIONLIST_circle: value = "circle"; break;
-        case TEXTRENDITIONLIST_dbox: value = "dbox"; break;
-        case TEXTRENDITIONLIST_tbox: value = "tbox"; break;
-        case TEXTRENDITIONLIST_bslash: value = "bslash"; break;
-        case TEXTRENDITIONLIST_fslash: value = "fslash"; break;
-        case TEXTRENDITIONLIST_line_through: value = "line-through"; break;
-        case TEXTRENDITIONLIST_none: value = "none"; break;
-        case TEXTRENDITIONLIST_overline: value = "overline"; break;
-        case TEXTRENDITIONLIST_overstrike: value = "overstrike"; break;
-        case TEXTRENDITIONLIST_strike: value = "strike"; break;
-        case TEXTRENDITIONLIST_sub: value = "sub"; break;
-        case TEXTRENDITIONLIST_sup: value = "sup"; break;
-        case TEXTRENDITIONLIST_superimpose: value = "superimpose"; break;
-        case TEXTRENDITIONLIST_underline: value = "underline"; break;
-        case TEXTRENDITIONLIST_x_through: value = "x-through"; break;
-        case TEXTRENDITIONLIST_ltr: value = "ltr"; break;
-        case TEXTRENDITIONLIST_rtl: value = "rtl"; break;
-        case TEXTRENDITIONLIST_lro: value = "lro"; break;
-        case TEXTRENDITIONLIST_rlo: value = "rlo"; break;
+        case TEXTRENDITIONLIST_quote: value="quote"; break;
+        case TEXTRENDITIONLIST_quotedbl: value="quotedbl"; break;
+        case TEXTRENDITIONLIST_italic: value="italic"; break;
+        case TEXTRENDITIONLIST_oblique: value="oblique"; break;
+        case TEXTRENDITIONLIST_smcaps: value="smcaps"; break;
+        case TEXTRENDITIONLIST_bold: value="bold"; break;
+        case TEXTRENDITIONLIST_bolder: value="bolder"; break;
+        case TEXTRENDITIONLIST_lighter: value="lighter"; break;
+        case TEXTRENDITIONLIST_box: value="box"; break;
+        case TEXTRENDITIONLIST_circle: value="circle"; break;
+        case TEXTRENDITIONLIST_dbox: value="dbox"; break;
+        case TEXTRENDITIONLIST_tbox: value="tbox"; break;
+        case TEXTRENDITIONLIST_bslash: value="bslash"; break;
+        case TEXTRENDITIONLIST_fslash: value="fslash"; break;
+        case TEXTRENDITIONLIST_line_through: value="line-through"; break;
+        case TEXTRENDITIONLIST_none: value="none"; break;
+        case TEXTRENDITIONLIST_overline: value="overline"; break;
+        case TEXTRENDITIONLIST_overstrike: value="overstrike"; break;
+        case TEXTRENDITIONLIST_strike: value="strike"; break;
+        case TEXTRENDITIONLIST_sub: value="sub"; break;
+        case TEXTRENDITIONLIST_sup: value="sup"; break;
+        case TEXTRENDITIONLIST_superimpose: value="superimpose"; break;
+        case TEXTRENDITIONLIST_underline: value="underline"; break;
+        case TEXTRENDITIONLIST_x_through: value="x-through"; break;
+        case TEXTRENDITIONLIST_ltr: value="ltr"; break;
+        case TEXTRENDITIONLIST_rtl: value="rtl"; break;
+        case TEXTRENDITIONLIST_lro: value="lro"; break;
+        case TEXTRENDITIONLIST_rlo: value="rlo"; break;
         default:
             LogWarning("Unknown value '%d' for data.TEXTRENDITIONLIST", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3340,13 +3340,13 @@ std::string AttConverter::VerticalalignmentToStr(data_VERTICALALIGNMENT data) co
 {
     std::string value;
     switch (data) {
-        case VERTICALALIGNMENT_top: value = "top"; break;
-        case VERTICALALIGNMENT_middle: value = "middle"; break;
-        case VERTICALALIGNMENT_bottom: value = "bottom"; break;
-        case VERTICALALIGNMENT_baseline: value = "baseline"; break;
+        case VERTICALALIGNMENT_top: value="top"; break;
+        case VERTICALALIGNMENT_middle: value="middle"; break;
+        case VERTICALALIGNMENT_bottom: value="bottom"; break;
+        case VERTICALALIGNMENT_baseline: value="baseline"; break;
         default:
             LogWarning("Unknown value '%d' for data.VERTICALALIGNMENT", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3367,11 +3367,11 @@ std::string AttConverter::AccidLogFuncToStr(accidLog_FUNC data) const
 {
     std::string value;
     switch (data) {
-        case accidLog_FUNC_caution: value = "caution"; break;
-        case accidLog_FUNC_edit: value = "edit"; break;
+        case accidLog_FUNC_caution: value="caution"; break;
+        case accidLog_FUNC_edit: value="edit"; break;
         default:
             LogWarning("Unknown value '%d' for att.accid.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3390,10 +3390,10 @@ std::string AttConverter::AnchoredTextLogFuncToStr(anchoredTextLog_FUNC data) co
 {
     std::string value;
     switch (data) {
-        case anchoredTextLog_FUNC_unknown: value = "unknown"; break;
+        case anchoredTextLog_FUNC_unknown: value="unknown"; break;
         default:
             LogWarning("Unknown value '%d' for att.anchoredText.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3411,12 +3411,12 @@ std::string AttConverter::ArpegLogOrderToStr(arpegLog_ORDER data) const
 {
     std::string value;
     switch (data) {
-        case arpegLog_ORDER_up: value = "up"; break;
-        case arpegLog_ORDER_down: value = "down"; break;
-        case arpegLog_ORDER_nonarp: value = "nonarp"; break;
+        case arpegLog_ORDER_up: value="up"; break;
+        case arpegLog_ORDER_down: value="down"; break;
+        case arpegLog_ORDER_nonarp: value="nonarp"; break;
         default:
             LogWarning("Unknown value '%d' for att.arpeg.log@order", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3436,11 +3436,11 @@ std::string AttConverter::AudienceAudienceToStr(audience_AUDIENCE data) const
 {
     std::string value;
     switch (data) {
-        case audience_AUDIENCE_private: value = "private"; break;
-        case audience_AUDIENCE_public: value = "public"; break;
+        case audience_AUDIENCE_private: value="private"; break;
+        case audience_AUDIENCE_public: value="public"; break;
         default:
             LogWarning("Unknown value '%d' for att.audience@audience", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3459,11 +3459,11 @@ std::string AttConverter::BTremLogFormToStr(bTremLog_FORM data) const
 {
     std::string value;
     switch (data) {
-        case bTremLog_FORM_meas: value = "meas"; break;
-        case bTremLog_FORM_unmeas: value = "unmeas"; break;
+        case bTremLog_FORM_meas: value="meas"; break;
+        case bTremLog_FORM_unmeas: value="unmeas"; break;
         default:
             LogWarning("Unknown value '%d' for att.bTrem.log@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3482,13 +3482,13 @@ std::string AttConverter::BeamRendFormToStr(beamRend_FORM data) const
 {
     std::string value;
     switch (data) {
-        case beamRend_FORM_acc: value = "acc"; break;
-        case beamRend_FORM_mixed: value = "mixed"; break;
-        case beamRend_FORM_rit: value = "rit"; break;
-        case beamRend_FORM_norm: value = "norm"; break;
+        case beamRend_FORM_acc: value="acc"; break;
+        case beamRend_FORM_mixed: value="mixed"; break;
+        case beamRend_FORM_rit: value="rit"; break;
+        case beamRend_FORM_norm: value="norm"; break;
         default:
             LogWarning("Unknown value '%d' for att.beamRend@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3509,12 +3509,12 @@ std::string AttConverter::BeamingVisBeamrendToStr(beamingVis_BEAMREND data) cons
 {
     std::string value;
     switch (data) {
-        case beamingVis_BEAMREND_acc: value = "acc"; break;
-        case beamingVis_BEAMREND_rit: value = "rit"; break;
-        case beamingVis_BEAMREND_norm: value = "norm"; break;
+        case beamingVis_BEAMREND_acc: value="acc"; break;
+        case beamingVis_BEAMREND_rit: value="rit"; break;
+        case beamingVis_BEAMREND_norm: value="norm"; break;
         default:
             LogWarning("Unknown value '%d' for att.beaming.vis@beam.rend", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3534,12 +3534,12 @@ std::string AttConverter::BracketSpanLogFuncToStr(bracketSpanLog_FUNC data) cons
 {
     std::string value;
     switch (data) {
-        case bracketSpanLog_FUNC_coloration: value = "coloration"; break;
-        case bracketSpanLog_FUNC_cross_rhythm: value = "cross-rhythm"; break;
-        case bracketSpanLog_FUNC_ligature: value = "ligature"; break;
+        case bracketSpanLog_FUNC_coloration: value="coloration"; break;
+        case bracketSpanLog_FUNC_cross_rhythm: value="cross-rhythm"; break;
+        case bracketSpanLog_FUNC_ligature: value="ligature"; break;
         default:
             LogWarning("Unknown value '%d' for att.bracketSpan.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3559,12 +3559,12 @@ std::string AttConverter::CurvatureCurvedirToStr(curvature_CURVEDIR data) const
 {
     std::string value;
     switch (data) {
-        case curvature_CURVEDIR_above: value = "above"; break;
-        case curvature_CURVEDIR_below: value = "below"; break;
-        case curvature_CURVEDIR_mixed: value = "mixed"; break;
+        case curvature_CURVEDIR_above: value="above"; break;
+        case curvature_CURVEDIR_below: value="below"; break;
+        case curvature_CURVEDIR_mixed: value="mixed"; break;
         default:
             LogWarning("Unknown value '%d' for att.curvature@curvedir", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3584,10 +3584,10 @@ std::string AttConverter::CurveLogFuncToStr(curveLog_FUNC data) const
 {
     std::string value;
     switch (data) {
-        case curveLog_FUNC_unknown: value = "unknown"; break;
+        case curveLog_FUNC_unknown: value="unknown"; break;
         default:
             LogWarning("Unknown value '%d' for att.curve.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3605,10 +3605,10 @@ std::string AttConverter::CutoutCutoutToStr(cutout_CUTOUT data) const
 {
     std::string value;
     switch (data) {
-        case cutout_CUTOUT_cutout: value = "cutout"; break;
+        case cutout_CUTOUT_cutout: value="cutout"; break;
         default:
             LogWarning("Unknown value '%d' for att.cutout@cutout", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3626,11 +3626,11 @@ std::string AttConverter::DotLogFormToStr(dotLog_FORM data) const
 {
     std::string value;
     switch (data) {
-        case dotLog_FORM_aug: value = "aug"; break;
-        case dotLog_FORM_div: value = "div"; break;
+        case dotLog_FORM_aug: value="aug"; break;
+        case dotLog_FORM_div: value="div"; break;
         default:
             LogWarning("Unknown value '%d' for att.dot.log@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3649,12 +3649,12 @@ std::string AttConverter::EndingsEndingrendToStr(endings_ENDINGREND data) const
 {
     std::string value;
     switch (data) {
-        case endings_ENDINGREND_top: value = "top"; break;
-        case endings_ENDINGREND_barred: value = "barred"; break;
-        case endings_ENDINGREND_grouped: value = "grouped"; break;
+        case endings_ENDINGREND_top: value="top"; break;
+        case endings_ENDINGREND_barred: value="barred"; break;
+        case endings_ENDINGREND_grouped: value="grouped"; break;
         default:
             LogWarning("Unknown value '%d' for att.endings@ending.rend", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3674,11 +3674,11 @@ std::string AttConverter::EpisemaVisFormToStr(episemaVis_FORM data) const
 {
     std::string value;
     switch (data) {
-        case episemaVis_FORM_h: value = "h"; break;
-        case episemaVis_FORM_v: value = "v"; break;
+        case episemaVis_FORM_h: value="h"; break;
+        case episemaVis_FORM_v: value="v"; break;
         default:
             LogWarning("Unknown value '%d' for att.episema.vis@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3697,12 +3697,12 @@ std::string AttConverter::EvidenceEvidenceToStr(evidence_EVIDENCE data) const
 {
     std::string value;
     switch (data) {
-        case evidence_EVIDENCE_internal: value = "internal"; break;
-        case evidence_EVIDENCE_external: value = "external"; break;
-        case evidence_EVIDENCE_conjecture: value = "conjecture"; break;
+        case evidence_EVIDENCE_internal: value="internal"; break;
+        case evidence_EVIDENCE_external: value="external"; break;
+        case evidence_EVIDENCE_conjecture: value="conjecture"; break;
         default:
             LogWarning("Unknown value '%d' for att.evidence@evidence", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3722,10 +3722,10 @@ std::string AttConverter::ExtSymGlyphauthToStr(extSym_GLYPHAUTH data) const
 {
     std::string value;
     switch (data) {
-        case extSym_GLYPHAUTH_smufl: value = "smufl"; break;
+        case extSym_GLYPHAUTH_smufl: value="smufl"; break;
         default:
             LogWarning("Unknown value '%d' for att.extSym@glyph.auth", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3743,11 +3743,11 @@ std::string AttConverter::FTremLogFormToStr(fTremLog_FORM data) const
 {
     std::string value;
     switch (data) {
-        case fTremLog_FORM_meas: value = "meas"; break;
-        case fTremLog_FORM_unmeas: value = "unmeas"; break;
+        case fTremLog_FORM_meas: value="meas"; break;
+        case fTremLog_FORM_unmeas: value="unmeas"; break;
         default:
             LogWarning("Unknown value '%d' for att.fTrem.log@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3766,11 +3766,11 @@ std::string AttConverter::FermataVisFormToStr(fermataVis_FORM data) const
 {
     std::string value;
     switch (data) {
-        case fermataVis_FORM_inv: value = "inv"; break;
-        case fermataVis_FORM_norm: value = "norm"; break;
+        case fermataVis_FORM_inv: value="inv"; break;
+        case fermataVis_FORM_norm: value="norm"; break;
         default:
             LogWarning("Unknown value '%d' for att.fermata.vis@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3789,12 +3789,12 @@ std::string AttConverter::FermataVisShapeToStr(fermataVis_SHAPE data) const
 {
     std::string value;
     switch (data) {
-        case fermataVis_SHAPE_curved: value = "curved"; break;
-        case fermataVis_SHAPE_square: value = "square"; break;
-        case fermataVis_SHAPE_angular: value = "angular"; break;
+        case fermataVis_SHAPE_curved: value="curved"; break;
+        case fermataVis_SHAPE_square: value="square"; break;
+        case fermataVis_SHAPE_angular: value="angular"; break;
         default:
             LogWarning("Unknown value '%d' for att.fermata.vis@shape", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3814,12 +3814,12 @@ std::string AttConverter::FingGrpLogFormToStr(fingGrpLog_FORM data) const
 {
     std::string value;
     switch (data) {
-        case fingGrpLog_FORM_alter: value = "alter"; break;
-        case fingGrpLog_FORM_combi: value = "combi"; break;
-        case fingGrpLog_FORM_subst: value = "subst"; break;
+        case fingGrpLog_FORM_alter: value="alter"; break;
+        case fingGrpLog_FORM_combi: value="combi"; break;
+        case fingGrpLog_FORM_subst: value="subst"; break;
         default:
             LogWarning("Unknown value '%d' for att.fingGrp.log@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3839,11 +3839,11 @@ std::string AttConverter::FingGrpVisOrientToStr(fingGrpVis_ORIENT data) const
 {
     std::string value;
     switch (data) {
-        case fingGrpVis_ORIENT_horiz: value = "horiz"; break;
-        case fingGrpVis_ORIENT_vert: value = "vert"; break;
+        case fingGrpVis_ORIENT_horiz: value="horiz"; break;
+        case fingGrpVis_ORIENT_vert: value="vert"; break;
         default:
             LogWarning("Unknown value '%d' for att.fingGrp.vis@orient", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3862,12 +3862,12 @@ std::string AttConverter::GraceGrpLogAttachToStr(graceGrpLog_ATTACH data) const
 {
     std::string value;
     switch (data) {
-        case graceGrpLog_ATTACH_pre: value = "pre"; break;
-        case graceGrpLog_ATTACH_post: value = "post"; break;
-        case graceGrpLog_ATTACH_unknown: value = "unknown"; break;
+        case graceGrpLog_ATTACH_pre: value="pre"; break;
+        case graceGrpLog_ATTACH_post: value="post"; break;
+        case graceGrpLog_ATTACH_unknown: value="unknown"; break;
         default:
             LogWarning("Unknown value '%d' for att.graceGrp.log@attach", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3887,11 +3887,11 @@ std::string AttConverter::HairpinLogFormToStr(hairpinLog_FORM data) const
 {
     std::string value;
     switch (data) {
-        case hairpinLog_FORM_cres: value = "cres"; break;
-        case hairpinLog_FORM_dim: value = "dim"; break;
+        case hairpinLog_FORM_cres: value="cres"; break;
+        case hairpinLog_FORM_dim: value="dim"; break;
         default:
             LogWarning("Unknown value '%d' for att.hairpin.log@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3910,11 +3910,11 @@ std::string AttConverter::HarmAnlFormToStr(harmAnl_FORM data) const
 {
     std::string value;
     switch (data) {
-        case harmAnl_FORM_explicit: value = "explicit"; break;
-        case harmAnl_FORM_implied: value = "implied"; break;
+        case harmAnl_FORM_explicit: value="explicit"; break;
+        case harmAnl_FORM_implied: value="implied"; break;
         default:
             LogWarning("Unknown value '%d' for att.harm.anl@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3933,12 +3933,12 @@ std::string AttConverter::HarmVisRendgridToStr(harmVis_RENDGRID data) const
 {
     std::string value;
     switch (data) {
-        case harmVis_RENDGRID_grid: value = "grid"; break;
-        case harmVis_RENDGRID_gridtext: value = "gridtext"; break;
-        case harmVis_RENDGRID_text: value = "text"; break;
+        case harmVis_RENDGRID_grid: value="grid"; break;
+        case harmVis_RENDGRID_gridtext: value="gridtext"; break;
+        case harmVis_RENDGRID_text: value="text"; break;
         default:
             LogWarning("Unknown value '%d' for att.harm.vis@rendgrid", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3958,12 +3958,12 @@ std::string AttConverter::HarpPedalLogAToStr(harpPedalLog_A data) const
 {
     std::string value;
     switch (data) {
-        case harpPedalLog_A_f: value = "f"; break;
-        case harpPedalLog_A_n: value = "n"; break;
-        case harpPedalLog_A_s: value = "s"; break;
+        case harpPedalLog_A_f: value="f"; break;
+        case harpPedalLog_A_n: value="n"; break;
+        case harpPedalLog_A_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.harpPedal.log@a", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -3983,12 +3983,12 @@ std::string AttConverter::HarpPedalLogBToStr(harpPedalLog_B data) const
 {
     std::string value;
     switch (data) {
-        case harpPedalLog_B_f: value = "f"; break;
-        case harpPedalLog_B_n: value = "n"; break;
-        case harpPedalLog_B_s: value = "s"; break;
+        case harpPedalLog_B_f: value="f"; break;
+        case harpPedalLog_B_n: value="n"; break;
+        case harpPedalLog_B_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.harpPedal.log@b", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4008,12 +4008,12 @@ std::string AttConverter::HarpPedalLogCToStr(harpPedalLog_C data) const
 {
     std::string value;
     switch (data) {
-        case harpPedalLog_C_f: value = "f"; break;
-        case harpPedalLog_C_n: value = "n"; break;
-        case harpPedalLog_C_s: value = "s"; break;
+        case harpPedalLog_C_f: value="f"; break;
+        case harpPedalLog_C_n: value="n"; break;
+        case harpPedalLog_C_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.harpPedal.log@c", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4033,12 +4033,12 @@ std::string AttConverter::HarpPedalLogDToStr(harpPedalLog_D data) const
 {
     std::string value;
     switch (data) {
-        case harpPedalLog_D_f: value = "f"; break;
-        case harpPedalLog_D_n: value = "n"; break;
-        case harpPedalLog_D_s: value = "s"; break;
+        case harpPedalLog_D_f: value="f"; break;
+        case harpPedalLog_D_n: value="n"; break;
+        case harpPedalLog_D_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.harpPedal.log@d", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4058,12 +4058,12 @@ std::string AttConverter::HarpPedalLogEToStr(harpPedalLog_E data) const
 {
     std::string value;
     switch (data) {
-        case harpPedalLog_E_f: value = "f"; break;
-        case harpPedalLog_E_n: value = "n"; break;
-        case harpPedalLog_E_s: value = "s"; break;
+        case harpPedalLog_E_f: value="f"; break;
+        case harpPedalLog_E_n: value="n"; break;
+        case harpPedalLog_E_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.harpPedal.log@e", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4083,12 +4083,12 @@ std::string AttConverter::HarpPedalLogFToStr(harpPedalLog_F data) const
 {
     std::string value;
     switch (data) {
-        case harpPedalLog_F_f: value = "f"; break;
-        case harpPedalLog_F_n: value = "n"; break;
-        case harpPedalLog_F_s: value = "s"; break;
+        case harpPedalLog_F_f: value="f"; break;
+        case harpPedalLog_F_n: value="n"; break;
+        case harpPedalLog_F_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.harpPedal.log@f", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4108,12 +4108,12 @@ std::string AttConverter::HarpPedalLogGToStr(harpPedalLog_G data) const
 {
     std::string value;
     switch (data) {
-        case harpPedalLog_G_f: value = "f"; break;
-        case harpPedalLog_G_n: value = "n"; break;
-        case harpPedalLog_G_s: value = "s"; break;
+        case harpPedalLog_G_f: value="f"; break;
+        case harpPedalLog_G_n: value="n"; break;
+        case harpPedalLog_G_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.harpPedal.log@g", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4133,12 +4133,12 @@ std::string AttConverter::LineLogFuncToStr(lineLog_FUNC data) const
 {
     std::string value;
     switch (data) {
-        case lineLog_FUNC_coloration: value = "coloration"; break;
-        case lineLog_FUNC_ligature: value = "ligature"; break;
-        case lineLog_FUNC_unknown: value = "unknown"; break;
+        case lineLog_FUNC_coloration: value="coloration"; break;
+        case lineLog_FUNC_ligature: value="ligature"; break;
+        case lineLog_FUNC_unknown: value="unknown"; break;
         default:
             LogWarning("Unknown value '%d' for att.line.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4158,11 +4158,11 @@ std::string AttConverter::LiquescentVisCurveToStr(liquescentVis_CURVE data) cons
 {
     std::string value;
     switch (data) {
-        case liquescentVis_CURVE_a: value = "a"; break;
-        case liquescentVis_CURVE_c: value = "c"; break;
+        case liquescentVis_CURVE_a: value="a"; break;
+        case liquescentVis_CURVE_c: value="c"; break;
         default:
             LogWarning("Unknown value '%d' for att.liquescent.vis@curve", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4181,26 +4181,26 @@ std::string AttConverter::MeasurementUnitToStr(measurement_UNIT data) const
 {
     std::string value;
     switch (data) {
-        case measurement_UNIT_byte: value = "byte"; break;
-        case measurement_UNIT_char: value = "char"; break;
-        case measurement_UNIT_cm: value = "cm"; break;
-        case measurement_UNIT_deg: value = "deg"; break;
-        case measurement_UNIT_in: value = "in"; break;
-        case measurement_UNIT_issue: value = "issue"; break;
-        case measurement_UNIT_ft: value = "ft"; break;
-        case measurement_UNIT_m: value = "m"; break;
-        case measurement_UNIT_mm: value = "mm"; break;
-        case measurement_UNIT_page: value = "page"; break;
-        case measurement_UNIT_pc: value = "pc"; break;
-        case measurement_UNIT_pt: value = "pt"; break;
-        case measurement_UNIT_px: value = "px"; break;
-        case measurement_UNIT_rad: value = "rad"; break;
-        case measurement_UNIT_record: value = "record"; break;
-        case measurement_UNIT_vol: value = "vol"; break;
-        case measurement_UNIT_vu: value = "vu"; break;
+        case measurement_UNIT_byte: value="byte"; break;
+        case measurement_UNIT_char: value="char"; break;
+        case measurement_UNIT_cm: value="cm"; break;
+        case measurement_UNIT_deg: value="deg"; break;
+        case measurement_UNIT_in: value="in"; break;
+        case measurement_UNIT_issue: value="issue"; break;
+        case measurement_UNIT_ft: value="ft"; break;
+        case measurement_UNIT_m: value="m"; break;
+        case measurement_UNIT_mm: value="mm"; break;
+        case measurement_UNIT_page: value="page"; break;
+        case measurement_UNIT_pc: value="pc"; break;
+        case measurement_UNIT_pt: value="pt"; break;
+        case measurement_UNIT_px: value="px"; break;
+        case measurement_UNIT_rad: value="rad"; break;
+        case measurement_UNIT_record: value="record"; break;
+        case measurement_UNIT_vol: value="vol"; break;
+        case measurement_UNIT_vu: value="vu"; break;
         default:
             LogWarning("Unknown value '%d' for att.measurement@unit", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4234,11 +4234,11 @@ std::string AttConverter::MeiVersionMeiversionToStr(meiVersion_MEIVERSION data) 
 {
     std::string value;
     switch (data) {
-        case meiVersion_MEIVERSION_4_0_0: value = "4.0.0"; break;
-        case meiVersion_MEIVERSION_4_0_1: value = "4.0.1"; break;
+        case meiVersion_MEIVERSION_4_0_0: value="4.0.0"; break;
+        case meiVersion_MEIVERSION_4_0_1: value="4.0.1"; break;
         default:
             LogWarning("Unknown value '%d' for att.meiVersion@meiversion", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4257,11 +4257,11 @@ std::string AttConverter::MensurVisFormToStr(mensurVis_FORM data) const
 {
     std::string value;
     switch (data) {
-        case mensurVis_FORM_horizontal: value = "horizontal"; break;
-        case mensurVis_FORM_vertical: value = "vertical"; break;
+        case mensurVis_FORM_horizontal: value="horizontal"; break;
+        case mensurVis_FORM_vertical: value="vertical"; break;
         default:
             LogWarning("Unknown value '%d' for att.mensur.vis@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4280,11 +4280,11 @@ std::string AttConverter::MensuralVisMensurformToStr(mensuralVis_MENSURFORM data
 {
     std::string value;
     switch (data) {
-        case mensuralVis_MENSURFORM_horizontal: value = "horizontal"; break;
-        case mensuralVis_MENSURFORM_vertical: value = "vertical"; break;
+        case mensuralVis_MENSURFORM_horizontal: value="horizontal"; break;
+        case mensuralVis_MENSURFORM_vertical: value="vertical"; break;
         default:
             LogWarning("Unknown value '%d' for att.mensural.vis@mensur.form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4303,12 +4303,12 @@ std::string AttConverter::MeterConformanceMetconToStr(meterConformance_METCON da
 {
     std::string value;
     switch (data) {
-        case meterConformance_METCON_c: value = "c"; break;
-        case meterConformance_METCON_i: value = "i"; break;
-        case meterConformance_METCON_o: value = "o"; break;
+        case meterConformance_METCON_c: value="c"; break;
+        case meterConformance_METCON_i: value="i"; break;
+        case meterConformance_METCON_o: value="o"; break;
         default:
             LogWarning("Unknown value '%d' for att.meterConformance@metcon", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4328,12 +4328,12 @@ std::string AttConverter::MeterSigGrpLogFuncToStr(meterSigGrpLog_FUNC data) cons
 {
     std::string value;
     switch (data) {
-        case meterSigGrpLog_FUNC_alternating: value = "alternating"; break;
-        case meterSigGrpLog_FUNC_interchanging: value = "interchanging"; break;
-        case meterSigGrpLog_FUNC_mixed: value = "mixed"; break;
+        case meterSigGrpLog_FUNC_alternating: value="alternating"; break;
+        case meterSigGrpLog_FUNC_interchanging: value="interchanging"; break;
+        case meterSigGrpLog_FUNC_mixed: value="mixed"; break;
         default:
             LogWarning("Unknown value '%d' for att.meterSigGrp.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4353,11 +4353,11 @@ std::string AttConverter::MordentLogFormToStr(mordentLog_FORM data) const
 {
     std::string value;
     switch (data) {
-        case mordentLog_FORM_lower: value = "lower"; break;
-        case mordentLog_FORM_upper: value = "upper"; break;
+        case mordentLog_FORM_lower: value="lower"; break;
+        case mordentLog_FORM_upper: value="upper"; break;
         default:
             LogWarning("Unknown value '%d' for att.mordent.log@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4376,12 +4376,12 @@ std::string AttConverter::NcFormConToStr(ncForm_CON data) const
 {
     std::string value;
     switch (data) {
-        case ncForm_CON_g: value = "g"; break;
-        case ncForm_CON_l: value = "l"; break;
-        case ncForm_CON_e: value = "e"; break;
+        case ncForm_CON_g: value="g"; break;
+        case ncForm_CON_l: value="l"; break;
+        case ncForm_CON_e: value="e"; break;
         default:
             LogWarning("Unknown value '%d' for att.ncForm@con", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4401,11 +4401,11 @@ std::string AttConverter::NcFormCurveToStr(ncForm_CURVE data) const
 {
     std::string value;
     switch (data) {
-        case ncForm_CURVE_a: value = "a"; break;
-        case ncForm_CURVE_c: value = "c"; break;
+        case ncForm_CURVE_a: value="a"; break;
+        case ncForm_CURVE_c: value="c"; break;
         default:
             LogWarning("Unknown value '%d' for att.ncForm@curve", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4424,11 +4424,11 @@ std::string AttConverter::NcFormRellenToStr(ncForm_RELLEN data) const
 {
     std::string value;
     switch (data) {
-        case ncForm_RELLEN_l: value = "l"; break;
-        case ncForm_RELLEN_s: value = "s"; break;
+        case ncForm_RELLEN_l: value="l"; break;
+        case ncForm_RELLEN_s: value="s"; break;
         default:
             LogWarning("Unknown value '%d' for att.ncForm@rellen", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4447,11 +4447,11 @@ std::string AttConverter::NoteAnlMensuralLigToStr(noteAnlMensural_LIG data) cons
 {
     std::string value;
     switch (data) {
-        case noteAnlMensural_LIG_recta: value = "recta"; break;
-        case noteAnlMensural_LIG_obliqua: value = "obliqua"; break;
+        case noteAnlMensural_LIG_recta: value="recta"; break;
+        case noteAnlMensural_LIG_obliqua: value="obliqua"; break;
         default:
             LogWarning("Unknown value '%d' for att.note.anl.mensural@lig", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4470,11 +4470,11 @@ std::string AttConverter::NoteGesExtremisToStr(noteGes_EXTREMIS data) const
 {
     std::string value;
     switch (data) {
-        case noteGes_EXTREMIS_highest: value = "highest"; break;
-        case noteGes_EXTREMIS_lowest: value = "lowest"; break;
+        case noteGes_EXTREMIS_highest: value="highest"; break;
+        case noteGes_EXTREMIS_lowest: value="lowest"; break;
         default:
             LogWarning("Unknown value '%d' for att.note.ges@extremis", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4493,10 +4493,10 @@ std::string AttConverter::NoteHeadsHeadauthToStr(noteHeads_HEADAUTH data) const
 {
     std::string value;
     switch (data) {
-        case noteHeads_HEADAUTH_smufl: value = "smufl"; break;
+        case noteHeads_HEADAUTH_smufl: value="smufl"; break;
         default:
             LogWarning("Unknown value '%d' for att.noteHeads@head.auth", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4514,10 +4514,10 @@ std::string AttConverter::OctaveLogCollToStr(octaveLog_COLL data) const
 {
     std::string value;
     switch (data) {
-        case octaveLog_COLL_coll: value = "coll"; break;
+        case octaveLog_COLL_coll: value="coll"; break;
         default:
             LogWarning("Unknown value '%d' for att.octave.log@coll", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4535,11 +4535,11 @@ std::string AttConverter::PbVisFoliumToStr(pbVis_FOLIUM data) const
 {
     std::string value;
     switch (data) {
-        case pbVis_FOLIUM_verso: value = "verso"; break;
-        case pbVis_FOLIUM_recto: value = "recto"; break;
+        case pbVis_FOLIUM_verso: value="verso"; break;
+        case pbVis_FOLIUM_recto: value="recto"; break;
         default:
             LogWarning("Unknown value '%d' for att.pb.vis@folium", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4558,13 +4558,13 @@ std::string AttConverter::PedalLogDirToStr(pedalLog_DIR data) const
 {
     std::string value;
     switch (data) {
-        case pedalLog_DIR_down: value = "down"; break;
-        case pedalLog_DIR_up: value = "up"; break;
-        case pedalLog_DIR_half: value = "half"; break;
-        case pedalLog_DIR_bounce: value = "bounce"; break;
+        case pedalLog_DIR_down: value="down"; break;
+        case pedalLog_DIR_up: value="up"; break;
+        case pedalLog_DIR_half: value="half"; break;
+        case pedalLog_DIR_bounce: value="bounce"; break;
         default:
             LogWarning("Unknown value '%d' for att.pedal.log@dir", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4585,13 +4585,13 @@ std::string AttConverter::PedalLogFuncToStr(pedalLog_FUNC data) const
 {
     std::string value;
     switch (data) {
-        case pedalLog_FUNC_sustain: value = "sustain"; break;
-        case pedalLog_FUNC_soft: value = "soft"; break;
-        case pedalLog_FUNC_sostenuto: value = "sostenuto"; break;
-        case pedalLog_FUNC_silent: value = "silent"; break;
+        case pedalLog_FUNC_sustain: value="sustain"; break;
+        case pedalLog_FUNC_soft: value="soft"; break;
+        case pedalLog_FUNC_sostenuto: value="sostenuto"; break;
+        case pedalLog_FUNC_silent: value="silent"; break;
         default:
             LogWarning("Unknown value '%d' for att.pedal.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4612,12 +4612,12 @@ std::string AttConverter::PedalVisFormToStr(pedalVis_FORM data) const
 {
     std::string value;
     switch (data) {
-        case pedalVis_FORM_line: value = "line"; break;
-        case pedalVis_FORM_pedstar: value = "pedstar"; break;
-        case pedalVis_FORM_altpedstar: value = "altpedstar"; break;
+        case pedalVis_FORM_line: value="line"; break;
+        case pedalVis_FORM_pedstar: value="pedstar"; break;
+        case pedalVis_FORM_altpedstar: value="altpedstar"; break;
         default:
             LogWarning("Unknown value '%d' for att.pedal.vis@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4637,12 +4637,12 @@ std::string AttConverter::PianoPedalsPedalstyleToStr(pianoPedals_PEDALSTYLE data
 {
     std::string value;
     switch (data) {
-        case pianoPedals_PEDALSTYLE_line: value = "line"; break;
-        case pianoPedals_PEDALSTYLE_pedstar: value = "pedstar"; break;
-        case pianoPedals_PEDALSTYLE_altpedstar: value = "altpedstar"; break;
+        case pianoPedals_PEDALSTYLE_line: value="line"; break;
+        case pianoPedals_PEDALSTYLE_pedstar: value="pedstar"; break;
+        case pianoPedals_PEDALSTYLE_altpedstar: value="altpedstar"; break;
         default:
             LogWarning("Unknown value '%d' for att.pianoPedals@pedal.style", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4662,13 +4662,13 @@ std::string AttConverter::PointingXlinkactuateToStr(pointing_XLINKACTUATE data) 
 {
     std::string value;
     switch (data) {
-        case pointing_XLINKACTUATE_onLoad: value = "onLoad"; break;
-        case pointing_XLINKACTUATE_onRequest: value = "onRequest"; break;
-        case pointing_XLINKACTUATE_none: value = "none"; break;
-        case pointing_XLINKACTUATE_other: value = "other"; break;
+        case pointing_XLINKACTUATE_onLoad: value="onLoad"; break;
+        case pointing_XLINKACTUATE_onRequest: value="onRequest"; break;
+        case pointing_XLINKACTUATE_none: value="none"; break;
+        case pointing_XLINKACTUATE_other: value="other"; break;
         default:
             LogWarning("Unknown value '%d' for att.pointing@xlink:actuate", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4689,14 +4689,14 @@ std::string AttConverter::PointingXlinkshowToStr(pointing_XLINKSHOW data) const
 {
     std::string value;
     switch (data) {
-        case pointing_XLINKSHOW_new: value = "new"; break;
-        case pointing_XLINKSHOW_replace: value = "replace"; break;
-        case pointing_XLINKSHOW_embed: value = "embed"; break;
-        case pointing_XLINKSHOW_none: value = "none"; break;
-        case pointing_XLINKSHOW_other: value = "other"; break;
+        case pointing_XLINKSHOW_new: value="new"; break;
+        case pointing_XLINKSHOW_replace: value="replace"; break;
+        case pointing_XLINKSHOW_embed: value="embed"; break;
+        case pointing_XLINKSHOW_none: value="none"; break;
+        case pointing_XLINKSHOW_other: value="other"; break;
         default:
             LogWarning("Unknown value '%d' for att.pointing@xlink:show", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4718,23 +4718,23 @@ std::string AttConverter::RecordTypeRecordtypeToStr(recordType_RECORDTYPE data) 
 {
     std::string value;
     switch (data) {
-        case recordType_RECORDTYPE_a: value = "a"; break;
-        case recordType_RECORDTYPE_c: value = "c"; break;
-        case recordType_RECORDTYPE_d: value = "d"; break;
-        case recordType_RECORDTYPE_e: value = "e"; break;
-        case recordType_RECORDTYPE_f: value = "f"; break;
-        case recordType_RECORDTYPE_g: value = "g"; break;
-        case recordType_RECORDTYPE_i: value = "i"; break;
-        case recordType_RECORDTYPE_j: value = "j"; break;
-        case recordType_RECORDTYPE_k: value = "k"; break;
-        case recordType_RECORDTYPE_m: value = "m"; break;
-        case recordType_RECORDTYPE_o: value = "o"; break;
-        case recordType_RECORDTYPE_p: value = "p"; break;
-        case recordType_RECORDTYPE_r: value = "r"; break;
-        case recordType_RECORDTYPE_t: value = "t"; break;
+        case recordType_RECORDTYPE_a: value="a"; break;
+        case recordType_RECORDTYPE_c: value="c"; break;
+        case recordType_RECORDTYPE_d: value="d"; break;
+        case recordType_RECORDTYPE_e: value="e"; break;
+        case recordType_RECORDTYPE_f: value="f"; break;
+        case recordType_RECORDTYPE_g: value="g"; break;
+        case recordType_RECORDTYPE_i: value="i"; break;
+        case recordType_RECORDTYPE_j: value="j"; break;
+        case recordType_RECORDTYPE_k: value="k"; break;
+        case recordType_RECORDTYPE_m: value="m"; break;
+        case recordType_RECORDTYPE_o: value="o"; break;
+        case recordType_RECORDTYPE_p: value="p"; break;
+        case recordType_RECORDTYPE_r: value="r"; break;
+        case recordType_RECORDTYPE_t: value="t"; break;
         default:
             LogWarning("Unknown value '%d' for att.recordType@recordtype", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4765,11 +4765,11 @@ std::string AttConverter::RegularMethodMethodToStr(regularMethod_METHOD data) co
 {
     std::string value;
     switch (data) {
-        case regularMethod_METHOD_silent: value = "silent"; break;
-        case regularMethod_METHOD_tags: value = "tags"; break;
+        case regularMethod_METHOD_silent: value="silent"; break;
+        case regularMethod_METHOD_tags: value="tags"; break;
         default:
             LogWarning("Unknown value '%d' for att.regularMethod@method", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4788,12 +4788,12 @@ std::string AttConverter::RehearsalRehencloseToStr(rehearsal_REHENCLOSE data) co
 {
     std::string value;
     switch (data) {
-        case rehearsal_REHENCLOSE_box: value = "box"; break;
-        case rehearsal_REHENCLOSE_circle: value = "circle"; break;
-        case rehearsal_REHENCLOSE_none: value = "none"; break;
+        case rehearsal_REHENCLOSE_box: value="box"; break;
+        case rehearsal_REHENCLOSE_circle: value="circle"; break;
+        case rehearsal_REHENCLOSE_none: value="none"; break;
         default:
             LogWarning("Unknown value '%d' for att.rehearsal@reh.enclose", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4813,10 +4813,10 @@ std::string AttConverter::SbVisFormToStr(sbVis_FORM data) const
 {
     std::string value;
     switch (data) {
-        case sbVis_FORM_hash: value = "hash"; break;
+        case sbVis_FORM_hash: value="hash"; break;
         default:
             LogWarning("Unknown value '%d' for att.sb.vis@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4834,14 +4834,14 @@ std::string AttConverter::StaffGroupingSymSymbolToStr(staffGroupingSym_SYMBOL da
 {
     std::string value;
     switch (data) {
-        case staffGroupingSym_SYMBOL_brace: value = "brace"; break;
-        case staffGroupingSym_SYMBOL_bracket: value = "bracket"; break;
-        case staffGroupingSym_SYMBOL_bracketsq: value = "bracketsq"; break;
-        case staffGroupingSym_SYMBOL_line: value = "line"; break;
-        case staffGroupingSym_SYMBOL_none: value = "none"; break;
+        case staffGroupingSym_SYMBOL_brace: value="brace"; break;
+        case staffGroupingSym_SYMBOL_bracket: value="bracket"; break;
+        case staffGroupingSym_SYMBOL_bracketsq: value="bracketsq"; break;
+        case staffGroupingSym_SYMBOL_line: value="line"; break;
+        case staffGroupingSym_SYMBOL_none: value="none"; break;
         default:
             LogWarning("Unknown value '%d' for att.staffGroupingSym@symbol", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4863,17 +4863,17 @@ std::string AttConverter::SylLogConToStr(sylLog_CON data) const
 {
     std::string value;
     switch (data) {
-        case sylLog_CON_s: value = "s"; break;
-        case sylLog_CON_d: value = "d"; break;
-        case sylLog_CON_u: value = "u"; break;
-        case sylLog_CON_t: value = "t"; break;
-        case sylLog_CON_c: value = "c"; break;
-        case sylLog_CON_v: value = "v"; break;
-        case sylLog_CON_i: value = "i"; break;
-        case sylLog_CON_b: value = "b"; break;
+        case sylLog_CON_s: value="s"; break;
+        case sylLog_CON_d: value="d"; break;
+        case sylLog_CON_u: value="u"; break;
+        case sylLog_CON_t: value="t"; break;
+        case sylLog_CON_c: value="c"; break;
+        case sylLog_CON_v: value="v"; break;
+        case sylLog_CON_i: value="i"; break;
+        case sylLog_CON_b: value="b"; break;
         default:
             LogWarning("Unknown value '%d' for att.syl.log@con", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4898,13 +4898,13 @@ std::string AttConverter::SylLogWordposToStr(sylLog_WORDPOS data) const
 {
     std::string value;
     switch (data) {
-        case sylLog_WORDPOS_i: value = "i"; break;
-        case sylLog_WORDPOS_m: value = "m"; break;
-        case sylLog_WORDPOS_s: value = "s"; break;
-        case sylLog_WORDPOS_t: value = "t"; break;
+        case sylLog_WORDPOS_i: value="i"; break;
+        case sylLog_WORDPOS_m: value="m"; break;
+        case sylLog_WORDPOS_s: value="s"; break;
+        case sylLog_WORDPOS_t: value="t"; break;
         default:
             LogWarning("Unknown value '%d' for att.syl.log@wordpos", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4925,12 +4925,12 @@ std::string AttConverter::TargetEvalEvaluateToStr(targetEval_EVALUATE data) cons
 {
     std::string value;
     switch (data) {
-        case targetEval_EVALUATE_all: value = "all"; break;
-        case targetEval_EVALUATE_one: value = "one"; break;
-        case targetEval_EVALUATE_none: value = "none"; break;
+        case targetEval_EVALUATE_all: value="all"; break;
+        case targetEval_EVALUATE_one: value="one"; break;
+        case targetEval_EVALUATE_none: value="none"; break;
         default:
             LogWarning("Unknown value '%d' for att.targetEval@evaluate", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4950,13 +4950,13 @@ std::string AttConverter::TempoLogFuncToStr(tempoLog_FUNC data) const
 {
     std::string value;
     switch (data) {
-        case tempoLog_FUNC_continuous: value = "continuous"; break;
-        case tempoLog_FUNC_instantaneous: value = "instantaneous"; break;
-        case tempoLog_FUNC_metricmod: value = "metricmod"; break;
-        case tempoLog_FUNC_precedente: value = "precedente"; break;
+        case tempoLog_FUNC_continuous: value="continuous"; break;
+        case tempoLog_FUNC_instantaneous: value="instantaneous"; break;
+        case tempoLog_FUNC_metricmod: value="metricmod"; break;
+        case tempoLog_FUNC_precedente: value="precedente"; break;
         default:
             LogWarning("Unknown value '%d' for att.tempo.log@func", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -4977,11 +4977,11 @@ std::string AttConverter::TupletVisNumformatToStr(tupletVis_NUMFORMAT data) cons
 {
     std::string value;
     switch (data) {
-        case tupletVis_NUMFORMAT_count: value = "count"; break;
-        case tupletVis_NUMFORMAT_ratio: value = "ratio"; break;
+        case tupletVis_NUMFORMAT_count: value="count"; break;
+        case tupletVis_NUMFORMAT_ratio: value="ratio"; break;
         default:
             LogWarning("Unknown value '%d' for att.tuplet.vis@num.format", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -5000,11 +5000,11 @@ std::string AttConverter::TurnLogFormToStr(turnLog_FORM data) const
 {
     std::string value;
     switch (data) {
-        case turnLog_FORM_lower: value = "lower"; break;
-        case turnLog_FORM_upper: value = "upper"; break;
+        case turnLog_FORM_lower: value="lower"; break;
+        case turnLog_FORM_upper: value="upper"; break;
         default:
             LogWarning("Unknown value '%d' for att.turn.log@form", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -5023,14 +5023,14 @@ std::string AttConverter::VoltaGroupingSymVoltasymToStr(voltaGroupingSym_VOLTASY
 {
     std::string value;
     switch (data) {
-        case voltaGroupingSym_VOLTASYM_brace: value = "brace"; break;
-        case voltaGroupingSym_VOLTASYM_bracket: value = "bracket"; break;
-        case voltaGroupingSym_VOLTASYM_bracketsq: value = "bracketsq"; break;
-        case voltaGroupingSym_VOLTASYM_line: value = "line"; break;
-        case voltaGroupingSym_VOLTASYM_none: value = "none"; break;
+        case voltaGroupingSym_VOLTASYM_brace: value="brace"; break;
+        case voltaGroupingSym_VOLTASYM_bracket: value="bracket"; break;
+        case voltaGroupingSym_VOLTASYM_bracketsq: value="bracketsq"; break;
+        case voltaGroupingSym_VOLTASYM_line: value="line"; break;
+        case voltaGroupingSym_VOLTASYM_none: value="none"; break;
         default:
             LogWarning("Unknown value '%d' for att.voltaGroupingSym@voltasym", data);
-            value = "";
+            value="";
             break;
     }
     return value;
@@ -5052,11 +5052,11 @@ std::string AttConverter::WhitespaceXmlspaceToStr(whitespace_XMLSPACE data) cons
 {
     std::string value;
     switch (data) {
-        case whitespace_XMLSPACE_default: value = "default"; break;
-        case whitespace_XMLSPACE_preserve: value = "preserve"; break;
+        case whitespace_XMLSPACE_default: value="default"; break;
+        case whitespace_XMLSPACE_preserve: value="preserve"; break;
         default:
             LogWarning("Unknown value '%d' for att.whitespace@xml:space", data);
-            value = "";
+            value="";
             break;
     }
     return value;

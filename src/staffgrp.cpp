@@ -56,7 +56,7 @@ void StaffGrp::Reset()
     ResetStaffGrpVis();
     ResetTyped();
 
-    m_drawingVisibility = OPTIMIZATION_NONE;
+    m_drawingVisibility=OPTIMIZATION_NONE;
 }
 
 bool StaffGrp::IsSupportedChild(Object *child)
@@ -88,11 +88,11 @@ bool StaffGrp::IsSupportedChild(Object *child)
 void StaffGrp::FilterList(ArrayOfObjects *childList)
 {
     // We want to keep only staffDef
-    ArrayOfObjects::iterator iter = childList->begin();
+    ArrayOfObjects::iterator iter=childList->begin();
 
     while (iter != childList->end()) {
         if (!(*iter)->Is(STAFFDEF)) {
-            iter = childList->erase(iter);
+            iter=childList->erase(iter);
         }
         else {
             ++iter;
@@ -103,21 +103,21 @@ void StaffGrp::FilterList(ArrayOfObjects *childList)
 int StaffGrp::GetMaxStaffSize()
 {
     this->ResetList(this);
-    const ArrayOfObjects *childList = this->GetList(this);
+    const ArrayOfObjects *childList=this->GetList(this);
 
     if (childList->empty()) return 100;
 
-    int max = 0;
+    int max=0;
 
-    StaffDef *staffDef = NULL;
+    StaffDef *staffDef=NULL;
     for (auto &child : *childList) {
-        staffDef = vrv_cast<StaffDef *>(child);
+        staffDef=vrv_cast<StaffDef *>(child);
         assert(staffDef);
         if (staffDef->HasScale() && staffDef->GetScale() >= max) {
-            max = staffDef->GetScale();
+            max=staffDef->GetScale();
         }
         else {
-            max = 100;
+            max=100;
         }
     }
 
@@ -130,14 +130,14 @@ int StaffGrp::GetMaxStaffSize()
 
 int StaffGrp::OptimizeScoreDefEnd(FunctorParams *)
 {
-    // OptimizeScoreDefParams *params = vrv_params_cast<OptimizeScoreDefParams *>(functorParams);
+    // OptimizeScoreDefParams *params=vrv_params_cast<OptimizeScoreDefParams *>(functorParams);
     // assert(params);
 
     this->SetDrawingVisibility(OPTIMIZATION_HIDDEN);
 
     for (auto &child : m_children) {
         if (child->Is(STAFFDEF)) {
-            StaffDef *staffDef = vrv_cast<StaffDef *>(child);
+            StaffDef *staffDef=vrv_cast<StaffDef *>(child);
             assert(staffDef);
             if (staffDef->GetDrawingVisibility() != OPTIMIZATION_HIDDEN) {
                 this->SetDrawingVisibility(OPTIMIZATION_SHOW);
@@ -145,7 +145,7 @@ int StaffGrp::OptimizeScoreDefEnd(FunctorParams *)
             }
         }
         else if (child->Is(STAFFGRP)) {
-            StaffGrp *staffGrp = vrv_cast<StaffGrp *>(child);
+            StaffGrp *staffGrp=vrv_cast<StaffGrp *>(child);
             assert(staffGrp);
             if (staffGrp->GetDrawingVisibility() != OPTIMIZATION_HIDDEN) {
                 this->SetDrawingVisibility(OPTIMIZATION_SHOW);
@@ -157,7 +157,7 @@ int StaffGrp::OptimizeScoreDefEnd(FunctorParams *)
     if ((this->GetSymbol() == staffGroupingSym_SYMBOL_brace) && (this->GetDrawingVisibility() != OPTIMIZATION_HIDDEN)) {
         for (auto &child : m_children) {
             if (child->Is(STAFFDEF)) {
-                StaffDef *staffDef = vrv_cast<StaffDef *>(child);
+                StaffDef *staffDef=vrv_cast<StaffDef *>(child);
                 assert(staffDef);
                 staffDef->SetDrawingVisibility(OPTIMIZATION_SHOW);
             }

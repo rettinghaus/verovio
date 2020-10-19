@@ -49,10 +49,10 @@ int FacsimileInterface::GetDrawingY() const
     assert(m_zone);
     int y;
     if (m_zone->GetRotate() >= 0) {
-        y = m_zone->GetLogicalUly();
+        y=m_zone->GetLogicalUly();
     }
     else {
-        y = m_zone->GetLogicalUly() - (m_zone->GetLrx() - m_zone->GetUlx()) * tan(m_zone->GetRotate() * M_PI / 180.0);
+        y=m_zone->GetLogicalUly() - (m_zone->GetLrx() - m_zone->GetUlx()) * tan(m_zone->GetRotate() * M_PI / 180.0);
     }
     return y;
 }
@@ -78,7 +78,7 @@ double FacsimileInterface::GetDrawingRotate() const
 int FacsimileInterface::GetSurfaceY() const
 {
     assert(m_zone);
-    Surface *surface = vrv_cast<Surface *>(m_zone->GetFirstAncestor(SURFACE));
+    Surface *surface=vrv_cast<Surface *>(m_zone->GetFirstAncestor(SURFACE));
     assert(surface);
     if (surface->HasLry()) {
         return surface->GetLry();
@@ -91,12 +91,12 @@ int FacsimileInterface::GetSurfaceY() const
 void FacsimileInterface::SetZone(Zone *zone)
 {
     if (m_zone != NULL) {
-        Object *parent = m_zone->GetParent();
+        Object *parent=m_zone->GetParent();
         if (!parent->DeleteChild(m_zone)) {
             printf("Failed to delete zone with ID %s\n", m_zone->GetUuid().c_str());
         }
     }
-    m_zone = zone;
+    m_zone=zone;
     if (m_zone == NULL) {
         this->SetFacs("");
     }

@@ -41,36 +41,36 @@ AttTabular::~AttTabular()
 
 void AttTabular::ResetTabular()
 {
-    m_colspan = 0;
-    m_rowspan = 0;
+    m_colspan=0;
+    m_rowspan=0;
 }
 
 bool AttTabular::ReadTabular(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("colspan")) {
         this->SetColspan(StrToInt(element.attribute("colspan").value()));
         element.remove_attribute("colspan");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     if (element.attribute("rowspan")) {
         this->SetRowspan(StrToInt(element.attribute("rowspan").value()));
         element.remove_attribute("rowspan");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttTabular::WriteTabular(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasColspan()) {
-        element.append_attribute("colspan") = IntToStr(this->GetColspan()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("colspan")=IntToStr(this->GetColspan()).c_str();
+        wroteAttribute=true;
     }
     if (this->HasRowspan()) {
-        element.append_attribute("rowspan") = IntToStr(this->GetRowspan()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("rowspan")=IntToStr(this->GetRowspan()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -90,7 +90,7 @@ bool AttTabular::HasRowspan() const
 bool Att::SetFigtable(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_TABULAR)) {
-        AttTabular *att = dynamic_cast<AttTabular *>(element);
+        AttTabular *att=dynamic_cast<AttTabular *>(element);
         assert(att);
         if (attrType == "colspan") {
             att->SetColspan(att->StrToInt(attrValue));
@@ -108,7 +108,7 @@ bool Att::SetFigtable(Object *element, const std::string &attrType, const std::s
 void Att::GetFigtable(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_TABULAR)) {
-        const AttTabular *att = dynamic_cast<const AttTabular *>(element);
+        const AttTabular *att=dynamic_cast<const AttTabular *>(element);
         assert(att);
         if (att->HasColspan()) {
             attributes->push_back(std::make_pair("colspan", att->IntToStr(att->GetColspan())));

@@ -115,7 +115,7 @@ public:
     /**
      * @name Navigation methods for changing the page in the view.
      * Navigating will check that the page exists in the document and also set it
-     * by calling SetPage (with doLayout = true);
+     * by calling SetPage (with doLayout=true);
      */
     void Next(bool forward);
     bool HasNext(bool forward);
@@ -153,7 +153,7 @@ public:
      * This is the default behavior, however, in some cases, we do not
      * want it. For example, when drawing the pages for getting the bounding boxes.
      */
-    void SetPage(int pageIdx, bool doLayout = true);
+    void SetPage(int pageIdx, bool doLayout=true);
 
     /**
      * Method that actually draw the current page.
@@ -163,7 +163,7 @@ public:
      * current page and it will still work properly.
      * Defined in view_page.cpp
      */
-    void DrawCurrentPage(DeviceContext *dc, bool background = true);
+    void DrawCurrentPage(DeviceContext *dc, bool background=true);
 
     /**
      * Return the pixel per unit factor of the current page (if any, 1.0 otherwise)
@@ -187,20 +187,20 @@ protected:
     ///@{
     void DrawSystem(DeviceContext *dc, System *system);
     void DrawSystemList(DeviceContext *dc, System *system, const ClassId classId);
-    void DrawScoreDef(DeviceContext *dc, ScoreDef *scoreDef, Measure *measure, int x, BarLine *barLine = NULL,
-        bool isLastMeasure = false);
-    void DrawStaffGrp(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, int x, bool topStaffGrp = false,
-        bool abbreviations = false);
+    void DrawScoreDef(DeviceContext *dc, ScoreDef *scoreDef, Measure *measure, int x, BarLine *barLine=NULL,
+        bool isLastMeasure=false);
+    void DrawStaffGrp(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, int x, bool topStaffGrp=false,
+        bool abbreviations=false);
     void DrawStaffDef(DeviceContext *dc, Staff *staff, Measure *measure);
     void DrawStaffDefCautionary(DeviceContext *dc, Staff *staff, Measure *measure);
-    void DrawStaffDefLabels(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, int x, bool abbreviations = false);
+    void DrawStaffDefLabels(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, int x, bool abbreviations=false);
     void DrawLabels(
         DeviceContext *dc, System *system, Object *object, int x, int y, bool abbreviations, int staffSize, int space);
     void DrawBracket(DeviceContext *dc, int x, int y1, int y2, int staffSize);
     void DrawBracketsq(DeviceContext *dc, int x, int y1, int y2, int staffSize);
     void DrawBrace(DeviceContext *dc, int x, int y1, int y2, int staffSize);
     void DrawBarLines(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, BarLine *barLine, bool isLastMeasure);
-    void DrawBarLine(DeviceContext *dc, int y_top, int y_bottom, BarLine *barLine, bool eraseIntersections = false);
+    void DrawBarLine(DeviceContext *dc, int y_top, int y_bottom, BarLine *barLine, bool eraseIntersections=false);
     void DrawBarLineDots(DeviceContext *dc, Staff *staff, BarLine *barLine);
     void DrawLedgerLines(DeviceContext *dc, Staff *staff, ArrayOfLedgerLines *lines, bool below, bool cueSize);
     void DrawMeasure(DeviceContext *dc, Measure *measure, System *system);
@@ -260,7 +260,7 @@ protected:
      * Defined in view_page.cpp
      */
     ///@{
-    void DrawAnnot(DeviceContext *dc, EditorialElement *element, bool isTextElement = false);
+    void DrawAnnot(DeviceContext *dc, EditorialElement *element, bool isTextElement=false);
     ///@}
 
     /**
@@ -413,26 +413,26 @@ protected:
      */
     ///@{
     void DrawControlElementConnector(DeviceContext *dc, ControlElement *element, int x1, int x2, Staff *staff,
-        char spanningType, Object *graphic = NULL);
+        char spanningType, Object *graphic=NULL);
     void DrawBracketSpan(DeviceContext *dc, BracketSpan *bracketSpan, int x1, int x2, Staff *staff, char spanningType,
-        Object *graphic = NULL);
+        Object *graphic=NULL);
     void DrawFConnector(
-        DeviceContext *dc, F *f, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, F *f, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     void DrawGliss(
-        DeviceContext *dc, Gliss *gliss, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, Gliss *gliss, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     void DrawHairpin(
-        DeviceContext *dc, Hairpin *hairpin, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, Hairpin *hairpin, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     void DrawOctave(
-        DeviceContext *dc, Octave *octave, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, Octave *octave, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     void DrawPedalLine(
-        DeviceContext *dc, Pedal *pedal, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, Pedal *pedal, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     void DrawSlur(
-        DeviceContext *dc, Slur *slur, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
-    void DrawTie(DeviceContext *dc, Tie *tie, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, Slur *slur, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
+    void DrawTie(DeviceContext *dc, Tie *tie, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     void DrawTrillExtension(
-        DeviceContext *dc, Trill *trill, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, Trill *trill, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     void DrawSylConnector(
-        DeviceContext *dc, Syl *syl, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+        DeviceContext *dc, Syl *syl, int x1, int x2, Staff *staff, char spanningType, Object *graphic=NULL);
     ///@}
 
     /**
@@ -471,7 +471,7 @@ protected:
      */
     ///@{
     void DrawMensuralStem(DeviceContext *dc, Note *note, Staff *staff, data_STEMDIRECTION dir, int radius, int xn,
-        int originY, int heightY = 0);
+        int originY, int heightY=0);
     void DrawMaximaToBrevis(DeviceContext *dc, int y, LayerElement *element, Layer *layer, Staff *staff);
     void DrawProportFigures(DeviceContext *dc, int x, int y, int num, int numBase, Staff *staff);
     ///@}
@@ -489,25 +489,25 @@ protected:
      * Defined in view_graph.cpp
      */
     ///@{
-    void DrawVerticalLine(DeviceContext *dc, int y1, int y2, int x1, int width, int dashLength = 0);
-    void DrawHorizontalLine(DeviceContext *dc, int x1, int x2, int y1, int width, int dashLength = 0);
+    void DrawVerticalLine(DeviceContext *dc, int y1, int y2, int x1, int width, int dashLength=0);
+    void DrawHorizontalLine(DeviceContext *dc, int x1, int x2, int y1, int width, int dashLength=0);
     void DrawRoundedLine(DeviceContext *dc, int x1, int y1, int x2, int y2, int width);
-    void DrawVerticalSegmentedLine(DeviceContext *dc, int x1, SegmentedLine &line, int width, int dashLength = 0);
-    void DrawHorizontalSegmentedLine(DeviceContext *dc, int y1, SegmentedLine &line, int width, int dashLength = 0);
+    void DrawVerticalSegmentedLine(DeviceContext *dc, int x1, SegmentedLine &line, int width, int dashLength=0);
+    void DrawHorizontalSegmentedLine(DeviceContext *dc, int y1, SegmentedLine &line, int width, int dashLength=0);
     void DrawSmuflCode(
-        DeviceContext *dc, int x, int y, wchar_t code, int staffSize, bool dimin, bool setBBGlyph = false);
+        DeviceContext *dc, int x, int y, wchar_t code, int staffSize, bool dimin, bool setBBGlyph=false);
     void DrawThickBezierCurve(
-        DeviceContext *dc, Point bezier[4], int thickness, int staffSize, float angle = 0.0, int penStyle = AxSOLID);
+        DeviceContext *dc, Point bezier[4], int thickness, int staffSize, float angle=0.0, int penStyle=AxSOLID);
     void DrawPartFilledRectangle(DeviceContext *dc, int x1, int y1, int x2, int y2, int fillSection);
     void DrawTextString(DeviceContext *dc, std::wstring str, TextDrawingParams &params);
     void DrawDynamString(DeviceContext *dc, std::wstring str, TextDrawingParams &params, Rend *rend);
     void DrawHarmString(DeviceContext *dc, std::wstring str, TextDrawingParams &params);
     void DrawSmuflLine(DeviceContext *dc, Point orig, int length, int staffSize, bool dimin, wchar_t fill,
-        wchar_t start = 0, wchar_t end = 0);
+        wchar_t start=0, wchar_t end=0);
     void DrawSmuflString(DeviceContext *dc, int x, int y, std::wstring s, data_HORIZONTALALIGNMENT alignment,
-        int staffSize = 100, bool dimin = false, bool setBBGlyph = false);
-    void DrawLyricString(DeviceContext *dc, std::wstring str, int staffSize = 100,
-        std::optional<TextDrawingParams> params = std::nullopt);
+        int staffSize=100, bool dimin=false, bool setBBGlyph=false);
+    void DrawLyricString(DeviceContext *dc, std::wstring str, int staffSize=100,
+        std::optional<TextDrawingParams> params=std::nullopt);
     void DrawFilledRectangle(DeviceContext *dc, int x1, int y1, int x2, int y2);
     void DrawFilledRoundedRectangle(DeviceContext *dc, int x1, int y1, int x2, int y2, int radius);
     void DrawObliquePolygon(DeviceContext *dc, int x1, int y1, int x2, int y2, int height);

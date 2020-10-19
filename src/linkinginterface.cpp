@@ -36,31 +36,31 @@ void LinkingInterface::Reset()
 {
     ResetLinking();
 
-    m_next = NULL;
-    m_nextUuid = "";
-    m_sameas = NULL;
-    m_sameasUuid = "";
+    m_next=NULL;
+    m_nextUuid="";
+    m_sameas=NULL;
+    m_sameasUuid="";
 }
 
 void LinkingInterface::SetNextLink(Object *next)
 {
     assert(!m_next);
-    m_next = next;
+    m_next=next;
 }
 
 void LinkingInterface::SetSameasLink(Object *sameas)
 {
     assert(!m_sameas);
-    m_sameas = sameas;
+    m_sameas=sameas;
 }
 
 void LinkingInterface::SetUuidStr()
 {
     if (this->HasNext()) {
-        m_nextUuid = ExtractUuidFragment(this->GetNext());
+        m_nextUuid=ExtractUuidFragment(this->GetNext());
     }
     if (this->HasSameas()) {
-        m_sameasUuid = ExtractUuidFragment(this->GetSameas());
+        m_sameasUuid=ExtractUuidFragment(this->GetSameas());
     }
 }
 
@@ -76,7 +76,7 @@ Measure *LinkingInterface::GetNextMeasure()
 
 int LinkingInterface::InterfacePrepareLinking(FunctorParams *functorParams, Object *object)
 {
-    PrepareLinkingParams *params = vrv_params_cast<PrepareLinkingParams *>(functorParams);
+    PrepareLinkingParams *params=vrv_params_cast<PrepareLinkingParams *>(functorParams);
     assert(params);
 
     // This should not happen?
@@ -98,7 +98,7 @@ int LinkingInterface::InterfacePrepareLinking(FunctorParams *functorParams, Obje
 
 int LinkingInterface::InterfaceFillStaffCurrentTimeSpanning(FunctorParams *functorParams, Object *object)
 {
-    FillStaffCurrentTimeSpanningParams *params = vrv_params_cast<FillStaffCurrentTimeSpanningParams *>(functorParams);
+    FillStaffCurrentTimeSpanningParams *params=vrv_params_cast<FillStaffCurrentTimeSpanningParams *>(functorParams);
     assert(params);
 
     // Only Dir and Dynam can be spanning with @next (extender)
@@ -113,7 +113,7 @@ int LinkingInterface::InterfaceFillStaffCurrentTimeSpanning(FunctorParams *funct
 
     // if @extender is available, the explicit "true" is required
     if (object->HasAttClass(ATT_EXTENDER)) {
-        AttExtender *att = dynamic_cast<AttExtender *>(object);
+        AttExtender *att=dynamic_cast<AttExtender *>(object);
         assert(att);
         if (att->GetExtender() != BOOLEAN_true) return FUNCTOR_CONTINUE;
     }
@@ -125,10 +125,10 @@ int LinkingInterface::InterfaceFillStaffCurrentTimeSpanning(FunctorParams *funct
 
 int LinkingInterface::InterfaceResetDrawing(FunctorParams *functorParams, Object *object)
 {
-    m_next = NULL;
-    m_nextUuid = "";
-    m_sameas = NULL;
-    m_sameasUuid = "";
+    m_next=NULL;
+    m_nextUuid="";
+    m_sameas=NULL;
+    m_sameasUuid="";
     return FUNCTOR_CONTINUE;
 }
 

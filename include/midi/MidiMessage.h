@@ -137,8 +137,8 @@ class MidiMessage : public std::vector<uchar> {
 		void           makeMarker           (const std::string& text);
 		void           makeCue              (const std::string& text);
 		void           makeTimeSignature    (int top, int bottom,
-		                                     int clocksPerClick = 24,
-		                                     int num32dsPerQuarter = 8);
+		                                     int clocksPerClick=24,
+		                                     int num32dsPerQuarter=8);
 
 		void           makeTempo            (double tempo) { setTempo(tempo); }
 		int            getTempoMicro        (void) const;

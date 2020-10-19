@@ -30,7 +30,7 @@
 namespace vrv {
 
 int View::s_drawingLigX[2], View::s_drawingLigY[2]; // to keep coords. of ligatures
-bool View::s_drawingLigObliqua = false; // mark the first pass for an oblique
+bool View::s_drawingLigObliqua=false; // mark the first pass for an oblique
 
 //----------------------------------------------------------------------------
 // View - Mensural
@@ -44,33 +44,33 @@ void View::DrawMensuralNote(DeviceContext *dc, LayerElement *element, Layer *lay
     assert(staff);
     assert(measure);
 
-    Note *note = vrv_cast<Note *>(element);
+    Note *note=vrv_cast<Note *>(element);
     assert(note);
 
-    int yNote = element->GetDrawingY();
-    int xNote = element->GetDrawingX();
-    int drawingDur = note->GetDrawingDur();
-    int radius = note->GetDrawingRadius(m_doc);
-    int staffY = staff->GetDrawingY();
-    int verticalCenter = 0;
+    int yNote=element->GetDrawingY();
+    int xNote=element->GetDrawingX();
+    int drawingDur=note->GetDrawingDur();
+    int radius=note->GetDrawingRadius(m_doc);
+    int staffY=staff->GetDrawingY();
+    int verticalCenter=0;
 
     /************** Stem/notehead direction: **************/
 
     data_STEMDIRECTION layerStemDir;
-    data_STEMDIRECTION stemDir = STEMDIRECTION_NONE;
+    data_STEMDIRECTION stemDir=STEMDIRECTION_NONE;
 
-    verticalCenter = staffY - m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize) * 2;
+    verticalCenter=staffY - m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize) * 2;
     if (note->HasStemDir()) {
-        stemDir = note->GetStemDir();
+        stemDir=note->GetStemDir();
     }
-    else if ((layerStemDir = layer->GetDrawingStemDir(note)) != STEMDIRECTION_NONE) {
-        stemDir = layerStemDir;
+    else if ((layerStemDir=layer->GetDrawingStemDir(note)) != STEMDIRECTION_NONE) {
+        stemDir=layerStemDir;
     }
     else {
         if (drawingDur < DUR_1)
-            stemDir = STEMDIRECTION_down;
+            stemDir=STEMDIRECTION_down;
         else
-            stemDir = (yNote > verticalCenter) ? STEMDIRECTION_down : STEMDIRECTION_up;
+            stemDir=(yNote > verticalCenter) ? STEMDIRECTION_down : STEMDIRECTION_up;
     }
 
     /************** Noteheads: **************/
@@ -84,7 +84,7 @@ void View::DrawMensuralNote(DeviceContext *dc, LayerElement *element, Layer *lay
     }
     // Semibrevis and shorter
     else {
-        wchar_t code = note->GetMensuralSmuflNoteHead();
+        wchar_t code=note->GetMensuralSmuflNoteHead();
         dc->StartCustomGraphic("notehead");
         DrawSmuflCode(dc, xNote, yNote, code, staff->m_drawingStaffSize, false);
         dc->EndCustomGraphic();
@@ -110,24 +110,24 @@ void View::DrawMensuralRest(DeviceContext *dc, LayerElement *element, Layer *lay
 
     wchar_t charCode;
 
-    Rest *rest = vrv_cast<Rest *>(element);
+    Rest *rest=vrv_cast<Rest *>(element);
     assert(rest);
 
-    bool drawingCueSize = rest->GetDrawingCueSize();
-    int drawingDur = rest->GetActualDur();
-    int x = element->GetDrawingX();
-    int y = element->GetDrawingY();
+    bool drawingCueSize=rest->GetDrawingCueSize();
+    int drawingDur=rest->GetActualDur();
+    int x=element->GetDrawingX();
+    int y=element->GetDrawingY();
 
     switch (drawingDur) {
-        case DUR_MX: charCode = SMUFL_E9F0_mensuralRestMaxima; break;
-        case DUR_LG: charCode = SMUFL_E9F2_mensuralRestLongaImperfecta; break;
-        case DUR_BR: charCode = SMUFL_E9F3_mensuralRestBrevis; break;
-        case DUR_1: charCode = SMUFL_E9F4_mensuralRestSemibrevis; break;
-        case DUR_2: charCode = SMUFL_E9F5_mensuralRestMinima; break;
-        case DUR_4: charCode = SMUFL_E9F6_mensuralRestSemiminima; break;
-        case DUR_8: charCode = SMUFL_E9F7_mensuralRestFusa; break;
-        case DUR_16: charCode = SMUFL_E9F8_mensuralRestSemifusa; break;
-        default: charCode = 0; // This should never happen
+        case DUR_MX: charCode=SMUFL_E9F0_mensuralRestMaxima; break;
+        case DUR_LG: charCode=SMUFL_E9F2_mensuralRestLongaImperfecta; break;
+        case DUR_BR: charCode=SMUFL_E9F3_mensuralRestBrevis; break;
+        case DUR_1: charCode=SMUFL_E9F4_mensuralRestSemibrevis; break;
+        case DUR_2: charCode=SMUFL_E9F5_mensuralRestMinima; break;
+        case DUR_4: charCode=SMUFL_E9F6_mensuralRestSemiminima; break;
+        case DUR_8: charCode=SMUFL_E9F7_mensuralRestFusa; break;
+        case DUR_16: charCode=SMUFL_E9F8_mensuralRestSemifusa; break;
+        default: charCode=0; // This should never happen
     }
     DrawSmuflCode(dc, x, y, charCode, staff->m_drawingStaffSize, drawingCueSize);
 }
@@ -140,7 +140,7 @@ void View::DrawMensur(DeviceContext *dc, LayerElement *element, Layer *layer, St
     assert(staff);
     assert(measure);
 
-    Mensur *mensur = vrv_cast<Mensur *>(element);
+    Mensur *mensur=vrv_cast<Mensur *>(element);
     assert(mensur);
 
     if (!mensur->HasSign()) {
@@ -148,28 +148,28 @@ void View::DrawMensur(DeviceContext *dc, LayerElement *element, Layer *layer, St
         return;
     }
 
-    int y = staff->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * (staff->m_drawingLines - 1);
-    int x = element->GetDrawingX();
-    int perfectRadius = m_doc->GetGlyphWidth(SMUFL_E910_mensuralProlation1, staff->m_drawingStaffSize, false) / 2;
-    int code = 0;
+    int y=staff->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * (staff->m_drawingLines - 1);
+    int x=element->GetDrawingX();
+    int perfectRadius=m_doc->GetGlyphWidth(SMUFL_E910_mensuralProlation1, staff->m_drawingStaffSize, false) / 2;
+    int code=0;
 
     if (mensur->HasLoc()) {
-        y = staff->GetDrawingY()
+        y=staff->GetDrawingY()
             - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * (2 * staff->m_drawingLines - 2 - mensur->GetLoc());
     }
 
     if (mensur->GetSign() == MENSURATIONSIGN_O) {
-        code = SMUFL_E911_mensuralProlation2;
+        code=SMUFL_E911_mensuralProlation2;
     }
     else if (mensur->GetSign() == MENSURATIONSIGN_C) {
         if (mensur->GetOrient() == ORIENTATION_reversed) {
-            code = SMUFL_E916_mensuralProlation7;
+            code=SMUFL_E916_mensuralProlation7;
             // additional offset
             // perfectRadius -= 2 * perfectRadius - m_doc->GetGlyphWidth(SMUFL_E916_mensuralProlation7,
             // staff->m_drawingStaffSize, false);
         }
         else {
-            code = SMUFL_E915_mensuralProlation6;
+            code=SMUFL_E915_mensuralProlation6;
         }
     }
 
@@ -191,12 +191,12 @@ void View::DrawMensur(DeviceContext *dc, LayerElement *element, Layer *layer, St
     }
 
     if (mensur->HasNum()) {
-        x = element->GetDrawingX();
+        x=element->GetDrawingX();
         if (mensur->HasSign() || mensur->HasTempus()) {
             x += m_doc->GetDrawingUnit(staff->m_drawingStaffSize)
                 * 6; // step forward because we have a sign or a meter symbol
         }
-        int numbase = mensur->HasNumbase() ? mensur->GetNumbase() : 0;
+        int numbase=mensur->HasNumbase() ? mensur->GetNumbase() : 0;
         DrawProportFigures(dc, x, y, mensur->GetNum(), numbase, staff);
     }
 
@@ -210,24 +210,24 @@ void View::DrawMensuralStem(
 {
     assert(note);
 
-    int staffSize = staff->m_drawingStaffSize;
-    int staffY = staff->GetDrawingY();
+    int staffSize=staff->m_drawingStaffSize;
+    int staffY=staff->GetDrawingY();
     int baseStem, totalFlagStemHeight, flagStemHeight, nbFlags;
-    int drawingDur = note->GetDrawingDur();
+    int drawingDur=note->GetDrawingDur();
     // Cue size is currently disabled
-    bool drawingCueSize = false;
-    int verticalCenter = staffY - m_doc->GetDrawingDoubleUnit(staffSize) * 2;
-    const bool mensural_black = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
+    bool drawingCueSize=false;
+    int verticalCenter=staffY - m_doc->GetDrawingDoubleUnit(staffSize) * 2;
+    const bool mensural_black=(staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
 
-    baseStem = m_doc->GetDrawingUnit(staffSize) * STANDARD_STEMLENGTH;
-    flagStemHeight = m_doc->GetDrawingDoubleUnit(staffSize);
+    baseStem=m_doc->GetDrawingUnit(staffSize) * STANDARD_STEMLENGTH;
+    flagStemHeight=m_doc->GetDrawingDoubleUnit(staffSize);
     if (drawingCueSize) {
-        baseStem = m_doc->GetCueSize(baseStem);
-        flagStemHeight = m_doc->GetCueSize(flagStemHeight);
+        baseStem=m_doc->GetCueSize(baseStem);
+        flagStemHeight=m_doc->GetCueSize(flagStemHeight);
     }
 
-    nbFlags = (mensural_black ? drawingDur - DUR_2 : drawingDur - DUR_4);
-    totalFlagStemHeight = flagStemHeight * (nbFlags * 2 - 1) / 2;
+    nbFlags=(mensural_black ? drawingDur - DUR_2 : drawingDur - DUR_4);
+    totalFlagStemHeight=flagStemHeight * (nbFlags * 2 - 1) / 2;
 
     /* SMuFL provides combining stem-and-flag characters with one and two flags, but
         at the moment, I'm using only the one flag ones, partly out of concern for
@@ -239,45 +239,45 @@ void View::DrawMensuralStem(
     if (dir == STEMDIRECTION_down) {
         // flip all lengths. Exception: in mensural notation, the stem will never be at
         //   left, so leave radius as is.
-        baseStem = -baseStem;
-        totalFlagStemHeight = -totalFlagStemHeight;
-        heightY = -heightY;
+        baseStem=-baseStem;
+        totalFlagStemHeight=-totalFlagStemHeight;
+        heightY=-heightY;
     }
 
     // If we have flags, add them to the height.
-    int y1 = originY;
-    int y2 = ((nbFlags > 0) ? (y1 + baseStem + totalFlagStemHeight) : (y1 + baseStem)) + heightY;
-    int x2 = xn + radius;
+    int y1=originY;
+    int y2=((nbFlags > 0) ? (y1 + baseStem + totalFlagStemHeight) : (y1 + baseStem)) + heightY;
+    int x2=xn + radius;
 
     if ((dir == STEMDIRECTION_up) && (y2 < verticalCenter)) {
-        y2 = verticalCenter;
+        y2=verticalCenter;
     }
     else if ((dir == STEMDIRECTION_down) && (y2 > verticalCenter)) {
-        y2 = verticalCenter;
+        y2=verticalCenter;
     }
 
     // shorten the stem at its connection with the note head
     // this will not work if the pseudo size is changed
-    int shortening = 0.9 * m_doc->GetDrawingUnit(staffSize);
+    int shortening=0.9 * m_doc->GetDrawingUnit(staffSize);
 
     // LogDebug("DrawMensuralStem: drawingDur=%d mensural_black=%d nbFlags=%d", drawingDur, mensural_black, nbFlags);
-    int stemY1 = (dir == STEMDIRECTION_up) ? y1 + shortening : y1 - shortening;
-    int stemY2 = y2;
+    int stemY1=(dir == STEMDIRECTION_up) ? y1 + shortening : y1 - shortening;
+    int stemY2=y2;
     if (nbFlags > 0) {
         // if we have flags, shorten the stem to make sure we have a nice overlap with the flag glyph
         int shortener
-            = (drawingCueSize) ? m_doc->GetCueSize(m_doc->GetDrawingUnit(staffSize)) : m_doc->GetDrawingUnit(staffSize);
-        stemY2 = (dir == STEMDIRECTION_up) ? y2 - shortener : y2 + shortener;
+           =(drawingCueSize) ? m_doc->GetCueSize(m_doc->GetDrawingUnit(staffSize)) : m_doc->GetDrawingUnit(staffSize);
+        stemY2=(dir == STEMDIRECTION_up) ? y2 - shortener : y2 + shortener;
     }
 
-    int halfStemWidth = m_doc->GetDrawingStemWidth(staffSize) / 2;
+    int halfStemWidth=m_doc->GetDrawingStemWidth(staffSize) / 2;
     // draw the stems and the flags
 
     dc->StartCustomGraphic("stem");
     if (dir == STEMDIRECTION_up) {
 
         if (nbFlags > 0) {
-            for (int i = 0; i < nbFlags; ++i) {
+            for (int i=0; i < nbFlags; ++i) {
                 DrawSmuflCode(dc, x2 - halfStemWidth, stemY1 - i * flagStemHeight,
                     SMUFL_E949_mensuralCombStemUpFlagSemiminima, staff->m_drawingStaffSize, drawingCueSize);
             }
@@ -288,7 +288,7 @@ void View::DrawMensuralStem(
     }
     else {
         if (nbFlags > 0) {
-            for (int i = 0; i < nbFlags; ++i) {
+            for (int i=0; i < nbFlags; ++i) {
                 DrawSmuflCode(dc, x2 - halfStemWidth, stemY1 + i * flagStemHeight,
                     SMUFL_E94A_mensuralCombStemDownFlagSemiminima, staff->m_drawingStaffSize, drawingCueSize);
             }
@@ -310,27 +310,27 @@ void View::DrawMaximaToBrevis(DeviceContext *dc, int y, LayerElement *element, L
     assert(layer);
     assert(staff);
 
-    Note *note = vrv_cast<Note *>(element);
+    Note *note=vrv_cast<Note *>(element);
     assert(note);
 
-    bool isMensuralBlack = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
-    bool fillNotehead = (isMensuralBlack || note->GetColored()) && !(isMensuralBlack && note->GetColored());
+    bool isMensuralBlack=(staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
+    bool fillNotehead=(isMensuralBlack || note->GetColored()) && !(isMensuralBlack && note->GetColored());
 
-    int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-    int strokeWidth = 2.8 * stemWidth;
+    int stemWidth=m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    int strokeWidth=2.8 * stemWidth;
 
-    int shape = LIGATURE_DEFAULT;
+    int shape=LIGATURE_DEFAULT;
     if (note->GetActualDur() != DUR_BR) {
-        bool up = false;
+        bool up=false;
         // Mensural notes have no Stem child - rely on the MEI @stem.dir
         if (note->GetStemDir() != STEMDIRECTION_NONE) {
-            up = (note->GetStemDir() == STEMDIRECTION_up);
+            up=(note->GetStemDir() == STEMDIRECTION_up);
         }
         else if (staff->m_drawingNotationType == NOTATIONTYPE_NONE
             || staff->m_drawingNotationType == NOTATIONTYPE_cmn) {
-            up = (note->GetDrawingStemDir() == STEMDIRECTION_up);
+            up=(note->GetDrawingStemDir() == STEMDIRECTION_up);
         }
-        shape = (up) ? LIGATURE_STEM_RIGHT_UP : LIGATURE_STEM_RIGHT_DOWN;
+        shape=(up) ? LIGATURE_STEM_RIGHT_UP : LIGATURE_STEM_RIGHT_DOWN;
     }
 
     Point topLeft, bottomRight;
@@ -375,7 +375,7 @@ void View::DrawLigature(DeviceContext *dc, LayerElement *element, Layer *layer, 
     assert(layer);
     assert(staff);
 
-    Ligature *ligature = vrv_cast<Ligature *>(element);
+    Ligature *ligature=vrv_cast<Ligature *>(element);
     assert(ligature);
 
     dc->StartGraphic(ligature, "", ligature->GetUuid());
@@ -393,43 +393,43 @@ void View::DrawLigatureNote(DeviceContext *dc, LayerElement *element, Layer *lay
     assert(layer);
     assert(staff);
 
-    Note *note = vrv_cast<Note *>(element);
+    Note *note=vrv_cast<Note *>(element);
     assert(note);
 
-    Ligature *ligature = vrv_cast<Ligature *>(note->GetFirstAncestor(LIGATURE));
+    Ligature *ligature=vrv_cast<Ligature *>(note->GetFirstAncestor(LIGATURE));
     assert(ligature);
 
-    Note *prevNote = dynamic_cast<Note *>(ligature->GetListPrevious(note));
-    Note *nextNote = dynamic_cast<Note *>(ligature->GetListNext(note));
+    Note *prevNote=dynamic_cast<Note *>(ligature->GetListPrevious(note));
+    Note *nextNote=dynamic_cast<Note *>(ligature->GetListNext(note));
 
-    int position = ligature->GetListIndex(note);
+    int position=ligature->GetListIndex(note);
     assert(position != -1);
-    int shape = ligature->m_drawingShapes.at(position);
-    int prevShape = (position > 0) ? ligature->m_drawingShapes.at(position - 1) : 0;
+    int shape=ligature->m_drawingShapes.at(position);
+    int prevShape=(position > 0) ? ligature->m_drawingShapes.at(position - 1) : 0;
 
     /** code duplicated from View::DrawMaximaToBrevis */
-    const bool isMensuralBlack = (staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
-    const bool fillNotehead = (isMensuralBlack || note->GetColored()) && !(isMensuralBlack && note->GetColored());
-    const bool oblique = ((shape & LIGATURE_OBLIQUE) || (prevShape & LIGATURE_OBLIQUE));
-    const bool obliqueEnd = (prevShape & LIGATURE_OBLIQUE);
-    const bool stackedEnd = (shape & LIGATURE_STACKED);
+    const bool isMensuralBlack=(staff->m_drawingNotationType == NOTATIONTYPE_mensural_black);
+    const bool fillNotehead=(isMensuralBlack || note->GetColored()) && !(isMensuralBlack && note->GetColored());
+    const bool oblique=((shape & LIGATURE_OBLIQUE) || (prevShape & LIGATURE_OBLIQUE));
+    const bool obliqueEnd=(prevShape & LIGATURE_OBLIQUE);
+    const bool stackedEnd=(shape & LIGATURE_STACKED);
 
-    const int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-    const int strokeWidth = 2.8 * stemWidth;
+    const int stemWidth=m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    const int strokeWidth=2.8 * stemWidth;
     /** end code duplicated */
 
     Point points[4];
-    Point *topLeft = &points[0];
-    Point *bottomLeft = &points[1];
-    Point *topRight = &points[2];
-    Point *bottomRight = &points[3];
+    Point *topLeft=&points[0];
+    Point *bottomLeft=&points[1];
+    Point *topRight=&points[2];
+    Point *bottomRight=&points[3];
     int sides[4];
     if (!oblique) {
         this->CalcBrevisPoints(note, staff, topLeft, bottomRight, sides, shape, isMensuralBlack);
-        bottomLeft->x = topLeft->x;
-        bottomLeft->y = bottomRight->y;
-        topRight->x = bottomRight->x;
-        topRight->y = topLeft->y;
+        bottomLeft->x=topLeft->x;
+        bottomLeft->y=bottomRight->y;
+        topRight->x=bottomRight->x;
+        topRight->y=topLeft->y;
     }
     else {
         // First half of the oblique - checking the nextNote is there just in case, but is should
@@ -457,21 +457,21 @@ void View::DrawLigatureNote(DeviceContext *dc, LayerElement *element, Layer *lay
 
     // Do not draw a left connector with obliques
     if (!obliqueEnd) {
-        int sideTop = sides[0];
-        int sideBottom = sides[1];
+        int sideTop=sides[0];
+        int sideBottom=sides[1];
         if (prevNote) {
-            Point prevTopLeft = *topLeft;
-            Point prevBottomRight = *bottomRight;
+            Point prevTopLeft=*topLeft;
+            Point prevBottomRight=*bottomRight;
             int prevSides[4];
             memcpy(prevSides, sides, 4 * sizeof(int));
             CalcBrevisPoints(prevNote, staff, &prevTopLeft, &prevBottomRight, prevSides, prevShape, isMensuralBlack);
             if (!stackedEnd) {
-                sideTop = std::max(sides[0], prevSides[2]);
-                sideBottom = std::min(sides[1], prevSides[3]);
+                sideTop=std::max(sides[0], prevSides[2]);
+                sideBottom=std::min(sides[1], prevSides[3]);
             }
             else {
                 // Stacked end - simply use the bottom right [3] note since the interval is going up anyway
-                sides[3] = prevSides[3];
+                sides[3]=prevSides[3];
             }
         }
         DrawFilledRoundedRectangle(dc, topLeft->x, sideTop, topLeft->x + stemWidth, sideBottom, stemWidth / 3);
@@ -489,16 +489,16 @@ void View::DrawProportFigures(DeviceContext *dc, int x, int y, int num, int numB
     assert(dc);
     assert(staff);
 
-    int ynum = 0, yden = 0;
-    int textSize = staff->m_drawingStaffSize;
+    int ynum=0, yden=0;
+    int textSize=staff->m_drawingStaffSize;
     std::wstring wtext;
 
     if (numBase) {
-        ynum = y + m_doc->GetDrawingDoubleUnit(textSize);
-        yden = y - m_doc->GetDrawingDoubleUnit(textSize);
+        ynum=y + m_doc->GetDrawingDoubleUnit(textSize);
+        yden=y - m_doc->GetDrawingDoubleUnit(textSize);
     }
     else
-        ynum = y;
+        ynum=y;
 
     if (numBase > 9 || num > 9) {
         x += m_doc->GetDrawingUnit(textSize) * 2;
@@ -506,12 +506,12 @@ void View::DrawProportFigures(DeviceContext *dc, int x, int y, int num, int numB
 
     dc->SetFont(m_doc->GetDrawingSmuflFont(textSize, false));
 
-    wtext = IntToTimeSigFigures(num);
-    DrawSmuflString(dc, x, ynum, wtext, HORIZONTALALIGNMENT_center, textSize); // true = center
+    wtext=IntToTimeSigFigures(num);
+    DrawSmuflString(dc, x, ynum, wtext, HORIZONTALALIGNMENT_center, textSize); // true=center
 
     if (numBase) {
-        wtext = IntToTimeSigFigures(numBase);
-        DrawSmuflString(dc, x, yden, wtext, HORIZONTALALIGNMENT_center, textSize); // true = center
+        wtext=IntToTimeSigFigures(numBase);
+        DrawSmuflString(dc, x, yden, wtext, HORIZONTALALIGNMENT_center, textSize); // true=center
     }
 
     dc->ResetFont();
@@ -527,28 +527,28 @@ void View::DrawProport(DeviceContext *dc, LayerElement *element, Layer *layer, S
 
     int x1, x2, y1, y2;
 
-    Proport *proport = dynamic_cast<Proport *>(element);
+    Proport *proport=dynamic_cast<Proport *>(element);
 
     dc->StartGraphic(element, "", element->GetUuid());
 
-    int y = staff->GetDrawingY() - (m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 4);
-    int x = element->GetDrawingX();
+    int y=staff->GetDrawingY() - (m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 4);
+    int x=element->GetDrawingX();
 
-    x1 = x + 120;
-    x2 = x1 + 150; // ??TEST: JUST DRAW AN ARBITRARY RECTANGLE
-    y1 = y;
-    y2 = y + 50 + (50 * proport->GetNum());
+    x1=x + 120;
+    x2=x1 + 150; // ??TEST: JUST DRAW AN ARBITRARY RECTANGLE
+    y1=y;
+    y2=y + 50 + (50 * proport->GetNum());
     // DrawFilledRectangle(dc,x1,y1,x2,y2);
     DrawPartFilledRectangle(dc, x1, y1, x2, y2, 0);
 
     if (proport->HasNum()) {
-        x = element->GetDrawingX();
+        x=element->GetDrawingX();
         // if (proport->GetSign() || proport->HasTempus())           // ??WHAT SHOULD THIS BE?
         {
             x += m_doc->GetDrawingUnit(staff->m_drawingStaffSize)
                 * 5; // step forward because we have a sign or a meter symbol
         }
-        int numbase = proport->HasNumbase() ? proport->GetNumbase() : 0;
+        int numbase=proport->HasNumbase() ? proport->GetNumbase() : 0;
         DrawProportFigures(dc, x,
             staff->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * (staff->m_drawingLines - 1),
             proport->GetNum(), numbase, staff);
@@ -565,19 +565,19 @@ void View::CalcBrevisPoints(
     assert(topLeft);
     assert(bottomRight);
 
-    int y = note->GetDrawingY();
+    int y=note->GetDrawingY();
 
     // Calculate size of the rectangle
-    topLeft->x = note->GetDrawingX();
-    int width = 2 * note->GetDrawingRadius(m_doc, true);
-    bottomRight->x = topLeft->x + width;
+    topLeft->x=note->GetDrawingX();
+    int width=2 * note->GetDrawingRadius(m_doc, true);
+    bottomRight->x=topLeft->x + width;
 
-    double heightFactor = (isMensuralBlack) ? 0.8 : 1.0;
-    topLeft->y = y + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * heightFactor;
-    bottomRight->y = y - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * heightFactor;
+    double heightFactor=(isMensuralBlack) ? 0.8 : 1.0;
+    topLeft->y=y + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * heightFactor;
+    bottomRight->y=y - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * heightFactor;
 
-    sides[0] = topLeft->y;
-    sides[1] = bottomRight->y;
+    sides[0]=topLeft->y;
+    sides[1]=bottomRight->y;
 
     if (!isMensuralBlack) {
         // add sherif
@@ -590,16 +590,16 @@ void View::CalcBrevisPoints(
         sides[1] += (int)m_doc->GetDrawingUnit(staff->m_drawingStaffSize) / 2;
     }
 
-    sides[2] = sides[0];
-    sides[3] = sides[1];
+    sides[2]=sides[0];
+    sides[3]=sides[1];
 
-    int stem = m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
+    int stem=m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
     stem *= (!isMensuralBlack) ? 7 : 5;
 
-    if (shape & LIGATURE_STEM_LEFT_UP) sides[0] = y + stem;
-    if (shape & LIGATURE_STEM_LEFT_DOWN) sides[1] = y - stem;
-    if (shape & LIGATURE_STEM_RIGHT_UP) sides[2] = y + stem;
-    if (shape & LIGATURE_STEM_RIGHT_DOWN) sides[3] = y - stem;
+    if (shape & LIGATURE_STEM_LEFT_UP) sides[0]=y + stem;
+    if (shape & LIGATURE_STEM_LEFT_DOWN) sides[1]=y - stem;
+    if (shape & LIGATURE_STEM_RIGHT_UP) sides[2]=y + stem;
+    if (shape & LIGATURE_STEM_RIGHT_DOWN) sides[3]=y - stem;
 }
 
 void View::CalcObliquePoints(Note *note1, Note *note2, Staff *staff, Point points[4], int sides[4], int shape,
@@ -609,60 +609,60 @@ void View::CalcObliquePoints(Note *note1, Note *note2, Staff *staff, Point point
     assert(note2);
     assert(staff);
 
-    int stemWidth = m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+    int stemWidth=m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
 
-    Point *topLeft = &points[0];
-    Point *bottomLeft = &points[1];
-    Point *topRight = &points[2];
-    Point *bottomRight = &points[3];
+    Point *topLeft=&points[0];
+    Point *bottomLeft=&points[1];
+    Point *topRight=&points[2];
+    Point *bottomRight=&points[3];
 
     int sides1[4];
     CalcBrevisPoints(note1, staff, topLeft, bottomLeft, sides1, shape, isMensuralBlack);
     // Correct the x of bottomLeft
-    bottomLeft->x = topLeft->x;
+    bottomLeft->x=topLeft->x;
     // Copy the left sides
-    sides[0] = sides1[0];
-    sides[1] = sides1[1];
+    sides[0]=sides1[0];
+    sides[1]=sides1[1];
 
     int sides2[4];
     // add OBLIQUE shape to make sure sides are shortened in mensural black
     CalcBrevisPoints(note2, staff, topRight, bottomRight, sides2, LIGATURE_OBLIQUE, isMensuralBlack);
     // Correct the x of topRight;
-    topRight->x = bottomRight->x;
+    topRight->x=bottomRight->x;
     // Copy the right sides
-    sides[2] = sides2[2];
-    sides[3] = sides2[3];
+    sides[2]=sides2[2];
+    sides[3]=sides2[3];
 
     // With oblique it is best visually to move them up / down - more with (white) ligatures with serif
-    double adjustmentFactor = (isMensuralBlack) ? 0.5 : 1.8;
-    double slope = 0.0;
+    double adjustmentFactor=(isMensuralBlack) ? 0.5 : 1.8;
+    double slope=0.0;
     if (bottomRight->x != bottomLeft->x)
-        slope = (double)(bottomRight->y - bottomLeft->y) / (double)(bottomRight->x - bottomLeft->x);
-    int adjustment = (int)(slope * stemWidth) * adjustmentFactor;
+        slope=(double)(bottomRight->y - bottomLeft->y) / (double)(bottomRight->x - bottomLeft->x);
+    int adjustment=(int)(slope * stemWidth) * adjustmentFactor;
     topLeft->y -= adjustment;
     bottomLeft->y -= adjustment;
     topRight->y += adjustment;
     bottomRight->y += adjustment;
 
-    slope = 0.0;
+    slope=0.0;
     // recalculate slope after adjustment
     if (bottomRight->x != bottomLeft->x)
-        slope = (double)(bottomRight->y - bottomLeft->y) / (double)(bottomRight->x - bottomLeft->x);
-    int length = (bottomRight->x - bottomLeft->x) / 2;
+        slope=(double)(bottomRight->y - bottomLeft->y) / (double)(bottomRight->x - bottomLeft->x);
+    int length=(bottomRight->x - bottomLeft->x) / 2;
 
     if (firstHalf) {
         // make sure there are some pixels of overlap
         length += 10;
-        bottomRight->x = bottomLeft->x + length;
-        topRight->x = bottomRight->x;
-        bottomRight->y = bottomLeft->y + (int)(length * slope);
-        topRight->y = topLeft->y + (int)(length * slope);
+        bottomRight->x=bottomLeft->x + length;
+        topRight->x=bottomRight->x;
+        bottomRight->y=bottomLeft->y + (int)(length * slope);
+        topRight->y=topLeft->y + (int)(length * slope);
     }
     else {
-        bottomLeft->x = bottomLeft->x + length;
-        topLeft->x = bottomLeft->x;
-        bottomLeft->y = bottomLeft->y + (int)(length * slope);
-        topLeft->y = topLeft->y + (int)(length * slope);
+        bottomLeft->x=bottomLeft->x + length;
+        topLeft->x=bottomLeft->x;
+        bottomLeft->y=bottomLeft->y + (int)(length * slope);
+        topLeft->y=topLeft->y + (int)(length * slope);
     }
 }
 

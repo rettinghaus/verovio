@@ -46,7 +46,7 @@ class MidiEventList {
 		int              linkEventPairs     (void);
 		void             clearLinks         (void);
 		void             clearSequence      (void);
-		int              markSequence       (int sequence = 1);
+		int              markSequence       (int sequence=1);
 
 		int              push               (MidiEvent& event);
 		int              push_back          (MidiEvent& event);

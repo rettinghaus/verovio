@@ -55,11 +55,11 @@ bool Fig::IsSupportedChild(Object *child)
 
 int Fig::AlignVertically(FunctorParams *functorParams)
 {
-    AlignVerticallyParams *params = vrv_params_cast<AlignVerticallyParams *>(functorParams);
+    AlignVerticallyParams *params=vrv_params_cast<AlignVerticallyParams *>(functorParams);
     assert(params);
 
-    Svg *svg = dynamic_cast<Svg *>(this->FindDescendantByType(SVG));
-    int width = (svg) ? svg->GetWidth() : 0;
+    Svg *svg=dynamic_cast<Svg *>(this->FindDescendantByType(SVG));
+    int width=(svg) ? svg->GetWidth() : 0;
 
     if (this->GetHalign() == HORIZONTALALIGNMENT_right) {
         this->SetDrawingXRel(params->m_pageWidth - width);

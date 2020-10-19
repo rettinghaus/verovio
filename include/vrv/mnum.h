@@ -63,7 +63,7 @@ public:
      */
     ///@{
     bool IsGenerated() const { return m_isGenerated; }
-    void IsGenerated(bool isGenerated) { m_isGenerated = isGenerated; }
+    void IsGenerated(bool isGenerated) { m_isGenerated=isGenerated; }
     ///@}
 
     //----------//

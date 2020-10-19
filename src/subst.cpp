@@ -25,14 +25,14 @@ namespace vrv {
 
 Subst::Subst() : EditorialElement("subst-")
 {
-    m_level = EDITORIAL_UNDEFINED;
+    m_level=EDITORIAL_UNDEFINED;
 
     Reset();
 }
 
 Subst::Subst(EditorialLevel level) : EditorialElement("subst-")
 {
-    m_level = level;
+    m_level=level;
 
     Reset();
 }

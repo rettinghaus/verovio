@@ -64,7 +64,7 @@ wchar_t Trill::GetTrillGlyph() const
 {
     // If there is glyph.num, return glyph based on it
     if (HasGlyphNum()) {
-        wchar_t code = GetGlyphNum();
+        wchar_t code=GetGlyphNum();
         if (NULL != Resources::GetGlyph(code)) return code;
     }
 

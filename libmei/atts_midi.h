@@ -49,19 +49,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMidiChannel(data_MIDICHANNEL midiChannel_) { m_midiChannel = midiChannel_; }
+    void SetMidiChannel(data_MIDICHANNEL midiChannel_) { m_midiChannel=midiChannel_; }
     data_MIDICHANNEL GetMidiChannel() const { return m_midiChannel; }
     bool HasMidiChannel() const;
     //
-    void SetMidiDuty(data_PERCENT_LIMITED midiDuty_) { m_midiDuty = midiDuty_; }
+    void SetMidiDuty(data_PERCENT_LIMITED midiDuty_) { m_midiDuty=midiDuty_; }
     data_PERCENT_LIMITED GetMidiDuty() const { return m_midiDuty; }
     bool HasMidiDuty() const;
     //
-    void SetMidiPort(data_MIDIVALUE_NAME midiPort_) { m_midiPort = midiPort_; }
+    void SetMidiPort(data_MIDIVALUE_NAME midiPort_) { m_midiPort=midiPort_; }
     data_MIDIVALUE_NAME GetMidiPort() const { return m_midiPort; }
     bool HasMidiPort() const;
     //
-    void SetMidiTrack(int midiTrack_) { m_midiTrack = midiTrack_; }
+    void SetMidiTrack(int midiTrack_) { m_midiTrack=midiTrack_; }
     int GetMidiTrack() const { return m_midiTrack; }
     bool HasMidiTrack() const;
     ///@}
@@ -103,7 +103,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetInstr(std::string instr_) { m_instr = instr_; }
+    void SetInstr(std::string instr_) { m_instr=instr_; }
     std::string GetInstr() const { return m_instr; }
     bool HasInstr() const;
     ///@}
@@ -142,27 +142,27 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMidiInstrnum(data_MIDIVALUE midiInstrnum_) { m_midiInstrnum = midiInstrnum_; }
+    void SetMidiInstrnum(data_MIDIVALUE midiInstrnum_) { m_midiInstrnum=midiInstrnum_; }
     data_MIDIVALUE GetMidiInstrnum() const { return m_midiInstrnum; }
     bool HasMidiInstrnum() const;
     //
-    void SetMidiInstrname(data_MIDINAMES midiInstrname_) { m_midiInstrname = midiInstrname_; }
+    void SetMidiInstrname(data_MIDINAMES midiInstrname_) { m_midiInstrname=midiInstrname_; }
     data_MIDINAMES GetMidiInstrname() const { return m_midiInstrname; }
     bool HasMidiInstrname() const;
     //
-    void SetMidiPan(data_MIDIVALUE_PAN midiPan_) { m_midiPan = midiPan_; }
+    void SetMidiPan(data_MIDIVALUE_PAN midiPan_) { m_midiPan=midiPan_; }
     data_MIDIVALUE_PAN GetMidiPan() const { return m_midiPan; }
     bool HasMidiPan() const;
     //
-    void SetMidiPatchname(std::string midiPatchname_) { m_midiPatchname = midiPatchname_; }
+    void SetMidiPatchname(std::string midiPatchname_) { m_midiPatchname=midiPatchname_; }
     std::string GetMidiPatchname() const { return m_midiPatchname; }
     bool HasMidiPatchname() const;
     //
-    void SetMidiPatchnum(data_MIDIVALUE midiPatchnum_) { m_midiPatchnum = midiPatchnum_; }
+    void SetMidiPatchnum(data_MIDIVALUE midiPatchnum_) { m_midiPatchnum=midiPatchnum_; }
     data_MIDIVALUE GetMidiPatchnum() const { return m_midiPatchnum; }
     bool HasMidiPatchnum() const;
     //
-    void SetMidiVolume(data_PERCENT midiVolume_) { m_midiVolume = midiVolume_; }
+    void SetMidiVolume(data_PERCENT midiVolume_) { m_midiVolume=midiVolume_; }
     data_PERCENT GetMidiVolume() const { return m_midiVolume; }
     bool HasMidiVolume() const;
     ///@}
@@ -217,7 +217,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetNum(int num_) { m_num = num_; }
+    void SetNum(int num_) { m_num=num_; }
     int GetNum() const { return m_num; }
     bool HasNum() const;
     ///@}
@@ -253,11 +253,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMidiBpm(data_MIDIBPM midiBpm_) { m_midiBpm = midiBpm_; }
+    void SetMidiBpm(data_MIDIBPM midiBpm_) { m_midiBpm=midiBpm_; }
     data_MIDIBPM GetMidiBpm() const { return m_midiBpm; }
     bool HasMidiBpm() const;
     //
-    void SetMidiMspb(data_MIDIMSPB midiMspb_) { m_midiMspb = midiMspb_; }
+    void SetMidiMspb(data_MIDIMSPB midiMspb_) { m_midiMspb=midiMspb_; }
     data_MIDIMSPB GetMidiMspb() const { return m_midiMspb; }
     bool HasMidiMspb() const;
     ///@}
@@ -304,7 +304,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVal(data_MIDIVALUE val_) { m_val = val_; }
+    void SetVal(data_MIDIVALUE val_) { m_val=val_; }
     data_MIDIVALUE GetVal() const { return m_val; }
     bool HasVal() const;
     ///@}
@@ -340,7 +340,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVal2(data_MIDIVALUE val2_) { m_val2 = val2_; }
+    void SetVal2(data_MIDIVALUE val2_) { m_val2=val2_; }
     data_MIDIVALUE GetVal2() const { return m_val2; }
     bool HasVal2() const;
     ///@}
@@ -376,7 +376,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetVel(data_MIDIVALUE vel_) { m_vel = vel_; }
+    void SetVel(data_MIDIVALUE vel_) { m_vel=vel_; }
     data_MIDIVALUE GetVel() const { return m_vel; }
     bool HasVel() const;
     ///@}
@@ -412,7 +412,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetPpq(int ppq_) { m_ppq = ppq_; }
+    void SetPpq(int ppq_) { m_ppq=ppq_; }
     int GetPpq() const { return m_ppq; }
     bool HasPpq() const;
     ///@}

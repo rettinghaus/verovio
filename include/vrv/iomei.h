@@ -181,22 +181,22 @@ public:
     /**
      * Return the output as a string by writing it to the stringstream member.
      */
-    std::string GetOutput(int page = -1);
+    std::string GetOutput(int page=-1);
 
     /**
      * Setter for score-based MEI output
      */
-    void SetScoreBasedMEI(bool scoreBasedMEI) { m_scoreBasedMEI = scoreBasedMEI; }
+    void SetScoreBasedMEI(bool scoreBasedMEI) { m_scoreBasedMEI=scoreBasedMEI; }
 
     /**
      * Setter for indent for the MEI output (default is 3, -1 for tabs)
      */
-    void SetIndent(int indent) { m_indent = indent; }
+    void SetIndent(int indent) { m_indent=indent; }
 
     /**
      * Setter for remove Ids flag for the MEI output (default is false)
      */
-    void SetRemoveIds(bool removeIds) { m_removeIds = removeIds; }
+    void SetRemoveIds(bool removeIds) { m_removeIds=removeIds; }
 
 private:
     bool WriteDoc(Doc *doc);
@@ -483,7 +483,7 @@ private:
     bool ReadPgFoot2(Object *parent, pugi::xml_node pgFoot2);
     bool ReadPgHead(Object *parent, pugi::xml_node pgHead);
     bool ReadPgHead2(Object *parent, pugi::xml_node pgHead2);
-    bool ReadRunningChildren(Object *parent, pugi::xml_node parentNode, Object *filter = NULL);
+    bool ReadRunningChildren(Object *parent, pugi::xml_node parentNode, Object *filter=NULL);
     bool ReadStaffGrp(Object *parent, pugi::xml_node staffGrp);
     bool ReadStaffGrpChildren(Object *parent, pugi::xml_node parentNode);
     bool ReadStaffDef(Object *parent, pugi::xml_node staffDef);
@@ -499,8 +499,8 @@ private:
     bool ReadStaff(Object *parent, pugi::xml_node staff);
     bool ReadStaffChildren(Object *parent, pugi::xml_node parentNode);
     bool ReadLayer(Object *parent, pugi::xml_node layer);
-    bool ReadLayerChildren(Object *parent, pugi::xml_node parentNode, Object *filter = NULL);
-    bool ReadTextChildren(Object *parent, pugi::xml_node parentNode, Object *filter = NULL);
+    bool ReadLayerChildren(Object *parent, pugi::xml_node parentNode, Object *filter=NULL);
+    bool ReadTextChildren(Object *parent, pugi::xml_node parentNode, Object *filter=NULL);
     ///@}
 
     /**
@@ -588,30 +588,30 @@ private:
      * The filter is propagated (if any)
      */
     ///@{
-    bool ReadEditorialElement(Object *parent, pugi::xml_node app, EditorialLevel level, Object *filter = NULL);
-    bool ReadAbbr(Object *parent, pugi::xml_node abbr, EditorialLevel level, Object *filter = NULL);
-    bool ReadAdd(Object *parent, pugi::xml_node add, EditorialLevel level, Object *filter = NULL);
+    bool ReadEditorialElement(Object *parent, pugi::xml_node app, EditorialLevel level, Object *filter=NULL);
+    bool ReadAbbr(Object *parent, pugi::xml_node abbr, EditorialLevel level, Object *filter=NULL);
+    bool ReadAdd(Object *parent, pugi::xml_node add, EditorialLevel level, Object *filter=NULL);
     bool ReadAnnot(Object *parent, pugi::xml_node annot);
-    bool ReadApp(Object *parent, pugi::xml_node app, EditorialLevel level, Object *filter = NULL);
-    bool ReadAppChildren(Object *parent, pugi::xml_node parentNode, EditorialLevel level, Object *filter = NULL);
-    bool ReadChoice(Object *parent, pugi::xml_node choice, EditorialLevel level, Object *filter = NULL);
-    bool ReadChoiceChildren(Object *parent, pugi::xml_node parentNode, EditorialLevel level, Object *filter = NULL);
-    bool ReadCorr(Object *parent, pugi::xml_node corr, EditorialLevel level, Object *filter = NULL);
-    bool ReadDamage(Object *parent, pugi::xml_node damage, EditorialLevel level, Object *filter = NULL);
-    bool ReadDel(Object *parent, pugi::xml_node del, EditorialLevel level, Object *filter = NULL);
-    bool ReadExpan(Object *parent, pugi::xml_node expan, EditorialLevel level, Object *filter = NULL);
-    bool ReadLem(Object *parent, pugi::xml_node lem, EditorialLevel level, Object *filter = NULL);
-    bool ReadOrig(Object *parent, pugi::xml_node orig, EditorialLevel level, Object *filter = NULL);
-    bool ReadRdg(Object *parent, pugi::xml_node rdg, EditorialLevel level, Object *filter = NULL);
-    bool ReadRef(Object *parent, pugi::xml_node ref, EditorialLevel level, Object *filter = NULL);
-    bool ReadReg(Object *parent, pugi::xml_node reg, EditorialLevel level, Object *filter = NULL);
-    bool ReadRestore(Object *parent, pugi::xml_node restore, EditorialLevel level, Object *filter = NULL);
-    bool ReadSic(Object *parent, pugi::xml_node sic, EditorialLevel level, Object *filter = NULL);
-    bool ReadSubst(Object *parent, pugi::xml_node subst, EditorialLevel level, Object *filter = NULL);
-    bool ReadSubstChildren(Object *parent, pugi::xml_node parentNode, EditorialLevel level, Object *filter = NULL);
-    bool ReadSupplied(Object *parent, pugi::xml_node supplied, EditorialLevel level, Object *filter = NULL);
-    bool ReadUnclear(Object *parent, pugi::xml_node unclear, EditorialLevel level, Object *filter = NULL);
-    bool ReadEditorialChildren(Object *parent, pugi::xml_node supplied, EditorialLevel level, Object *filter = NULL);
+    bool ReadApp(Object *parent, pugi::xml_node app, EditorialLevel level, Object *filter=NULL);
+    bool ReadAppChildren(Object *parent, pugi::xml_node parentNode, EditorialLevel level, Object *filter=NULL);
+    bool ReadChoice(Object *parent, pugi::xml_node choice, EditorialLevel level, Object *filter=NULL);
+    bool ReadChoiceChildren(Object *parent, pugi::xml_node parentNode, EditorialLevel level, Object *filter=NULL);
+    bool ReadCorr(Object *parent, pugi::xml_node corr, EditorialLevel level, Object *filter=NULL);
+    bool ReadDamage(Object *parent, pugi::xml_node damage, EditorialLevel level, Object *filter=NULL);
+    bool ReadDel(Object *parent, pugi::xml_node del, EditorialLevel level, Object *filter=NULL);
+    bool ReadExpan(Object *parent, pugi::xml_node expan, EditorialLevel level, Object *filter=NULL);
+    bool ReadLem(Object *parent, pugi::xml_node lem, EditorialLevel level, Object *filter=NULL);
+    bool ReadOrig(Object *parent, pugi::xml_node orig, EditorialLevel level, Object *filter=NULL);
+    bool ReadRdg(Object *parent, pugi::xml_node rdg, EditorialLevel level, Object *filter=NULL);
+    bool ReadRef(Object *parent, pugi::xml_node ref, EditorialLevel level, Object *filter=NULL);
+    bool ReadReg(Object *parent, pugi::xml_node reg, EditorialLevel level, Object *filter=NULL);
+    bool ReadRestore(Object *parent, pugi::xml_node restore, EditorialLevel level, Object *filter=NULL);
+    bool ReadSic(Object *parent, pugi::xml_node sic, EditorialLevel level, Object *filter=NULL);
+    bool ReadSubst(Object *parent, pugi::xml_node subst, EditorialLevel level, Object *filter=NULL);
+    bool ReadSubstChildren(Object *parent, pugi::xml_node parentNode, EditorialLevel level, Object *filter=NULL);
+    bool ReadSupplied(Object *parent, pugi::xml_node supplied, EditorialLevel level, Object *filter=NULL);
+    bool ReadUnclear(Object *parent, pugi::xml_node unclear, EditorialLevel level, Object *filter=NULL);
+    bool ReadEditorialChildren(Object *parent, pugi::xml_node supplied, EditorialLevel level, Object *filter=NULL);
     ///@}
 
     /**

@@ -64,7 +64,7 @@ public:
      */
     ///@{
     int GetHorizAdvX() { return m_horizAdvX; }
-    void SetHorizAdvX(double horizAdvX) { m_horizAdvX = (int)(horizAdvX * 10.0); }
+    void SetHorizAdvX(double horizAdvX) { m_horizAdvX=(int)(horizAdvX * 10.0); }
     ///@}
 
     /**

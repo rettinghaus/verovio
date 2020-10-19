@@ -55,9 +55,9 @@ class MidiFile {
 		bool           write                       (const std::string& filename);
 		bool           write                       (std::ostream& out);
 		bool           writeHex                    (const std::string& filename,
-		                                            int width = 25);
+		                                            int width=25);
 		bool           writeHex                    (std::ostream& out,
-		                                            int width = 25);
+		                                            int width=25);
 		bool           writeBinasc                 (const std::string& filename);
 		bool           writeBinasc                 (std::ostream& out);
 		bool           writeBinascWithComments     (const std::string& filename);
@@ -95,7 +95,7 @@ class MidiFile {
 		void             sortTrack                 (int track);
 		void             sortTracks                (void);
 		void             markSequence              (void);
-		void             markSequence              (int track, int sequence = 1);
+		void             markSequence              (int track, int sequence=1);
 		void             clearSequence             (void);
 		void             clearSequence             (int track);
 
@@ -204,12 +204,12 @@ class MidiFile {
 		                                           double aTempo);
 		MidiEvent*         addTimeSignature       (int aTrack, int aTick,
 		                                           int top, int bottom,
-		                                           int clocksPerClick = 24,
-		                                           int num32dsPerQuarter = 8);
+		                                           int clocksPerClick=24,
+		                                           int num32dsPerQuarter=8);
 		MidiEvent*         addCompoundTimeSignature(int aTrack, int aTick,
 		                                           int top, int bottom,
-		                                           int clocksPerClick = 36,
-		                                           int num32dsPerQuarter = 8);
+		                                           int clocksPerClick=36,
+		                                           int num32dsPerQuarter=8);
 
 		uchar              readByte               (std::istream& input);
 
@@ -249,44 +249,44 @@ class MidiFile {
 		// which represents the number of ticks in a quarter note
 		// that are used as units for the delta times for MIDI events
 		// in MIDI file track data.
-		int m_ticksPerQuarterNote = 120;
+		int m_ticksPerQuarterNote=120;
 
 		// m_trackCount == the number of tracks in the file.
-		int m_trackCount = 1;
+		int m_trackCount=1;
 
 		// m_theTrackState == state variable for whether the tracks
 		// are joined or split.
-		int m_theTrackState = TRACK_STATE_SPLIT;
+		int m_theTrackState=TRACK_STATE_SPLIT;
 
 		// m_theTimeState == state variable for whether the MidiEvent::tick
 		// variable contain absolute ticks since the start of the file's
 		// time, or delta ticks since the last MIDI event in the track.
-		int m_theTimeState = TIME_STATE_ABSOLUTE;
+		int m_theTimeState=TIME_STATE_ABSOLUTE;
 
 		// m_readFileName == the filename of the last file read into
 		// the object.
 		std::string m_readFileName;
 
 		// m_timemapvalid ==
-		bool m_timemapvalid = false;
+		bool m_timemapvalid=false;
 
 		// m_timemap ==
 		std::vector<_TickTime> m_timemap;
 
 		// m_rwstatus == True if last read was successful, false if a problem.
-		bool m_rwstatus = true;
+		bool m_rwstatus=true;
 
 		// m_linkedEventQ == True if link analysis has been done.
-		bool m_linkedEventsQ = false;
+		bool m_linkedEventsQ=false;
 
 	private:
 		int        extractMidiData                 (std::istream& inputfile,
 		                                            std::vector<uchar>& array,
 		                                            uchar& runningCommand);
 		ulong      readVLValue                     (std::istream& inputfile);
-		ulong      unpackVLV                       (uchar a = 0, uchar b = 0,
-		                                            uchar c = 0, uchar d = 0,
-		                                            uchar e = 0);
+		ulong      unpackVLV                       (uchar a=0, uchar b=0,
+		                                            uchar c=0, uchar d=0,
+		                                            uchar e=0);
 		void       writeVLValue                    (long aValue,
 		                                            std::vector<uchar>& data);
 		int        makeVLV                         (uchar *buffer, int number);

@@ -114,7 +114,7 @@ public:
      * This is set by the SetAlignmentPitchPos functor.
      */
     ///@{
-    void SetDrawingLoc(int drawingLoc) { m_drawingLoc = drawingLoc; }
+    void SetDrawingLoc(int drawingLoc) { m_drawingLoc=drawingLoc; }
     int GetDrawingLoc() const { return m_drawingLoc; }
     ///@}
 
@@ -124,7 +124,7 @@ public:
      * Otherwise, it will look for the Staff ancestor.
      * Set the value of ledger lines above or below.
      */
-    bool HasLedgerLines(int &linesAbove, int &linesBelow, Staff *staff = NULL);
+    bool HasLedgerLines(int &linesAbove, int &linesBelow, Staff *staff=NULL);
 
     /**
      * Overriding functions to return information from chord parent if any
@@ -139,7 +139,7 @@ public:
      * Return true if the note is a unisson.
      * If ignoreAccid is set to true then only @pname and @oct are compared.
      */
-    bool IsUnissonWith(Note *note, bool ignoreAccid = false);
+    bool IsUnissonWith(Note *note, bool ignoreAccid=false);
 
     /**
      * @name Setter and getter for the chord cluster and the position of the note
@@ -153,7 +153,7 @@ public:
      * @name Setter and getter for the flipped note head flag
      */
     ///@{
-    void SetFlippedNotehead(bool flippedNotehead) { m_flippedNotehead = flippedNotehead; }
+    void SetFlippedNotehead(bool flippedNotehead) { m_flippedNotehead=flippedNotehead; }
     bool GetFlippedNotehead() const { return m_flippedNotehead; }
     ///}
 
@@ -373,8 +373,8 @@ public:
 
     bool operator()(const Object *first, const Object *second) const
     {
-        const Note *n1 = dynamic_cast<const Note *>(first);
-        const Note *n2 = dynamic_cast<const Note *>(second);
+        const Note *n1=dynamic_cast<const Note *>(first);
+        const Note *n2=dynamic_cast<const Note *>(second);
         assert(n1 && n2);
         return (n1->GetDiatonicPitch() < n2->GetDiatonicPitch());
     }

@@ -57,9 +57,9 @@ public:
      */
     ///@{
     LayerElement *GetDrawingLeft() { return m_drawingLeft; }
-    void SetDrawingLeft(LayerElement *drawingLeft) { m_drawingLeft = drawingLeft; }
+    void SetDrawingLeft(LayerElement *drawingLeft) { m_drawingLeft=drawingLeft; }
     LayerElement *GetDrawingRight() { return m_drawingRight; }
-    void SetDrawingRight(LayerElement *drawingRight) { m_drawingRight = drawingRight; }
+    void SetDrawingRight(LayerElement *drawingRight) { m_drawingRight=drawingRight; }
     data_STAFFREL_basic GetDrawingBracketPos() { return m_drawingBracketPos; }
     data_STAFFREL_basic GetDrawingNumPos() { return m_drawingNumPos; }
     ///@}

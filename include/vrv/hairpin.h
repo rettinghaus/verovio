@@ -56,7 +56,7 @@ public:
      */
     ///@{
     int GetDrawingLength() const { return m_drawingLength; }
-    void SetDrawingLength(int length) { m_drawingLength = length; }
+    void SetDrawingLength(int length) { m_drawingLength=length; }
     bool HasDrawingLength() const { return (m_drawingLength > 0); }
     ///@}
 

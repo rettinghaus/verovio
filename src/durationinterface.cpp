@@ -66,16 +66,16 @@ void DurationInterface::Reset()
 
 double DurationInterface::GetInterfaceAlignmentDuration(int num, int numBase)
 {
-    int noteDur = this->GetDurGes() != DURATION_NONE ? this->GetActualDurGes() : this->GetActualDur();
+    int noteDur=this->GetDurGes() != DURATION_NONE ? this->GetActualDurGes() : this->GetActualDur();
 
     if (this->HasNum()) num *= this->GetNum();
     if (this->HasNumbase()) numBase *= this->GetNumbase();
 
-    double duration = DUR_MAX / pow(2.0, (double)(noteDur - 2.0)) * numBase / num;
+    double duration=DUR_MAX / pow(2.0, (double)(noteDur - 2.0)) * numBase / num;
 
-    int noteDots = (this->HasDotsGes()) ? this->GetDotsGes() : this->GetDots();
+    int noteDots=(this->HasDotsGes()) ? this->GetDotsGes() : this->GetDots();
     if (noteDots != -1) {
-        duration = 2 * duration - (duration / pow(2, noteDots));
+        duration=2 * duration - (duration / pow(2, noteDots));
     }
     // LogDebug("Duration %d; Dot %d; Alignement %f", noteDur, GetDots(), duration);
     return duration;
@@ -83,7 +83,7 @@ double DurationInterface::GetInterfaceAlignmentDuration(int num, int numBase)
 
 double DurationInterface::GetInterfaceAlignmentMensuralDuration(int num, int numBase, Mensur *currentMensur)
 {
-    int noteDur = this->GetDurGes() != DURATION_NONE ? this->GetActualDurGes() : this->GetActualDur();
+    int noteDur=this->GetDurGes() != DURATION_NONE ? this->GetActualDurGes() : this->GetActualDur();
 
     if (!currentMensur) {
         LogWarning("No current mensur for calculating duration");
@@ -116,8 +116,8 @@ double DurationInterface::GetInterfaceAlignmentMensuralDuration(int num, int num
     if (currentMensur->HasNum()) num *= currentMensur->GetNum();
     if (currentMensur->HasNumbase()) numBase *= currentMensur->GetNumbase();
 
-    double ratio = 0.0;
-    double duration = (double)DUR_MENSURAL_REF;
+    double ratio=0.0;
+    double duration=(double)DUR_MENSURAL_REF;
     switch (noteDur) {
         case DUR_MX:
             duration *= (double)abs(currentMensur->GetModusminor()) * (double)abs(currentMensur->GetModusmaior());
@@ -126,24 +126,24 @@ double DurationInterface::GetInterfaceAlignmentMensuralDuration(int num, int num
         case DUR_BR: break;
         case DUR_1: duration /= (double)abs(currentMensur->GetTempus()); break;
         default:
-            ratio = pow(2.0, (double)(noteDur - DUR_2));
+            ratio=pow(2.0, (double)(noteDur - DUR_2));
             duration /= (double)abs(currentMensur->GetTempus()) * (double)abs(currentMensur->GetProlatio()) * ratio;
             break;
     }
     duration *= (double)numBase / (double)num;
     // LogDebug("Duration %d; %d/%d; Alignement %f; Ratio %f", noteDur, num, numbase, duration, ratio);
-    duration = durRound(duration);
+    duration=durRound(duration);
     return duration;
 }
 
 bool DurationInterface::IsFirstInBeam(LayerElement *noteOrRest)
 {
-    Beam *beam = dynamic_cast<Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
+    Beam *beam=dynamic_cast<Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
     if (!beam) {
         return false;
     }
-    const ArrayOfObjects *notesOrRests = beam->GetList(beam);
-    ArrayOfObjects::const_iterator iter = notesOrRests->begin();
+    const ArrayOfObjects *notesOrRests=beam->GetList(beam);
+    ArrayOfObjects::const_iterator iter=notesOrRests->begin();
     if (*iter == noteOrRest) {
         return true;
     }
@@ -152,12 +152,12 @@ bool DurationInterface::IsFirstInBeam(LayerElement *noteOrRest)
 
 bool DurationInterface::IsLastInBeam(LayerElement *noteOrRest)
 {
-    Beam *beam = dynamic_cast<Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
+    Beam *beam=dynamic_cast<Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
     if (!beam) {
         return false;
     }
-    const ArrayOfObjects *notesOrRests = beam->GetList(beam);
-    ArrayOfObjects::const_reverse_iterator iter = notesOrRests->rbegin();
+    const ArrayOfObjects *notesOrRests=beam->GetList(beam);
+    ArrayOfObjects::const_reverse_iterator iter=notesOrRests->rbegin();
     if (*iter == noteOrRest) {
         return true;
     }
@@ -184,9 +184,9 @@ int DurationInterface::GetNoteOrChordDur(LayerElement *element)
         return this->GetActualDur();
     }
     else if (element->Is(NOTE)) {
-        Note *note = vrv_cast<Note *>(element);
+        Note *note=vrv_cast<Note *>(element);
         assert(note);
-        Chord *chord = note->IsChordTone();
+        Chord *chord=note->IsChordTone();
         if (chord && !this->HasDur())
             return chord->GetActualDur();
         else

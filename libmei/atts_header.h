@@ -49,19 +49,19 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOuterRecto(std::string outerRecto_) { m_outerRecto = outerRecto_; }
+    void SetOuterRecto(std::string outerRecto_) { m_outerRecto=outerRecto_; }
     std::string GetOuterRecto() const { return m_outerRecto; }
     bool HasOuterRecto() const;
     //
-    void SetInnerVerso(std::string innerVerso_) { m_innerVerso = innerVerso_; }
+    void SetInnerVerso(std::string innerVerso_) { m_innerVerso=innerVerso_; }
     std::string GetInnerVerso() const { return m_innerVerso; }
     bool HasInnerVerso() const;
     //
-    void SetInnerRecto(std::string innerRecto_) { m_innerRecto = innerRecto_; }
+    void SetInnerRecto(std::string innerRecto_) { m_innerRecto=innerRecto_; }
     std::string GetInnerRecto() const { return m_innerRecto; }
     bool HasInnerRecto() const;
     //
-    void SetOuterVerso(std::string outerVerso_) { m_outerVerso = outerVerso_; }
+    void SetOuterVerso(std::string outerVerso_) { m_outerVerso=outerVerso_; }
     std::string GetOuterVerso() const { return m_outerVerso; }
     bool HasOuterVerso() const;
     ///@}
@@ -103,11 +103,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetRecto(std::string recto_) { m_recto = recto_; }
+    void SetRecto(std::string recto_) { m_recto=recto_; }
     std::string GetRecto() const { return m_recto; }
     bool HasRecto() const;
     //
-    void SetVerso(std::string verso_) { m_verso = verso_; }
+    void SetVerso(std::string verso_) { m_verso=verso_; }
     std::string GetVerso() const { return m_verso; }
     bool HasVerso() const;
     ///@}
@@ -145,7 +145,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetRecordtype(recordType_RECORDTYPE recordtype_) { m_recordtype = recordtype_; }
+    void SetRecordtype(recordType_RECORDTYPE recordtype_) { m_recordtype=recordtype_; }
     recordType_RECORDTYPE GetRecordtype() const { return m_recordtype; }
     bool HasRecordtype() const;
     ///@}
@@ -181,7 +181,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetMethod(regularMethod_METHOD method_) { m_method = method_; }
+    void SetMethod(regularMethod_METHOD method_) { m_method=method_; }
     regularMethod_METHOD GetMethod() const { return m_method; }
     bool HasMethod() const;
     ///@}

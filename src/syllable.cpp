@@ -65,15 +65,15 @@ void Syllable::Reset()
 
 bool Syllable::MarkupAddSyl()
 {
-    Object *obj = this->FindDescendantByType(SYL);
+    Object *obj=this->FindDescendantByType(SYL);
     ArrayOfStrAttr attributes;
     this->GetAttributes(&attributes);
-    bool noFollows = std::find_if(attributes.begin(), attributes.end(), [](auto att) -> bool {
+    bool noFollows=std::find_if(attributes.begin(), attributes.end(), [](auto att) -> bool {
         return (std::string{ "follows" }.compare(att.first) == 0);
     }) == attributes.end();
     if (noFollows && (obj == NULL)) {
-        Syl *syl = new Syl();
-        Text *text = new Text();
+        Syl *syl=new Syl();
+        Text *text=new Text();
         syl->AddChild(text);
         this->AddChild(syl);
         return true;

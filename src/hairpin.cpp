@@ -57,9 +57,9 @@ void Hairpin::Reset()
     ResetPlacement();
     ResetVerticalGroup();
 
-    m_leftLink = NULL;
-    m_rightLink = NULL;
-    m_drawingLength = 0;
+    m_leftLink=NULL;
+    m_rightLink=NULL;
+    m_drawingLength=0;
 }
 
 int Hairpin::CalcHeight(
@@ -67,10 +67,10 @@ int Hairpin::CalcHeight(
 {
     assert(doc);
 
-    int endY = doc->GetDrawingHairpinSize(staffSize, false);
+    int endY=doc->GetDrawingHairpinSize(staffSize, false);
 
     if (this->HasOpening()) {
-        endY = this->GetOpening() * doc->GetDrawingUnit(staffSize);
+        endY=this->GetOpening() * doc->GetDrawingUnit(staffSize);
     }
 
     // Something is probably wrong before...
@@ -79,17 +79,17 @@ int Hairpin::CalcHeight(
     // Do not adjust heigt when not a full hairpin
     if (spanningType != SPANNING_START_END) return endY;
 
-    int length = this->GetDrawingLength();
+    int length=this->GetDrawingLength();
 
     // Second of a <>
     if ((this->GetForm() == hairpinLog_FORM_dim) && m_leftLink && m_leftLink->Is(HAIRPIN)) {
         // Do no ajust height when previous hairpin is not a full hairpin
         if (!leftPositioner || (leftPositioner->GetSpanningType() != SPANNING_START_END)) return endY;
-        Hairpin *left = vrv_cast<Hairpin *>(m_leftLink);
+        Hairpin *left=vrv_cast<Hairpin *>(m_leftLink);
         assert(left);
         // Take into account its length only if the left one is actually a <
         if (left->GetForm() == hairpinLog_FORM_cres) {
-            length = std::max(length, left->GetDrawingLength());
+            length=std::max(length, left->GetDrawingLength());
         }
     }
 
@@ -97,11 +97,11 @@ int Hairpin::CalcHeight(
     if ((this->GetForm() == hairpinLog_FORM_cres) && m_rightLink && m_rightLink->Is(HAIRPIN)) {
         // Do no ajust height when next hairpin is not a full hairpin
         if (!rightPositioner || (rightPositioner->GetSpanningType() != SPANNING_START_END)) return endY;
-        Hairpin *right = vrv_cast<Hairpin *>(m_rightLink);
+        Hairpin *right=vrv_cast<Hairpin *>(m_rightLink);
         assert(right);
         // Take into account its length only if the right one is actually a >
         if (right->GetForm() == hairpinLog_FORM_dim) {
-            length = std::max(length, right->GetDrawingLength());
+            length=std::max(length, right->GetDrawingLength());
         }
     }
 
@@ -111,13 +111,13 @@ int Hairpin::CalcHeight(
     /************** cap the angle of hairpins **************/
 
     // Given height and width, calculate hairpin angle
-    double theta = 2.0 * atan((endY / 2.0) / length);
+    double theta=2.0 * atan((endY / 2.0) / length);
     // Convert to Radians
     theta *= (360.0 / (2.0 * M_PI));
     // If the angle is too big, restrict endY
     if (theta > 16) {
-        theta = 16;
-        endY = 2 * (length)*tan((M_PI / 360) * theta);
+        theta=16;
+        endY=2 * (length)*tan((M_PI / 360) * theta);
     }
 
     return endY;
@@ -125,25 +125,25 @@ int Hairpin::CalcHeight(
 
 void Hairpin::SetLeftLink(ControlElement *leftLink)
 {
-    m_leftLink = leftLink;
+    m_leftLink=leftLink;
     if (this->GetDrawingGrpId() != 0) {
         // LogDebug("Grp id LF already set %d", this->GetDrawingGrpId());
         return;
     }
 
-    int grpId = leftLink->GetDrawingGrpId();
+    int grpId=leftLink->GetDrawingGrpId();
     if (grpId == 0) {
-        grpId = leftLink->SetDrawingGrpObject(leftLink);
+        grpId=leftLink->SetDrawingGrpObject(leftLink);
     }
     this->SetDrawingGrpId(grpId);
 }
 
 void Hairpin::SetRightLink(ControlElement *rightLink)
 {
-    m_rightLink = rightLink;
-    int grpId = this->GetDrawingGrpId();
+    m_rightLink=rightLink;
+    int grpId=this->GetDrawingGrpId();
     if (grpId == 0) {
-        grpId = this->SetDrawingGrpObject(this);
+        grpId=this->SetDrawingGrpObject(this);
     }
 
     if (rightLink->GetDrawingGrpId() != 0) {
@@ -159,7 +159,7 @@ void Hairpin::SetRightLink(ControlElement *rightLink)
 
 int Hairpin::PrepareFloatingGrps(FunctorParams *functorParams)
 {
-    PrepareFloatingGrpsParams *params = vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
+    PrepareFloatingGrpsParams *params=vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
     assert(params);
 
     if (this->HasVgrp()) {
@@ -199,9 +199,9 @@ int Hairpin::ResetDrawing(FunctorParams *functorParams)
     // Call parent one too
     ControlElement::ResetDrawing(functorParams);
 
-    m_leftLink = NULL;
-    m_rightLink = NULL;
-    m_drawingLength = 0;
+    m_leftLink=NULL;
+    m_rightLink=NULL;
+    m_drawingLength=0;
 
     return FUNCTOR_CONTINUE;
 }

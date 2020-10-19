@@ -40,7 +40,7 @@ MidiEventList::MidiEventList(void) {
 
 MidiEventList::MidiEventList(const MidiEventList& other) {
 	list.reserve(other.list.size());
-	auto it = other.list.begin();
+	auto it=other.list.begin();
 	std::generate_n(std::back_inserter(list), other.list.size(), [&]() -> MidiEvent* {
 		return new MidiEvent(**it++);
 	});
@@ -54,7 +54,7 @@ MidiEventList::MidiEventList(const MidiEventList& other) {
 //
 
 MidiEventList::MidiEventList(MidiEventList&& other) {
-   list = std::move(other.list);
+   list=std::move(other.list);
    other.list.clear();
 }
 
@@ -144,7 +144,7 @@ void MidiEventList::clear(void) {
 	for (int i=0; i<(int)list.size(); i++) {
 		if (list[i] != NULL) {
 			delete list[i];
-			list[i] = NULL;
+			list[i]=NULL;
 		}
 	}
 	list.resize(0);
@@ -213,7 +213,7 @@ int MidiEventList::getEventCount(void) const {
 //
 
 int MidiEventList::append(MidiEvent& event) {
-	MidiEvent* ptr = new MidiEvent(event);
+	MidiEvent* ptr=new MidiEvent(event);
 	list.push_back(ptr);
 	return (int)list.size()-1;
 }
@@ -244,11 +244,11 @@ int MidiEventList::push_back(MidiEvent& event) {
 //
 
 void MidiEventList::removeEmpties(void) {
-	int count = 0;
+	int count=0;
 	for (int i=0; i<(int)list.size(); i++) {
 		if (list[i]->empty()) {
 			delete list[i];
-			list[i] = NULL;
+			list[i]=NULL;
 			count++;
 		}
 	}
@@ -324,24 +324,24 @@ int MidiEventList::linkNotePairs(void) {
 	contmap.resize(128);
 	std::pair<int, int> zero(0, 0);
 	std::fill(contmap.begin(), contmap.end(), zero);
-	contmap[64].first  = 1;   contmap[64].second = 0;
-	contmap[65].first  = 1;   contmap[65].second = 1;
-	contmap[66].first  = 1;   contmap[66].second = 2;
-	contmap[67].first  = 1;   contmap[67].second = 3;
-	contmap[68].first  = 1;   contmap[68].second = 4;
-	contmap[69].first  = 1;   contmap[69].second = 5;
-	contmap[80].first  = 1;   contmap[80].second = 6;
-	contmap[81].first  = 1;   contmap[81].second = 7;
-	contmap[82].first  = 1;   contmap[82].second = 8;
-	contmap[83].first  = 1;   contmap[83].second = 9;
-	contmap[84].first  = 1;   contmap[84].second = 10;
-	contmap[85].first  = 1;   contmap[85].second = 11;
-	contmap[86].first  = 1;   contmap[86].second = 12;
-	contmap[87].first  = 1;   contmap[87].second = 13;
-	contmap[88].first  = 1;   contmap[88].second = 14;
-	contmap[89].first  = 1;   contmap[89].second = 15;
-	contmap[90].first  = 1;   contmap[90].second = 16;
-	contmap[122].first = 1;   contmap[122].second = 17;
+	contmap[64].first =1;   contmap[64].second=0;
+	contmap[65].first =1;   contmap[65].second=1;
+	contmap[66].first =1;   contmap[66].second=2;
+	contmap[67].first =1;   contmap[67].second=3;
+	contmap[68].first =1;   contmap[68].second=4;
+	contmap[69].first =1;   contmap[69].second=5;
+	contmap[80].first =1;   contmap[80].second=6;
+	contmap[81].first =1;   contmap[81].second=7;
+	contmap[82].first =1;   contmap[82].second=8;
+	contmap[83].first =1;   contmap[83].second=9;
+	contmap[84].first =1;   contmap[84].second=10;
+	contmap[85].first =1;   contmap[85].second=11;
+	contmap[86].first =1;   contmap[86].second=12;
+	contmap[87].first =1;   contmap[87].second=13;
+	contmap[88].first =1;   contmap[88].second=14;
+	contmap[89].first =1;   contmap[89].second=15;
+	contmap[90].first =1;   contmap[90].second=16;
+	contmap[122].first=1;   contmap[122].second=17;
 
 	// dimensions:
 	// 1: mapped controller (0 to 17)
@@ -365,51 +365,51 @@ int MidiEventList::linkNotePairs(void) {
 	int contval;
 	int conti;
 	int contstate;
-	int counter = 0;
+	int counter=0;
 	MidiEvent* mev;
 	MidiEvent* noteon;
 	for (i=0; i<getSize(); i++) {
-		mev = &getEvent(i);
+		mev=&getEvent(i);
 		mev->unlinkEvent();
 		if (mev->isNoteOn()) {
 			// store the note-on to pair later with a note-off message.
-			key = mev->getKeyNumber();
-			channel = mev->getChannel();
+			key=mev->getKeyNumber();
+			channel=mev->getChannel();
 			noteons[channel][key].push_back(mev);
 		} else if (mev->isNoteOff()) {
-			key = mev->getKeyNumber();
-			channel = mev->getChannel();
+			key=mev->getKeyNumber();
+			channel=mev->getChannel();
 			if (noteons[channel][key].size() > 0) {
-				noteon = noteons[channel][key].back();
+				noteon=noteons[channel][key].back();
 				noteons[channel][key].pop_back();
 				noteon->linkEvent(mev);
 				counter++;
 			}
 		} else if (mev->isController()) {
-			contnum = mev->getP1();
+			contnum=mev->getP1();
 			if (contmap[contnum].first) {
-				conti     = contmap[contnum].second;
-				channel   = mev->getChannel();
-				contval   = mev->getP2();
-				contstate = contval < 64 ? 0 : 1;
+				conti    =contmap[contnum].second;
+				channel  =mev->getChannel();
+				contval  =mev->getP2();
+				contstate=contval < 64 ? 0 : 1;
 				if ((oldstates[conti][channel] == -1) && contstate) {
 					// a newly initialized onstate was detected, so store for
 					// later linking to an off state.
-					contevents[conti][channel] = mev;
-					oldstates[conti][channel] = contstate;
+					contevents[conti][channel]=mev;
+					oldstates[conti][channel]=contstate;
 				} else if (oldstates[conti][channel] == contstate) {
 					// the controller state is redundant and will be ignored.
 				} else if ((oldstates[conti][channel] == 0) && contstate) {
 					// controller is currently off, so store on-state for next link
-					contevents[conti][channel] = mev;
-					oldstates[conti][channel] = contstate;
+					contevents[conti][channel]=mev;
+					oldstates[conti][channel]=contstate;
 				} else if ((oldstates[conti][channel] == 1) && (contstate == 0)) {
 					// controller has just been turned off, so link to
 					// stored on-message.
 					contevents[conti][channel]->linkEvent(mev);
-					oldstates[conti][channel] = contstate;
+					oldstates[conti][channel]=contstate;
 					// not necessary, but maybe use for something later:
-					contevents[conti][channel] = mev;
+					contevents[conti][channel]=mev;
 				}
 			}
 		}
@@ -442,7 +442,7 @@ void MidiEventList::clearLinks(void) {
 
 void MidiEventList::clearSequence(void) {
 	for (int i=0; i<getEventCount(); i++) {
-		getEvent(i).seq = 0;
+		getEvent(i).seq=0;
 	}
 }
 
@@ -460,12 +460,12 @@ void MidiEventList::clearSequence(void) {
 //   default sorting behavior of sortTracks() when events occur at the
 //   same time.  Returns the next serial number that has not yet been
 //   used.
-//   default value: sequence = 1.
+//   default value: sequence=1.
 //
 
 int MidiEventList::markSequence(int sequence) {
 	for (int i=0; i<getEventCount(); i++) {
-		getEvent(i).seq = sequence++;
+		getEvent(i).seq=sequence++;
 	}
 	return sequence;
 }
@@ -552,8 +552,8 @@ void MidiEventList::sort(void) {
 //
 
 int eventcompare(const void* a, const void* b) {
-	MidiEvent& aevent = **((MidiEvent**)a);
-	MidiEvent& bevent = **((MidiEvent**)b);
+	MidiEvent& aevent=**((MidiEvent**)a);
+	MidiEvent& bevent=**((MidiEvent**)b);
 
 	if (aevent.tick > bevent.tick) {
 		// aevent occurs after bevent

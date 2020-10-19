@@ -172,7 +172,7 @@ public:
      * If idx is provided, move the children to the idx position in the object children.
      * Only moving to the same type is allow unless allowTypeChange is true.
      */
-    void MoveChildrenFrom(Object *sourceParent, int idx = -1, bool allowTypeChange = false);
+    void MoveChildrenFrom(Object *sourceParent, int idx=-1, bool allowTypeChange=false);
 
     /**
      * Replace the currentChild with the replacingChild.
@@ -225,16 +225,16 @@ public:
     void SetUuid(std::string uuid);
     void SwapUuid(Object *other);
     void ResetUuid();
-    static void SeedUuid(unsigned int seed = 0);
+    static void SeedUuid(unsigned int seed=0);
 
     /**
      * Methods for setting / getting comments
      */
     std::string GetComment() const { return m_comment; }
-    void SetComment(std::string comment) { m_comment = comment; }
+    void SetComment(std::string comment) { m_comment=comment; }
     bool HasComment() { return !m_comment.empty(); }
     std::string GetClosingComment() const { return m_closingComment; }
-    void SetClosingComment(std::string endComment) { m_closingComment = endComment; }
+    void SetClosingComment(std::string endComment) { m_closingComment=endComment; }
     bool HasClosingComment() { return !m_closingComment.empty(); }
 
     /**
@@ -278,7 +278,7 @@ public:
      * Always call GetFirst before calling GetNext() or call GetNext(child)
      */
     ///@{
-    Object *GetFirst(const ClassId classId = UNSPECIFIED);
+    Object *GetFirst(const ClassId classId=UNSPECIFIED);
     Object *GetNext();
     ///@}
 
@@ -287,8 +287,8 @@ public:
      * Returns NULL is not found
      */
     ///@{
-    Object *GetNext(const Object *child, const ClassId classId = UNSPECIFIED);
-    Object *GetPrevious(const Object *child, const ClassId classId = UNSPECIFIED);
+    Object *GetNext(const Object *child, const ClassId classId=UNSPECIFIED);
+    Object *GetPrevious(const Object *child, const ClassId classId=UNSPECIFIED);
     ///@}
 
     /**
@@ -311,7 +311,7 @@ public:
      * Reset the parent of the Object.
      * The current parent is not expected to be NULL.
      */
-    void ResetParent() { m_parent = NULL; }
+    void ResetParent() { m_parent=NULL; }
 
     /**
      * Base method for checking if a child can be added.
@@ -372,47 +372,47 @@ public:
      * Return true if the object has the child Object as descendant (reference of direct).
      * Processes in depth-first.
      */
-    bool HasDescendant(Object *child, int deepness = UNLIMITED_DEPTH) const;
+    bool HasDescendant(Object *child, int deepness=UNLIMITED_DEPTH) const;
 
     /**
      * Look for a descendant with the specified uuid (returns NULL if not found)
      * This method is a wrapper for the Object::FindByUuid functor.
      */
-    Object *FindDescendantByUuid(std::string uuid, int deepness = UNLIMITED_DEPTH, bool direction = FORWARD);
+    Object *FindDescendantByUuid(std::string uuid, int deepness=UNLIMITED_DEPTH, bool direction=FORWARD);
 
     /**
      * Look for a descendant with the specified type (returns NULL if not found)
      * This method is a wrapper for the Object::FindByType functor.
      */
-    Object *FindDescendantByType(ClassId classId, int deepness = UNLIMITED_DEPTH, bool direction = FORWARD);
+    Object *FindDescendantByType(ClassId classId, int deepness=UNLIMITED_DEPTH, bool direction=FORWARD);
 
     /**
      * Return the first element matching the Comparison functor
      * Deepness allow to limit the depth search (EditorialElements are not count)
      */
     Object *FindDescendantByComparison(
-        Comparison *comparison, int deepness = UNLIMITED_DEPTH, bool direction = FORWARD);
+        Comparison *comparison, int deepness=UNLIMITED_DEPTH, bool direction=FORWARD);
 
     /**
      * Return the element matching the extreme value with an Comparison functor
      * Deepness allow to limit the depth search (EditorialElements are not count)
      */
     Object *FindDescendantExtremeByComparison(
-        Comparison *comparison, int deepness = UNLIMITED_DEPTH, bool direction = FORWARD);
+        Comparison *comparison, int deepness=UNLIMITED_DEPTH, bool direction=FORWARD);
 
     /**
      * Return all the objects matching the Comparison functor
      * Deepness allow to limit the depth search (EditorialElements are not count)
      */
-    void FindAllDescendantByComparison(ListOfObjects *objects, Comparison *comparison, int deepness = UNLIMITED_DEPTH,
-        bool direction = FORWARD, bool clear = true);
+    void FindAllDescendantByComparison(ListOfObjects *objects, Comparison *comparison, int deepness=UNLIMITED_DEPTH,
+        bool direction=FORWARD, bool clear=true);
 
     /**
      * Return all the objects matching the Comparison functor and being between start and end in the tree.
      * The start and end objects are included in the result set.
      */
     void FindAllDescendantBetween(
-        ListOfObjects *objects, Comparison *comparison, Object *start, Object *end, bool clear = true);
+        ListOfObjects *objects, Comparison *comparison, Object *start, Object *end, bool clear=true);
 
     /**
      * Give up ownership of the child at the idx position (NULL if not found)
@@ -446,15 +446,15 @@ public:
      * Return the first ancestor of the specified type.
      * The maxSteps parameter limits the search to a certain number of level if not -1.
      */
-    Object *GetFirstAncestor(const ClassId classId, int maxSteps = -1) const;
+    Object *GetFirstAncestor(const ClassId classId, int maxSteps=-1) const;
 
-    Object *GetFirstAncestorInRange(const ClassId classIdMin, const ClassId classIdMax, int maxDepth = -1) const;
+    Object *GetFirstAncestorInRange(const ClassId classIdMin, const ClassId classIdMax, int maxDepth=-1) const;
 
     /**
      * Return the last ancestor that is NOT of the specified type.
      * The maxSteps parameter limits the search to a certain number of level if not -1.
      */
-    Object *GetLastAncestorNot(const ClassId classId, int maxSteps = -1);
+    Object *GetLastAncestorNot(const ClassId classId, int maxSteps=-1);
 
     /**
      * Return the first child that is NOT of the specified type.
@@ -475,14 +475,14 @@ public:
     /**
      * Mark the object and its parent (if any) as modified
      */
-    void Modify(bool modified = true);
+    void Modify(bool modified=true);
 
     /**
      * @name Setter and getter of the attribute flag
      */
     ///@{
     bool IsAttribute() const { return m_isAttribute; }
-    void IsAttribute(bool isAttribute) { m_isAttribute = isAttribute; }
+    void IsAttribute(bool isAttribute) { m_isAttribute=isAttribute; }
     ///@}
 
     /**
@@ -490,7 +490,7 @@ public:
      */
     ///@{
     bool IsExpansion() const { return m_isExpansion; }
-    void IsExpansion(bool isExpansion) { m_isExpansion = isExpansion; }
+    void IsExpansion(bool isExpansion) { m_isExpansion=isExpansion; }
     ///@}
 
     /**
@@ -527,8 +527,8 @@ public:
      * Deepness specifies how many child levels should be processed. UNLIMITED_DEPTH means no
      * limit (EditorialElement objects do not count).
      */
-    virtual void Process(Functor *functor, FunctorParams *functorParams, Functor *endFunctor = NULL,
-        ArrayOfComparisons *filters = NULL, int deepness = UNLIMITED_DEPTH, bool direction = FORWARD);
+    virtual void Process(Functor *functor, FunctorParams *functorParams, Functor *endFunctor=NULL,
+        ArrayOfComparisons *filters=NULL, int deepness=UNLIMITED_DEPTH, bool direction=FORWARD);
 
     //----------//
     // Functors //
@@ -1318,8 +1318,8 @@ public:
     /**
      * Gets the first item of type elementType starting at startFrom
      */
-    Object *GetListFirst(const Object *startFrom, const ClassId classId = UNSPECIFIED);
-    Object *GetListFirstBackward(Object *startFrom, const ClassId classId = UNSPECIFIED);
+    Object *GetListFirst(const Object *startFrom, const ClassId classId=UNSPECIFIED);
+    Object *GetListFirstBackward(Object *startFrom, const ClassId classId=UNSPECIFIED);
 
     /**
      * Returns the previous object in the list (NULL if not found)
@@ -1451,7 +1451,7 @@ private:
 class ObjectComparison {
 
 public:
-    ObjectComparison(const ClassId classId) { m_classId = classId; }
+    ObjectComparison(const ClassId classId) { m_classId=classId; }
 
     bool operator()(Object *object)
     {

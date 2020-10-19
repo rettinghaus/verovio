@@ -43,7 +43,7 @@ void SystemElement::Reset()
     FloatingObject::Reset();
     ResetTyped();
 
-    m_visibility = Visible;
+    m_visibility=Visible;
 }
 
 //----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ void SystemElement::Reset()
 
 int SystemElement::ConvertToPageBased(FunctorParams *functorParams)
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
+    ConvertToPageBasedParams *params=vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
     assert(params);
 
     this->MoveItselfTo(params->m_pageBasedSystem);
@@ -62,7 +62,7 @@ int SystemElement::ConvertToPageBased(FunctorParams *functorParams)
 
 int SystemElement::ConvertToCastOffMensural(FunctorParams *functorParams)
 {
-    ConvertToCastOffMensuralParams *params = vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
+    ConvertToCastOffMensuralParams *params=vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
     assert(params);
 
     assert(params->m_targetSystem);
@@ -73,14 +73,14 @@ int SystemElement::ConvertToCastOffMensural(FunctorParams *functorParams)
 
 int SystemElement::CastOffSystems(FunctorParams *functorParams)
 {
-    CastOffSystemsParams *params = vrv_params_cast<CastOffSystemsParams *>(functorParams);
+    CastOffSystemsParams *params=vrv_params_cast<CastOffSystemsParams *>(functorParams);
     assert(params);
 
     // Since the functor returns FUNCTOR_SIBLINGS we should never go lower than the system children
     assert(dynamic_cast<System *>(this->GetParent()));
 
     // Special case where we use the Relinquish method.
-    SystemElement *element = dynamic_cast<SystemElement *>(params->m_contentSystem->Relinquish(this->GetIdx()));
+    SystemElement *element=dynamic_cast<SystemElement *>(params->m_contentSystem->Relinquish(this->GetIdx()));
     // move as pending since we want it at the beginning of the system in case of system break coming
     params->m_pendingObjects.push_back(element);
 
@@ -89,7 +89,7 @@ int SystemElement::CastOffSystems(FunctorParams *functorParams)
 
 int SystemElement::CastOffEncoding(FunctorParams *functorParams)
 {
-    CastOffEncodingParams *params = vrv_params_cast<CastOffEncodingParams *>(functorParams);
+    CastOffEncodingParams *params=vrv_params_cast<CastOffEncodingParams *>(functorParams);
     assert(params);
 
     MoveItselfTo(params->m_currentSystem);

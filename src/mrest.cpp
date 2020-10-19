@@ -49,11 +49,11 @@ void MRest::Reset()
 
 int MRest::ConvertMarkupAnalytical(FunctorParams *functorParams)
 {
-    ConvertMarkupAnalyticalParams *params = vrv_params_cast<ConvertMarkupAnalyticalParams *>(functorParams);
+    ConvertMarkupAnalyticalParams *params=vrv_params_cast<ConvertMarkupAnalyticalParams *>(functorParams);
     assert(params);
 
     if (this->HasFermata()) {
-        Fermata *fermata = new Fermata();
+        Fermata *fermata=new Fermata();
         fermata->ConvertFromAnalyticalMarkup(this, this->GetUuid(), params);
     }
 

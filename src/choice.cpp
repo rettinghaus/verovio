@@ -30,14 +30,14 @@ namespace vrv {
 
 Choice::Choice() : EditorialElement("choice-")
 {
-    m_level = EDITORIAL_UNDEFINED;
+    m_level=EDITORIAL_UNDEFINED;
 
     Reset();
 }
 
 Choice::Choice(EditorialLevel level) : EditorialElement("choice-")
 {
-    m_level = level;
+    m_level=level;
 
     Reset();
 }

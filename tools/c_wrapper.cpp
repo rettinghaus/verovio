@@ -82,7 +82,7 @@ const char *vrvToolkit_getExpansionIdsForElement(Toolkit *tk, const char *xmlId)
 
 const char *vrvToolkit_getHumdrum(Toolkit *tk)
 {
-    const char *buffer = tk->GetHumdrumBuffer();
+    const char *buffer=tk->GetHumdrumBuffer();
     return buffer;
 }
 

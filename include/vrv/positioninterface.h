@@ -43,7 +43,7 @@ public:
      * This is set by the SetAlignmentPitchPos functor.
      */
     ///@{
-    void SetDrawingLoc(int drawingLoc) { m_drawingLoc = drawingLoc; }
+    void SetDrawingLoc(int drawingLoc) { m_drawingLoc=drawingLoc; }
     int GetDrawingLoc() const { return m_drawingLoc; }
     ///@}
 

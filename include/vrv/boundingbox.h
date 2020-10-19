@@ -77,8 +77,8 @@ public:
      * Pure virtual methods
      */
     ///@{
-    virtual int GetDrawingX() const = 0;
-    virtual int GetDrawingY() const = 0;
+    virtual int GetDrawingX() const=0;
+    virtual int GetDrawingY() const=0;
     ///@}
 
     /**
@@ -86,8 +86,8 @@ public:
      * Pure virtual methods.
      */
     ///@{
-    virtual void ResetCachedDrawingX() const = 0;
-    virtual void ResetCachedDrawingY() const = 0;
+    virtual void ResetCachedDrawingX() const=0;
+    virtual void ResetCachedDrawingY() const=0;
     ///@}
 
     /**
@@ -132,20 +132,20 @@ public:
      * Makes an overal bounding box overlap calculation without looking at anchor points
      */
     ///@{
-    bool HorizontalContentOverlap(const BoundingBox *other, int margin = 0) const;
-    bool VerticalContentOverlap(const BoundingBox *other, int margin = 0) const;
-    bool HorizontalSelfOverlap(const BoundingBox *other, int margin = 0) const;
-    bool VerticalSelfOverlap(const BoundingBox *other, int margin = 0) const;
+    bool HorizontalContentOverlap(const BoundingBox *other, int margin=0) const;
+    bool VerticalContentOverlap(const BoundingBox *other, int margin=0) const;
+    bool HorizontalSelfOverlap(const BoundingBox *other, int margin=0) const;
+    bool VerticalSelfOverlap(const BoundingBox *other, int margin=0) const;
     ///@}
 
     /**
      * @name Return the overlap on the left / right / top / bottom looking at bounding box anchor points
      */
     ///@{
-    int HorizontalLeftOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int vMargin = 0) const;
-    int HorizontalRightOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int vMaring = 0) const;
-    int VerticalTopOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int hMargin = 0) const;
-    int VerticalBottomOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int hMargin = 0) const;
+    int HorizontalLeftOverlap(const BoundingBox *other, Doc *doc, int margin=0, int vMargin=0) const;
+    int HorizontalRightOverlap(const BoundingBox *other, Doc *doc, int margin=0, int vMaring=0) const;
+    int VerticalTopOverlap(const BoundingBox *other, Doc *doc, int margin=0, int hMargin=0) const;
+    int VerticalBottomOverlap(const BoundingBox *other, Doc *doc, int margin=0, int hMargin=0) const;
     ////}
 
     /**
@@ -157,7 +157,7 @@ public:
      * Return true if the bounding box intersects with the curve represented by the FloatingPositioner.
      * The Object pointed by the FloatingPositioner is expected to be a SLUR or a TIE
      */
-    int Intersects(FloatingCurvePositioner *curve, Accessor type, int margin = 0) const;
+    int Intersects(FloatingCurvePositioner *curve, Accessor type, int margin=0) const;
 
     /**
      * Swap values.

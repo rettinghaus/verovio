@@ -53,7 +53,7 @@ void MNum::Reset()
     ResetLang();
     ResetTypography();
 
-    m_isGenerated = false;
+    m_isGenerated=false;
 }
 
 bool MNum::IsSupportedChild(Object *child)

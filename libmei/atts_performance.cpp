@@ -41,26 +41,26 @@ AttAlignment::~AttAlignment()
 
 void AttAlignment::ResetAlignment()
 {
-    m_when = "";
+    m_when="";
 }
 
 bool AttAlignment::ReadAlignment(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("when")) {
         this->SetWhen(StrToStr(element.attribute("when").value()));
         element.remove_attribute("when");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttAlignment::WriteAlignment(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasWhen()) {
-        element.append_attribute("when") = StrToStr(this->GetWhen()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("when")=StrToStr(this->GetWhen()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -75,7 +75,7 @@ bool AttAlignment::HasWhen() const
 bool Att::SetPerformance(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_ALIGNMENT)) {
-        AttAlignment *att = dynamic_cast<AttAlignment *>(element);
+        AttAlignment *att=dynamic_cast<AttAlignment *>(element);
         assert(att);
         if (attrType == "when") {
             att->SetWhen(att->StrToStr(attrValue));
@@ -89,7 +89,7 @@ bool Att::SetPerformance(Object *element, const std::string &attrType, const std
 void Att::GetPerformance(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_ALIGNMENT)) {
-        const AttAlignment *att = dynamic_cast<const AttAlignment *>(element);
+        const AttAlignment *att=dynamic_cast<const AttAlignment *>(element);
         assert(att);
         if (att->HasWhen()) {
             attributes->push_back(std::make_pair("when", att->StrToStr(att->GetWhen())));

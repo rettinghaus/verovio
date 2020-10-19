@@ -41,36 +41,36 @@ AttNotationType::~AttNotationType()
 
 void AttNotationType::ResetNotationType()
 {
-    m_notationtype = NOTATIONTYPE_NONE;
-    m_notationsubtype = "";
+    m_notationtype=NOTATIONTYPE_NONE;
+    m_notationsubtype="";
 }
 
 bool AttNotationType::ReadNotationType(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("notationtype")) {
         this->SetNotationtype(StrToNotationtype(element.attribute("notationtype").value()));
         element.remove_attribute("notationtype");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     if (element.attribute("notationsubtype")) {
         this->SetNotationsubtype(StrToStr(element.attribute("notationsubtype").value()));
         element.remove_attribute("notationsubtype");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttNotationType::WriteNotationType(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasNotationtype()) {
-        element.append_attribute("notationtype") = NotationtypeToStr(this->GetNotationtype()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("notationtype")=NotationtypeToStr(this->GetNotationtype()).c_str();
+        wroteAttribute=true;
     }
     if (this->HasNotationsubtype()) {
-        element.append_attribute("notationsubtype") = StrToStr(this->GetNotationsubtype()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("notationsubtype")=StrToStr(this->GetNotationsubtype()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -90,7 +90,7 @@ bool AttNotationType::HasNotationsubtype() const
 bool Att::SetMei(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_NOTATIONTYPE)) {
-        AttNotationType *att = dynamic_cast<AttNotationType *>(element);
+        AttNotationType *att=dynamic_cast<AttNotationType *>(element);
         assert(att);
         if (attrType == "notationtype") {
             att->SetNotationtype(att->StrToNotationtype(attrValue));
@@ -108,7 +108,7 @@ bool Att::SetMei(Object *element, const std::string &attrType, const std::string
 void Att::GetMei(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_NOTATIONTYPE)) {
-        const AttNotationType *att = dynamic_cast<const AttNotationType *>(element);
+        const AttNotationType *att=dynamic_cast<const AttNotationType *>(element);
         assert(att);
         if (att->HasNotationtype()) {
             attributes->push_back(std::make_pair("notationtype", att->NotationtypeToStr(att->GetNotationtype())));

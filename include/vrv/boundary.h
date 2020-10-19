@@ -37,7 +37,7 @@ public:
     virtual ClassId GetClassId() const { return BOUNDARY_END; }
     ///@}
 
-    void SetMeasure(Measure *measure) { m_drawingMeasure = measure; }
+    void SetMeasure(Measure *measure) { m_drawingMeasure=measure; }
     Measure *GetMeasure() { return m_drawingMeasure; }
 
     /**
@@ -107,7 +107,7 @@ public:
     virtual void Reset();
     ///@}
 
-    void SetMeasure(Measure *measure) { m_drawingMeasure = measure; }
+    void SetMeasure(Measure *measure) { m_drawingMeasure=measure; }
     Measure *GetMeasure() { return m_drawingMeasure; }
 
     /**

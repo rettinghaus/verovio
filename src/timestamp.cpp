@@ -30,7 +30,7 @@ void TimestampAttr::Reset()
 {
     LayerElement::Reset();
 
-    m_actualDurPos = 0.0;
+    m_actualDurPos=0.0;
 }
 
 double TimestampAttr::GetTimestampAttrAlignmentDuration(int meterUnit) const

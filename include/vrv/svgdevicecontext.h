@@ -48,8 +48,8 @@ public:
      * @name Setters
      */
     ///@{
-    virtual void SetBackground(int colour, int style = AxSOLID);
-    virtual void SetBackgroundImage(void *image, double opacity = 1.0);
+    virtual void SetBackground(int colour, int style=AxSOLID);
+    virtual void SetBackgroundImage(void *image, double opacity=1.0);
     virtual void SetBackgroundMode(int mode);
     virtual void SetTextForeground(int colour);
     virtual void SetTextBackground(int colour);
@@ -67,7 +67,7 @@ public:
      * Get the SVG into a string.
      * Add the xml tag if necessary.
      */
-    std::string GetStringSVG(bool xml_declaration = false);
+    std::string GetStringSVG(bool xml_declaration=false);
 
     /**
      * @name Drawing methods
@@ -79,23 +79,23 @@ public:
     virtual void DrawEllipse(int x, int y, int width, int height);
     virtual void DrawEllipticArc(int x, int y, int width, int height, double start, double end);
     virtual void DrawLine(int x1, int y1, int x2, int y2);
-    virtual void DrawPolygon(int n, Point points[], int xoffset, int yoffset, int fill_style = AxODDEVEN_RULE);
+    virtual void DrawPolygon(int n, Point points[], int xoffset, int yoffset, int fill_style=AxODDEVEN_RULE);
     virtual void DrawRectangle(int x, int y, int width, int height);
     virtual void DrawRotatedText(const std::string &text, int x, int y, double angle);
     virtual void DrawRoundedRectangle(int x, int y, int width, int height, int radius);
-    virtual void DrawText(const std::string &text, const std::wstring wtext = L"", int x = VRV_UNSET, int y = VRV_UNSET,
-        int width = VRV_UNSET, int height = VRV_UNSET);
-    virtual void DrawMusicText(const std::wstring &text, int x, int y, bool setSmuflGlyph = false);
+    virtual void DrawText(const std::string &text, const std::wstring wtext=L"", int x=VRV_UNSET, int y=VRV_UNSET,
+        int width=VRV_UNSET, int height=VRV_UNSET);
+    virtual void DrawMusicText(const std::wstring &text, int x, int y, bool setSmuflGlyph=false);
     virtual void DrawSpline(int n, Point points[]);
     virtual void DrawSvgShape(int x, int y, int width, int height, pugi::xml_node svg);
-    virtual void DrawBackgroundImage(int x = 0, int y = 0);
+    virtual void DrawBackgroundImage(int x=0, int y=0);
     ///@}
 
     /**
      * @name Method for starting and ending a text
      */
     ///@{
-    virtual void StartText(int x, int y, data_HORIZONTALALIGNMENT alignment = HORIZONTALALIGNMENT_left);
+    virtual void StartText(int x, int y, data_HORIZONTALALIGNMENT alignment=HORIZONTALALIGNMENT_left);
     virtual void EndText();
 
     /**
@@ -111,7 +111,7 @@ public:
      */
     ///@{
     virtual void StartGraphic(
-        Object *object, std::string gClass, std::string gId, bool primary = true, bool prepend = false);
+        Object *object, std::string gClass, std::string gId, bool primary=true, bool prepend=false);
     virtual void EndGraphic(Object *object, View *view);
     ///@}
 
@@ -119,7 +119,7 @@ public:
      * @name Method for starting and ending a graphic custom graphic that do not correspond to an Object
      */
     ///@{
-    virtual void StartCustomGraphic(std::string name, std::string gClass = "", std::string gId = "");
+    virtual void StartCustomGraphic(std::string name, std::string gClass="", std::string gId="");
     virtual void EndCustomGraphic();
     ///@}
 
@@ -164,7 +164,7 @@ public:
     /**
      * Add id, data-id and class attributes
      */
-    void AppendIdAndClass(std::string gId, std::string baseClass, std::string addedClasses, bool primary = true);
+    void AppendIdAndClass(std::string gId, std::string baseClass, std::string addedClasses, bool primary=true);
 
     /**
      * In SVG use global styling but not with mm output (for pdf generation)
@@ -174,30 +174,30 @@ public:
     /**
      * Setting mm output flag (false by default)
      */
-    void SetMMOutput(bool mmOutput) { m_mmOutput = mmOutput; }
+    void SetMMOutput(bool mmOutput) { m_mmOutput=mmOutput; }
 
-    void SetFacsimile(bool facsimile) { m_facsimile = facsimile; }
+    void SetFacsimile(bool facsimile) { m_facsimile=facsimile; }
     bool GetFacsimile() { return m_facsimile; }
 
     /**
      * Setting m_svgBoudingBoxes flag (false by default)
      */
-    void SetSvgBoundingBoxes(bool svgBoundingBoxes) { m_svgBoundingBoxes = svgBoundingBoxes; }
+    void SetSvgBoundingBoxes(bool svgBoundingBoxes) { m_svgBoundingBoxes=svgBoundingBoxes; }
 
     /**
      * Setting m_svgViewBox flag (false by default)
      */
-    void SetSvgViewBox(bool svgViewBox) { m_svgViewBox = svgViewBox; }
+    void SetSvgViewBox(bool svgViewBox) { m_svgViewBox=svgViewBox; }
 
     /**
      * Setting m_html5 flag (false by default)
      */
-    void SetHtml5(bool html5) { m_html5 = html5; }
+    void SetHtml5(bool html5) { m_html5=html5; }
 
     /**
      * Setter for indent of the SVG (default is 3, -1 for tabs)
      */
-    void SetIndent(int indent) { m_indent = indent; }
+    void SetIndent(int indent) { m_indent=indent; }
 
 private:
     /**
@@ -219,7 +219,7 @@ private:
     /**
      * Change the flag for indicating the use of the VerovioText font
      */
-    void VrvTextFont() { m_vrvTextFont = true; }
+    void VrvTextFont() { m_vrvTextFont=true; }
 
     /**
      * Flush the data to the internal buffer.

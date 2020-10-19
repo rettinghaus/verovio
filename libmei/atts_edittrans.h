@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAgent(std::string agent_) { m_agent = agent_; }
+    void SetAgent(std::string agent_) { m_agent=agent_; }
     std::string GetAgent() const { return m_agent; }
     bool HasAgent() const;
     ///@}
@@ -88,7 +88,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetReason(std::string reason_) { m_reason = reason_; }
+    void SetReason(std::string reason_) { m_reason=reason_; }
     std::string GetReason() const { return m_reason; }
     bool HasReason() const;
     ///@}

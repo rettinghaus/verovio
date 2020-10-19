@@ -86,7 +86,7 @@ public:
     virtual ClassId GetClassId() const { return (m_isLeft ? BARLINE_ATTR_LEFT : BARLINE_ATTR_RIGHT); }
     ///@}
 
-    void SetLeft() { m_isLeft = true; }
+    void SetLeft() { m_isLeft=true; }
 
 private:
     //

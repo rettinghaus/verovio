@@ -41,26 +41,26 @@ AttFacsimile::~AttFacsimile()
 
 void AttFacsimile::ResetFacsimile()
 {
-    m_facs = "";
+    m_facs="";
 }
 
 bool AttFacsimile::ReadFacsimile(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("facs")) {
         this->SetFacs(StrToStr(element.attribute("facs").value()));
         element.remove_attribute("facs");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttFacsimile::WriteFacsimile(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasFacs()) {
-        element.append_attribute("facs") = StrToStr(this->GetFacs()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("facs")=StrToStr(this->GetFacs()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -75,7 +75,7 @@ bool AttFacsimile::HasFacs() const
 bool Att::SetFacsimile(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_FACSIMILE)) {
-        AttFacsimile *att = dynamic_cast<AttFacsimile *>(element);
+        AttFacsimile *att=dynamic_cast<AttFacsimile *>(element);
         assert(att);
         if (attrType == "facs") {
             att->SetFacs(att->StrToStr(attrValue));
@@ -89,7 +89,7 @@ bool Att::SetFacsimile(Object *element, const std::string &attrType, const std::
 void Att::GetFacsimile(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_FACSIMILE)) {
-        const AttFacsimile *att = dynamic_cast<const AttFacsimile *>(element);
+        const AttFacsimile *att=dynamic_cast<const AttFacsimile *>(element);
         assert(att);
         if (att->HasFacs()) {
             attributes->push_back(std::make_pair("facs", att->StrToStr(att->GetFacs())));

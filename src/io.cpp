@@ -20,7 +20,7 @@ namespace vrv {
 Output::Output(Doc *doc)
 {
     assert(doc);
-    m_doc = doc;
+    m_doc=doc;
 }
 
 Output::~Output() {}
@@ -32,13 +32,13 @@ Output::~Output() {}
 Input::Input(Doc *doc)
 {
     assert(doc);
-    m_doc = doc;
+    m_doc=doc;
     Init();
 }
 
 void Input::Init()
 {
-    m_hasLayoutInformation = false;
+    m_hasLayoutInformation=false;
 }
 
 Input::~Input() {}

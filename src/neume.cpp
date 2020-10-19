@@ -33,7 +33,7 @@
 namespace vrv {
 
 std::map<std::string, NeumeGroup> Neume::s_neumes
-    = { { "", PUNCTUM }, { "u", PES }, { "d", CLIVIS }, { "uu", SCANDICUS }, { "dd", CLIMACUS }, { "ud", TORCULUS },
+   ={ { "", PUNCTUM }, { "u", PES }, { "d", CLIVIS }, { "uu", SCANDICUS }, { "dd", CLIMACUS }, { "ud", TORCULUS },
           { "du", PORRECTUS }, { "ddd", CLIMACUS }, { "ddu", CLIMACUS_RESUPINUS }, { "udu", TORCULUS_RESUPINUS },
           { "dud", PORRECTUS_FLEXUS }, { "udd", PES_SUBPUNCTIS }, { "uud", SCANDICUS_FLEXUS },
           { "uudd", SCANDICUS_SUBPUNCTIS }, { "dudd", PORRECTUS_SUBPUNCTIS }, { "sd", PRESSUS } };
@@ -70,14 +70,14 @@ bool Neume::IsSupportedChild(Object *child)
 int Neume::GetPosition(LayerElement *element)
 {
     this->GetList(this);
-    int position = this->GetListIndex(element);
+    int position=this->GetListIndex(element);
     return position;
 }
 
 bool Neume::IsLastInNeume(LayerElement *element)
 {
-    int size = (int)this->GetList(this)->size();
-    int position = this->GetPosition(element);
+    int size=(int)this->GetList(this)->size();
+    int position=this->GetPosition(element);
 
     // This method should be called only if the note is part of a neume
     assert(position != -1);
@@ -92,18 +92,18 @@ NeumeGroup Neume::GetNeumeGroup()
     ClassIdComparison ac(NC);
     this->FindAllDescendantByComparison(&children, &ac);
 
-    auto iter = children.begin();
-    Nc *previous = dynamic_cast<Nc *>(*iter);
+    auto iter=children.begin();
+    Nc *previous=dynamic_cast<Nc *>(*iter);
     if (previous == NULL) return NEUME_ERROR;
     ++iter;
 
-    std::string key = "";
+    std::string key="";
 
     for (; iter != children.end(); ++iter) {
-        Nc *current = vrv_cast<Nc *>(*iter);
+        Nc *current=vrv_cast<Nc *>(*iter);
         assert(current);
 
-        int pitchDifference = current->PitchDifferenceTo(previous);
+        int pitchDifference=current->PitchDifferenceTo(previous);
         if (pitchDifference > 0) {
             key += "u";
         }
@@ -113,7 +113,7 @@ NeumeGroup Neume::GetNeumeGroup()
         else {
             key += "s";
         }
-        previous = current;
+        previous=current;
     }
     return s_neumes[key];
 }
@@ -128,16 +128,16 @@ std::vector<int> Neume::GetPitchDifferences()
     pitchDifferences.reserve(ncChildren.size() - 1);
 
     // Iterate through children and calculate pitch differences
-    auto iter = ncChildren.begin();
-    Nc *previous = dynamic_cast<Nc *>(*iter);
+    auto iter=ncChildren.begin();
+    Nc *previous=dynamic_cast<Nc *>(*iter);
     if (previous == NULL) return pitchDifferences;
     ++iter;
 
     for (; iter != ncChildren.end(); ++iter) {
-        Nc *current = vrv_cast<Nc *>(*iter);
+        Nc *current=vrv_cast<Nc *>(*iter);
         assert(current);
         pitchDifferences.push_back(current->PitchDifferenceTo(previous));
-        previous = current;
+        previous=current;
     }
     return pitchDifferences;
 }
@@ -149,30 +149,30 @@ bool Neume::GenerateChildMelodic()
     this->FindAllDescendantByComparison(&children, &ac);
 
     // Get the first neume component of the neume
-    auto iter = children.begin();
-    Nc *head = dynamic_cast<Nc *>(*iter);
+    auto iter=children.begin();
+    Nc *head=dynamic_cast<Nc *>(*iter);
     if (head == NULL) return false;
     ++iter;
 
     // Iterate on second to last neume component and add intm value
     for (; iter != children.end(); ++iter) {
-        Nc *current = vrv_cast<Nc *>(*iter);
+        Nc *current=vrv_cast<Nc *>(*iter);
         assert(current);
         std::string intmValue;
 
-        int pitchDifference = current->PitchDifferenceTo(head);
+        int pitchDifference=current->PitchDifferenceTo(head);
         if (pitchDifference > 0) {
-            intmValue = "u";
+            intmValue="u";
         }
         else if (pitchDifference < 0) {
-            intmValue = "d";
+            intmValue="d";
         }
         else {
-            intmValue = "s";
+            intmValue="s";
         }
 
         current->SetIntm(intmValue);
-        head = current;
+        head=current;
     }
 
     return true;
@@ -184,14 +184,14 @@ PitchInterface *Neume::GetHighestPitch()
     InterfaceComparison ic(INTERFACE_PITCH);
     this->FindAllDescendantByComparison(&pitchChildren, &ic);
 
-    auto it = pitchChildren.begin();
-    PitchInterface *max = (*it)->GetPitchInterface();
+    auto it=pitchChildren.begin();
+    PitchInterface *max=(*it)->GetPitchInterface();
     if (!max) return NULL;
     for (it++; it != pitchChildren.end(); it++) {
-        PitchInterface *pi = vrv_cast<PitchInterface *>((*it)->GetPitchInterface());
+        PitchInterface *pi=vrv_cast<PitchInterface *>((*it)->GetPitchInterface());
         assert(pi);
         if (pi->PitchDifferenceTo(max) > 0) {
-            max = pi;
+            max=pi;
         }
     }
     return max;
@@ -203,14 +203,14 @@ PitchInterface *Neume::GetLowestPitch()
     InterfaceComparison ic(INTERFACE_PITCH);
     this->FindAllDescendantByComparison(&pitchChildren, &ic);
 
-    auto it = pitchChildren.begin();
-    PitchInterface *min = (*it)->GetPitchInterface();
+    auto it=pitchChildren.begin();
+    PitchInterface *min=(*it)->GetPitchInterface();
     if (!min) return NULL;
     for (it++; it != pitchChildren.end(); it++) {
-        PitchInterface *pi = vrv_cast<PitchInterface *>((*it)->GetPitchInterface());
+        PitchInterface *pi=vrv_cast<PitchInterface *>((*it)->GetPitchInterface());
         assert(pi);
         if (pi->PitchDifferenceTo(min) < 0) {
-            min = pi;
+            min=pi;
         }
     }
     return min;

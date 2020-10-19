@@ -19,9 +19,9 @@
 #include <sstream>
 
 // jsonxx versioning: major.minor-extra where
-// major = { number }
-// minor = { number }
-// extra = { 'a':alpha, 'b':beta, 'rc': release candidate, 'r': release, 's':stable }
+// major={ number }
+// minor={ number }
+// extra={ 'a':alpha, 'b':beta, 'rc': release candidate, 'r': release, 's':stable }
 #define JSONXX_MAJOR    "0"
 #define JSONXX_MINOR    "22"
 #define JSONXX_EXTRA    "a"
@@ -58,14 +58,14 @@ namespace jsonxx {
 // Settings
 enum Settings {
   // constants
-  Enabled = true,
-  Disabled = false,
-  Permissive = true,
-  Strict = false,
+  Enabled=true,
+  Disabled=false,
+  Permissive=true,
+  Strict=false,
   // values
-  Parser = Permissive,  // permissive or strict parsing
-  UnquotedKeys = Disabled, // support of unquoted keys
-  Assertions = Enabled  // enabled or disabled assertions (these asserts work both in DEBUG and RELEASE builds)
+  Parser=Permissive,  // permissive or strict parsing
+  UnquotedKeys=Disabled, // support of unquoted keys
+  Assertions=Enabled  // enabled or disabled assertions (these asserts work both in DEBUG and RELEASE builds)
 };
 
 #ifdef _MSC_VER
@@ -81,11 +81,11 @@ inline bool unquoted_keys_are_enabled() { return UnquotedKeys == Enabled; }
 
 // Constants for .write() and .xml() methods
 enum Format {
-  JSON      = 0,     // JSON output
-  JSONx     = 1,     // XML output, JSONx  format. see http://goo.gl/I3cxs
-  JXML      = 2,     // XML output, JXML   format. see https://github.com/r-lyeh/JXML
-  JXMLex    = 3,     // XML output, JXMLex format. see https://github.com/r-lyeh/JXMLex
-  TaggedXML = 4      // XML output, tagged XML format. see https://github.com/hjiang/jsonxx/issues/12
+  JSON     =0,     // JSON output
+  JSONx    =1,     // XML output, JSONx  format. see http://goo.gl/I3cxs
+  JXML     =2,     // XML output, JXML   format. see https://github.com/r-lyeh/JXML
+  JXMLex   =3,     // XML output, JXMLex format. see https://github.com/r-lyeh/JXMLex
+  TaggedXML=4      // XML output, tagged XML format. see https://github.com/hjiang/jsonxx/issues/12
 };
 
 // Types
@@ -108,8 +108,8 @@ bool validate( const std::string &input );
 bool validate( std::istream &input );
 std::string reformat( const std::string &input );
 std::string reformat( std::istream &input );
-std::string xml( const std::string &input, unsigned format = JSONx );
-std::string xml( std::istream &input, unsigned format = JSONx );
+std::string xml( const std::string &input, unsigned format=JSONx );
+std::string xml( std::istream &input, unsigned format=JSONx );
 
 // Detail
 void assertion( const char *file, int line, const char *expression, bool result );
@@ -138,7 +138,7 @@ class Object {
 
   const std::map<std::string, Value*>& kv_map() const;
   std::string json() const;
-  std::string xml( unsigned format = JSONx, const std::string &header = std::string(), const std::string &attrib = std::string() ) const;
+  std::string xml( unsigned format=JSONx, const std::string &header=std::string(), const std::string &attrib=std::string() ) const;
   std::string write( unsigned format ) const;
 
   void reset();
@@ -188,7 +188,7 @@ class Array {
     return values_;
   }
   std::string json() const;
-  std::string xml( unsigned format = JSONx, const std::string &header = std::string(), const std::string &attrib = std::string() ) const;
+  std::string xml( unsigned format=JSONx, const std::string &header=std::string(), const std::string &attrib=std::string() ) const;
 
   std::string write( unsigned format ) const { return format == JSON ? json() : xml(format); }
   void reset();
@@ -222,20 +222,20 @@ class Value {
   template<typename T>
   void import( const T & ) {
     reset();
-    type_ = INVALID_;
+    type_=INVALID_;
     // debug
     // std::cout << "[WARN] No support for " << typeid(t).name() << std::endl;
   }
   void import( const bool &b ) {
     reset();
-    type_ = BOOL_;
-    bool_value_ = b;
+    type_=BOOL_;
+    bool_value_=b;
   }
 #define $number(TYPE) \
   void import( const TYPE &n ) { \
     reset(); \
-    type_ = NUMBER_; \
-    number_value_ = static_cast<long double>(n); \
+    type_=NUMBER_; \
+    number_value_=static_cast<long double>(n); \
   }
   $number( char )
   $number( int )
@@ -252,27 +252,27 @@ class Value {
 #if JSONXX_COMPILER_HAS_CXX11 > 0
   void import( const std::nullptr_t & ) {
     reset();
-    type_ = NULL_;
+    type_=NULL_;
   }
 #endif
   void import( const Null & ) {
     reset();
-    type_ = NULL_;
+    type_=NULL_;
   }
   void import( const String &s ) {
     reset();
-    type_ = STRING_;
-    *( string_value_ = new String() ) = s;
+    type_=STRING_;
+    *( string_value_=new String() )=s;
   }
   void import( const Array &a ) {
     reset();
-    type_ = ARRAY_;
-    *( array_value_ = new Array() ) = a;
+    type_=ARRAY_;
+    *( array_value_=new Array() )=a;
   }
   void import( const Object &o ) {
     reset();
-    type_ = OBJECT_;
-    *( object_value_ = new Object() ) = o;
+    type_=OBJECT_;
+    *( object_value_=new Object() )=o;
   }
   void import( const Value &other ) {
     if (this != &other)
@@ -285,7 +285,7 @@ class Value {
         break;
       case NUMBER_:
         import( other.number_value_ );
-        precision_ = other.precision_;
+        precision_=other.precision_;
         break;
       case STRING_:
         import( *other.string_value_ );
@@ -297,7 +297,7 @@ class Value {
         import( *other.object_value_ );
         break;
       case INVALID_:
-        type_ = INVALID_;
+        type_=INVALID_;
         break;
       default:
         JSONXX_ASSERT( !"not implemented" );
@@ -360,7 +360,7 @@ bool Array::has(unsigned int i) const {
   if (i >= size()) {
     return false;
   } else {
-    Value* v = values_.at(i);
+    Value* v=values_.at(i);
     return v->is<T>();
   }
 }
@@ -368,21 +368,21 @@ bool Array::has(unsigned int i) const {
 template <typename T>
 T& Array::get(unsigned int i) {
   JSONXX_ASSERT(i < size());
-  Value* v = values_.at(i);
+  Value* v=values_.at(i);
   return v->get<T>();
 }
 
 template <typename T>
 const T& Array::get(unsigned int i) const {
   JSONXX_ASSERT(i < size());
-  const Value* v = values_.at(i);
+  const Value* v=values_.at(i);
   return v->get<T>();
 }
 
 template <typename T>
 const T& Array::get(unsigned int i, const typename identity<T>::type& default_value) const {
   if(has<T>(i)) {
-    const Value* v = values_.at(i);
+    const Value* v=values_.at(i);
     return v->get<T>();
   } else {
     return default_value;

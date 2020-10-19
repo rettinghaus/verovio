@@ -41,7 +41,7 @@ public:
      * @name Constructors, destructors, and other standard methods
      */
     ///@{
-    BBoxDeviceContext(View *view, int width, int height, unsigned char update = BBOX_BOTH);
+    BBoxDeviceContext(View *view, int width, int height, unsigned char update=BBOX_BOTH);
     virtual ~BBoxDeviceContext();
     virtual ClassId GetClassId() const { return BBOX_DEVICE_CONTEXT; }
     ///@}
@@ -50,8 +50,8 @@ public:
      * @name Setters
      */
     ///@{
-    virtual void SetBackground(int colour, int style = AxSOLID);
-    virtual void SetBackgroundImage(void *image, double opacity = 1.0){};
+    virtual void SetBackground(int colour, int style=AxSOLID);
+    virtual void SetBackgroundImage(void *image, double opacity=1.0){};
     virtual void SetBackgroundMode(int mode);
     virtual void SetTextForeground(int colour);
     virtual void SetTextBackground(int colour);
@@ -76,16 +76,16 @@ public:
     virtual void DrawEllipse(int x, int y, int width, int height);
     virtual void DrawEllipticArc(int x, int y, int width, int height, double start, double end);
     virtual void DrawLine(int x1, int y1, int x2, int y2);
-    virtual void DrawPolygon(int n, Point points[], int xOffset, int yOffset, int fillStyle = AxODDEVEN_RULE);
+    virtual void DrawPolygon(int n, Point points[], int xOffset, int yOffset, int fillStyle=AxODDEVEN_RULE);
     virtual void DrawRectangle(int x, int y, int width, int height);
     virtual void DrawRotatedText(const std::string &text, int x, int y, double angle);
     virtual void DrawRoundedRectangle(int x, int y, int width, int height, int radius);
-    virtual void DrawText(const std::string &text, const std::wstring wtext = L"", int x = VRV_UNSET, int y = VRV_UNSET,
-        int width = VRV_UNSET, int height = VRV_UNSET);
-    virtual void DrawMusicText(const std::wstring &text, int x, int y, bool setSmuflGlyph = false);
+    virtual void DrawText(const std::string &text, const std::wstring wtext=L"", int x=VRV_UNSET, int y=VRV_UNSET,
+        int width=VRV_UNSET, int height=VRV_UNSET);
+    virtual void DrawMusicText(const std::wstring &text, int x, int y, bool setSmuflGlyph=false);
     virtual void DrawSpline(int n, Point points[]);
     virtual void DrawSvgShape(int x, int y, int width, int height, pugi::xml_node svg);
-    virtual void DrawBackgroundImage(int x = 0, int y = 0){};
+    virtual void DrawBackgroundImage(int x=0, int y=0){};
     ///@}
 
     /**
@@ -98,7 +98,7 @@ public:
      * @name Method for starting and ending a text
      */
     ///@{
-    virtual void StartText(int x, int y, data_HORIZONTALALIGNMENT alignment = HORIZONTALALIGNMENT_left);
+    virtual void StartText(int x, int y, data_HORIZONTALALIGNMENT alignment=HORIZONTALALIGNMENT_left);
     virtual void EndText();
 
     /**
@@ -114,7 +114,7 @@ public:
      */
     ///@{
     virtual void StartGraphic(
-        Object *object, std::string gClass, std::string gId, bool primary = true, bool prepend = false);
+        Object *object, std::string gClass, std::string gId, bool primary=true, bool prepend=false);
     virtual void EndGraphic(Object *object, View *view);
     ///@}
 
@@ -199,7 +199,7 @@ private:
      */
     View *m_view;
 
-    void UpdateBB(int x1, int y1, int x2, int y2, wchar_t glyph = 0);
+    void UpdateBB(int x1, int y1, int x2, int y2, wchar_t glyph=0);
 };
 
 } // namespace vrv

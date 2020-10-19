@@ -25,14 +25,14 @@ namespace vrv {
 
 App::App() : EditorialElement("app-")
 {
-    m_level = EDITORIAL_UNDEFINED;
+    m_level=EDITORIAL_UNDEFINED;
 
     Reset();
 }
 
 App::App(EditorialLevel level) : EditorialElement("app-")
 {
-    m_level = level;
+    m_level=level;
 
     Reset();
 }

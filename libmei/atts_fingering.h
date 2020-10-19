@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetForm(fingGrpLog_FORM form_) { m_form = form_; }
+    void SetForm(fingGrpLog_FORM form_) { m_form=form_; }
     fingGrpLog_FORM GetForm() const { return m_form; }
     bool HasForm() const;
     ///@}

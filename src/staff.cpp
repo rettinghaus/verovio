@@ -45,10 +45,10 @@ Staff::Staff(int n) : Object("staff-"), FacsimileInterface(), AttNInteger(), Att
     RegisterAttClass(ATT_VISIBILITY);
     RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
     // owned pointers need to be set to NULL;
-    m_ledgerLinesAbove = NULL;
-    m_ledgerLinesBelow = NULL;
-    m_ledgerLinesAboveCue = NULL;
-    m_ledgerLinesBelowCue = NULL;
+    m_ledgerLinesAbove=NULL;
+    m_ledgerLinesBelow=NULL;
+    m_ledgerLinesAboveCue=NULL;
+    m_ledgerLinesBelowCue=NULL;
 
     Reset();
     SetN(n);
@@ -67,14 +67,14 @@ void Staff::Reset()
     ResetTyped();
     ResetVisibility();
 
-    m_yAbs = VRV_UNSET;
+    m_yAbs=VRV_UNSET;
 
-    m_drawingStaffSize = 100;
-    m_drawingLines = 5;
-    m_drawingNotationType = NOTATIONTYPE_NONE;
-    m_staffAlignment = NULL;
+    m_drawingStaffSize=100;
+    m_drawingLines=5;
+    m_drawingNotationType=NOTATIONTYPE_NONE;
+    m_staffAlignment=NULL;
     m_timeSpanningElements.clear();
-    m_drawingStaffDef = NULL;
+    m_drawingStaffDef=NULL;
 
     ClearLedgerLines();
 }
@@ -83,43 +83,43 @@ void Staff::CloneReset()
 {
     Object::CloneReset();
 
-    m_ledgerLinesAbove = NULL;
-    m_ledgerLinesBelow = NULL;
-    m_ledgerLinesAboveCue = NULL;
-    m_ledgerLinesBelowCue = NULL;
+    m_ledgerLinesAbove=NULL;
+    m_ledgerLinesBelow=NULL;
+    m_ledgerLinesAboveCue=NULL;
+    m_ledgerLinesBelowCue=NULL;
 
-    m_drawingStaffSize = 100;
-    m_drawingLines = 5;
-    m_drawingNotationType = NOTATIONTYPE_NONE;
-    m_staffAlignment = NULL;
+    m_drawingStaffSize=100;
+    m_drawingLines=5;
+    m_drawingNotationType=NOTATIONTYPE_NONE;
+    m_staffAlignment=NULL;
     m_timeSpanningElements.clear();
-    m_drawingStaffDef = NULL;
+    m_drawingStaffDef=NULL;
 }
 
 void Staff::ClearLedgerLines()
 {
     if (m_ledgerLinesAbove) {
         delete m_ledgerLinesAbove;
-        m_ledgerLinesAbove = NULL;
+        m_ledgerLinesAbove=NULL;
     }
     if (m_ledgerLinesBelow) {
         delete m_ledgerLinesBelow;
-        m_ledgerLinesBelow = NULL;
+        m_ledgerLinesBelow=NULL;
     }
     if (m_ledgerLinesAboveCue) {
         delete m_ledgerLinesAboveCue;
-        m_ledgerLinesAboveCue = NULL;
+        m_ledgerLinesAboveCue=NULL;
     }
     if (m_ledgerLinesBelowCue) {
         delete m_ledgerLinesBelowCue;
-        m_ledgerLinesBelowCue = NULL;
+        m_ledgerLinesBelowCue=NULL;
     }
 }
 
 bool Staff::IsSupportedChild(Object *child)
 {
     if (child->Is(LAYER)) {
-        Layer *layer = vrv_cast<Layer *>(child);
+        Layer *layer=vrv_cast<Layer *>(child);
         assert(layer);
         if (layer && !layer->HasN()) {
             // This is not 100% safe if we have a <app> and <rdg> with more than
@@ -139,7 +139,7 @@ bool Staff::IsSupportedChild(Object *child)
 int Staff::GetDrawingX() const
 {
     if (this->HasFacs()) {
-        Doc *doc = vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
+        Doc *doc=vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
         assert(doc);
         if (doc->GetType() == Facs) {
             return FacsimileInterface::GetDrawingX();
@@ -151,7 +151,7 @@ int Staff::GetDrawingX() const
 int Staff::GetDrawingY() const
 {
     if (this->HasFacs()) {
-        Doc *doc = vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
+        Doc *doc=vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
         assert(DOC);
         if (doc->GetType() == Facs) {
             return FacsimileInterface::GetDrawingY();
@@ -164,17 +164,17 @@ int Staff::GetDrawingY() const
 
     if (m_cachedDrawingY != VRV_UNSET) return m_cachedDrawingY;
 
-    System *system = vrv_cast<System *>(this->GetFirstAncestor(SYSTEM));
+    System *system=vrv_cast<System *>(this->GetFirstAncestor(SYSTEM));
     assert(system);
 
-    m_cachedDrawingY = system->GetDrawingY() + m_staffAlignment->GetYRel();
+    m_cachedDrawingY=system->GetDrawingY() + m_staffAlignment->GetYRel();
     return m_cachedDrawingY;
 }
 
 double Staff::GetDrawingRotate() const
 {
     if (this->HasFacs()) {
-        Doc *doc = vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
+        Doc *doc=vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
         assert(doc);
         if (doc->GetType() == Facs) {
             return FacsimileInterface::GetDrawingRotate();
@@ -186,26 +186,26 @@ double Staff::GetDrawingRotate() const
 void Staff::AdjustDrawingStaffSize()
 {
     if (this->HasFacs()) {
-        Doc *doc = vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
+        Doc *doc=vrv_cast<Doc *>(this->GetFirstAncestor(DOC));
         assert(doc);
         if (doc->GetType() == Facs) {
-            double rotate = this->GetDrawingRotate();
-            Zone *zone = this->GetZone();
+            double rotate=this->GetDrawingRotate();
+            Zone *zone=this->GetZone();
             assert(zone);
             int yDiff
-                = zone->GetLry() - zone->GetUly() - (zone->GetLrx() - zone->GetUlx()) * tan(abs(rotate) * M_PI / 180.0);
-            this->m_drawingStaffSize = 100 * yDiff / (doc->GetOptions()->m_unit.GetValue() * 2 * (m_drawingLines - 1));
+               =zone->GetLry() - zone->GetUly() - (zone->GetLrx() - zone->GetUlx()) * tan(abs(rotate) * M_PI / 180.0);
+            this->m_drawingStaffSize=100 * yDiff / (doc->GetOptions()->m_unit.GetValue() * 2 * (m_drawingLines - 1));
         }
     }
 }
 
 bool Staff::DrawingIsVisible()
 {
-    System *system = vrv_cast<System *>(this->GetFirstAncestor(SYSTEM));
+    System *system=vrv_cast<System *>(this->GetFirstAncestor(SYSTEM));
     assert(system);
     assert(system->GetDrawingScoreDef());
 
-    StaffDef *staffDef = system->GetDrawingScoreDef()->GetStaffDef(this->GetN());
+    StaffDef *staffDef=system->GetDrawingScoreDef()->GetStaffDef(this->GetN());
     assert(staffDef);
     return (staffDef->GetDrawingVisibility() != OPTIMIZATION_HIDDEN);
 }
@@ -215,18 +215,18 @@ int Staff::CalcPitchPosYRel(Doc *doc, int loc)
     assert(doc);
 
     // the staff loc offset is based on the number of lines: 0 with 1 line, 2 with 2, etc
-    int staffLocOffset = (this->m_drawingLines - 1) * 2;
+    int staffLocOffset=(this->m_drawingLines - 1) * 2;
     return (loc - staffLocOffset) * doc->GetDrawingUnit(this->m_drawingStaffSize);
 }
 
 void Staff::AddLedgerLineAbove(int count, int left, int right, bool cueSize)
 {
     if (cueSize) {
-        if (m_ledgerLinesAboveCue == NULL) m_ledgerLinesAboveCue = new ArrayOfLedgerLines;
+        if (m_ledgerLinesAboveCue == NULL) m_ledgerLinesAboveCue=new ArrayOfLedgerLines;
         AddLedgerLines(m_ledgerLinesAboveCue, count, left, right);
     }
     else {
-        if (m_ledgerLinesAbove == NULL) m_ledgerLinesAbove = new ArrayOfLedgerLines;
+        if (m_ledgerLinesAbove == NULL) m_ledgerLinesAbove=new ArrayOfLedgerLines;
         AddLedgerLines(m_ledgerLinesAbove, count, left, right);
     }
 }
@@ -234,11 +234,11 @@ void Staff::AddLedgerLineAbove(int count, int left, int right, bool cueSize)
 void Staff::AddLedgerLineBelow(int count, int left, int right, bool cueSize)
 {
     if (cueSize) {
-        if (m_ledgerLinesBelowCue == NULL) m_ledgerLinesBelowCue = new ArrayOfLedgerLines;
+        if (m_ledgerLinesBelowCue == NULL) m_ledgerLinesBelowCue=new ArrayOfLedgerLines;
         AddLedgerLines(m_ledgerLinesBelowCue, count, left, right);
     }
     else {
-        if (m_ledgerLinesBelow == NULL) m_ledgerLinesBelow = new ArrayOfLedgerLines;
+        if (m_ledgerLinesBelow == NULL) m_ledgerLinesBelow=new ArrayOfLedgerLines;
         AddLedgerLines(m_ledgerLinesBelow, count, left, right);
     }
 }
@@ -248,8 +248,8 @@ void Staff::AddLedgerLines(ArrayOfLedgerLines *lines, int count, int left, int r
     assert(lines);
 
     if ((int)lines->size() < count) lines->resize(count);
-    int i = 0;
-    for (i = 0; i < count; ++i) {
+    int i=0;
+    for (i=0; i < count; ++i) {
         lines->at(i).AddDash(left, right);
     }
 }
@@ -259,7 +259,7 @@ void Staff::SetFromFacsimile(Doc *doc)
     if (!this->HasFacs()) return;
     if (this->GetZone() == NULL) {
         assert(doc);
-        Zone *zone = doc->GetFacsimile()->FindZoneByUuid(this->GetFacs());
+        Zone *zone=doc->GetFacsimile()->FindZoneByUuid(this->GetFacs());
         assert(zone);
         this->SetZone(zone);
     }
@@ -289,22 +289,22 @@ void LedgerLine::AddDash(int left, int right)
     std::list<std::pair<int, int> >::iterator iter;
 
     // First add the dash
-    for (iter = m_dashes.begin(); iter != m_dashes.end(); ++iter) {
+    for (iter=m_dashes.begin(); iter != m_dashes.end(); ++iter) {
         if (iter->first > left) break;
     }
     m_dashes.insert(iter, std::make_pair(left, right));
 
     // Merge overlapping dashes
-    std::list<std::pair<int, int> >::iterator previous = m_dashes.begin();
-    iter = m_dashes.begin();
+    std::list<std::pair<int, int> >::iterator previous=m_dashes.begin();
+    iter=m_dashes.begin();
     ++iter;
     while (iter != m_dashes.end()) {
         if (previous->second > iter->first) {
-            previous->second = std::max(iter->second, previous->second);
-            iter = m_dashes.erase(iter);
+            previous->second=std::max(iter->second, previous->second);
+            iter=m_dashes.erase(iter);
         }
         else {
-            previous = iter;
+            previous=iter;
             ++iter;
         }
     }
@@ -316,10 +316,10 @@ void LedgerLine::AddDash(int left, int right)
 
 int Staff::ConvertToCastOffMensural(FunctorParams *functorParams)
 {
-    ConvertToCastOffMensuralParams *params = vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
+    ConvertToCastOffMensuralParams *params=vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
     assert(params);
 
-    params->m_targetStaff = new Staff(*this);
+    params->m_targetStaff=new Staff(*this);
     params->m_targetStaff->ClearChildren();
     params->m_targetStaff->CloneReset();
     // Keep the xml:id of the staff in the first staff segment
@@ -332,18 +332,18 @@ int Staff::ConvertToCastOffMensural(FunctorParams *functorParams)
 
 int Staff::UnsetCurrentScoreDef(FunctorParams *functorParams)
 {
-    m_drawingStaffDef = NULL;
+    m_drawingStaffDef=NULL;
 
     return FUNCTOR_CONTINUE;
 }
 
 int Staff::OptimizeScoreDef(FunctorParams *functorParams)
 {
-    OptimizeScoreDefParams *params = vrv_params_cast<OptimizeScoreDefParams *>(functorParams);
+    OptimizeScoreDefParams *params=vrv_params_cast<OptimizeScoreDefParams *>(functorParams);
     assert(params);
 
     assert(params->m_currentScoreDef);
-    StaffDef *staffDef = params->m_currentScoreDef->GetStaffDef(this->GetN());
+    StaffDef *staffDef=params->m_currentScoreDef->GetStaffDef(this->GetN());
 
     if (!staffDef) {
         LogDebug(
@@ -382,7 +382,7 @@ int Staff::OptimizeScoreDef(FunctorParams *functorParams)
 
 int Staff::ResetVerticalAlignment(FunctorParams *functorParams)
 {
-    m_staffAlignment = NULL;
+    m_staffAlignment=NULL;
 
     ClearLedgerLines();
 
@@ -391,7 +391,7 @@ int Staff::ResetVerticalAlignment(FunctorParams *functorParams)
 
 int Staff::ApplyPPUFactor(FunctorParams *functorParams)
 {
-    ApplyPPUFactorParams *params = vrv_params_cast<ApplyPPUFactorParams *>(functorParams);
+    ApplyPPUFactorParams *params=vrv_params_cast<ApplyPPUFactorParams *>(functorParams);
     assert(params);
 
     if (m_yAbs != VRV_UNSET) m_yAbs /= params->m_page->GetPPUFactor();
@@ -401,16 +401,16 @@ int Staff::ApplyPPUFactor(FunctorParams *functorParams)
 
 int Staff::AlignHorizontally(FunctorParams *functorParams)
 {
-    AlignHorizontallyParams *params = vrv_params_cast<AlignHorizontallyParams *>(functorParams);
+    AlignHorizontallyParams *params=vrv_params_cast<AlignHorizontallyParams *>(functorParams);
     assert(params);
 
     assert(this->m_drawingStaffDef);
 
     if (this->m_drawingStaffDef->HasNotationtype()) {
-        params->m_notationType = this->m_drawingStaffDef->GetNotationtype();
+        params->m_notationType=this->m_drawingStaffDef->GetNotationtype();
     }
     else {
-        params->m_notationType = NOTATIONTYPE_cmn;
+        params->m_notationType=NOTATIONTYPE_cmn;
     }
 
     return FUNCTOR_CONTINUE;
@@ -418,27 +418,27 @@ int Staff::AlignHorizontally(FunctorParams *functorParams)
 
 int Staff::AlignVertically(FunctorParams *functorParams)
 {
-    AlignVerticallyParams *params = vrv_params_cast<AlignVerticallyParams *>(functorParams);
+    AlignVerticallyParams *params=vrv_params_cast<AlignVerticallyParams *>(functorParams);
     assert(params);
 
     if (!this->DrawingIsVisible()) {
         return FUNCTOR_SIBLINGS;
     }
 
-    params->m_staffN = this->GetN();
+    params->m_staffN=this->GetN();
 
     // this gets (or creates) the measureAligner for the measure
-    StaffAlignment *alignment = params->m_systemAligner->GetStaffAlignment(params->m_staffIdx, this, params->m_doc);
+    StaffAlignment *alignment=params->m_systemAligner->GetStaffAlignment(params->m_staffIdx, this, params->m_doc);
 
     assert(alignment);
 
     // Set the pointer of the m_alignment
-    m_staffAlignment = alignment;
+    m_staffAlignment=alignment;
 
     std::vector<Object *>::iterator it;
-    it = std::find_if(m_timeSpanningElements.begin(), m_timeSpanningElements.end(), ObjectComparison(VERSE));
+    it=std::find_if(m_timeSpanningElements.begin(), m_timeSpanningElements.end(), ObjectComparison(VERSE));
     if (it != m_timeSpanningElements.end()) {
-        Verse *v = vrv_cast<Verse *>(*it);
+        Verse *v=vrv_cast<Verse *>(*it);
         assert(v);
         alignment->SetVerseCount(v->GetN());
     }
@@ -451,14 +451,14 @@ int Staff::AlignVertically(FunctorParams *functorParams)
 
 int Staff::FillStaffCurrentTimeSpanning(FunctorParams *functorParams)
 {
-    FillStaffCurrentTimeSpanningParams *params = vrv_params_cast<FillStaffCurrentTimeSpanningParams *>(functorParams);
+    FillStaffCurrentTimeSpanningParams *params=vrv_params_cast<FillStaffCurrentTimeSpanningParams *>(functorParams);
     assert(params);
 
-    std::vector<Object *>::iterator iter = params->m_timeSpanningElements.begin();
+    std::vector<Object *>::iterator iter=params->m_timeSpanningElements.begin();
     while (iter != params->m_timeSpanningElements.end()) {
-        TimeSpanningInterface *interface = (*iter)->GetTimeSpanningInterface();
+        TimeSpanningInterface *interface=(*iter)->GetTimeSpanningInterface();
         assert(interface);
-        Measure *currentMeasure = vrv_cast<Measure *>(this->GetFirstAncestor(MEASURE));
+        Measure *currentMeasure=vrv_cast<Measure *>(this->GetFirstAncestor(MEASURE));
         assert(currentMeasure);
         // We need to make sure we are in the next measure (and not just a staff below because of some cross staff
         // notation
@@ -479,7 +479,7 @@ int Staff::ResetDrawing(FunctorParams *functorParams)
 
 int Staff::PrepareRpt(FunctorParams *functorParams)
 {
-    PrepareRptParams *params = vrv_params_cast<PrepareRptParams *>(functorParams);
+    PrepareRptParams *params=vrv_params_cast<PrepareRptParams *>(functorParams);
     assert(params);
 
     // If multiNumber is set, we already know that nothing needs to be done
@@ -489,29 +489,29 @@ int Staff::PrepareRpt(FunctorParams *functorParams)
     }
 
     // This is happening only for the first staff element of the staff @n
-    if (StaffDef *staffDef = params->m_currentScoreDef->GetStaffDef(this->GetN())) {
+    if (StaffDef *staffDef=params->m_currentScoreDef->GetStaffDef(this->GetN())) {
         if ((staffDef->HasMultiNumber()) && (staffDef->GetMultiNumber() == BOOLEAN_false)) {
             // Set it just in case, but stopping the functor should do it for this staff @n
-            params->m_multiNumber = BOOLEAN_false;
+            params->m_multiNumber=BOOLEAN_false;
             return FUNCTOR_STOP;
         }
     }
-    params->m_multiNumber = BOOLEAN_true;
+    params->m_multiNumber=BOOLEAN_true;
     return FUNCTOR_CONTINUE;
 }
 
 int Staff::CalcOnsetOffset(FunctorParams *functorParams)
 {
-    CalcOnsetOffsetParams *params = vrv_params_cast<CalcOnsetOffsetParams *>(functorParams);
+    CalcOnsetOffsetParams *params=vrv_params_cast<CalcOnsetOffsetParams *>(functorParams);
     assert(params);
 
     assert(this->m_drawingStaffDef);
 
     if (this->m_drawingStaffDef->HasNotationtype()) {
-        params->m_notationType = this->m_drawingStaffDef->GetNotationtype();
+        params->m_notationType=this->m_drawingStaffDef->GetNotationtype();
     }
     else {
-        params->m_notationType = NOTATIONTYPE_cmn;
+        params->m_notationType=NOTATIONTYPE_cmn;
     }
 
     return FUNCTOR_CONTINUE;
@@ -543,12 +543,12 @@ int Staff::CalcStem(FunctorParams *)
         // not need to sort since it already sorted
         std::set_difference(layers.begin(), layers.end(), emptyLayers.begin(), emptyLayers.end(),
             std::inserter(nonEmptyLayers, nonEmptyLayers.begin()));
-        layers = nonEmptyLayers;
+        layers=nonEmptyLayers;
     }
 
     for (auto &object : layers) {
         // Alter stem direction between even and odd numbered layers
-        Layer *layer = dynamic_cast<Layer *>(object);
+        Layer *layer=dynamic_cast<Layer *>(object);
         layer->SetDrawingStemDir(layer->GetN() % 2 ? STEMDIRECTION_up : STEMDIRECTION_down);
     }
 
@@ -557,11 +557,11 @@ int Staff::CalcStem(FunctorParams *)
 
 int Staff::AdjustSylSpacing(FunctorParams *functorParams)
 {
-    AdjustSylSpacingParams *params = vrv_params_cast<AdjustSylSpacingParams *>(functorParams);
+    AdjustSylSpacingParams *params=vrv_params_cast<AdjustSylSpacingParams *>(functorParams);
     assert(params);
 
     // Set the staff size for this pass
-    params->m_staffSize = this->m_drawingStaffSize;
+    params->m_staffSize=this->m_drawingStaffSize;
 
     return FUNCTOR_CONTINUE;
 }

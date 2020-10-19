@@ -46,7 +46,7 @@ public:
      * Reset method resets all attribute classes
      */
     ///@{
-    Measure(bool measuredMusic = true, int logMeasureNb = -1);
+    Measure(bool measuredMusic=true, int logMeasureNb=-1);
     virtual ~Measure();
     virtual Object *Clone() const { return new Measure(*this); };
     virtual void Reset();
@@ -187,7 +187,7 @@ public:
      */
     ///@{
     Ending *GetDrawingEnding() const { return m_drawingEnding; }
-    void SetDrawingEnding(Ending *ending) { m_drawingEnding = ending; }
+    void SetDrawingEnding(Ending *ending) { m_drawingEnding=ending; }
     ///@}
 
     /*

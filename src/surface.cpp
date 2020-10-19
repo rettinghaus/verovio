@@ -53,14 +53,14 @@ bool Surface::IsSupportedChild(Object *object)
 int Surface::GetMaxX()
 {
     if (HasLrx()) return GetLrx();
-    int max = 0;
+    int max=0;
     ClassIdComparison ac(ZONE);
     ListOfObjects zones;
     FindAllDescendantByComparison(&zones, &ac);
-    for (auto iter = zones.begin(); iter != zones.end(); ++iter) {
-        Zone *zone = vrv_cast<Zone *>(*iter);
+    for (auto iter=zones.begin(); iter != zones.end(); ++iter) {
+        Zone *zone=vrv_cast<Zone *>(*iter);
         assert(zone);
-        max = (zone->GetLrx() > max) ? zone->GetLrx() : max;
+        max=(zone->GetLrx() > max) ? zone->GetLrx() : max;
     }
     return max;
 }
@@ -68,14 +68,14 @@ int Surface::GetMaxX()
 int Surface::GetMaxY()
 {
     if (HasLry()) return GetLry();
-    int max = 0;
+    int max=0;
     ClassIdComparison ac(ZONE);
     ListOfObjects zones;
     FindAllDescendantByComparison(&zones, &ac);
-    for (auto iter = zones.begin(); iter != zones.end(); ++iter) {
-        Zone *zone = vrv_cast<Zone *>(*iter);
+    for (auto iter=zones.begin(); iter != zones.end(); ++iter) {
+        Zone *zone=vrv_cast<Zone *>(*iter);
         assert(zone);
-        max = (zone->GetLry() > max) ? zone->GetLry() : max;
+        max=(zone->GetLry() > max) ? zone->GetLry() : max;
     }
     return max;
 }

@@ -19,7 +19,7 @@ class BeamElementCoord;
 // the maximum allowed number of partials
 #define MAX_DURATION_PARTIALS 16
 
-enum { PARTIAL_NONE = 0, PARTIAL_THROUGH, PARTIAL_RIGHT, PARTIAL_LEFT };
+enum { PARTIAL_NONE=0, PARTIAL_THROUGH, PARTIAL_RIGHT, PARTIAL_LEFT };
 
 //----------------------------------------------------------------------------
 // BeamSegment
@@ -42,7 +42,7 @@ public:
     void Reset();
 
     void CalcBeam(Layer *layer, Staff *staff, Doc *doc, BeamDrawingInterface *beamInterface,
-        data_BEAMPLACE place = BEAMPLACE_NONE, bool init = true);
+        data_BEAMPLACE place=BEAMPLACE_NONE, bool init=true);
 
     /**
      *
@@ -203,10 +203,10 @@ public:
     ///@{
     BeamElementCoord()
     {
-        m_element = NULL;
-        m_closestNote = NULL;
-        m_stem = NULL;
-        m_overlapMargin = 0;
+        m_element=NULL;
+        m_closestNote=NULL;
+        m_stem=NULL;
+        m_overlapMargin=0;
     }
     virtual ~BeamElementCoord();
 

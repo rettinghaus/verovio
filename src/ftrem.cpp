@@ -79,27 +79,27 @@ const ArrayOfBeamElementCoords *FTrem::GetElementCoords()
 
 void FTrem::FilterList(ArrayOfObjects *childList)
 {
-    ArrayOfObjects::iterator iter = childList->begin();
+    ArrayOfObjects::iterator iter=childList->begin();
 
     while (iter != childList->end()) {
         if (!(*iter)->Is(NOTE) && !(*iter)->Is(CHORD)) {
             // remove anything that is not an LayerElement (e.g. Verse, Syl, etc)
-            iter = childList->erase(iter);
+            iter=childList->erase(iter);
             continue;
         }
         // also remove notes within chords
         if ((*iter)->Is(NOTE)) {
-            Note *note = vrv_cast<Note *>(*iter);
+            Note *note=vrv_cast<Note *>(*iter);
             assert(note);
             if (note->IsChordTone()) {
-                iter = childList->erase(iter);
+                iter=childList->erase(iter);
                 continue;
             }
         }
         ++iter;
     }
 
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
 
     InitCoords(childList, staff, BEAMPLACE_NONE);
@@ -114,18 +114,18 @@ void FTrem::InitCoords(ArrayOfObjects *childList)
         return;
     }
 
-    BeamElementCoord *firstElement = new BeamElementCoord;
-    BeamElementCoord *secondElement = new BeamElementCoord;
+    BeamElementCoord *firstElement=new BeamElementCoord;
+    BeamElementCoord *secondElement=new BeamElementCoord;
 
     m_beamElementCoords.push_back(firstElement);
     m_beamElementCoords.push_back(secondElement);
 
     // current point to the first Note in the layed out layer
-    firstElement->m_element = dynamic_cast<LayerElement *>(childList->front());
+    firstElement->m_element=dynamic_cast<LayerElement *>(childList->front());
     // fTrem list should contain only DurationInterface objects
     assert(firstElement->m_element->GetDurationInterface());
     // current point to the first Note in the layed out layer
-    secondElement->m_element = dynamic_cast<LayerElement *>(childList->back());
+    secondElement->m_element=dynamic_cast<LayerElement *>(childList->back());
     // fTrem list should contain only DurationInterface objects
     assert(secondElement->m_element->GetDurationInterface());
     // Should we assert this at the beginning?
@@ -133,27 +133,27 @@ void FTrem::InitCoords(ArrayOfObjects *childList)
         return;
     }
 
-    this->m_changingDur = false;
-    this->m_beamHasChord = false;
-    this->m_hasMultipleStemDir = false;
-    this->m_cueSize = false;
+    this->m_changingDur=false;
+    this->m_beamHasChord=false;
+    this->m_hasMultipleStemDir=false;
+    this->m_cueSize=false;
     // adjust beam->m_drawingParams.m_shortestDur depending on the number of slashes
-    this->m_shortestDur = std::max(DUR_8, DUR_1 + this->GetBeams());
-    this->m_stemDir = STEMDIRECTION_NONE;
+    this->m_shortestDur=std::max(DUR_8, DUR_1 + this->GetBeams());
+    this->m_stemDir=STEMDIRECTION_NONE;
 
     if (firstElement->m_element->Is(CHORD)) {
-        this->m_beamHasChord = true;
+        this->m_beamHasChord=true;
     }
     if (secondElement->m_element->Is(CHORD)) {
-        this->m_beamHasChord = true;
+        this->m_beamHasChord=true;
     }
 
     // For now look at the stemDir only on the first note
     assert(dynamic_cast<AttStems *>(firstElement->m_element));
-    this->m_stemDir = (dynamic_cast<AttStems *>(firstElement->m_element))->GetStemDir();
+    this->m_stemDir=(dynamic_cast<AttStems *>(firstElement->m_element))->GetStemDir();
 
     // We look only at the first note for checking if cue-sized. Somehow arbitrarily
-    this->m_cueSize = firstElement->m_element->GetDrawingCueSize();
+    this->m_cueSize=firstElement->m_element->GetDrawingCueSize();
  }
  */
 
@@ -163,10 +163,10 @@ void FTrem::InitCoords(ArrayOfObjects *childList)
 
 int FTrem::CalcStem(FunctorParams *functorParams)
 {
-    CalcStemParams *params = vrv_params_cast<CalcStemParams *>(functorParams);
+    CalcStemParams *params=vrv_params_cast<CalcStemParams *>(functorParams);
     assert(params);
 
-    const ArrayOfObjects *fTremChildren = this->GetList(this);
+    const ArrayOfObjects *fTremChildren=this->GetList(this);
 
     // Should we assert this at the beginning?
     if (fTremChildren->empty()) {
@@ -180,9 +180,9 @@ int FTrem::CalcStem(FunctorParams *functorParams)
 
     this->m_beamSegment.InitCoordRefs(this->GetElementCoords());
 
-    Layer *layer = vrv_cast<Layer *>(this->GetFirstAncestor(LAYER));
+    Layer *layer=vrv_cast<Layer *>(this->GetFirstAncestor(LAYER));
     assert(layer);
-    Staff *staff = vrv_cast<Staff *>(layer->GetFirstAncestor(STAFF));
+    Staff *staff=vrv_cast<Staff *>(layer->GetFirstAncestor(STAFF));
     assert(staff);
 
     this->m_beamSegment.CalcBeam(layer, staff, params->m_doc, this);
@@ -204,10 +204,10 @@ int FTrem::ResetDrawing(FunctorParams *functorParams)
 
 int FTrem::GenerateMIDI(FunctorParams *functorParams)
 {
-    // GenerateMIDIParams *params = vrv_params_cast<GenerateMIDIParams *>(functorParams);
+    // GenerateMIDIParams *params=vrv_params_cast<GenerateMIDIParams *>(functorParams);
     // assert(params);
 
-    FTrem *fTrem = vrv_cast<FTrem *>(this);
+    FTrem *fTrem=vrv_cast<FTrem *>(this);
     assert(fTrem);
 
     if (!fTrem->HasUnitdur()) {

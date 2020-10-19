@@ -84,7 +84,7 @@ public:
 
 class FunctorDocParams : public FunctorParams {
 public:
-    FunctorDocParams(Doc *doc) { m_doc = doc; }
+    FunctorDocParams(Doc *doc) { m_doc=doc; }
     Doc *m_doc;
 };
 
@@ -98,7 +98,7 @@ public:
 
 class AddLayerElementToFlatListParams : public FunctorParams {
 public:
-    AddLayerElementToFlatListParams(ArrayOfObjects *flatList) { m_flatList = flatList; }
+    AddLayerElementToFlatListParams(ArrayOfObjects *flatList) { m_flatList=flatList; }
     ArrayOfObjects *m_flatList;
 };
 
@@ -115,9 +115,9 @@ class AdjustAccidXParams : public FunctorParams {
 public:
     AdjustAccidXParams(Doc *doc, Functor *functor)
     {
-        m_currentMeasure = NULL;
-        m_functor = functor;
-        m_doc = doc;
+        m_currentMeasure=NULL;
+        m_functor=functor;
+        m_doc=doc;
     }
     Measure *m_currentMeasure;
     Functor *m_functor;
@@ -139,9 +139,9 @@ class AdjustArpegParams : public FunctorParams {
 public:
     AdjustArpegParams(Doc *doc, Functor *functor)
     {
-        m_measureAligner = NULL;
-        m_doc = doc;
-        m_functor = functor;
+        m_measureAligner=NULL;
+        m_doc=doc;
+        m_functor=functor;
     }
     ArrayOfAligmentArpegTuples m_alignmentArpegTuples;
     MeasureAligner *m_measureAligner;
@@ -165,12 +165,12 @@ class AdjustBeamParams : public FunctorParams {
 public:
     AdjustBeamParams(Doc *doc)
     {
-        m_beam = NULL;
-        m_y1 = 0;
-        m_y2 = 0;
-        m_directionBias = 0;
-        m_overlapMargin = 0;
-        m_doc = doc;
+        m_beam=NULL;
+        m_y1=0;
+        m_y2=0;
+        m_directionBias=0;
+        m_overlapMargin=0;
+        m_doc=doc;
     }
 
     Object *m_beam;
@@ -207,15 +207,15 @@ class AdjustGraceXPosParams : public FunctorParams {
 public:
     AdjustGraceXPosParams(Doc *doc, Functor *functor, Functor *functorEnd, std::vector<int> staffNs)
     {
-        m_graceMaxPos = 0;
-        m_graceUpcomingMaxPos = -VRV_UNSET;
-        m_graceCumulatedXShift = 0;
-        m_staffNs = staffNs;
-        m_isGraceAlignment = false;
-        m_rightDefaultAlignment = NULL;
-        m_doc = doc;
-        m_functor = functor;
-        m_functorEnd = functorEnd;
+        m_graceMaxPos=0;
+        m_graceUpcomingMaxPos=-VRV_UNSET;
+        m_graceCumulatedXShift=0;
+        m_staffNs=staffNs;
+        m_isGraceAlignment=false;
+        m_rightDefaultAlignment=NULL;
+        m_doc=doc;
+        m_functor=functor;
+        m_functorEnd=functorEnd;
     }
 
     int m_graceMaxPos;
@@ -244,10 +244,10 @@ class AdjustFloatingPositionersParams : public FunctorParams {
 public:
     AdjustFloatingPositionersParams(Doc *doc, Functor *functor)
     {
-        m_classId = OBJECT;
-        m_inBetween = false;
-        m_doc = doc;
-        m_functor = functor;
+        m_classId=OBJECT;
+        m_inBetween=false;
+        m_doc=doc;
+        m_functor=functor;
     }
     ClassId m_classId;
     bool m_inBetween;
@@ -268,10 +268,10 @@ class AdjustFloatingPositionersBetweenParams : public FunctorParams {
 public:
     AdjustFloatingPositionersBetweenParams(Doc *doc, Functor *functor)
     {
-        m_previousStaffPositioners = NULL;
-        m_previousStaffAlignment = NULL;
-        m_doc = doc;
-        m_functor = functor;
+        m_previousStaffPositioners=NULL;
+        m_previousStaffAlignment=NULL;
+        m_doc=doc;
+        m_functor=functor;
     }
     ArrayOfFloatingPositioners *m_previousStaffPositioners;
     StaffAlignment *m_previousStaffAlignment;
@@ -292,8 +292,8 @@ class AdjustFloatingPositionerGrpsParams : public FunctorParams {
 public:
     AdjustFloatingPositionerGrpsParams(Doc *doc)
     {
-        m_doc = doc;
-        m_place = STAFFREL_above;
+        m_doc=doc;
+        m_place=STAFFREL_above;
     }
     std::vector<ClassId> m_classIds;
     data_STAFFREL m_place;
@@ -321,14 +321,14 @@ class AdjustHarmGrpsSpacingParams : public FunctorParams {
 public:
     AdjustHarmGrpsSpacingParams(Doc *doc, Functor *functor, Functor *functorEnd)
     {
-        m_doc = doc;
-        m_functor = functor;
-        m_functorEnd = functorEnd;
-        m_currentGrp = 0;
-        m_previousHarmPositioner = NULL;
-        m_previousHarmStart = NULL;
-        m_previousMeasure = NULL;
-        m_currentSystem = NULL;
+        m_doc=doc;
+        m_functor=functor;
+        m_functorEnd=functorEnd;
+        m_currentGrp=0;
+        m_previousHarmPositioner=NULL;
+        m_previousHarmStart=NULL;
+        m_previousMeasure=NULL;
+        m_currentSystem=NULL;
     }
     std::vector<int> m_grpIds;
     int m_currentGrp;
@@ -361,12 +361,12 @@ class AdjustLayersParams : public FunctorParams {
 public:
     AdjustLayersParams(Doc *doc, Functor *functor, const std::vector<int> &staffNs)
     {
-        m_currentLayerN = VRV_UNSET;
-        m_currentNote = NULL;
-        m_currentChord = NULL;
-        m_doc = doc;
-        m_functor = functor;
-        m_staffNs = staffNs;
+        m_currentLayerN=VRV_UNSET;
+        m_currentNote=NULL;
+        m_currentChord=NULL;
+        m_doc=doc;
+        m_functor=functor;
+        m_staffNs=staffNs;
     }
     std::vector<int> m_staffNs;
     int m_currentLayerN;
@@ -391,9 +391,9 @@ class AdjustSlursParams : public FunctorParams {
 public:
     AdjustSlursParams(Doc *doc, Functor *functor)
     {
-        m_adjusted = false;
-        m_doc = doc;
-        m_functor = functor;
+        m_adjusted=false;
+        m_doc=doc;
+        m_functor=functor;
     }
     bool m_adjusted;
     Doc *m_doc;
@@ -413,8 +413,8 @@ class AdjustStaffOverlapParams : public FunctorParams {
 public:
     AdjustStaffOverlapParams(Functor *functor)
     {
-        m_previous = NULL;
-        m_functor = functor;
+        m_previous=NULL;
+        m_functor=functor;
     }
     StaffAlignment *m_previous;
     Functor *m_functor;
@@ -434,13 +434,13 @@ class AdjustSylSpacingParams : public FunctorParams {
 public:
     AdjustSylSpacingParams(Doc *doc)
     {
-        m_previousVerse = NULL;
-        m_lastSyl = NULL;
-        m_previousMeasure = NULL;
-        m_currentLabelAbbr = NULL;
-        m_freeSpace = 0;
-        m_staffSize = 100;
-        m_doc = doc;
+        m_previousVerse=NULL;
+        m_lastSyl=NULL;
+        m_previousMeasure=NULL;
+        m_currentLabelAbbr=NULL;
+        m_freeSpace=0;
+        m_staffSize=100;
+        m_doc=doc;
     }
     ArrayOfAdjustmentTuples m_overlapingSyl;
     Verse *m_previousVerse;
@@ -467,10 +467,10 @@ class AdjustXOverflowParams : public FunctorParams {
 public:
     AdjustXOverflowParams(int margin)
     {
-        m_currentSystem = NULL;
-        m_lastMeasure = NULL;
-        m_currentWidest = NULL;
-        m_margin = margin;
+        m_currentSystem=NULL;
+        m_lastMeasure=NULL;
+        m_currentWidest=NULL;
+        m_margin=margin;
     }
     System *m_currentSystem;
     Measure *m_lastMeasure;
@@ -499,14 +499,14 @@ class AdjustXPosParams : public FunctorParams {
 public:
     AdjustXPosParams(Doc *doc, Functor *functor, Functor *functorEnd, const std::vector<int> &staffNs)
     {
-        m_minPos = 0;
-        m_upcomingMinPos = VRV_UNSET;
-        m_cumulatedXShift = 0;
-        m_staffN = 0;
-        m_staffNs = staffNs;
-        m_doc = doc;
-        m_functor = functor;
-        m_functorEnd = functorEnd;
+        m_minPos=0;
+        m_upcomingMinPos=VRV_UNSET;
+        m_cumulatedXShift=0;
+        m_staffN=0;
+        m_staffNs=staffNs;
+        m_doc=doc;
+        m_functor=functor;
+        m_functorEnd=functorEnd;
     }
     int m_minPos;
     int m_upcomingMinPos;
@@ -534,9 +534,9 @@ class AdjustYPosParams : public FunctorParams {
 public:
     AdjustYPosParams(Doc *doc, Functor *functor)
     {
-        m_cumulatedShift = 0;
-        m_doc = doc;
-        m_functor = functor;
+        m_cumulatedShift=0;
+        m_doc=doc;
+        m_functor=functor;
     }
     int m_cumulatedShift;
     Doc *m_doc;
@@ -564,16 +564,16 @@ class AlignHorizontallyParams : public FunctorParams {
 public:
     AlignHorizontallyParams(Functor *functor, Doc *doc)
     {
-        m_measureAligner = NULL;
-        m_time = 0.0;
-        m_currentMensur = NULL;
-        m_currentMeterSig = NULL;
-        m_notationType = NOTATIONTYPE_cmn;
-        m_functor = functor;
-        m_scoreDefRole = SCOREDEF_NONE;
-        m_isFirstMeasure = false;
-        m_hasMultipleLayer = false;
-        m_doc = doc;
+        m_measureAligner=NULL;
+        m_time=0.0;
+        m_currentMensur=NULL;
+        m_currentMeterSig=NULL;
+        m_notationType=NOTATIONTYPE_cmn;
+        m_functor=functor;
+        m_scoreDefRole=SCOREDEF_NONE;
+        m_isFirstMeasure=false;
+        m_hasMultipleLayer=false;
+        m_doc=doc;
     }
     MeasureAligner *m_measureAligner;
     double m_time;
@@ -600,8 +600,8 @@ class AlignMeasuresParams : public FunctorParams {
 public:
     AlignMeasuresParams()
     {
-        m_shift = 0;
-        m_justifiableWidth = 0;
+        m_shift=0;
+        m_justifiableWidth=0;
     }
 
     int m_shift;
@@ -624,11 +624,11 @@ class AlignSystemsParams : public FunctorParams {
 public:
     AlignSystemsParams(Doc *doc)
     {
-        m_shift = 0;
-        m_systemMargin = 0;
-        m_prevBottomOverflow = 0;
-        m_justificationSum = 0.;
-        m_doc = doc;
+        m_shift=0;
+        m_systemMargin=0;
+        m_prevBottomOverflow=0;
+        m_justificationSum=0.;
+        m_doc=doc;
     }
     int m_shift;
     int m_systemMargin;
@@ -657,15 +657,15 @@ class AlignVerticallyParams : public FunctorParams {
 public:
     AlignVerticallyParams(Doc *doc, Functor *functor, Functor *functorEnd)
     {
-        m_systemAligner = NULL;
-        m_staffIdx = 0;
-        m_staffN = 0;
-        m_cumulatedShift = 0;
-        m_justificationSum = 0.;
-        m_pageWidth = 0;
-        m_functor = functor;
-        m_functorEnd = functorEnd;
-        m_doc = doc;
+        m_systemAligner=NULL;
+        m_staffIdx=0;
+        m_staffN=0;
+        m_cumulatedShift=0;
+        m_justificationSum=0.;
+        m_pageWidth=0;
+        m_functor=functor;
+        m_functorEnd=functorEnd;
+        m_doc=doc;
     }
     SystemAligner *m_systemAligner;
     int m_staffIdx;
@@ -688,7 +688,7 @@ public:
 
 class ApplyPPUFactorParams : public FunctorParams {
 public:
-    ApplyPPUFactorParams() { m_page = NULL; }
+    ApplyPPUFactorParams() { m_page=NULL; }
     Page *m_page;
 };
 
@@ -717,10 +717,10 @@ class CalcDotsParams : public FunctorParams {
 public:
     CalcDotsParams(Doc *doc)
     {
-        m_chordDots = NULL;
-        m_chordDrawingX = 0;
-        m_chordStemDir = STEMDIRECTION_NONE;
-        m_doc = doc;
+        m_chordDots=NULL;
+        m_chordDrawingX=0;
+        m_chordStemDir=STEMDIRECTION_NONE;
+        m_doc=doc;
     }
     Dots *m_chordDots;
     int m_chordDrawingX;
@@ -754,12 +754,12 @@ class CalcMaxMeasureDurationParams : public FunctorParams {
 public:
     CalcMaxMeasureDurationParams()
     {
-        m_currentScoreTime = 0.0;
-        m_currentRealTimeSeconds = 0.0;
-        m_maxCurrentScoreTime = 0.0;
-        m_maxCurrentRealTimeSeconds = 0.0;
-        m_currentTempo = 120;
-        m_tempoAdjustment = 1.0;
+        m_currentScoreTime=0.0;
+        m_currentRealTimeSeconds=0.0;
+        m_maxCurrentScoreTime=0.0;
+        m_maxCurrentRealTimeSeconds=0.0;
+        m_currentTempo=120;
+        m_tempoAdjustment=1.0;
     }
     double m_currentScoreTime;
     double m_currentRealTimeSeconds;
@@ -786,12 +786,12 @@ class CalcOnsetOffsetParams : public FunctorParams {
 public:
     CalcOnsetOffsetParams()
     {
-        m_currentScoreTime = 0.0;
-        m_currentRealTimeSeconds = 0.0;
-        m_currentMensur = NULL;
-        m_currentMeterSig = NULL;
-        m_notationType = NOTATIONTYPE_cmn;
-        m_currentTempo = 120;
+        m_currentScoreTime=0.0;
+        m_currentRealTimeSeconds=0.0;
+        m_currentMensur=NULL;
+        m_currentMeterSig=NULL;
+        m_notationType=NOTATIONTYPE_cmn;
+        m_currentTempo=120;
     }
     double m_currentScoreTime;
     double m_currentRealTimeSeconds;
@@ -820,14 +820,14 @@ class CalcStemParams : public FunctorParams {
 public:
     CalcStemParams(Doc *doc)
     {
-        m_chordStemLength = 0;
-        m_verticalCenter = 0;
-        m_dur = DUR_1;
-        m_isGraceNote = false;
-        m_staff = NULL;
-        m_layer = NULL;
-        m_interface = NULL;
-        m_doc = doc;
+        m_chordStemLength=0;
+        m_verticalCenter=0;
+        m_dur=DUR_1;
+        m_isGraceNote=false;
+        m_staff=NULL;
+        m_layer=NULL;
+        m_interface=NULL;
+        m_doc=doc;
     }
     int m_chordStemLength;
     int m_verticalCenter;
@@ -854,13 +854,13 @@ public:
 class CastOffEncodingParams : public FunctorParams {
 public:
     CastOffEncodingParams(
-        Doc *doc, Page *currentPage, System *currentSystem, System *contentSystem, bool usePages = true)
+        Doc *doc, Page *currentPage, System *currentSystem, System *contentSystem, bool usePages=true)
     {
-        m_doc = doc;
-        m_currentPage = currentPage;
-        m_currentSystem = currentSystem;
-        m_contentSystem = contentSystem;
-        m_usePages = usePages;
+        m_doc=doc;
+        m_currentPage=currentPage;
+        m_currentSystem=currentSystem;
+        m_contentSystem=contentSystem;
+        m_usePages=usePages;
     }
     Doc *m_doc;
     Page *m_currentPage;
@@ -885,15 +885,15 @@ class CastOffPagesParams : public FunctorParams {
 public:
     CastOffPagesParams(Page *contentPage, Doc *doc, Page *currentPage)
     {
-        m_contentPage = contentPage;
-        m_doc = doc;
-        m_currentPage = currentPage;
-        m_shift = 0;
-        m_pageHeight = 0;
-        m_pgHeadHeight = 0;
-        m_pgFootHeight = 0;
-        m_pgHead2Height = 0;
-        m_pgFoot2Height = 0;
+        m_contentPage=contentPage;
+        m_doc=doc;
+        m_currentPage=currentPage;
+        m_shift=0;
+        m_pageHeight=0;
+        m_pgHeadHeight=0;
+        m_pgFootHeight=0;
+        m_pgHead2Height=0;
+        m_pgFoot2Height=0;
     }
     Page *m_contentPage;
     Doc *m_doc;
@@ -925,13 +925,13 @@ class CastOffSystemsParams : public FunctorParams {
 public:
     CastOffSystemsParams(System *contentSystem, Page *page, System *currentSystem, Doc *doc)
     {
-        m_contentSystem = contentSystem;
-        m_page = page;
-        m_currentSystem = currentSystem;
-        m_shift = 0;
-        m_systemWidth = 0;
-        m_currentScoreDefWidth = 0;
-        m_doc = doc;
+        m_contentSystem=contentSystem;
+        m_page=page;
+        m_currentSystem=currentSystem;
+        m_shift=0;
+        m_systemWidth=0;
+        m_currentScoreDefWidth=0;
+        m_doc=doc;
     }
     System *m_contentSystem;
     Page *m_page;
@@ -958,8 +958,8 @@ class ConvertMarkupAnalyticalParams : public FunctorParams {
 public:
     ConvertMarkupAnalyticalParams(bool permanent)
     {
-        m_currentChord = NULL;
-        m_permanent = permanent;
+        m_currentChord=NULL;
+        m_permanent=permanent;
     }
     std::vector<Note *> m_currentNotes;
     Chord *m_currentChord;
@@ -977,7 +977,7 @@ public:
 
 class ConvertScoreDefMarkupParams : public FunctorParams {
 public:
-    ConvertScoreDefMarkupParams(bool permanent) { m_permanent = permanent; }
+    ConvertScoreDefMarkupParams(bool permanent) { m_permanent=permanent; }
     bool m_permanent;
 };
 
@@ -1004,16 +1004,16 @@ class ConvertToCastOffMensuralParams : public FunctorParams {
 public:
     ConvertToCastOffMensuralParams(Doc *doc, System *targetSystem, IntTree *layerTree)
     {
-        m_doc = doc;
-        m_contentLayer = NULL;
-        m_targetSystem = targetSystem;
-        m_targetSubSystem = NULL;
-        m_targetMeasure = NULL;
-        m_targetStaff = NULL;
-        m_targetLayer = NULL;
-        m_segmentIdx = 0;
-        m_segmentTotal = 0;
-        m_layerTree = layerTree;
+        m_doc=doc;
+        m_contentLayer=NULL;
+        m_targetSystem=targetSystem;
+        m_targetSubSystem=NULL;
+        m_targetMeasure=NULL;
+        m_targetStaff=NULL;
+        m_targetLayer=NULL;
+        m_segmentIdx=0;
+        m_segmentTotal=0;
+        m_layerTree=layerTree;
     }
     Doc *m_doc;
     std::vector<int> m_staffNs;
@@ -1038,7 +1038,7 @@ public:
 
 class ConvertToPageBasedParams : public FunctorParams {
 public:
-    ConvertToPageBasedParams(System *pageBasedSystem) { m_pageBasedSystem = pageBasedSystem; }
+    ConvertToPageBasedParams(System *pageBasedSystem) { m_pageBasedSystem=pageBasedSystem; }
     System *m_pageBasedSystem;
 };
 
@@ -1057,9 +1057,9 @@ class ConvertToUnCastOffMensuralParams : public FunctorParams {
 public:
     ConvertToUnCastOffMensuralParams()
     {
-        m_contentMeasure = NULL;
-        m_contentLayer = NULL;
-        m_addSegmentsToDelete = true;
+        m_contentMeasure=NULL;
+        m_contentLayer=NULL;
+        m_addSegmentsToDelete=true;
     }
     Measure *m_contentMeasure;
     Layer *m_contentLayer;
@@ -1096,10 +1096,10 @@ class FindAllBetweenParams : public FunctorParams {
 public:
     FindAllBetweenParams(Comparison *comparison, ListOfObjects *elements, Object *start, Object *end)
     {
-        m_comparison = comparison;
-        m_elements = elements;
-        m_start = start;
-        m_end = end;
+        m_comparison=comparison;
+        m_elements=elements;
+        m_start=start;
+        m_end=end;
     }
     Comparison *m_comparison;
     ListOfObjects *m_elements;
@@ -1117,7 +1117,7 @@ public:
 
 class FindAllReferencedObjectsParams : public FunctorParams {
 public:
-    FindAllReferencedObjectsParams(ListOfObjects *elements) { m_elements = elements; }
+    FindAllReferencedObjectsParams(ListOfObjects *elements) { m_elements=elements; }
     ListOfObjects *m_elements;
 };
 
@@ -1134,8 +1134,8 @@ class FindAllByComparisonParams : public FunctorParams {
 public:
     FindAllByComparisonParams(Comparison *comparison, ListOfObjects *elements)
     {
-        m_comparison = comparison;
-        m_elements = elements;
+        m_comparison=comparison;
+        m_elements=elements;
     }
     Comparison *m_comparison;
     ListOfObjects *m_elements;
@@ -1154,8 +1154,8 @@ class FindByComparisonParams : public FunctorParams {
 public:
     FindByComparisonParams(Comparison *comparison)
     {
-        m_comparison = comparison;
-        m_element = NULL;
+        m_comparison=comparison;
+        m_element=NULL;
     }
     Comparison *m_comparison;
     Object *m_element;
@@ -1172,7 +1172,7 @@ public:
 
 class FindByUuidParams : public FunctorParams {
 public:
-    FindByUuidParams() { m_element = NULL; }
+    FindByUuidParams() { m_element=NULL; }
     std::string m_uuid;
     Object *m_element;
 };
@@ -1190,9 +1190,9 @@ class FindChildByComparisonParams : public FunctorParams {
 public:
     FindChildByComparisonParams(Comparison *comparison, Object *start)
     {
-        m_comparison = comparison;
-        m_element = NULL;
-        m_start = start;
+        m_comparison=comparison;
+        m_element=NULL;
+        m_start=start;
     }
     Comparison *m_comparison;
     Object *m_element;
@@ -1212,8 +1212,8 @@ class FindExtremeByComparisonParams : public FunctorParams {
 public:
     FindExtremeByComparisonParams(Comparison *comparison)
     {
-        m_comparison = comparison;
-        m_element = NULL;
+        m_comparison=comparison;
+        m_element=NULL;
     }
     Comparison *m_comparison;
     Object *m_element;
@@ -1237,10 +1237,10 @@ class FindSpannedLayerElementsParams : public FunctorParams {
 public:
     FindSpannedLayerElementsParams(TimeSpanningInterface *interface, Slur *slur)
     {
-        m_interface = interface;
-        m_minPos = 0;
-        m_maxPos = 0;
-        m_slur = slur;
+        m_interface=interface;
+        m_minPos=0;
+        m_maxPos=0;
+        m_slur=slur;
     }
     std::vector<LayerElement *> m_elements;
     int m_minPos;
@@ -1267,13 +1267,13 @@ class GenerateMIDIParams : public FunctorParams {
 public:
     GenerateMIDIParams(smf::MidiFile *midiFile, Functor *functor)
     {
-        m_midiFile = midiFile;
-        m_midiChannel = 0;
-        m_midiTrack = 1;
-        m_totalTime = 0.0;
-        m_transSemi = 0;
-        m_currentTempo = 120;
-        m_functor = functor;
+        m_midiFile=midiFile;
+        m_midiChannel=0;
+        m_midiTrack=1;
+        m_totalTime=0.0;
+        m_transSemi=0;
+        m_currentTempo=120;
+        m_functor=functor;
     }
     smf::MidiFile *m_midiFile;
     int m_midiChannel;
@@ -1302,10 +1302,10 @@ class GenerateTimemapParams : public FunctorParams {
 public:
     GenerateTimemapParams(Functor *functor)
     {
-        m_scoreTimeOffset = 0.0;
-        m_realTimeOffsetMilliseconds = 0;
-        m_currentTempo = 120;
-        m_functor = functor;
+        m_scoreTimeOffset=0.0;
+        m_realTimeOffsetMilliseconds=0;
+        m_currentTempo=120;
+        m_functor=functor;
     }
     std::map<double, double> realTimeToScoreTime;
     std::map<double, std::vector<std::string> > realTimeToOnElements;
@@ -1330,9 +1330,9 @@ class GetAlignmentLeftRightParams : public FunctorParams {
 public:
     GetAlignmentLeftRightParams(Functor *functor)
     {
-        m_minLeft = -VRV_UNSET;
-        m_maxRight = VRV_UNSET;
-        m_functor = functor;
+        m_minLeft=-VRV_UNSET;
+        m_maxRight=VRV_UNSET;
+        m_functor=functor;
     }
     int m_minLeft;
     int m_maxRight;
@@ -1354,10 +1354,10 @@ class GetRelativeLayerElementParams : public FunctorParams {
 public:
     GetRelativeLayerElementParams(const int elementId, bool searchDirection, bool anotherLayer)
     {
-        m_relativeElement = NULL;
-        m_initialElementId = elementId;
-        m_searchDirection = searchDirection;
-        m_isInNeighboringLayer = anotherLayer;
+        m_relativeElement=NULL;
+        m_initialElementId=elementId;
+        m_searchDirection=searchDirection;
+        m_isInNeighboringLayer=anotherLayer;
     }
     Object *m_relativeElement;
     int m_initialElementId;
@@ -1382,13 +1382,13 @@ class JustifyXParams : public FunctorParams {
 public:
     JustifyXParams(Functor *functor, Doc *doc)
     {
-        m_measureXRel = 0;
-        m_justifiableRatio = 1.0;
-        m_leftBarLineX = 0;
-        m_rightBarLineX = 0;
-        m_systemFullWidth = 0;
-        m_functor = functor;
-        m_doc = doc;
+        m_measureXRel=0;
+        m_justifiableRatio=1.0;
+        m_leftBarLineX=0;
+        m_rightBarLineX=0;
+        m_systemFullWidth=0;
+        m_functor=functor;
+        m_doc=doc;
     }
     int m_measureXRel;
     double m_justifiableRatio;
@@ -1415,11 +1415,11 @@ class JustifyYParams : public FunctorParams {
 public:
     JustifyYParams(Functor *functor, Doc *doc)
     {
-        m_cumulatedShift = 0;
-        m_spaceToDistribute = 0;
-        m_justificationSum = 0.;
-        m_functor = functor;
-        m_doc = doc;
+        m_cumulatedShift=0;
+        m_spaceToDistribute=0;
+        m_justificationSum=0.;
+        m_functor=functor;
+        m_doc=doc;
     }
 
     int m_cumulatedShift;
@@ -1446,11 +1446,11 @@ class LayerCountInTimeSpanParams : public FunctorParams {
 public:
     LayerCountInTimeSpanParams(MeterSig *meterSig, Mensur *mensur, Functor *functor)
     {
-        m_time = 0.0;
-        m_duration = 0.0;
-        m_meterSig = meterSig;
-        m_mensur = mensur;
-        m_functor = functor;
+        m_time=0.0;
+        m_duration=0.0;
+        m_meterSig=meterSig;
+        m_mensur=mensur;
+        m_functor=functor;
     }
     double m_time;
     double m_duration;
@@ -1478,11 +1478,11 @@ class LayerElementsInTimeSpanParams : public FunctorParams {
 public:
     LayerElementsInTimeSpanParams(MeterSig *meterSig, Mensur *mensur, Layer *layer)
     {
-        m_time = 0.0;
-        m_duration = 0.0;
-        m_meterSig = meterSig;
-        m_mensur = mensur;
-        m_layer = layer;
+        m_time=0.0;
+        m_duration=0.0;
+        m_meterSig=meterSig;
+        m_mensur=mensur;
+        m_layer=layer;
     }
     double m_time;
     double m_duration;
@@ -1507,14 +1507,14 @@ class OptimizeScoreDefParams : public FunctorParams {
 public:
     OptimizeScoreDefParams(Doc *doc, Functor *functor, Functor *functorEnd)
     {
-        m_currentScoreDef = NULL;
-        m_encoded = false;
-        m_firstScoreDef = true;
-        m_hasFermata = false;
-        m_hasTempo = false;
-        m_doc = doc;
-        m_functor = functor;
-        m_functorEnd = functorEnd;
+        m_currentScoreDef=NULL;
+        m_encoded=false;
+        m_firstScoreDef=true;
+        m_hasFermata=false;
+        m_hasTempo=false;
+        m_doc=doc;
+        m_functor=functor;
+        m_functorEnd=functorEnd;
     }
     ScoreDef *m_currentScoreDef;
     bool m_encoded;
@@ -1539,8 +1539,8 @@ class PrepareBoundariesParams : public FunctorParams {
 public:
     PrepareBoundariesParams()
     {
-        m_lastMeasure = NULL;
-        m_currentEnding = NULL;
+        m_lastMeasure=NULL;
+        m_currentEnding=NULL;
     }
     Measure *m_lastMeasure;
     Ending *m_currentEnding;
@@ -1557,7 +1557,7 @@ public:
 
 class PrepareFacsimileParams : public FunctorParams {
 public:
-    PrepareFacsimileParams(Facsimile *facsimile) { m_facsimile = facsimile; }
+    PrepareFacsimileParams(Facsimile *facsimile) { m_facsimile=facsimile; }
     Facsimile *m_facsimile;
     ListOfObjects m_zonelessSyls;
 };
@@ -1578,8 +1578,8 @@ class PrepareFloatingGrpsParams : public FunctorParams {
 public:
     PrepareFloatingGrpsParams()
     {
-        m_previousEnding = NULL;
-        m_pedalLine = NULL;
+        m_previousEnding=NULL;
+        m_pedalLine=NULL;
     }
     Ending *m_previousEnding;
     Pedal *m_pedalLine;
@@ -1600,9 +1600,9 @@ class PrepareCrossStaffParams : public FunctorParams {
 public:
     PrepareCrossStaffParams()
     {
-        m_currentMeasure = NULL;
-        m_currentCrossStaff = NULL;
-        m_currentCrossLayer = NULL;
+        m_currentMeasure=NULL;
+        m_currentCrossStaff=NULL;
+        m_currentCrossLayer=NULL;
     }
     Measure *m_currentMeasure;
     Staff *m_currentCrossStaff;
@@ -1622,9 +1622,9 @@ class PrepareLyricsParams : public FunctorParams {
 public:
     PrepareLyricsParams()
     {
-        m_currentSyl = NULL;
-        m_lastNote = NULL;
-        m_lastButOneNote = NULL;
+        m_currentSyl=NULL;
+        m_lastNote=NULL;
+        m_lastButOneNote=NULL;
     }
     Syl *m_currentSyl;
     Note *m_lastNote;
@@ -1642,7 +1642,7 @@ public:
 
 class PrepareLinkingParams : public FunctorParams {
 public:
-    PrepareLinkingParams() { m_fillList = true; }
+    PrepareLinkingParams() { m_fillList=true; }
     MapOfLinkingInterfaceUuidPairs m_nextUuidPairs;
     MapOfLinkingInterfaceUuidPairs m_sameasUuidPairs;
     bool m_fillList;
@@ -1659,7 +1659,7 @@ public:
 
 class PreparePlistParams : public FunctorParams {
 public:
-    PreparePlistParams() { m_fillList = true; }
+    PreparePlistParams() { m_fillList=true; }
     ArrayOfPlistInterfaceUuidPairs m_interfaceUuidPairs;
     bool m_fillList;
 };
@@ -1677,8 +1677,8 @@ class PreparePointersByLayerParams : public FunctorParams {
 public:
     PreparePointersByLayerParams()
     {
-        m_currentNote = NULL;
-        m_lastDot = NULL;
+        m_currentNote=NULL;
+        m_lastDot=NULL;
     }
     Note *m_currentNote;
     Dot *m_lastDot;
@@ -1714,9 +1714,9 @@ class PrepareRptParams : public FunctorParams {
 public:
     PrepareRptParams(ScoreDef *currentScoreDef)
     {
-        m_currentMRpt = NULL;
-        m_multiNumber = BOOLEAN_NONE;
-        m_currentScoreDef = currentScoreDef;
+        m_currentMRpt=NULL;
+        m_multiNumber=BOOLEAN_NONE;
+        m_currentScoreDef=currentScoreDef;
     }
     MRpt *m_currentMRpt;
     data_BOOLEAN m_multiNumber;
@@ -1748,7 +1748,7 @@ public:
 
 class PrepareTimeSpanningParams : public FunctorParams {
 public:
-    PrepareTimeSpanningParams() { m_fillList = true; }
+    PrepareTimeSpanningParams() { m_fillList=true; }
     ListOfSpanningInterClassIdPairs m_timeSpanningInterfaces;
     bool m_fillList;
 };
@@ -1785,10 +1785,10 @@ public:
     ReplaceDrawingValuesInStaffDefParams(
         Clef const *clef, KeySig const *keySig, Mensur const *mensur, MeterSig const *meterSig)
     {
-        m_clef = clef;
-        m_keySig = keySig;
-        m_mensur = mensur;
-        m_meterSig = meterSig;
+        m_clef=clef;
+        m_keySig=keySig;
+        m_mensur=mensur;
+        m_meterSig=meterSig;
     }
     Clef const *m_clef;
     KeySig const *m_keySig;
@@ -1806,7 +1806,7 @@ public:
 
 class SaveParams : public FunctorParams {
 public:
-    SaveParams(Output *output) { m_output = output; }
+    SaveParams(Output *output) { m_output=output; }
     Output *m_output;
 };
 
@@ -1820,7 +1820,7 @@ public:
 
 class SetAlignmentPitchPosParams : public FunctorParams {
 public:
-    SetAlignmentPitchPosParams(Doc *doc) { m_doc = doc; }
+    SetAlignmentPitchPosParams(Doc *doc) { m_doc=doc; }
     Doc *m_doc;
 };
 
@@ -1840,11 +1840,11 @@ class SetAlignmentXPosParams : public FunctorParams {
 public:
     SetAlignmentXPosParams(Doc *doc, Functor *functor)
     {
-        m_previousTime = 0.0;
-        m_previousXRel = 0;
-        m_longestActualDur = 0;
-        m_doc = doc;
-        m_functor = functor;
+        m_previousTime=0.0;
+        m_previousXRel=0;
+        m_longestActualDur=0;
+        m_doc=doc;
+        m_functor=functor;
     }
     double m_previousTime;
     int m_previousXRel;
@@ -1866,8 +1866,8 @@ class SetCautionaryScoreDefParams : public FunctorParams {
 public:
     SetCautionaryScoreDefParams(ScoreDef *currentScoreDef)
     {
-        m_currentScoreDef = currentScoreDef;
-        m_currentStaffDef = NULL;
+        m_currentScoreDef=currentScoreDef;
+        m_currentStaffDef=NULL;
     }
     ScoreDef *m_currentScoreDef;
     StaffDef *m_currentStaffDef;
@@ -1891,13 +1891,13 @@ class SetCurrentScoreDefParams : public FunctorParams {
 public:
     SetCurrentScoreDefParams(Doc *doc, ScoreDef *upcomingScoreDef)
     {
-        m_currentScoreDef = NULL;
-        m_currentStaffDef = NULL;
-        m_upcomingScoreDef = upcomingScoreDef;
-        m_previousMeasure = NULL;
-        m_currentSystem = NULL;
-        m_drawLabels = false;
-        m_doc = doc;
+        m_currentScoreDef=NULL;
+        m_currentStaffDef=NULL;
+        m_upcomingScoreDef=upcomingScoreDef;
+        m_previousMeasure=NULL;
+        m_currentSystem=NULL;
+        m_drawLabels=false;
+        m_doc=doc;
     }
     ScoreDef *m_currentScoreDef;
     StaffDef *m_currentStaffDef;
@@ -1921,8 +1921,8 @@ class SetOverflowBBoxesParams : public FunctorParams {
 public:
     SetOverflowBBoxesParams(Doc *doc)
     {
-        m_staffAlignment = NULL;
-        m_doc = doc;
+        m_staffAlignment=NULL;
+        m_doc=doc;
     }
     StaffAlignment *m_staffAlignment;
     Doc *m_doc;
@@ -1944,11 +1944,11 @@ class SetStaffDefRedrawFlagsParams : public FunctorParams {
 public:
     SetStaffDefRedrawFlagsParams()
     {
-        m_clef = false;
-        m_keySig = false;
-        m_mensur = false;
-        m_meterSig = false;
-        m_applyToAll = false;
+        m_clef=false;
+        m_keySig=false;
+        m_mensur=false;
+        m_meterSig=false;
+        m_applyToAll=false;
     }
     bool m_clef;
     bool m_keySig;
@@ -1970,8 +1970,8 @@ class TransposeParams : public FunctorParams {
 public:
     TransposeParams(Doc *doc, Transposer *transposer)
     {
-        m_transposer = transposer;
-        m_doc = doc;
+        m_transposer=transposer;
+        m_doc=doc;
     }
     Transposer *m_transposer;
     Doc *m_doc;
@@ -1987,7 +1987,7 @@ public:
 
 class UnCastOffParams : public FunctorParams {
 public:
-    UnCastOffParams(System *currentSystem) { m_currentSystem = currentSystem; }
+    UnCastOffParams(System *currentSystem) { m_currentSystem=currentSystem; }
     System *m_currentSystem;
 };
 
@@ -2000,7 +2000,7 @@ public:
  **/
 class ReorderByXPosParams : public FunctorParams {
 public:
-    int modifications = 0;
+    int modifications=0;
 };
 
 //----------------------------------------------------------------------------
@@ -2013,7 +2013,7 @@ public:
 
 class UnsetCurrentScoreDefParams : public FunctorParams {
 public:
-    UnsetCurrentScoreDefParams(Functor *functor) { m_functor = functor; }
+    UnsetCurrentScoreDefParams(Functor *functor) { m_functor=functor; }
     Functor *m_functor;
 };
 

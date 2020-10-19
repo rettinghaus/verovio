@@ -25,8 +25,8 @@
 namespace vrv {
 
 #define DYNAM_CHARS 7
-std::wstring dynamChars[] = { L"p", L"m", L"f", L"r", L"s", L"z", L"n" };
-std::wstring dynamSmufl[] = { L"\uE520", L"\uE521", L"\uE522", L"\uE523", L"\uE524", L"\uE525", L"\uE526" };
+std::wstring dynamChars[]={ L"p", L"m", L"f", L"r", L"s", L"z", L"n" };
+std::wstring dynamSmufl[]={ L"\uE520", L"\uE521", L"\uE522", L"\uE523", L"\uE524", L"\uE525", L"\uE526" };
 
 //----------------------------------------------------------------------------
 // Dynam
@@ -78,10 +78,10 @@ bool Dynam::IsSupportedChild(Object *child)
 
 bool Dynam::IsSymbolOnly()
 {
-    m_symbolStr = L"";
-    std::wstring str = this->GetText(this);
+    m_symbolStr=L"";
+    std::wstring str=this->GetText(this);
     if (Dynam::IsSymbolOnly(str)) {
-        m_symbolStr = str;
+        m_symbolStr=str;
         return true;
     }
     return false;
@@ -103,15 +103,15 @@ bool Dynam::GetSymbolsInStr(std::wstring &str, ArrayOfStringDynamTypePairs &toke
     std::wistringstream iss(str);
     std::wstring token;
     std::wstring text;
-    bool hasSymbols = false;
+    bool hasSymbols=false;
     while (std::getline(iss, token, L' ')) {
         // if (token.size() == 0) continue;
         if (Dynam::IsSymbolOnly(token)) {
-            hasSymbols = true;
+            hasSymbols=true;
             if (tokens.size() > 0) {
                 // previous one is not a symbol, add a space to it
                 if (tokens.back().second == false) {
-                    tokens.back().first = tokens.back().first + L" ";
+                    tokens.back().first=tokens.back().first + L" ";
                 }
                 // previous one it also a symbol, add a space in between
                 else {
@@ -125,7 +125,7 @@ bool Dynam::GetSymbolsInStr(std::wstring &str, ArrayOfStringDynamTypePairs &toke
             if (tokens.size() > 0) {
                 // previous one is not a symbol, append token to it with a space
                 if (tokens.back().second == false) {
-                    tokens.back().first = tokens.back().first + L" " + token;
+                    tokens.back().first=tokens.back().first + L" " + token;
                 }
                 // previous one is not a symbol, add it separately but with a space
                 else {
@@ -219,13 +219,13 @@ std::wstring Dynam::GetSymbolStr(const std::wstring &str)
     if (!dynam.empty()) return dynam;
 
     // Otherwise replace it letter by letter
-    dynam = str;
+    dynam=str;
     int i;
     std::wstring from, to;
-    for (i = 0; i < DYNAM_CHARS; ++i) {
-        from = dynamChars[i];
-        to = dynamSmufl[i];
-        for (size_t pos = 0; (pos = dynam.find(from, pos)) != std::string::npos; pos += to.size())
+    for (i=0; i < DYNAM_CHARS; ++i) {
+        from=dynamChars[i];
+        to=dynamSmufl[i];
+        for (size_t pos=0; (pos=dynam.find(from, pos)) != std::string::npos; pos += to.size())
             dynam.replace(pos, from.size(), to);
     }
     return dynam;
@@ -237,7 +237,7 @@ std::wstring Dynam::GetSymbolStr(const std::wstring &str)
 
 int Dynam::PrepareFloatingGrps(FunctorParams *functorParams)
 {
-    PrepareFloatingGrpsParams *params = vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
+    PrepareFloatingGrpsParams *params=vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
     assert(params);
 
     if (this->HasVgrp()) {

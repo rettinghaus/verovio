@@ -53,7 +53,7 @@ public:
     Zone *GetZone() { return m_zone; }
 
 private:
-    Zone *m_zone = NULL;
+    Zone *m_zone=NULL;
 };
 } // namespace vrv
 #endif

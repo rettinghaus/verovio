@@ -34,13 +34,13 @@ class Transposer;
 
 class TransPitch {
 public:
-    // diatonic pitch class name of pitch: C = 0, D = 1, ... B = 6.
+    // diatonic pitch class name of pitch: C=0, D=1, ... B=6.
     int m_pname;
 
-    // chromatic alteration of pitch: 0 = natural, 1 = sharp, -2 = flat, +2 = double sharp
+    // chromatic alteration of pitch: 0=natural, 1=sharp, -2=flat, +2=double sharp
     int m_accid;
 
-    // octave number of pitch: 4 = middle-C octave
+    // octave number of pitch: 4=middle-C octave
     int m_oct;
 
     TransPitch(){};

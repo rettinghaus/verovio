@@ -62,7 +62,7 @@ public:
     Input(Doc *doc);
     virtual ~Input();
 
-    void SetOutputFormat(const std::string &format) { m_outformat = format; }
+    void SetOutputFormat(const std::string &format) { m_outformat=format; }
     std::string GetOutputFormat() { return m_outformat; }
 
     // read
@@ -93,7 +93,7 @@ protected:
      */
     bool m_hasLayoutInformation;
 
-    std::string m_outformat = "mei";
+    std::string m_outformat="mei";
 };
 
 } // namespace vrv

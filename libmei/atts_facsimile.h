@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetFacs(std::string facs_) { m_facs = facs_; }
+    void SetFacs(std::string facs_) { m_facs=facs_; }
     std::string GetFacs() const { return m_facs; }
     bool HasFacs() const;
     ///@}

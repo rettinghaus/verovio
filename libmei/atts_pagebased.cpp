@@ -41,26 +41,26 @@ AttSurface::~AttSurface()
 
 void AttSurface::ResetSurface()
 {
-    m_surface = "";
+    m_surface="";
 }
 
 bool AttSurface::ReadSurface(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("surface")) {
         this->SetSurface(StrToStr(element.attribute("surface").value()));
         element.remove_attribute("surface");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttSurface::WriteSurface(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasSurface()) {
-        element.append_attribute("surface") = StrToStr(this->GetSurface()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("surface")=StrToStr(this->GetSurface()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -75,7 +75,7 @@ bool AttSurface::HasSurface() const
 bool Att::SetPagebased(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_SURFACE)) {
-        AttSurface *att = dynamic_cast<AttSurface *>(element);
+        AttSurface *att=dynamic_cast<AttSurface *>(element);
         assert(att);
         if (attrType == "surface") {
             att->SetSurface(att->StrToStr(attrValue));
@@ -89,7 +89,7 @@ bool Att::SetPagebased(Object *element, const std::string &attrType, const std::
 void Att::GetPagebased(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_SURFACE)) {
-        const AttSurface *att = dynamic_cast<const AttSurface *>(element);
+        const AttSurface *att=dynamic_cast<const AttSurface *>(element);
         assert(att);
         if (att->HasSurface()) {
             attributes->push_back(std::make_pair("surface", att->StrToStr(att->GetSurface())));

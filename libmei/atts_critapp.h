@@ -49,7 +49,7 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetCause(std::string cause_) { m_cause = cause_; }
+    void SetCause(std::string cause_) { m_cause=cause_; }
     std::string GetCause() const { return m_cause; }
     bool HasCause() const;
     ///@}

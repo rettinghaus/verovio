@@ -51,15 +51,15 @@ class OptionGrp;
 // Option defines
 //----------------------------------------------------------------------------
 
-enum option_BREAKS { BREAKS_none = 0, BREAKS_auto, BREAKS_line, BREAKS_encoded };
+enum option_BREAKS { BREAKS_none=0, BREAKS_auto, BREAKS_line, BREAKS_encoded };
 
-enum option_FOOTER { FOOTER_none = 0, FOOTER_auto, FOOTER_encoded };
+enum option_FOOTER { FOOTER_none=0, FOOTER_auto, FOOTER_encoded };
 
-enum option_HEADER { HEADER_none = 0, HEADER_auto, HEADER_encoded };
+enum option_HEADER { HEADER_none=0, HEADER_auto, HEADER_encoded };
 
-enum option_MEASURENUMBER { MEASURENUMBER_system = 0, MEASURENUMBER_interval };
+enum option_MEASURENUMBER { MEASURENUMBER_system=0, MEASURENUMBER_interval };
 
-enum option_SYSTEMDIVIDER { SYSTEMDIVIDER_none = 0, SYSTEMDIVIDER_left, SYSTEMDIVIDER_left_right };
+enum option_SYSTEMDIVIDER { SYSTEMDIVIDER_none=0, SYSTEMDIVIDER_left, SYSTEMDIVIDER_left_right };
 
 //----------------------------------------------------------------------------
 // Option
@@ -75,7 +75,7 @@ public:
     virtual ~Option() {}
     virtual void CopyTo(Option *option);
 
-    void SetKey(const std::string &key) { m_key = key; }
+    void SetKey(const std::string &key) { m_key=key; }
     std::string GetKey() const { return m_key; }
 
     virtual bool SetValueBool(bool value);
@@ -194,7 +194,7 @@ public:
     OptionInt() {}
     virtual ~OptionInt() {}
     virtual void CopyTo(Option *option);
-    void Init(int defaultValue, int minValue, int maxValue, bool definitionFactor = false);
+    void Init(int defaultValue, int minValue, int maxValue, bool definitionFactor=false);
 
     virtual bool SetValueDbl(double value);
     virtual bool SetValue(const std::string &value);
@@ -395,19 +395,19 @@ private:
  */
 
 class OptionJson : public Option {
-    using JsonPath = std::vector<std::reference_wrapper<jsonxx::Value> >;
+    using JsonPath=std::vector<std::reference_wrapper<jsonxx::Value> >;
 
 public:
     //
-    OptionJson() = default;
-    virtual ~OptionJson() = default;
+    OptionJson()=default;
+    virtual ~OptionJson()=default;
     virtual void Init(const std::string &defaultValue);
 
     virtual bool SetValue(const std::string &jsonFilePath);
     //virtual std::string GetStrValue() const;
 
-    int GetIntValue(const std::vector<std::string> &jsonNodePath, bool getDefault = false) const;
-    double GetDoubleValue(const std::vector<std::string> &jsonNodePath, bool getDefault = false) const;
+    int GetIntValue(const std::vector<std::string> &jsonNodePath, bool getDefault=false) const;
+    double GetDoubleValue(const std::vector<std::string> &jsonNodePath, bool getDefault=false) const;
     //
     bool UpdateNodeValue(const std::vector<std::string> &jsonNodePath, const std::string &value);
     //
@@ -435,8 +435,8 @@ public:
 
     void SetLabel(const std::string &label, const std::string &id)
     {
-        m_label = label;
-        m_id = id;
+        m_label=label;
+        m_id=id;
     }
     std::string GetLabel() const { return m_label; }
     std::string GetId() const { return m_id; }

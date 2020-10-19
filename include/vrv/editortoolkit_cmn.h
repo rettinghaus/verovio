@@ -33,7 +33,7 @@ public:
     {
         return ParseEditorAction(json_editorAction, false);
     }
-    bool ParseEditorAction(const std::string &json_editorAction, bool commitOnly = false);
+    bool ParseEditorAction(const std::string &json_editorAction, bool commitOnly=false);
     virtual std::string EditInfo();
 
 protected:

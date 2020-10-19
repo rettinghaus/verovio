@@ -72,7 +72,7 @@ std::wstring KeyAccid::GetSymbolStr() const
 {
     if (!this->HasAccid()) return L"";
 
-    wchar_t symc = Accid::GetAccidGlyph(this->GetAccid());
+    wchar_t symc=Accid::GetAccidGlyph(this->GetAccid());
     std::wstring symbolStr;
 
     if (this->HasEnclose()) {

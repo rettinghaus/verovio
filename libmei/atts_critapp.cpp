@@ -41,26 +41,26 @@ AttCrit::~AttCrit()
 
 void AttCrit::ResetCrit()
 {
-    m_cause = "";
+    m_cause="";
 }
 
 bool AttCrit::ReadCrit(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("cause")) {
         this->SetCause(StrToStr(element.attribute("cause").value()));
         element.remove_attribute("cause");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttCrit::WriteCrit(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasCause()) {
-        element.append_attribute("cause") = StrToStr(this->GetCause()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("cause")=StrToStr(this->GetCause()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -75,7 +75,7 @@ bool AttCrit::HasCause() const
 bool Att::SetCritapp(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_CRIT)) {
-        AttCrit *att = dynamic_cast<AttCrit *>(element);
+        AttCrit *att=dynamic_cast<AttCrit *>(element);
         assert(att);
         if (attrType == "cause") {
             att->SetCause(att->StrToStr(attrValue));
@@ -89,7 +89,7 @@ bool Att::SetCritapp(Object *element, const std::string &attrType, const std::st
 void Att::GetCritapp(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_CRIT)) {
-        const AttCrit *att = dynamic_cast<const AttCrit *>(element);
+        const AttCrit *att=dynamic_cast<const AttCrit *>(element);
         assert(att);
         if (att->HasCause()) {
             attributes->push_back(std::make_pair("cause", att->StrToStr(att->GetCause())));

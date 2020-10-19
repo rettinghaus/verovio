@@ -49,11 +49,11 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetOct(std::string oct_) { m_oct = oct_; }
+    void SetOct(std::string oct_) { m_oct=oct_; }
     std::string GetOct() const { return m_oct; }
     bool HasOct() const;
     //
-    void SetPname(std::string pname_) { m_pname = pname_; }
+    void SetPname(std::string pname_) { m_pname=pname_; }
     std::string GetPname() const { return m_pname; }
     bool HasPname() const;
     ///@}
@@ -91,35 +91,35 @@ public:
      * to the default value)
      **/
     ///@{
-    void SetAngled(data_BOOLEAN angled_) { m_angled = angled_; }
+    void SetAngled(data_BOOLEAN angled_) { m_angled=angled_; }
     data_BOOLEAN GetAngled() const { return m_angled; }
     bool HasAngled() const;
     //
-    void SetCon(ncForm_CON con_) { m_con = con_; }
+    void SetCon(ncForm_CON con_) { m_con=con_; }
     ncForm_CON GetCon() const { return m_con; }
     bool HasCon() const;
     //
-    void SetCurve(ncForm_CURVE curve_) { m_curve = curve_; }
+    void SetCurve(ncForm_CURVE curve_) { m_curve=curve_; }
     ncForm_CURVE GetCurve() const { return m_curve; }
     bool HasCurve() const;
     //
-    void SetHooked(data_BOOLEAN hooked_) { m_hooked = hooked_; }
+    void SetHooked(data_BOOLEAN hooked_) { m_hooked=hooked_; }
     data_BOOLEAN GetHooked() const { return m_hooked; }
     bool HasHooked() const;
     //
-    void SetLigated(data_BOOLEAN ligated_) { m_ligated = ligated_; }
+    void SetLigated(data_BOOLEAN ligated_) { m_ligated=ligated_; }
     data_BOOLEAN GetLigated() const { return m_ligated; }
     bool HasLigated() const;
     //
-    void SetRellen(ncForm_RELLEN rellen_) { m_rellen = rellen_; }
+    void SetRellen(ncForm_RELLEN rellen_) { m_rellen=rellen_; }
     ncForm_RELLEN GetRellen() const { return m_rellen; }
     bool HasRellen() const;
     //
-    void SetSShape(std::string sShape_) { m_sShape = sShape_; }
+    void SetSShape(std::string sShape_) { m_sShape=sShape_; }
     std::string GetSShape() const { return m_sShape; }
     bool HasSShape() const;
     //
-    void SetTilt(data_COMPASSDIRECTION tilt_) { m_tilt = tilt_; }
+    void SetTilt(data_COMPASSDIRECTION tilt_) { m_tilt=tilt_; }
     data_COMPASSDIRECTION GetTilt() const { return m_tilt; }
     bool HasTilt() const;
     ///@}

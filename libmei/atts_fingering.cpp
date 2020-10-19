@@ -41,26 +41,26 @@ AttFingGrpLog::~AttFingGrpLog()
 
 void AttFingGrpLog::ResetFingGrpLog()
 {
-    m_form = fingGrpLog_FORM_NONE;
+    m_form=fingGrpLog_FORM_NONE;
 }
 
 bool AttFingGrpLog::ReadFingGrpLog(pugi::xml_node element)
 {
-    bool hasAttribute = false;
+    bool hasAttribute=false;
     if (element.attribute("form")) {
         this->SetForm(StrToFingGrpLogForm(element.attribute("form").value()));
         element.remove_attribute("form");
-        hasAttribute = true;
+        hasAttribute=true;
     }
     return hasAttribute;
 }
 
 bool AttFingGrpLog::WriteFingGrpLog(pugi::xml_node element)
 {
-    bool wroteAttribute = false;
+    bool wroteAttribute=false;
     if (this->HasForm()) {
-        element.append_attribute("form") = FingGrpLogFormToStr(this->GetForm()).c_str();
-        wroteAttribute = true;
+        element.append_attribute("form")=FingGrpLogFormToStr(this->GetForm()).c_str();
+        wroteAttribute=true;
     }
     return wroteAttribute;
 }
@@ -75,7 +75,7 @@ bool AttFingGrpLog::HasForm() const
 bool Att::SetFingering(Object *element, const std::string &attrType, const std::string &attrValue)
 {
     if (element->HasAttClass(ATT_FINGGRPLOG)) {
-        AttFingGrpLog *att = dynamic_cast<AttFingGrpLog *>(element);
+        AttFingGrpLog *att=dynamic_cast<AttFingGrpLog *>(element);
         assert(att);
         if (attrType == "form") {
             att->SetForm(att->StrToFingGrpLogForm(attrValue));
@@ -89,7 +89,7 @@ bool Att::SetFingering(Object *element, const std::string &attrType, const std::
 void Att::GetFingering(const Object *element, ArrayOfStrAttr *attributes)
 {
     if (element->HasAttClass(ATT_FINGGRPLOG)) {
-        const AttFingGrpLog *att = dynamic_cast<const AttFingGrpLog *>(element);
+        const AttFingGrpLog *att=dynamic_cast<const AttFingGrpLog *>(element);
         assert(att);
         if (att->HasForm()) {
             attributes->push_back(std::make_pair("form", att->FingGrpLogFormToStr(att->GetForm())));

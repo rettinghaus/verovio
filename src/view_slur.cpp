@@ -43,9 +43,9 @@ void View::DrawSlur(DeviceContext *dc, Slur *slur, int x1, int x2, Staff *staff,
     assert(slur);
     assert(staff);
 
-    FloatingPositioner *positioner = slur->GetCurrentFloatingPositioner();
+    FloatingPositioner *positioner=slur->GetCurrentFloatingPositioner();
     assert(positioner && positioner->Is(FLOATING_CURVE_POSITIONER));
-    FloatingCurvePositioner *curve = vrv_cast<FloatingCurvePositioner *>(positioner);
+    FloatingCurvePositioner *curve=vrv_cast<FloatingCurvePositioner *>(positioner);
     assert(curve);
 
     if (curve->GetDir() == curvature_CURVEDIR_NONE) {
@@ -60,10 +60,10 @@ void View::DrawSlur(DeviceContext *dc, Slur *slur, int x1, int x2, Staff *staff,
     else
         dc->StartGraphic(slur, "", slur->GetUuid(), false);
 
-    int penStyle = AxSOLID;
+    int penStyle=AxSOLID;
     switch (slur->GetLform()) {
-        case LINEFORM_dashed: penStyle = AxSHORT_DASH; break;
-        case LINEFORM_dotted: penStyle = AxDOT; break;
+        case LINEFORM_dashed: penStyle=AxSHORT_DASH; break;
+        case LINEFORM_dotted: penStyle=AxDOT; break;
         case LINEFORM_wavy:
         // TODO: Implement wavy slur.
         default: break;
@@ -72,8 +72,8 @@ void View::DrawSlur(DeviceContext *dc, Slur *slur, int x1, int x2, Staff *staff,
 
     /*
     int i;
-    for (i = 0; i <= 10; ++i) {
-        Point p = BoundingBox::CalcDeCasteljau(points, (double)i / 10.0);
+    for (i=0; i <= 10; ++i) {
+        Point p=BoundingBox::CalcDeCasteljau(points, (double)i / 10.0);
         DrawDot(dc, p.x, p.y, staff->m_drawingStaffSize);
     }
     */
@@ -86,26 +86,26 @@ void View::DrawSlur(DeviceContext *dc, Slur *slur, int x1, int x2, Staff *staff,
 
 void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, int x2, Staff *staff, char spanningType)
 {
-    Beam *parentBeam = NULL;
-    Chord *startParentChord = NULL;
-    Chord *endParentChord = NULL;
-    Note *startNote = NULL;
-    Note *endNote = NULL;
-    Chord *startChord = NULL;
-    Chord *endChord = NULL;
+    Beam *parentBeam=NULL;
+    Chord *startParentChord=NULL;
+    Chord *endParentChord=NULL;
+    Note *startNote=NULL;
+    Note *endNote=NULL;
+    Chord *startChord=NULL;
+    Chord *endChord=NULL;
 
-    curvature_CURVEDIR drawingCurveDir = curvature_CURVEDIR_above;
-    data_STEMDIRECTION startStemDir = STEMDIRECTION_NONE;
-    data_STEMDIRECTION endStemDir = STEMDIRECTION_NONE;
-    data_STEMDIRECTION stemDir = STEMDIRECTION_NONE;
-    bool isGraceToNoteSlur = false;
-    int y1 = staff->GetDrawingY();
-    int y2 = staff->GetDrawingY();
+    curvature_CURVEDIR drawingCurveDir=curvature_CURVEDIR_above;
+    data_STEMDIRECTION startStemDir=STEMDIRECTION_NONE;
+    data_STEMDIRECTION endStemDir=STEMDIRECTION_NONE;
+    data_STEMDIRECTION stemDir=STEMDIRECTION_NONE;
+    bool isGraceToNoteSlur=false;
+    int y1=staff->GetDrawingY();
+    int y2=staff->GetDrawingY();
 
     /************** parent layers **************/
 
-    LayerElement *start = dynamic_cast<LayerElement *>(slur->GetStart());
-    LayerElement *end = dynamic_cast<LayerElement *>(slur->GetEnd());
+    LayerElement *start=dynamic_cast<LayerElement *>(slur->GetStart());
+    LayerElement *end=dynamic_cast<LayerElement *>(slur->GetEnd());
 
     if (!start || !end) {
         // no start and end, obviously nothing to do...
@@ -118,47 +118,47 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
     }
 
     if (start->Is(NOTE)) {
-        startNote = vrv_cast<Note *>(start);
+        startNote=vrv_cast<Note *>(start);
         assert(startNote);
-        startParentChord = startNote->IsChordTone();
-        startStemDir = startNote->GetDrawingStemDir();
+        startParentChord=startNote->IsChordTone();
+        startStemDir=startNote->GetDrawingStemDir();
     }
     else if (start->Is(CHORD)) {
-        startChord = vrv_cast<Chord *>(start);
+        startChord=vrv_cast<Chord *>(start);
         assert(startChord);
-        startStemDir = startChord->GetDrawingStemDir();
+        startStemDir=startChord->GetDrawingStemDir();
     }
     if (end->Is(NOTE)) {
-        endNote = vrv_cast<Note *>(end);
+        endNote=vrv_cast<Note *>(end);
         assert(endNote);
-        endParentChord = endNote->IsChordTone();
-        endStemDir = endNote->GetDrawingStemDir();
+        endParentChord=endNote->IsChordTone();
+        endStemDir=endNote->GetDrawingStemDir();
     }
     else if (end->Is(CHORD)) {
-        endChord = vrv_cast<Chord *>(end);
+        endChord=vrv_cast<Chord *>(end);
         assert(endChord);
-        endStemDir = endChord->GetDrawingStemDir();
+        endStemDir=endChord->GetDrawingStemDir();
     }
 
     if (startNote && endNote && startNote->IsGraceNote() && !endNote->IsGraceNote()) {
-        isGraceToNoteSlur = true;
+        isGraceToNoteSlur=true;
     }
 
-    Layer *layer = NULL;
-    LayerElement *layerElement = NULL;
+    Layer *layer=NULL;
+    LayerElement *layerElement=NULL;
     // For now, with timestamps, get the first layer. We should eventually look at the @layerident (not implemented)
     if (!start->Is(TIMESTAMP_ATTR)) {
-        layer = dynamic_cast<Layer *>(start->GetFirstAncestor(LAYER));
-        layerElement = start;
+        layer=dynamic_cast<Layer *>(start->GetFirstAncestor(LAYER));
+        layerElement=start;
     }
     else {
-        layer = dynamic_cast<Layer *>(end->GetFirstAncestor(LAYER));
-        layerElement = end;
+        layer=dynamic_cast<Layer *>(end->GetFirstAncestor(LAYER));
+        layerElement=end;
     }
     assert(layer);
 
     if (!start->Is(TIMESTAMP_ATTR) && !end->Is(TIMESTAMP_ATTR) && (spanningType == SPANNING_START_END)) {
-        System *system = vrv_cast<System *>(staff->GetFirstAncestor(SYSTEM));
+        System *system=vrv_cast<System *>(staff->GetFirstAncestor(SYSTEM));
         assert(system);
         // If we have a start to end situation, then store the curvedir in the slur for mixed drawing stem dir
         // situations
@@ -169,33 +169,33 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
 
     /************** calculate the radius for adjusting the x position **************/
 
-    int startRadius = 0;
+    int startRadius=0;
     if (!start->Is(TIMESTAMP_ATTR)) {
-        startRadius = start->GetDrawingRadius(m_doc);
+        startRadius=start->GetDrawingRadius(m_doc);
     }
 
-    int endRadius = 0;
+    int endRadius=0;
     if (!end->Is(TIMESTAMP_ATTR)) {
-        endRadius = end->GetDrawingRadius(m_doc);
+        endRadius=end->GetDrawingRadius(m_doc);
     }
 
     /************** note stem dir **************/
 
     if (spanningType == SPANNING_START_END) {
-        stemDir = startStemDir;
+        stemDir=startStemDir;
     }
     // This is the case when the tie is split over two system of two pages.
     // In this case, we are now drawing its beginning to the end of the measure (i.e., the last aligner)
     else if (spanningType == SPANNING_START) {
-        stemDir = startStemDir;
+        stemDir=startStemDir;
     }
     // Now this is the case when the tie is split but we are drawing the end of it
     else if (spanningType == SPANNING_END) {
-        stemDir = endStemDir;
+        stemDir=endStemDir;
     }
     // Finally, slur accross an entire system; use the staff position and up (see below)
     else {
-        stemDir = STEMDIRECTION_down;
+        stemDir=STEMDIRECTION_down;
     }
 
     /************** direction **************/
@@ -205,48 +205,48 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
     // first should be the tie @curvedir
     if (slur->HasCurvedir()) {
         drawingCurveDir
-            = (slur->GetCurvedir() == curvature_CURVEDIR_above) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
+           =(slur->GetCurvedir() == curvature_CURVEDIR_above) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
     }
     // grace notes - always below unless we have a drawing stem direction on the layer
     else if (isGraceToNoteSlur && (layer->GetDrawingStemDir(layerElement) == STEMDIRECTION_NONE)) {
-        drawingCurveDir = curvature_CURVEDIR_below;
+        drawingCurveDir=curvature_CURVEDIR_below;
     }
     // the normal case
     else if (slur->HasDrawingCurvedir()) {
-        drawingCurveDir = slur->GetDrawingCurvedir();
+        drawingCurveDir=slur->GetDrawingCurvedir();
     }
     // then layer direction trumps note direction
-    else if (layer && ((layerStemDir = layer->GetDrawingStemDir(layerElement)) != STEMDIRECTION_NONE)) {
-        drawingCurveDir = (layerStemDir == STEMDIRECTION_up) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
+    else if (layer && ((layerStemDir=layer->GetDrawingStemDir(layerElement)) != STEMDIRECTION_NONE)) {
+        drawingCurveDir=(layerStemDir == STEMDIRECTION_up) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
     }
     // look if in a chord
     else if (startParentChord) {
         if (startParentChord->PositionInChord(startNote) < 0) {
-            drawingCurveDir = curvature_CURVEDIR_below;
+            drawingCurveDir=curvature_CURVEDIR_below;
         }
         else if (startParentChord->PositionInChord(startNote) > 0) {
-            drawingCurveDir = curvature_CURVEDIR_above;
+            drawingCurveDir=curvature_CURVEDIR_above;
         }
         // away from the stem if odd number (center note)
         else {
-            drawingCurveDir = (stemDir != STEMDIRECTION_up) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
+            drawingCurveDir=(stemDir != STEMDIRECTION_up) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
         }
     }
     else if (stemDir == STEMDIRECTION_up) {
-        drawingCurveDir = curvature_CURVEDIR_below;
+        drawingCurveDir=curvature_CURVEDIR_below;
     }
     else if (stemDir == STEMDIRECTION_NONE) {
         // no information from the note stem directions, look at the position in the notes
-        int center = staff->GetDrawingY() - m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize) * 2;
-        drawingCurveDir = (start->GetDrawingY() > center) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
+        int center=staff->GetDrawingY() - m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize) * 2;
+        drawingCurveDir=(start->GetDrawingY() > center) ? curvature_CURVEDIR_above : curvature_CURVEDIR_below;
     }
 
     /************** adjusting y position **************/
 
-    bool isShortSlur = false;
-    if (x2 - x1 < 1 * m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize)) isShortSlur = true;
+    bool isShortSlur=false;
+    if (x2 - x1 < 1 * m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize)) isShortSlur=true;
 
-    int yChordMax = 0, yChordMin = 0;
+    int yChordMax=0, yChordMin=0;
     if ((spanningType == SPANNING_START_END) || (spanningType == SPANNING_START)) {
         // first get the min max of the chord (if any)
         if (startParentChord) {
@@ -258,14 +258,14 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
         // slur is up
         if (drawingCurveDir == curvature_CURVEDIR_above) {
             // P(^)
-            if (startStemDir == STEMDIRECTION_down) y1 = start->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
+            if (startStemDir == STEMDIRECTION_down) y1=start->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
             //  d(^)d
             else if (isShortSlur) {
-                y1 = start->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
+                y1=start->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
             }
             // same but in beam - adjust the x too
-            else if ((parentBeam = start->IsInBeam()) && !parentBeam->IsLastInBeam(start)) {
-                y1 = start->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
+            else if ((parentBeam=start->IsInBeam()) && !parentBeam->IsLastInBeam(start)) {
+                y1=start->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
                 x1 += startRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
             }
             // d(^)
@@ -273,31 +273,31 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
                 // put it on the side, move it left, but not if we have a @stamp
                 if (!start->Is(TIMESTAMP_ATTR)) x1 += m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 4 / 2;
                 if (startChord || startParentChord)
-                    y1 = yChordMin + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y1=yChordMin + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
                 else
-                    y1 = start->GetDrawingY() + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y1=start->GetDrawingY() + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
             }
         }
         // slur is down
         else {
             // d(_)
-            if (startStemDir == STEMDIRECTION_up) y1 = start->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
+            if (startStemDir == STEMDIRECTION_up) y1=start->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
             // P(_)P
             else if (isShortSlur) {
-                y1 = start->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
+                y1=start->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
             }
             // same but in beam
-            else if ((parentBeam = start->IsInBeam()) && !parentBeam->IsLastInBeam(start)) {
-                y1 = start->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
+            else if ((parentBeam=start->IsInBeam()) && !parentBeam->IsLastInBeam(start)) {
+                y1=start->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
                 x1 -= startRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
             }
             // P(_)
             else {
                 // put it on the side, but no need to move it left
                 if (startChord || startParentChord)
-                    y1 = yChordMin - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y1=yChordMin - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
                 else
-                    y1 = start->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y1=start->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
             }
         }
     }
@@ -313,46 +313,46 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
         // slur is up
         if (drawingCurveDir == curvature_CURVEDIR_above) {
             // (^)P
-            if (endStemDir == STEMDIRECTION_down) y2 = end->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
+            if (endStemDir == STEMDIRECTION_down) y2=end->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
             // d(^)d
             else if (isShortSlur) {
-                y2 = end->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
+                y2=end->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
             }
             // same but in beam - adjust the x too
-            else if ((parentBeam = end->IsInBeam()) && !parentBeam->IsFirstInBeam(end)) {
-                y2 = end->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
+            else if ((parentBeam=end->IsInBeam()) && !parentBeam->IsFirstInBeam(end)) {
+                y2=end->GetDrawingTop(m_doc, staff->m_drawingStaffSize);
                 x2 += endRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
             }
             // (^)d
             else {
                 // put it on the side, no need to move it right
                 if (endChord || endParentChord)
-                    y2 = yChordMin + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y2=yChordMin + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
                 else
-                    y2 = end->GetDrawingY() + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y2=end->GetDrawingY() + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
             }
         }
         else {
             if (isGraceToNoteSlur) {
                 if (endNote) {
-                    y2 = endNote->GetDrawingY();
+                    y2=endNote->GetDrawingY();
                     x2 -= m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 2;
-                    isShortSlur = true;
+                    isShortSlur=true;
                 }
                 else {
-                    y2 = y1;
+                    y2=y1;
                 }
             }
             // (_)d
             else if (endStemDir == STEMDIRECTION_up)
-                y2 = end->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
+                y2=end->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
             // P(_)P
             else if (isShortSlur) {
-                y2 = end->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
+                y2=end->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
             }
             // same but in beam
-            else if ((parentBeam = end->IsInBeam()) && !parentBeam->IsFirstInBeam(end)) {
-                y2 = end->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
+            else if ((parentBeam=end->IsInBeam()) && !parentBeam->IsFirstInBeam(end)) {
+                y2=end->GetDrawingBottom(m_doc, staff->m_drawingStaffSize);
                 //
                 x2 -= endRadius - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
             }
@@ -361,9 +361,9 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
                 // put it on the side, move it right, but not if we have a @stamp2
                 if (!end->Is(TIMESTAMP_ATTR)) x2 -= m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 2;
                 if (endChord || endParentChord)
-                    y2 = yChordMin - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y2=yChordMin - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
                 else
-                    y2 = end->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
+                    y2=end->GetDrawingY() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 3;
             }
         }
     }
@@ -371,36 +371,36 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
     // Positions not attached to a note
     if (spanningType == SPANNING_START) {
         if (drawingCurveDir == curvature_CURVEDIR_above)
-            y2 = staff->GetDrawingY();
+            y2=staff->GetDrawingY();
         else
-            y2 = staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
+            y2=staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
     }
     if (end->Is(TIMESTAMP_ATTR)) {
         if (drawingCurveDir == curvature_CURVEDIR_above)
-            y2 = std::max(staff->GetDrawingY(), y1);
+            y2=std::max(staff->GetDrawingY(), y1);
         else
-            y2 = std::min(staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize), y1);
+            y2=std::min(staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize), y1);
     }
     if (spanningType == SPANNING_END) {
         if (drawingCurveDir == curvature_CURVEDIR_above)
-            y1 = staff->GetDrawingY();
+            y1=staff->GetDrawingY();
         else
-            y1 = staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
+            y1=staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
     }
     if (start->Is(TIMESTAMP_ATTR)) {
         if (drawingCurveDir == curvature_CURVEDIR_above)
-            y1 = std::max(staff->GetDrawingY(), y2);
+            y1=std::max(staff->GetDrawingY(), y2);
         else
-            y1 = std::min(staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize), y2);
+            y1=std::min(staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize), y2);
     }
     // slur accross an entire system; use the staff position
     else if (spanningType == SPANNING_MIDDLE) {
         // To be adjusted
         if (drawingCurveDir == curvature_CURVEDIR_above)
-            y1 = staff->GetDrawingY();
+            y1=staff->GetDrawingY();
         else
-            y1 = staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
-        y2 = y1;
+            y1=staff->GetDrawingY() - m_doc->GetDrawingStaffSize(staff->m_drawingStaffSize);
+        y2=y1;
     }
 
     /************** y position **************/
@@ -415,11 +415,11 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
     }
 
     Point points[4];
-    points[0] = Point(x1, y1);
-    points[3] = Point(x2, y2);
+    points[0]=Point(x1, y1);
+    points[3]=Point(x2, y2);
 
-    float angle = CalcInitialSlur(curve, slur, staff, layer->GetN(), drawingCurveDir, points);
-    int thickness = m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * m_options->m_slurThickness.GetValue();
+    float angle=CalcInitialSlur(curve, slur, staff, layer->GetN(), drawingCurveDir, points);
+    int thickness=m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * m_options->m_slurThickness.GetValue();
 
     curve->UpdateCurveParams(points, angle, thickness, drawingCurveDir);
 
@@ -434,9 +434,9 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
         start->FindAllDescendantByComparison(&artics, &matchType);
         // Then the @n of each first staffDef
         for (auto &object : artics) {
-            Artic *artic = vrv_cast<Artic *>(object);
+            Artic *artic=vrv_cast<Artic *>(object);
             assert(artic);
-            ArticPart *outsidePart = artic->GetOutsidePart();
+            ArticPart *outsidePart=artic->GetOutsidePart();
             if (outsidePart) {
                 if ((outsidePart->GetPlace() == STAFFREL_above) && (drawingCurveDir == curvature_CURVEDIR_above)) {
                     outsidePart->AddSlurPositioner(curve, true);
@@ -452,9 +452,9 @@ void View::DrawSlurInitial(FloatingCurvePositioner *curve, Slur *slur, int x1, i
         end->FindAllDescendantByComparison(&artics, &matchType);
         // Then the @n of each first staffDef
         for (auto &object : artics) {
-            Artic *artic = vrv_cast<Artic *>(object);
+            Artic *artic=vrv_cast<Artic *>(object);
             assert(artic);
-            ArticPart *outsidePart = artic->GetOutsidePart();
+            ArticPart *outsidePart=artic->GetOutsidePart();
             if (outsidePart) {
                 if ((outsidePart->GetPlace() == STAFFREL_above) && (drawingCurveDir == curvature_CURVEDIR_above)) {
                     outsidePart->AddSlurPositioner(curve, false);
@@ -473,31 +473,31 @@ float View::CalcInitialSlur(
     FloatingCurvePositioner *curve, Slur *slur, Staff *staff, int layerN, curvature_CURVEDIR curveDir, Point points[4])
 {
     // For readability makes them p1 and p2
-    Point p1 = points[0];
-    Point p2 = points[3];
+    Point p1=points[0];
+    Point p2=points[3];
 
     /************** height **************/
 
     // the 'height' of the bezier
     int height;
-    int dist = abs(p2.x - p1.x);
-    height = std::max(int(m_options->m_slurMinHeight.GetValue() * m_doc->GetDrawingUnit(staff->m_drawingStaffSize)),
+    int dist=abs(p2.x - p1.x);
+    height=std::max(int(m_options->m_slurMinHeight.GetValue() * m_doc->GetDrawingUnit(staff->m_drawingStaffSize)),
         dist / m_options->m_slurHeightFactor.GetValue());
-    height = std::min(
+    height=std::min(
         int(m_options->m_slurMaxHeight.GetValue() * m_doc->GetDrawingUnit(staff->m_drawingStaffSize)), height);
 
     // the height of the control points
-    height = height * 4 / 3;
+    height=height * 4 / 3;
 
     /************** content **************/
 
-    System *system = vrv_cast<System *>(staff->GetFirstAncestor(SYSTEM));
+    System *system=vrv_cast<System *>(staff->GetFirstAncestor(SYSTEM));
     assert(system);
     FindSpannedLayerElementsParams findSpannedLayerElementsParams(slur, slur);
-    findSpannedLayerElementsParams.m_minPos = p1.x;
-    findSpannedLayerElementsParams.m_maxPos = p2.x;
+    findSpannedLayerElementsParams.m_minPos=p1.x;
+    findSpannedLayerElementsParams.m_maxPos=p2.x;
     findSpannedLayerElementsParams.m_classIds
-        = { ACCID, ARTIC_PART, ARTIC, CHORD, FLAG, GLISS, NOTE, STEM, TIE, TUPLET_BRACKET, TUPLET_NUM };
+       ={ ACCID, ARTIC_PART, ARTIC, CHORD, FLAG, GLISS, NOTE, STEM, TIE, TUPLET_BRACKET, TUPLET_NUM };
     ArrayOfComparisons filters;
     // Create ad comparison object for each type / @n
     // For now we only look at one layer (assumed layer1 == layer2)
@@ -514,45 +514,45 @@ float View::CalcInitialSlur(
 
         Point pRotated;
         Point pLeft;
-        pLeft.x = element->GetSelfLeft();
+        pLeft.x=element->GetSelfLeft();
         // if ((pLeft.x > p1->x) && (pLeft.x < p2->x)) {
-        //    pLeft.y = (curveDir == curvature_CURVEDIR_above) ? element->GetSelfTop() : element->GetSelfBottom();
+        //    pLeft.y=(curveDir == curvature_CURVEDIR_above) ? element->GetSelfTop() : element->GetSelfBottom();
         //    spannedElements->push_back(spannedElement);
         //}
         Point pRight;
-        pRight.x = element->GetSelfRight();
+        pRight.x=element->GetSelfRight();
         // if ((pRight.x > p1->x) && (pRight.x < p2->x)) {
-        //    pRight.y = (curveDir == curvature_CURVEDIR_above) ? element->GetSelfTop() : element->GetSelfBottom();
+        //    pRight.y=(curveDir == curvature_CURVEDIR_above) ? element->GetSelfTop() : element->GetSelfBottom();
         //    spannedElements->push_back(spannedElement);
         //}
         if (((pLeft.x > p1.x) && (pLeft.x < p2.x)) || ((pRight.x > p1.x) && (pRight.x < p2.x))) {
-            CurveSpannedElement *spannedElement = new CurveSpannedElement;
-            spannedElement->m_boundingBox = element;
+            CurveSpannedElement *spannedElement=new CurveSpannedElement;
+            spannedElement->m_boundingBox=element;
             curve->AddSpannedElement(spannedElement);
         }
     }
 
     for (auto &positioner : findSpannedLayerElementsParams.m_ties) {
-        CurveSpannedElement *spannedElement = new CurveSpannedElement;
-        spannedElement->m_boundingBox = positioner;
+        CurveSpannedElement *spannedElement=new CurveSpannedElement;
+        spannedElement->m_boundingBox=positioner;
         curve->AddSpannedElement(spannedElement);
     }
 
     /************** angle **************/
 
-    const ArrayOfCurveSpannedElements *spannedElements = curve->GetSpannedElements();
-    float slurAngle = slur->GetAdjustedSlurAngle(m_doc, p1, p2, curveDir, (spannedElements->size() > 0));
-    Point rotatedP2 = BoundingBox::CalcPositionAfterRotation(p2, -slurAngle, p1);
+    const ArrayOfCurveSpannedElements *spannedElements=curve->GetSpannedElements();
+    float slurAngle=slur->GetAdjustedSlurAngle(m_doc, p1, p2, curveDir, (spannedElements->size() > 0));
+    Point rotatedP2=BoundingBox::CalcPositionAfterRotation(p2, -slurAngle, p1);
 
     /************** control points **************/
 
     Point rotatedC1, rotatedC2;
     slur->GetControlPoints(m_doc, p1, rotatedP2, rotatedC1, rotatedC2, curveDir, height, staff->m_drawingStaffSize);
 
-    points[0] = p1;
-    points[1] = BoundingBox::CalcPositionAfterRotation(rotatedC1, slurAngle, p1);
-    points[2] = BoundingBox::CalcPositionAfterRotation(rotatedC2, slurAngle, p1);
-    points[3] = BoundingBox::CalcPositionAfterRotation(rotatedP2, slurAngle, p1);
+    points[0]=p1;
+    points[1]=BoundingBox::CalcPositionAfterRotation(rotatedC1, slurAngle, p1);
+    points[2]=BoundingBox::CalcPositionAfterRotation(rotatedC2, slurAngle, p1);
+    points[3]=BoundingBox::CalcPositionAfterRotation(rotatedP2, slurAngle, p1);
 
     return slurAngle;
 }
