@@ -1,4 +1,5 @@
 name: verovio
+base: core18
 version: git
 summary: Music notation engraving library for MEI
 description: |
@@ -9,14 +10,13 @@ description: |
   Plaine & Easie Code, Humdrum, Musedata, MusicXML, 
   EsAC, and ABC digital scores.
 
-base: core18
+grade: devel
 confinement: strict
 
 parts:
   verovio:
-    plugin: autotools
-    source-type: tar
-    source: http://source.dosbox.com/dosboxsvn.tgz
+    plugin: cmake
+    source: .
     build-packages:
       - g++
       - make
