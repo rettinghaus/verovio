@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20201107 at Mon Jan 25 11:48:58 2021
+Created by FontForge 20201107 at Thu Feb  4 11:12:30 2021
  By Klaus Rettinghaus
 Copyright (C) 2021, MuseScore BVBA (http://www.musescore.org/),
 with Reserved Font Name "Leland".
@@ -1793,7 +1793,6 @@ d="M151 253v-65.2002l-225.5 -160h225.5v-55.5v-9.7002l-225.5 -160h225.5v-55.5996h
     <hkern u1="&#xe522;" g2="uniE52A" k="100" />
     <hkern u1="&#xe522;" g2="uniE529" k="100" />
     <hkern u1="&#xe522;" g2="uniE528" k="100" />
-    <hkern u1="&#xe522;" u2="&#xe525;" k="101" />
     <hkern u1="&#xe522;" u2="&#xe522;" k="117" />
     <hkern u1="&#xe522;" u2="&#xe520;" k="110" />
     <hkern u1="&#xe523;" g2="uniE533" k="-24" />
@@ -1838,7 +1837,6 @@ d="M151 253v-65.2002l-225.5 -160h225.5v-55.5v-9.7002l-225.5 -160h225.5v-55.5996h
     <hkern g1="uniE52F" g2="uniE529" k="90" />
     <hkern g1="uniE52F" g2="uniE528" k="90" />
     <hkern g1="uniE52F" g2="uniE527" k="90" />
-    <hkern g1="uniE52F" u2="&#xe525;" k="102" />
     <hkern g1="uniE52F" u2="&#xe520;" k="100" />
     <hkern g1="uniE530" g2="uniE52B" k="90" />
     <hkern g1="uniE530" g2="uniE52A" k="90" />
@@ -1852,21 +1850,18 @@ d="M151 253v-65.2002l-225.5 -160h225.5v-55.5v-9.7002l-225.5 -160h225.5v-55.5996h
     <hkern g1="uniE531" g2="uniE529" k="90" />
     <hkern g1="uniE531" g2="uniE528" k="90" />
     <hkern g1="uniE531" g2="uniE527" k="90" />
-    <hkern g1="uniE531" u2="&#xe525;" k="101" />
     <hkern g1="uniE531" u2="&#xe520;" k="100" />
     <hkern g1="uniE532" g2="uniE52B" k="90" />
     <hkern g1="uniE532" g2="uniE52A" k="90" />
     <hkern g1="uniE532" g2="uniE529" k="90" />
     <hkern g1="uniE532" g2="uniE528" k="90" />
     <hkern g1="uniE532" g2="uniE527" k="90" />
-    <hkern g1="uniE532" u2="&#xe525;" k="102" />
     <hkern g1="uniE532" u2="&#xe520;" k="100" />
     <hkern g1="uniE533" g2="uniE52B" k="90" />
     <hkern g1="uniE533" g2="uniE52A" k="90" />
     <hkern g1="uniE533" g2="uniE529" k="90" />
     <hkern g1="uniE533" g2="uniE528" k="90" />
     <hkern g1="uniE533" g2="uniE527" k="90" />
-    <hkern g1="uniE533" u2="&#xe525;" k="101" />
     <hkern g1="uniE533" u2="&#xe520;" k="100" />
     <hkern g1="uniE536" g2="uniE52B" k="100" />
     <hkern g1="uniE536" g2="uniE52A" k="100" />
@@ -1880,5 +1875,8 @@ d="M151 253v-65.2002l-225.5 -160h225.5v-55.5v-9.7002l-225.5 -160h225.5v-55.5996h
     <hkern g1="uniE53C" g2="uniE528" k="90" />
     <hkern g1="uniE53C" g2="uniE527" k="90" />
     <hkern g1="uniE53C" u2="&#xe520;" k="100" />
+    <hkern g1="uniE522,uniE52D,uniE52E,uniE52F,uniE530,uniE531,uniE532,uniE533,uniE536,uniE53C"
+	g2="uniE525"
+	k="145" />
   </font>
 </defs></svg>
