@@ -387,14 +387,13 @@ void View::DrawBeatRpt(DeviceContext *dc, LayerElement *element, Layer *layer, S
         DrawSmuflCode(dc, xSymbol, y, SMUFL_E501_repeat2Bars, staff->m_drawingStaffSize, false);
     }
     else {
-        DrawSmuflCode(dc, xSymbol, y, SMUFL_E101_noteheadSlashHorizontalEnds, staff->m_drawingStaffSize, false);
-        int additionalSlash = beatRpt->GetSlash() - BEATRPT_REND_1;
-        int halfWidth
-            = m_doc->GetGlyphWidth(SMUFL_E101_noteheadSlashHorizontalEnds, staff->m_drawingStaffSize, false) / 2;
-        int i;
-        for (i = 0; i < additionalSlash; ++i) {
+        DrawSmuflCode(dc, xSymbol, y, SMUFL_E504_repeatBarSlash, staff->m_drawingStaffSize, false);
+        const int additionalSlashes = beatRpt->GetSlash() - BEATRPT_REND_1;
+        const int halfWidth
+            = m_doc->GetGlyphWidth(SMUFL_E504_repeatBarSlash, staff->m_drawingStaffSize, false) / 2;
+        for (int i = 0; i < additionalSlashes; ++i) {
             xSymbol += halfWidth;
-            DrawSmuflCode(dc, xSymbol, y, SMUFL_E101_noteheadSlashHorizontalEnds, staff->m_drawingStaffSize, false);
+            DrawSmuflCode(dc, xSymbol, y, SMUFL_E504_repeatBarSlash, staff->m_drawingStaffSize, false);
         }
     }
 
