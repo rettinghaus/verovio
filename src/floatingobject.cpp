@@ -336,14 +336,24 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
         if (m_place == STAFFREL_above) {
             yRel = GetContentY1();
             yRel -= doc->GetBottomMargin(m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
-            this->SetDrawingYRel(yRel);
-            this->SetDrawingYRel(-minStaffDistance);
+            if (m_object->Is({ DIR, DYNAM })) {
+                SetDrawingYRel(std::min(yRel, m_object->GetMaxDrawingYRel()));
+            }
+            else {
+                SetDrawingYRel(yRel);
+                SetDrawingYRel(-minStaffDistance);
+            }
         }
         else {
             yRel = staffAlignment->GetStaffHeight() + GetContentY2();
             yRel += doc->GetTopMargin(m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
-            this->SetDrawingYRel(yRel);
-            this->SetDrawingYRel(minStaffDistance + staffAlignment->GetStaffHeight());
+            if (m_object->Is({ DIR, DYNAM })) {
+                SetDrawingYRel(std::max(yRel, m_object->GetMaxDrawingYRel()));
+            }
+            else {
+                SetDrawingYRel(yRel);
+                SetDrawingYRel(minStaffDistance + staffAlignment->GetStaffHeight());
+            }
         }
     }
     else {
@@ -355,10 +365,9 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
 
         if (m_place == STAFFREL_above) {
             if (curve && curve->m_object->Is({ PHRASE, SLUR, TIE })) {
-                int shift = this->Intersects(curve, CONTENT, doc->GetDrawingUnit(staffSize));
+                int shift = Intersects(curve, CONTENT, doc->GetDrawingUnit(staffSize));
                 if (shift != 0) {
-                    this->SetDrawingYRel(this->GetDrawingYRel() - shift);
-                    // LogDebug("Shift %d", shift);
+                    SetDrawingYRel(GetDrawingYRel() - shift);
                 }
                 return true;
             }
@@ -371,18 +380,18 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
             }
             // With LayerElement always move them up
             else if (object && object->IsLayerElement()) {
-                if (yRel < 0) this->SetDrawingYRel(yRel);
+                if (yRel < 0) SetDrawingYRel(yRel);
             }
             // Otherwise only if the is a vertical overlap
-            else if (this->VerticalContentOverlap(horizOverlapingBBox, margin)) {
-                this->SetDrawingYRel(yRel);
+            else if (VerticalContentOverlap(horizOverlapingBBox, margin)) {
+                SetDrawingYRel(yRel);
             }
         }
         else {
             if (curve && curve->m_object->Is({ PHRASE, SLUR, TIE })) {
-                int shift = this->Intersects(curve, CONTENT, doc->GetDrawingUnit(staffSize));
+                int shift = Intersects(curve, CONTENT, doc->GetDrawingUnit(staffSize));
                 if (shift != 0) {
-                    this->SetDrawingYRel(this->GetDrawingYRel() - shift);
+                    SetDrawingYRel(GetDrawingYRel() - shift);
                     // LogDebug("Shift %d", shift);
                 }
                 return true;
@@ -397,11 +406,11 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
             }
             // With LayerElement always move them down
             else if (object && object->IsLayerElement()) {
-                if (yRel > 0) this->SetDrawingYRel(yRel);
+                if (yRel > 0) SetDrawingYRel(yRel);
             }
             // Otherwise only if the is a vertical overlap
-            else if (this->VerticalContentOverlap(horizOverlapingBBox, margin)) {
-                this->SetDrawingYRel(yRel);
+            else if (VerticalContentOverlap(horizOverlapingBBox, margin)) {
+                SetDrawingYRel(yRel);
             }
         }
     }
