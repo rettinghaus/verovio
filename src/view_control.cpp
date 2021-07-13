@@ -1028,8 +1028,6 @@ void View::DrawControlElementConnector(
     assert(element->GetNextLink() || interface->GetEnd());
     if (!element->GetNextLink() && !interface->GetEnd()) return;
 
-    int y = element->GetDrawingY() + m_doc->GetDrawingUnit(staff->m_drawingStaffSize) / 2;
-
     // Adjust the x1
     if ((spanningType == SPANNING_START) || (spanningType == SPANNING_START_END)) {
         if (element->GetCurrentFloatingPositioner() && element->GetCurrentFloatingPositioner()->HasContentBB()) {
@@ -1049,6 +1047,7 @@ void View::DrawControlElementConnector(
     }
 
     const int width = m_options->m_lyricLineThickness.GetValue() * m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
+    const int y = element->GetDrawingY() + width / 2;
 
     // the length of the dash and the space between them - can be made a parameter
     const int dashLength = m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 4 / 3;
