@@ -666,7 +666,7 @@ int StaffAlignment::AdjustFloatingPositioners(FunctorParams *functorParams)
             // find all the overflowing elements from the staff that overlap horizontally (and, in case of extender
             // elements - vertically)
             i = std::find_if(i, end, [iter, drawingUnit](BoundingBox *elem) {
-                if ((*iter)->GetObject()->IsExtenderElement()) {
+                if ((*iter)->GetObject()->IsExtenderElement() && !elem->Is(FLOATING_POSITIONER)) {
                     return (*iter)->HorizontalContentOverlap(elem, drawingUnit * 8)
                         || (*iter)->VerticalContentOverlap(elem);                
                 }
