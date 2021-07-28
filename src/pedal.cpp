@@ -29,6 +29,8 @@ namespace vrv {
 // Pedal
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<Pedal> s_factory("pedal", PEDAL);
+
 Pedal::Pedal()
     : ControlElement("pedal-")
     , TimeSpanningInterface()
@@ -36,7 +38,7 @@ Pedal::Pedal()
     , AttExtSym()
     , AttPedalLog()
     , AttPedalVis()
-    , AttPlacement()
+    , AttPlacementRelStaff()
     , AttVerticalGroup()
 {
     RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
@@ -44,7 +46,7 @@ Pedal::Pedal()
     RegisterAttClass(ATT_EXTSYM);
     RegisterAttClass(ATT_PEDALLOG);
     RegisterAttClass(ATT_PEDALVIS);
-    RegisterAttClass(ATT_PLACEMENT);
+    RegisterAttClass(ATT_PLACEMENTRELSTAFF);
     RegisterAttClass(ATT_VERTICALGROUP);
 
     Reset();
@@ -60,7 +62,7 @@ void Pedal::Reset()
     ResetExtSym();
     ResetPedalLog();
     ResetPedalVis();
-    ResetPlacement();
+    ResetPlacementRelStaff();
     ResetVerticalGroup();
 
     m_endsWithBounce = false;
@@ -68,9 +70,14 @@ void Pedal::Reset()
 
 wchar_t Pedal::GetPedalGlyph() const
 {
-    // If there is glyph.num, prioritize it, otherwise check other attributes
+    // If there is glyph.num, prioritize it
     if (HasGlyphNum()) {
         wchar_t code = GetGlyphNum();
+        if (NULL != Resources::GetGlyph(code)) return code;
+    }
+    // If there is glyph.name (second priority)
+    else if (HasGlyphName()) {
+        wchar_t code = Resources::GetGlyphCode(GetGlyphName());
         if (NULL != Resources::GetGlyph(code)) return code;
     }
 

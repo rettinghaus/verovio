@@ -175,7 +175,7 @@ void Page::LayOutTranscription(bool force)
     AlignVerticallyParams alignVerticallyParams(doc, &alignVertically, &alignVerticallyEnd);
     this->Process(&alignVertically, &alignVerticallyParams, &alignVerticallyEnd);
 
-    // Set the pitch / pos alignement
+    // Set the pitch / pos alignment
     SetAlignmentPitchPosParams setAlignmentPitchPosParams(doc);
     Functor setAlignmentPitchPos(&Object::SetAlignmentPitchPos);
     this->Process(&setAlignmentPitchPos, &setAlignmentPitchPosParams);
@@ -205,7 +205,8 @@ void Page::LayOutTranscription(bool force)
 
     FunctorDocParams calcLedgerLinesParams(doc);
     Functor calcLedgerLines(&Object::CalcLedgerLines);
-    this->Process(&calcLedgerLines, &calcLedgerLinesParams);
+    Functor calcLedgerLinesEnd(&Object::CalcLedgerLinesEnd);
+    this->Process(&calcLedgerLines, &calcLedgerLinesParams, &calcLedgerLinesEnd);
 
     m_layoutDone = true;
 }
@@ -267,7 +268,7 @@ void Page::LayOutHorizontally()
         this->Process(&setAlignmentX, &setAlignmentXPosParams);
     }
 
-    // Set the pitch / pos alignement
+    // Set the pitch / pos alignment
     SetAlignmentPitchPosParams setAlignmentPitchPosParams(doc);
     Functor setAlignmentPitchPos(&Object::SetAlignmentPitchPos);
     this->Process(&setAlignmentPitchPos, &setAlignmentPitchPosParams);
@@ -310,9 +311,22 @@ void Page::LayOutHorizontally()
 
     // Adjust the x position of the LayerElement where multiple layer collide
     // Look at each LayerElement and change the m_xShift if the bounding box is overlapping
+    // For the first iteration align elements without taking dots into consideration
     Functor adjustLayers(&Object::AdjustLayers);
     AdjustLayersParams adjustLayersParams(doc, &adjustLayers, doc->m_mdivScoreDef.GetStaffNs());
     this->Process(&adjustLayers, &adjustLayersParams);
+
+    // Adjust dots for the multiple layers. Try to align dots that can be grouped together when layers collide,
+    // otherwise keep their relative positioning
+    Functor adjustDots(&Object::AdjustDots);
+    Functor adjustDotsEnd(&Object::AdjustDotsEnd);
+    AdjustDotsParams adjustDotsParams(doc, &adjustDots, &adjustDotsEnd, doc->m_mdivScoreDef.GetStaffNs());
+    this->Process(&adjustDots, &adjustDotsParams, &adjustDotsEnd);
+
+    // adjust Layers again, this time including dots positioning
+    AdjustLayersParams newAdjustLayersParams(doc, &adjustLayers, doc->m_mdivScoreDef.GetStaffNs());
+    newAdjustLayersParams.m_ignoreDots = false;
+    this->Process(&adjustLayers, &newAdjustLayersParams);
 
     // Adjust the X position of the accidentals, including in chords
     Functor adjustAccidX(&Object::AdjustAccidX);
@@ -324,6 +338,15 @@ void Page::LayOutHorizontally()
     Functor adjustXPos(&Object::AdjustXPos);
     Functor adjustXPosEnd(&Object::AdjustXPosEnd);
     AdjustXPosParams adjustXPosParams(doc, &adjustXPos, &adjustXPosEnd, doc->m_mdivScoreDef.GetStaffNs());
+    adjustXPosParams.m_excludes.push_back(TABDURSYM);
+    this->Process(&adjustXPos, &adjustXPosParams, &adjustXPosEnd);
+
+    // Adjust tabRhyhtm separately
+    adjustXPosParams.m_excludes.clear();
+    adjustXPosParams.m_includes.push_back(TABDURSYM);
+    adjustXPosParams.m_includes.push_back(BARLINE_ATTR_RIGHT);
+    adjustXPosParams.m_includes.push_back(METERSIG);
+    adjustXPosParams.m_includes.push_back(KEYSIG);
     this->Process(&adjustXPos, &adjustXPosParams, &adjustXPosEnd);
 
     // Adjust the X shift of the Alignment looking at the bounding boxes
@@ -333,6 +356,12 @@ void Page::LayOutHorizontally()
     AdjustGraceXPosParams adjustGraceXPosParams(
         doc, &adjustGraceXPos, &adjustGraceXPosEnd, doc->m_mdivScoreDef.GetStaffNs());
     this->Process(&adjustGraceXPos, &adjustGraceXPosParams, &adjustGraceXPosEnd);
+
+    // Adjust the spacing of clef changes since they are skipped in AdjustXPos
+    // Look at each clef change and  move them to the left and add space if necessary
+    Functor adjustClefChanges(&Object::AdjustClefChanges);
+    AdjustClefsParams adjustClefChangesParams(doc);
+    this->Process(&adjustClefChanges, &adjustClefChangesParams);
 
     // We need to populate processing lists for processing the document by Layer (for matching @tie) and
     // by Verse (for matching syllable connectors)
@@ -352,6 +381,11 @@ void Page::LayOutHorizontally()
     Functor adjustArpegEnd(&Object::AdjustArpegEnd);
     AdjustArpegParams adjustArpegParams(doc, &adjustArpeg);
     this->Process(&adjustArpeg, &adjustArpegParams, &adjustArpegEnd);
+
+    // Adjust the tempo
+    Functor adjustTempo(&Object::AdjustTempo);
+    AdjustTempoParams adjustTempoParams(doc);
+    this->Process(&adjustTempo, &adjustTempoParams);
 
     // Adjust the position of the tuplets
     FunctorDocParams adjustTupletsXParams(doc);
@@ -386,7 +420,8 @@ void Page::LayOutVertically()
 
     FunctorDocParams calcLedgerLinesParams(doc);
     Functor calcLedgerLines(&Object::CalcLedgerLines);
-    this->Process(&calcLedgerLines, &calcLedgerLinesParams);
+    Functor calcLedgerLinesEnd(&Object::CalcLedgerLinesEnd);
+    this->Process(&calcLedgerLines, &calcLedgerLinesParams, &calcLedgerLinesEnd);
 
     // Align the content of the page using system aligners
     // After this:
@@ -427,7 +462,7 @@ void Page::LayOutVertically()
 
     // If slurs were adjusted we need to redraw to adjust the bounding boxes
     if (adjustSlursParams.m_adjusted) {
-        // There is a problem here with cross-staff slurs: if they have been ajusted, the
+        // There is a problem here with cross-staff slurs: if they have been adjusted, the
         // Slur::m_isCrossStaff flag will trigger View::DrawSlurInitial to be called again.
         // The slur will then remain not adjusted. It will again when AdjustSlurs is called below,
         // but in between, we can have wrong collisions detections. To be improved
@@ -441,12 +476,12 @@ void Page::LayOutVertically()
     Functor setOverflowBBoxesEnd(&Object::SetOverflowBBoxesEnd);
     this->Process(&setOverflowBBoxes, &setOverflowBBoxesParams, &setOverflowBBoxesEnd);
 
-    // Adjust the positioners of floationg elements (slurs, hairpin, dynam, etc)
+    // Adjust the positioners of floating elements (slurs, hairpin, dynam, etc)
     Functor adjustFloatingPositioners(&Object::AdjustFloatingPositioners);
     AdjustFloatingPositionersParams adjustFloatingPositionersParams(doc, &adjustFloatingPositioners);
     this->Process(&adjustFloatingPositioners, &adjustFloatingPositionersParams);
 
-    // Adjust the overlap of the staff aligmnents by looking at the overflow bounding boxes params.clear();
+    // Adjust the overlap of the staff aligments by looking at the overflow bounding boxes params.clear();
     Functor adjustStaffOverlap(&Object::AdjustStaffOverlap);
     AdjustStaffOverlapParams adjustStaffOverlapParams(&adjustStaffOverlap);
     this->Process(&adjustStaffOverlap, &adjustStaffOverlapParams);
@@ -457,7 +492,7 @@ void Page::LayOutVertically()
     AdjustYPosParams adjustYPosParams(doc, &adjustYPos);
     this->Process(&adjustYPos, &adjustYPosParams);
 
-    // Adjust the positioners of floationg elements placed between staves
+    // Adjust the positioners of floating elements placed between staves
     Functor adjustFloatingPositionersBetween(&Object::AdjustFloatingPositionersBetween);
     AdjustFloatingPositionersBetweenParams adjustFloatingPositionersBetweenParams(
         doc, &adjustFloatingPositionersBetween);
@@ -470,7 +505,6 @@ void Page::LayOutVertically()
 
     // Redraw are re-adjust the position of the slurs when we have cross-staff ones
     if (adjustSlursParams.m_crossStaffSlurs) {
-        LogMessage("XStaff slurs");
         view.SetPage(this->GetIdx(), false);
         view.DrawCurrentPage(&bBoxDC, false);
         this->Process(&adjustSlurs, &adjustSlursParams);
@@ -534,7 +568,7 @@ void Page::JustifyVertically()
         return;
     }
 
-    // Vertical justificaiton is not enabled
+    // Vertical justification is not enabled
     if (!doc->GetOptions()->m_justifyVertically.GetValue()) {
         return;
     }
@@ -549,8 +583,8 @@ void Page::JustifyVertically()
             Page *penultimatePage = dynamic_cast<Page *>(pages->GetPrevious(this));
             assert(penultimatePage);
 
-            if (penultimatePage->m_drawingJustifiableHeight < this->m_drawingJustifiableHeight) {
-                this->m_drawingJustifiableHeight = penultimatePage->m_drawingJustifiableHeight;
+            if (penultimatePage->m_drawingJustifiableHeight < m_drawingJustifiableHeight) {
+                m_drawingJustifiableHeight = penultimatePage->m_drawingJustifiableHeight;
             }
 
             const int maxSystemsPerPage = doc->GetOptions()->m_systemMaxPerPage.GetValue();
@@ -567,8 +601,8 @@ void Page::JustifyVertically()
     // Justify Y position
     Functor justifyY(&Object::JustifyY);
     JustifyYParams justifyYParams(&justifyY, doc);
-    justifyYParams.m_justificationSum = this->m_justificationSum;
-    justifyYParams.m_spaceToDistribute = this->m_drawingJustifiableHeight;
+    justifyYParams.m_justificationSum = m_justificationSum;
+    justifyYParams.m_spaceToDistribute = m_drawingJustifiableHeight;
     this->Process(&justifyY, &justifyYParams);
 }
 
@@ -581,7 +615,7 @@ void Page::LayOutPitchPos()
     // Make sure we have the correct page
     assert(this == doc->GetDrawingPage());
 
-    // Set the pitch / pos alignement
+    // Set the pitch / pos alignment
     SetAlignmentPitchPosParams setAlignmentPitchPosParams(doc);
     Functor setAlignmentPitchPos(&Object::SetAlignmentPitchPos);
     this->Process(&setAlignmentPitchPos, &setAlignmentPitchPosParams);
@@ -682,19 +716,19 @@ int Page::ApplyPPUFactor(FunctorParams *functorParams)
     assert(params);
 
     params->m_page = this;
-    this->m_pageWidth /= params->m_page->GetPPUFactor();
-    this->m_pageHeight /= params->m_page->GetPPUFactor();
-    this->m_pageMarginBottom /= params->m_page->GetPPUFactor();
-    this->m_pageMarginLeft /= params->m_page->GetPPUFactor();
-    this->m_pageMarginRight /= params->m_page->GetPPUFactor();
-    this->m_pageMarginTop /= params->m_page->GetPPUFactor();
+    m_pageWidth /= params->m_page->GetPPUFactor();
+    m_pageHeight /= params->m_page->GetPPUFactor();
+    m_pageMarginBottom /= params->m_page->GetPPUFactor();
+    m_pageMarginLeft /= params->m_page->GetPPUFactor();
+    m_pageMarginRight /= params->m_page->GetPPUFactor();
+    m_pageMarginTop /= params->m_page->GetPPUFactor();
 
     return FUNCTOR_CONTINUE;
 }
 
 int Page::ResetVerticalAlignment(FunctorParams *functorParams)
 {
-    // Same functor, but we have not FunctorParams so we just re-instanciate it
+    // Same functor, but we have not FunctorParams so we just re-instantiate it
     Functor resetVerticalAlignment(&Object::ResetVerticalAlignment);
 
     RunningElement *header = this->GetHeader();
@@ -761,12 +795,12 @@ int Page::AlignSystemsEnd(FunctorParams *functorParams)
     AlignSystemsParams *params = vrv_params_cast<AlignSystemsParams *>(functorParams);
     assert(params);
 
-    this->m_drawingJustifiableHeight = params->m_shift;
-    this->m_justificationSum = params->m_justificationSum;
+    m_drawingJustifiableHeight = params->m_shift;
+    m_justificationSum = params->m_justificationSum;
 
     RunningElement *footer = this->GetFooter();
     if (footer) {
-        this->m_drawingJustifiableHeight -= footer->GetTotalHeight();
+        m_drawingJustifiableHeight -= footer->GetTotalHeight();
 
         // Move it up below the last system
         if (params->m_doc->GetOptions()->m_adjustPageHeight.GetValue()) {

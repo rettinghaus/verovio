@@ -27,6 +27,7 @@
 #include "pages.h"
 #include "pedal.h"
 #include "section.h"
+#include "slur.h"
 #include "staff.h"
 #include "syl.h"
 #include "trill.h"
@@ -141,7 +142,7 @@ int System::GetHeight() const
 int System::GetMinimumSystemSpacing(const Doc *doc) const
 {
     const auto &spacingSystem = doc->GetOptions()->m_spacingSystem;
-    if (!spacingSystem.isSet()) {
+    if (!spacingSystem.IsSet()) {
         assert(m_drawingScoreDef);
         if (m_drawingScoreDef->HasSpacingSystem()) {
             return m_drawingScoreDef->GetSpacingSystem() * doc->GetDrawingUnit(100);
@@ -184,7 +185,7 @@ bool System::SetCurrentFloatingPositioner(
 
 void System::SetDrawingScoreDef(ScoreDef *drawingScoreDef)
 {
-    assert(!m_drawingScoreDef); // We should always call UnsetCurrentScoreDef before
+    assert(!m_drawingScoreDef); // We should always call UnscoreDefSetCurrent before
 
     m_drawingScoreDef = new ScoreDef();
     *m_drawingScoreDef = *drawingScoreDef;
@@ -261,13 +262,51 @@ bool System::HasMixedDrawingStemDir(LayerElement *start, LayerElement *end)
     return false;
 }
 
+curvature_CURVEDIR System::GetPreferredCurveDirection(LayerElement *start, LayerElement *end, Slur *slur)
+{
+    FindSpannedLayerElementsParams findSpannedLayerElementsParams(slur);
+    findSpannedLayerElementsParams.m_minPos = start->GetDrawingX();
+    findSpannedLayerElementsParams.m_maxPos = end->GetDrawingX();
+    findSpannedLayerElementsParams.m_classIds = { CHORD, NOTE };
+
+    Layer *layerStart = vrv_cast<Layer *>(start->GetFirstAncestor(LAYER));
+    assert(layerStart);
+
+    Functor findSpannedLayerElements(&Object::FindSpannedLayerElements);
+    Process(&findSpannedLayerElements, &findSpannedLayerElementsParams, NULL);
+
+    curvature_CURVEDIR preferredDirection = curvature_CURVEDIR_NONE;
+    for (auto element : findSpannedLayerElementsParams.m_elements) {
+        Layer *layer = vrv_cast<Layer *>((element)->GetFirstAncestor(LAYER));
+        assert(layer);
+        if (layer == layerStart) continue;
+
+        if (curvature_CURVEDIR_NONE == preferredDirection) {
+            if (layer->GetN() > layerStart->GetN()) {
+                preferredDirection = curvature_CURVEDIR_above;
+            }
+            else {
+                preferredDirection = curvature_CURVEDIR_below;
+            }
+        }
+        // if there are layers both above and below - discard previous location and return - we'll use default direction
+        else if (((curvature_CURVEDIR_above == preferredDirection) && (layer->GetN() < layerStart->GetN()))
+            || ((curvature_CURVEDIR_below == preferredDirection) && (layer->GetN() > layerStart->GetN()))) {
+            preferredDirection = curvature_CURVEDIR_NONE;
+            break;
+        }
+    }
+
+    return preferredDirection;
+}
+
 void System::AddToDrawingListIfNeccessary(Object *object)
 {
     assert(object);
 
     if (!object->HasInterface(INTERFACE_TIME_SPANNING)) return;
 
-    if (object->Is({ BRACKETSPAN, FIGURE, GLISS, HAIRPIN, PHRASE, OCTAVE, SLUR, SYL, TIE })) {
+    if (object->Is({ BRACKETSPAN, FIGURE, GLISS, HAIRPIN, LV, OCTAVE, PHRASE, PITCHINFLECTION, SLUR, SYL, TIE })) {
         this->AddToDrawingList(object);
     }
     else if (object->Is(DIR)) {
@@ -304,7 +343,7 @@ void System::AddToDrawingListIfNeccessary(Object *object)
 // System functor methods
 //----------------------------------------------------------------------------
 
-int System::UnsetCurrentScoreDef(FunctorParams *functorParams)
+int System::ScoreDefUnsetCurrent(FunctorParams *functorParams)
 {
     if (m_drawingScoreDef) {
         delete m_drawingScoreDef;
@@ -316,9 +355,9 @@ int System::UnsetCurrentScoreDef(FunctorParams *functorParams)
     return FUNCTOR_CONTINUE;
 }
 
-int System::OptimizeScoreDef(FunctorParams *functorParams)
+int System::ScoreDefOptimize(FunctorParams *functorParams)
 {
-    OptimizeScoreDefParams *params = vrv_params_cast<OptimizeScoreDefParams *>(functorParams);
+    ScoreDefOptimizeParams *params = vrv_params_cast<ScoreDefOptimizeParams *>(functorParams);
     assert(params);
 
     this->IsDrawingOptimized(true);
@@ -336,15 +375,25 @@ int System::OptimizeScoreDef(FunctorParams *functorParams)
     return FUNCTOR_CONTINUE;
 }
 
-int System::OptimizeScoreDefEnd(FunctorParams *functorParams)
+int System::ScoreDefOptimizeEnd(FunctorParams *functorParams)
 {
-    OptimizeScoreDefParams *params = vrv_params_cast<OptimizeScoreDefParams *>(functorParams);
+    ScoreDefOptimizeParams *params = vrv_params_cast<ScoreDefOptimizeParams *>(functorParams);
     assert(params);
 
     params->m_currentScoreDef->Process(params->m_functor, params, params->m_functorEnd);
     m_systemAligner.SetSpacing(params->m_currentScoreDef);
 
     return FUNCTOR_CONTINUE;
+}
+
+int System::ScoreDefSetGrpSym(FunctorParams *functorParams)
+{
+    ScoreDefSetGrpSymParams *params = vrv_params_cast<ScoreDefSetGrpSymParams *>(functorParams);
+    assert(params);
+
+    if (m_drawingScoreDef) m_drawingScoreDef->Process(params->m_functor, functorParams);
+
+    return FUNCTOR_SIBLINGS;
 }
 
 int System::ResetHorizontalAlignment(FunctorParams *functorParams)
@@ -559,6 +608,16 @@ int System::AdjustSylSpacingEnd(FunctorParams *functorParams)
     return FUNCTOR_CONTINUE;
 }
 
+int System::AdjustTempo(FunctorParams *functorParams)
+{
+    AdjustTempoParams *params = vrv_params_cast<AdjustTempoParams *>(functorParams);
+    assert(params);
+
+    params->m_systemAligner = &m_systemAligner;
+
+    return FUNCTOR_CONTINUE;
+}
+
 int System::AdjustYPos(FunctorParams *functorParams)
 {
     AdjustYPosParams *params = vrv_params_cast<AdjustYPosParams *>(functorParams);
@@ -580,7 +639,7 @@ int System::AlignMeasures(FunctorParams *functorParams)
     AlignMeasuresParams *params = vrv_params_cast<AlignMeasuresParams *>(functorParams);
     assert(params);
 
-    SetDrawingXRel(this->m_systemLeftMar + this->GetDrawingLabelsWidth());
+    SetDrawingXRel(m_systemLeftMar + this->GetDrawingLabelsWidth());
     params->m_shift = 0;
     params->m_justifiableWidth = 0;
 
@@ -617,7 +676,7 @@ int System::AlignSystems(FunctorParams *functorParams)
 
     params->m_justificationSum += m_systemAligner.GetJustificationSum(params->m_doc);
     if (!this->GetIdx()) {
-        // remove extra system justification factor to get exaclty (systemsCount-1)*justificationSystem
+        // remove extra system justification factor to get exactly (systemsCount-1)*justificationSystem
         params->m_justificationSum -= params->m_doc->GetOptions()->m_justificationSystem.GetValue();
     }
 
@@ -637,7 +696,7 @@ int System::JustifyX(FunctorParams *functorParams)
     Object *parent = GetParent();
 
     params->m_measureXRel = 0;
-    int margins = this->m_systemLeftMar + this->m_systemRightMar;
+    int margins = m_systemLeftMar + m_systemRightMar;
     int nonJustifiableWidth
         = margins + (m_drawingTotalWidth - m_drawingJustifiableWidth); // m_drawingTotalWidth includes the labels
     params->m_justifiableRatio
@@ -709,6 +768,9 @@ int System::AdjustFloatingPositioners(FunctorParams *functorParams)
     Functor adjustFloatingPositionerGrps(&Object::AdjustFloatingPositionerGrps);
 
     params->m_classId = GLISS;
+    m_systemAligner.Process(params->m_functor, params);
+
+    params->m_classId = LV;
     m_systemAligner.Process(params->m_functor, params);
 
     params->m_classId = TIE;
@@ -860,12 +922,23 @@ int System::CastOffPages(FunctorParams *functorParams)
     const int childCount = params->m_currentPage->GetChildCount();
     if ((systemMaxPerPage && systemMaxPerPage == childCount)
         || (childCount > 0 && (this->m_drawingYRel - this->GetHeight() - currentShift < 0))) {
-        params->m_currentPage = new Page();
-        // Use VRV_UNSET value as a flag
-        params->m_pgHeadHeight = VRV_UNSET;
-        assert(params->m_doc->GetPages());
-        params->m_doc->GetPages()->AddChild(params->m_currentPage);
-        params->m_shift = this->m_drawingYRel - params->m_pageHeight;
+        // If this is last system in the list, it doesn't fit the page and it's leftover system (has just one last
+        // measure) - get measure out of that system and try adding it to the previous system
+        Object *nextSystem = params->m_contentPage->GetNext(this, SYSTEM);
+        if ((NULL == nextSystem) && (this == params->m_leftoverSystem)) {
+            Measure *measure = dynamic_cast<Measure *>(Relinquish(GetFirst(MEASURE)->GetIdx()));
+            System *lastSystem = dynamic_cast<System *>(params->m_currentPage->GetLast());
+            if (measure && lastSystem) lastSystem->AddChild(measure);
+            return FUNCTOR_SIBLINGS;
+        }
+        else {
+            params->m_currentPage = new Page();
+            // Use VRV_UNSET value as a flag
+            params->m_pgHeadHeight = VRV_UNSET;
+            assert(params->m_doc->GetPages());
+            params->m_doc->GetPages()->AddChild(params->m_currentPage);
+            params->m_shift = this->m_drawingYRel - params->m_pageHeight;
+        }
     }
 
     // Special case where we use the Relinquish method.
@@ -884,7 +957,7 @@ int System::UnCastOff(FunctorParams *functorParams)
     UnCastOffParams *params = vrv_params_cast<UnCastOffParams *>(functorParams);
     assert(params);
 
-    // Just move all the content of the system to the continous one (parameter)
+    // Just move all the content of the system to the continuous one (parameter)
     // Use the MoveChildrenFrom method that moves and relinquishes them
     // See Object::Relinquish
     params->m_currentSystem->MoveChildrenFrom(this);

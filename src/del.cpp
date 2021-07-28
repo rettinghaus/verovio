@@ -21,6 +21,8 @@ namespace vrv {
 // Del
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<Del> s_factory("del", DEL);
+
 Del::Del() : EditorialElement("del-"), AttSource()
 {
     RegisterAttClass(ATT_SOURCE);

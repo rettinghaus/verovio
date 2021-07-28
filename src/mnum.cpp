@@ -74,6 +74,8 @@ bool MNum::IsSupportedChild(Object *child)
 // MNum functor methods
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<MNum> s_factory("mNum", MNUM);
+
 int MNum::Save(FunctorParams *functorParams)
 {
     if (this->IsGenerated())

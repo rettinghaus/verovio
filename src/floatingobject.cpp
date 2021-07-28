@@ -27,6 +27,7 @@
 #include "mordent.h"
 #include "octave.h"
 #include "pedal.h"
+#include "pitchinflection.h"
 #include "reh.h"
 #include "slur.h"
 #include "staff.h"
@@ -43,7 +44,7 @@ namespace vrv {
 // Static members
 //----------------------------------------------------------------------------
 
-std::vector<void *> FloatingObject::s_drawingObjectIds;
+thread_local std::vector<void *> FloatingObject::s_drawingObjectIds;
 
 //----------------------------------------------------------------------------
 // FloatingObject
@@ -214,6 +215,13 @@ FloatingPositioner::FloatingPositioner(FloatingObject *object, StaffAlignment *a
         // octave below by default (won't draw without @dis.place anyway);
         m_place = (octave->GetDisPlace() == STAFFREL_basic_above) ? STAFFREL_above : STAFFREL_below;
     }
+    else if (object->Is(PITCHINFLECTION)) {
+        // PitchInflection *pitchInflection = vrv_cast<PitchInflection *>(object);
+        // assert(pitchInflection);
+        // pitchInflection above by default;
+        // m_place = (pitchInflection->GetPlace() != STAFFREL_NONE) ? pitchInflection->GetPlace() : STAFFREL_above;
+        m_place = STAFFREL_above;
+    }
     else if (object->Is(PEDAL)) {
         Pedal *pedal = vrv_cast<Pedal *>(object);
         assert(pedal);
@@ -320,15 +328,21 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
     int yRel;
 
     if (horizOverlapingBBox == NULL) {
-        if (this->m_place == STAFFREL_above) {
+        // Apply element margin and enforce minimal staff distance
+        int staffIndex = staffAlignment->GetStaff()->GetN();
+        int minStaffDistance
+            = doc->GetStaffDistance(m_object->GetClassId(), staffIndex, m_place) * doc->GetDrawingUnit(staffSize);
+        if (m_place == STAFFREL_above) {
             yRel = GetContentY1();
-            yRel -= doc->GetBottomMargin(this->m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
+            yRel -= doc->GetBottomMargin(m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
             this->SetDrawingYRel(yRel);
+            this->SetDrawingYRel(-minStaffDistance);
         }
         else {
             yRel = staffAlignment->GetStaffHeight() + GetContentY2();
-            yRel += doc->GetTopMargin(this->m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
+            yRel += doc->GetTopMargin(m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
             this->SetDrawingYRel(yRel);
+            this->SetDrawingYRel(minStaffDistance + staffAlignment->GetStaffHeight());
         }
     }
     else {
@@ -336,15 +350,20 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
         if (curve) {
             assert(curve->m_object);
         }
-        int margin = doc->GetBottomMargin(this->m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
+        int margin = doc->GetBottomMargin(m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
 
-        if (this->m_place == STAFFREL_above) {
-            if (curve && curve->m_object->Is({ PHRASE, SLUR, TIE })) {
+        if (m_place == STAFFREL_above) {
+            if (curve && curve->m_object->Is({ LV, PHRASE, SLUR, TIE })) {
                 int shift = this->Intersects(curve, CONTENT, doc->GetDrawingUnit(staffSize));
                 if (shift != 0) {
                     this->SetDrawingYRel(this->GetDrawingYRel() - shift);
                     // LogDebug("Shift %d", shift);
                 }
+                return true;
+            }
+            else if (m_object->Is(DYNAM) && horizOverlapingBBox->Is(BEAM)) {
+                // Try to avoid comparing with BEAM BB since it might be much larger overlap while having a lot of
+                // whitespace. For such cases, DYNAM should be compared to individual elements of BEAM instead
                 return true;
             }
             yRel = -staffAlignment->CalcOverflowAbove(horizOverlapingBBox) + GetContentY1() - margin;
@@ -359,7 +378,7 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
             }
         }
         else {
-            if (curve && curve->m_object->Is({ PHRASE, SLUR, TIE })) {
+            if (curve && curve->m_object->Is({ LV, PHRASE, SLUR, TIE })) {
                 int shift = this->Intersects(curve, CONTENT, doc->GetDrawingUnit(staffSize));
                 if (shift != 0) {
                     this->SetDrawingYRel(this->GetDrawingYRel() - shift);
@@ -385,7 +404,7 @@ bool FloatingPositioner::CalcDrawingYRel(Doc *doc, StaffAlignment *staffAlignmen
 
 int FloatingPositioner::GetSpaceBelow(Doc *doc, StaffAlignment *staffAlignment, BoundingBox *horizOverlapingBBox)
 {
-    if (this->m_place != STAFFREL_between) return VRV_UNSET;
+    if (m_place != STAFFREL_between) return VRV_UNSET;
 
     int staffSize = staffAlignment->GetStaffSize();
 
@@ -393,9 +412,9 @@ int FloatingPositioner::GetSpaceBelow(Doc *doc, StaffAlignment *staffAlignment, 
     if (curve) {
         assert(curve->m_object);
     }
-    int margin = doc->GetBottomMargin(this->m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
+    int margin = doc->GetBottomMargin(m_object->GetClassId()) * doc->GetDrawingUnit(staffSize);
 
-    if (curve && curve->m_object->Is({ PHRASE, SLUR, TIE })) {
+    if (curve && curve->m_object->Is({ LV, PHRASE, SLUR, TIE })) {
         // For now ignore curves
         return 0;
     }
@@ -442,6 +461,7 @@ void FloatingCurvePositioner::ResetCurveParams()
     m_angle = 0.0;
     m_thickness = 0;
     m_dir = curvature_CURVEDIR_NONE;
+    m_crossStaff = NULL;
     m_cachedMinMaxY = VRV_UNSET;
     ClearSpannedElements();
 }
@@ -479,7 +499,7 @@ void FloatingCurvePositioner::MoveBackVertical(int distance)
 int FloatingCurvePositioner::CalcMinMaxY(const Point points[4])
 {
     assert(this->GetObject());
-    assert(this->GetObject()->Is({ PHRASE, SLUR, TIE }));
+    assert(this->GetObject()->Is({ LV, PHRASE, SLUR, TIE }));
     assert(m_dir != curvature_CURVEDIR_NONE);
 
     if (m_cachedMinMaxY != VRV_UNSET) return m_cachedMinMaxY;
@@ -493,7 +513,7 @@ int FloatingCurvePositioner::CalcMinMaxY(const Point points[4])
     return m_cachedMinMaxY;
 }
 
-int FloatingCurvePositioner::CalcAdjustment(BoundingBox *boundingBox, bool &discard, int margin)
+int FloatingCurvePositioner::CalcAdjustment(BoundingBox *boundingBox, bool &discard, int margin, bool horizontalOverlap)
 {
     assert(boundingBox);
     assert(boundingBox->HasSelfBB());
@@ -510,13 +530,15 @@ int FloatingCurvePositioner::CalcAdjustment(BoundingBox *boundingBox, bool &disc
     // bool keepInside = element->Is({ARTIC, ARTIC_PART, NOTE, STEM}));
     // The idea is to force only some of the elements to be inside a slur.
     // However, this currently does work because skipping an adjustment can cause collision later depending on how
-    // the slur is eventually adjusted. Keeping erverything inside now.
+    // the slur is eventually adjusted. Keeping everything inside now.
     bool keepInside = true;
     discard = false;
 
     // first check if they overlap at all
-    if (p2.x < boundingBox->GetLeftBy(type) + margin) return 0;
-    if (p1.x > boundingBox->GetRightBy(type) + margin) return 0;
+    if (horizontalOverlap) {
+        if (p2.x < boundingBox->GetLeftBy(type) + margin) return 0;
+        if (p1.x > boundingBox->GetRightBy(type) + margin) return 0;
+    }
 
     Point topBezier[4], bottomBezier[4];
     BoundingBox::CalcThickBezier(points, this->GetThickness(), this->GetAngle(), topBezier, bottomBezier);
@@ -530,7 +552,7 @@ int FloatingCurvePositioner::CalcAdjustment(BoundingBox *boundingBox, bool &disc
         int rightY = 0;
         // The curve overflows on both sides
         if ((p1.x < boundingBox->GetLeftBy(type)) && p2.x > boundingBox->GetRightBy(type)) {
-            // Calcuate the y positions
+            // calculate the y positions
             leftY = BoundingBox::CalcBezierAtPosition(bottomBezier, boundingBox->GetLeftBy(type)) - margin;
             rightY = BoundingBox::CalcBezierAtPosition(bottomBezier, boundingBox->GetRightBy(type)) - margin;
         }
@@ -568,7 +590,7 @@ int FloatingCurvePositioner::CalcAdjustment(BoundingBox *boundingBox, bool &disc
         int rightY = 0;
         // The curve overflows on both sides
         if ((p1.x < boundingBox->GetLeftBy(type)) && p2.x > boundingBox->GetRightBy(type)) {
-            // Calcuate the y positions
+            // calculate the y positions
             leftY = BoundingBox::CalcBezierAtPosition(topBezier, boundingBox->GetLeftBy(type)) + margin;
             rightY = BoundingBox::CalcBezierAtPosition(topBezier, boundingBox->GetRightBy(type)) + margin;
         }

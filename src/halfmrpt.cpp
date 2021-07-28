@@ -28,6 +28,8 @@ namespace vrv {
 // HalfmRpt
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<HalfmRpt> s_factory("halfmRpt", HALFMRPT);
+
 HalfmRpt::HalfmRpt() : LayerElement("mrpt-")
 {
     RegisterAttClass(ATT_COLOR);

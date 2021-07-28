@@ -17,6 +17,7 @@
 #include "arpeg.h"
 #include "comparison.h"
 #include "doc.h"
+#include "elementpart.h"
 #include "floatingobject.h"
 #include "functorparams.h"
 #include "layer.h"
@@ -116,6 +117,8 @@ void MeasureAligner::Reset()
     AddAlignment(m_rightBarLineAlignment);
     m_rightAlignment = new Alignment(0.0 * DUR_MAX, ALIGNMENT_MEASURE_END);
     AddAlignment(m_rightAlignment);
+
+    m_initialTstampDur = -DUR_MAX;
 }
 
 Alignment *MeasureAligner::GetAlignmentAtTime(double time, AlignmentType type)
@@ -131,7 +134,7 @@ Alignment *MeasureAligner::GetAlignmentAtTime(double time, AlignmentType type)
             // This typically occurs when a tstamp event occurs after the last note of a measure
             int rightBarlineIdx = m_rightBarLineAlignment->GetIdx();
             assert(rightBarlineIdx != -1);
-            idx = rightBarlineIdx - 1;
+            idx = rightBarlineIdx;
             this->SetMaxTime(time);
         }
         else {
@@ -171,6 +174,13 @@ double MeasureAligner::GetMaxTime() const
     return m_rightAlignment->GetTime();
 }
 
+void MeasureAligner::SetInitialTstamp(int meterUnit)
+{
+    if (meterUnit != 0) {
+        m_initialTstampDur = DUR_MAX / meterUnit * -1;
+    }
+}
+
 void MeasureAligner::AdjustProportionally(const ArrayOfAdjustmentTuples &adjustments)
 {
     ArrayOfAdjustmentTuples::const_iterator iter;
@@ -191,7 +201,7 @@ void MeasureAligner::AdjustProportionally(const ArrayOfAdjustmentTuples &adjustm
         for (auto child : *this->GetChildren()) {
             Alignment *current = vrv_cast<Alignment *>(child);
             assert(current);
-            // Nothing to do once we passed the start aligment
+            // Nothing to do once we passed the start alignment
             if (current->GetXRel() <= startX)
                 continue;
             else if (current->GetXRel() >= endX) {
@@ -265,7 +275,7 @@ void MeasureAligner::AdjustGraceNoteSpacing(Doc *doc, Alignment *alignment, int 
         }
 
         int minLeft;
-        rightAlignment->GetLeftRight(staffNGrp, minLeft, maxRight);
+        rightAlignment->GetLeftRight(staffNGrp, minLeft, maxRight, { CLEF });
 
         if (maxRight != VRV_UNSET) break;
     }
@@ -274,7 +284,7 @@ void MeasureAligner::AdjustGraceNoteSpacing(Doc *doc, Alignment *alignment, int 
     if (!rightAlignment || (maxRight == VRV_UNSET)) return;
 
     // Check if the left position of the group is on the right of the previous maxRight
-    // If not, move the aligments accordingly
+    // If not, move the alignments accordingly
     int left = alignment->GetGraceAligner(graceAlignerId)->GetGraceGroupLeft(staffN);
     // We also set artificially the margin with the previous note
     if (left != -VRV_UNSET) left -= doc->GetLeftMargin(NOTE) * doc->GetDrawingUnit(100);
@@ -351,7 +361,7 @@ void GraceAligner::AlignStack()
         element->FindAllDescendantByComparison(&children, &matchType);
         alignment->AddLayerElementRef(element);
 
-        // Set the grace alignmnet to all children
+        // Set the grace alignment to all children
         for (auto &child : children) {
             // Trick : FindAllDescendantByComparison include the element, which is probably a problem.
             // With note, we want to set only accid, so make sure we do not set it twice
@@ -376,8 +386,9 @@ int GraceAligner::GetGraceGroupLeft(int staffN)
         // The alignment is its parent
         leftAlignment = dynamic_cast<Alignment *>(reference->GetParent());
     }
-    else
+    else {
         leftAlignment = dynamic_cast<Alignment *>(this->GetFirst());
+    }
     // Return if nothing found
     if (!leftAlignment) return -VRV_UNSET;
 
@@ -413,7 +424,7 @@ void GraceAligner::SetGraceAligmentXPos(Doc *doc)
         Alignment *alignment = vrv_cast<Alignment *>(*childrenIter);
         assert(alignment);
         // We space with a notehead (non grace size) which seems to be a reasonable default spacing with margin
-        // Ideally we should look at the duration in that alignmment and also the maximum staff scaling for this aligner
+        // Ideally we should look at the duration in that alignment and also the maximum staff scaling for this aligner
         alignment->SetXRel(-i * doc->GetGlyphWidth(SMUFL_E0A4_noteheadBlack, 100, false));
         i++;
     }
@@ -472,6 +483,16 @@ bool Alignment::HasAlignmentReference(int staffN)
     return (this->FindDescendantByComparison(&matchStaff, 1) != NULL);
 }
 
+bool Alignment::HasTimestampOnly()
+{
+    // If no child, then not timestamp
+    if (!this->GetChildCount()) return false;
+    // Look for everything that is not a timestamp
+    ClassIdsComparison notTimestamp({ ALIGNMENT, ALIGNMENT_REFERENCE, TIMESTAMP_ATTR });
+    notTimestamp.ReverseComparison();
+    return (this->FindDescendantByComparison(&notTimestamp, 2) == NULL);
+}
+
 AlignmentReference *Alignment::GetAlignmentReference(int staffN)
 {
     AttNIntegerComparison matchStaff(ALIGNMENT_REFERENCE, staffN);
@@ -521,9 +542,9 @@ bool Alignment::AddLayerElementRef(LayerElement *element)
                 layerN = layerRef->GetN();
                 staffN = staffRef->GetN();
             }
-            // staffN and layerN remain unsed for barLine attributes and timestamps
+            // staffN and layerN remain unused for barLine attributes and timestamps
             else {
-                assert(element->Is({ BARLINE_ATTR_LEFT, BARLINE_ATTR_RIGHT, TIMESTAMP_ATTR }));
+                assert(element->Is({ BARLINE, BARLINE_ATTR_LEFT, BARLINE_ATTR_RIGHT, TIMESTAMP_ATTR }));
             }
         }
     }
@@ -534,15 +555,33 @@ bool Alignment::AddLayerElementRef(LayerElement *element)
     return alignmentRef->HasMultipleLayer();
 }
 
-bool Alignment::IsOfType(const std::vector<AlignmentType> &types)
+bool Alignment::IsOfType(const std::vector<AlignmentType> &types) const
 {
     return (std::find(types.begin(), types.end(), m_type) != types.end());
 }
 
-void Alignment::GetLeftRight(int staffN, int &minLeft, int &maxRight)
+void Alignment::GetLeftRight(
+    const std::vector<int> &staffNs, int &minLeft, int &maxRight, const std::vector<ClassId> &m_excludes)
 {
     Functor getAlignmentLeftRight(&Object::GetAlignmentLeftRight);
     GetAlignmentLeftRightParams getAlignmentLeftRightParams(&getAlignmentLeftRight);
+
+    minLeft = -VRV_UNSET;
+    maxRight = VRV_UNSET;
+
+    for (auto staffN : staffNs) {
+        int staffMinLeft, staffMaxRight;
+        this->GetLeftRight(staffN, staffMinLeft, staffMaxRight);
+        if (staffMinLeft < minLeft) minLeft = staffMinLeft;
+        if (staffMaxRight > maxRight) maxRight = staffMaxRight;
+    }
+}
+
+void Alignment::GetLeftRight(int staffN, int &minLeft, int &maxRight, const std::vector<ClassId> &m_excludes)
+{
+    Functor getAlignmentLeftRight(&Object::GetAlignmentLeftRight);
+    GetAlignmentLeftRightParams getAlignmentLeftRightParams(&getAlignmentLeftRight);
+    getAlignmentLeftRightParams.m_excludeClasses = m_excludes;
 
     if (staffN != VRV_UNSET) {
         ArrayOfComparisons filters;
@@ -550,8 +589,9 @@ void Alignment::GetLeftRight(int staffN, int &minLeft, int &maxRight)
         filters.push_back(&matchStaff);
         this->Process(&getAlignmentLeftRight, &getAlignmentLeftRightParams, NULL, &filters);
     }
-    else
+    else {
         this->Process(&getAlignmentLeftRight, &getAlignmentLeftRightParams);
+    }
 
     minLeft = getAlignmentLeftRightParams.m_minLeft;
     maxRight = getAlignmentLeftRightParams.m_maxRight;
@@ -570,6 +610,11 @@ bool Alignment::HasGraceAligner(int id) const
     return (m_graceAligners.count(id) == 1);
 }
 
+bool Alignment::PerfomBoundingBoxAlignment() const
+{
+    return this->IsOfType({ ALIGNMENT_ACCID, ALIGNMENT_DOT, ALIGNMENT_DEFAULT });
+}
+
 AlignmentReference *Alignment::GetReferenceWithElement(LayerElement *element, int staffN)
 {
     AlignmentReference *reference = NULL;
@@ -584,6 +629,27 @@ AlignmentReference *Alignment::GetReferenceWithElement(LayerElement *element, in
         }
     }
     return reference;
+}
+
+std::pair<int, int> Alignment::GetAlignmentTopBottom()
+{
+    int max = VRV_UNSET, min = VRV_UNSET;
+    // Iterate over each element in each alignment reference and find max/min Y value - these will serve as top/bottom
+    // values for the Alignment
+    for (auto child : *GetChildren()) {
+        AlignmentReference *reference = dynamic_cast<AlignmentReference *>(child);
+        for (auto element : *reference->GetChildren()) {
+            const int top = element->GetSelfTop();
+            if ((VRV_UNSET == max) || (top > max)) {
+                max = top;
+            }
+            const int bottom = element->GetSelfBottom();
+            if ((VRV_UNSET == min) || (bottom < min)) {
+                min = bottom;
+            }
+        }
+    }
+    return { min, max };
 }
 
 void Alignment::AddToAccidSpace(Accid *accid)
@@ -657,7 +723,7 @@ void AlignmentReference::AddChild(Object *child)
         if (childrenIter == children->end()) m_layerCount++;
     }
 
-    // Specical case where we do not set the parent because the reference will not have ownership
+    // Special case where we do not set the parent because the reference will not have ownership
     // Children will be treated as relinquished objects in the desctructor
     // However, we need to make sure the child has a parent (somewhere else)
     assert(child->GetParent() && this->IsReferenceObject());
@@ -682,6 +748,20 @@ void AlignmentReference::AdjustAccidWithAccidSpace(Accid *accid, Doc *doc, int s
     for (auto child : *this->GetChildren()) {
         accid->AdjustX(dynamic_cast<LayerElement *>(child), doc, staffSize, leftAccids);
     }
+}
+
+bool AlignmentReference::HasCrossStaffElements()
+{
+    ListOfObjects children;
+    ClassIdComparison classId(LAYER_ELEMENT);
+    FindAllDescendantByComparison(&children, &classId);
+
+    for (auto child : children) {
+        LayerElement *layerElement = vrv_cast<LayerElement *>(child);
+        if (layerElement && layerElement->m_crossStaff) return true;
+    }
+
+    return false;
 }
 
 //----------------------------------------------------------------------------
@@ -750,7 +830,9 @@ int MeasureAligner::SetAlignmentXPos(FunctorParams *functorParams)
     // We start a new MeasureAligner
     // Reset the previous time position and x_rel to 0;
     params->m_previousTime = 0.0;
-    params->m_previousXRel = 0;
+    params->m_previousXRel = params->m_doc->GetDrawingUnit(100);
+    params->m_lastNonTimestamp = m_leftBarLineAlignment;
+    params->m_measureAligner = this;
 
     return FUNCTOR_CONTINUE;
 }
@@ -771,7 +853,7 @@ int Alignment::AdjustArpeg(FunctorParams *functorParams)
     AdjustArpegParams *params = vrv_params_cast<AdjustArpegParams *>(functorParams);
     assert(params);
 
-    // An array of Alignment / Arpeg / staffN / bool (for indicating if we have reached the aligment yet)
+    // An array of Alignment / arpeg / staffN / bool (for indicating if we have reached the alignment yet)
     ArrayOfAligmentArpegTuples::iterator iter = params->m_alignmentArpegTuples.begin();
 
     while (iter != params->m_alignmentArpegTuples.end()) {
@@ -817,13 +899,30 @@ int Alignment::AdjustArpeg(FunctorParams *functorParams)
             continue;
         }
 
-        int overlap = maxRight - std::get<1>(*iter)->GetCurrentFloatingPositioner()->GetSelfLeft();
+        const int overlap = maxRight - std::get<1>(*iter)->GetCurrentFloatingPositioner()->GetSelfLeft();
+        const int drawingUnit = params->m_doc->GetDrawingUnit(100);
         // HARDCODED
-        overlap += params->m_doc->GetDrawingUnit(100) / 2 * 3;
+        int adjust = overlap + drawingUnit / 2 * 3;
         // LogDebug("maxRight %d, %d %d", maxRight, std::get<2>(*iter), overlap);
-        if (overlap > 0) {
-            ArrayOfAdjustmentTuples boundaries{ std::make_tuple(this, std::get<0>(*iter), overlap) };
+        if (adjust > 0) {
+            ArrayOfAdjustmentTuples boundaries{ std::make_tuple(this, std::get<0>(*iter), adjust) };
             params->m_measureAligner->AdjustProportionally(boundaries);
+            // After adjusting, make sure that arpeggio does not overlap with elements from the previous alignment
+            if (m_type == ALIGNMENT_CLEF) {
+                auto [currentMin, currentMax] = GetAlignmentTopBottom();
+                Note *topNote = NULL;
+                Note *bottomNote = NULL;
+                std::get<1>(*iter)->GetDrawingTopBottomNotes(topNote, bottomNote);
+                if (topNote && bottomNote) {
+                    const int arpegMax = topNote->GetDrawingY() + drawingUnit / 2;
+                    const int arpegMin = bottomNote->GetDrawingY() - drawingUnit / 2;
+                    // Make sure that there is vertical overlap, otherwise do not shift arpeggo
+                    if (((currentMin < arpegMin) && (currentMax > arpegMin))
+                        || ((currentMax > arpegMax) && (currentMin < arpegMax))) {
+                        std::get<0>(*iter)->SetXRel(std::get<0>(*iter)->GetXRel() + overlap + drawingUnit / 2);
+                    }
+                }
+            }
         }
 
         // We can remove it from the list
@@ -960,6 +1059,31 @@ int Alignment::AdjustXPosEnd(FunctorParams *functorParams)
     // Eventually we might want to have a more sophisticated pruning algorithm
     if (params->m_upcomingBoundingBoxes.empty()) return FUNCTOR_CONTINUE;
 
+    // Handle additional offsets that can happen when we have overlapping dots/flags. This should happen only for
+    // default alignments, so other ones should be ignored. If there are at least one bounding box that overlaps with
+    // dot/flag from the previous alignment - we need to consider additional offset for those elements. In such case,
+    // all current elements should have their XRel adjusted (as they would normally have) and increase minXPosition by
+    // the dot/flag offset
+    if (params->m_previousAlignment.m_overlappingBB && params->m_previousAlignment.m_alignment
+        && (params->m_previousAlignment.m_alignment->GetType() == ALIGNMENT_DEFAULT)) {
+        auto it = std::find_if(
+            params->m_upcomingBoundingBoxes.begin(), params->m_upcomingBoundingBoxes.end(), [params](BoundingBox *bb) {
+                if (params->m_previousAlignment.m_overlappingBB == bb) return false;
+                // check if elements actually overlap
+                return (bb->HorizontalSelfOverlap(params->m_previousAlignment.m_overlappingBB)
+                    && bb->VerticalSelfOverlap(params->m_previousAlignment.m_overlappingBB));
+            });
+        if (it != params->m_upcomingBoundingBoxes.end()) {
+            params->m_currentAlignment.m_alignment->SetXRel(
+                params->m_currentAlignment.m_alignment->GetXRel() + params->m_previousAlignment.m_offset);
+            params->m_minPos += params->m_previousAlignment.m_offset;
+            params->m_cumulatedXShift += params->m_previousAlignment.m_offset;
+        }
+    }
+    params->m_previousAlignment = params->m_currentAlignment;
+    // Reset current alignment
+    params->m_currentAlignment.Reset();
+
     params->m_boundingBoxes = params->m_upcomingBoundingBoxes;
     params->m_upcomingBoundingBoxes.clear();
 
@@ -975,6 +1099,68 @@ int Alignment::AdjustAccidX(FunctorParams *functorParams)
     for (iter = m_graceAligners.begin(); iter != m_graceAligners.end(); ++iter) {
         iter->second->Process(params->m_functor, functorParams);
     }
+
+    return FUNCTOR_CONTINUE;
+}
+
+int Alignment::AdjustDotsEnd(FunctorParams *functorParams)
+{
+    AdjustDotsParams *params = vrv_params_cast<AdjustDotsParams *>(functorParams);
+    assert(params);
+
+    // process dots only if there is at least 1 dot (vertical group) in the alignment
+    if (!params->m_elements.empty() && !params->m_dots.empty()) {
+        // multimap of overlapping dots with other elements
+        std::multimap<LayerElement *, LayerElement *> overlapElements;
+
+        // Try to find which dots can be grouped together. To achieve this, find layer elements that collide with these
+        // dots. Then find if their parents (note/chord) have dots - if they do then we can group these dots together,
+        // otherwise they should be kept separate
+        for (auto dot : params->m_dots) {
+            // A third staff size will be used as required margin
+            const Staff *staff
+                = vrv_cast<Staff *>(dot->m_crossStaff ? dot->m_crossStaff : dot->GetFirstAncestor(STAFF));
+            assert(staff);
+            const int staffSize = staff->m_drawingStaffSize;
+            const int thirdUnit = params->m_doc->GetDrawingUnit(staffSize) / 3;
+
+            for (LayerElement *element : params->m_elements) {
+                if (dot->HorizontalSelfOverlap(element, thirdUnit)
+                    && dot->VerticalSelfOverlap(element, 2 * thirdUnit)) {
+                    if (element->Is({ CHORD, NOTE })) {
+                        if (dynamic_cast<AttAugmentDots *>(element)->GetDots() <= 0) continue;
+                        overlapElements.emplace(dot, element);
+                    }
+                    else if (Object *chord = element->GetFirstAncestor(CHORD, UNLIMITED_DEPTH); chord) {
+                        if (vrv_cast<Chord *>(chord)->GetDots() <= 0) continue;
+                        overlapElements.emplace(dot, vrv_cast<LayerElement *>(chord));
+                    }
+                    else if (Object *note = element->GetFirstAncestor(NOTE, UNLIMITED_DEPTH); note) {
+                        if (vrv_cast<Note *>(note)->GetDots() <= 0) continue;
+                        overlapElements.emplace(dot, vrv_cast<LayerElement *>(note));
+                    }
+                }
+            }
+        }
+
+        // if at least one overlapping element has been found, make sure to adjust relative positioning of the dots in
+        // the group to the rightmost one
+        if (!overlapElements.empty()) {
+            for (auto dot : params->m_dots) {
+                auto pair = overlapElements.equal_range(dot);
+                int max = 0;
+                for (auto it = pair.first; it != pair.second; ++it) {
+                    const int diff = it->second->GetDrawingX() + it->first->GetDrawingXRel() - it->first->GetDrawingX();
+                    if (diff > max) max = diff;
+                }
+                if (max) dot->SetDrawingXRel(dot->GetDrawingXRel() + max);
+                vrv_cast<Dots *>(dot)->IsAdjusted(true);
+            }
+        }
+    }
+
+    params->m_elements.clear();
+    params->m_dots.clear();
 
     return FUNCTOR_CONTINUE;
 }
@@ -996,13 +1182,19 @@ int Alignment::SetAlignmentXPos(FunctorParams *functorParams)
     assert(params);
 
     // Do not set an x pos for anything before the barline (including it)
-    if (this->m_type <= ALIGNMENT_MEASURE_LEFT_BARLINE) return FUNCTOR_CONTINUE;
+    if (m_type <= ALIGNMENT_MEASURE_LEFT_BARLINE) return FUNCTOR_CONTINUE;
 
     int intervalXRel = 0;
     double intervalTime = (m_time - params->m_previousTime);
 
-    if (this->m_type > ALIGNMENT_MEASURE_RIGHT_BARLINE) {
+    if (m_type > ALIGNMENT_MEASURE_RIGHT_BARLINE) {
         intervalTime = 0.0;
+    }
+
+    // Do not move aligner that are only time-stamps at this stage but add it to the pending list
+    if (this->HasTimestampOnly()) {
+        params->m_timestamps.push_back(this);
+        return FUNCTOR_CONTINUE;
     }
 
     if (intervalTime > 0.0) {
@@ -1021,6 +1213,33 @@ int Alignment::SetAlignmentXPos(FunctorParams *functorParams)
     params->m_previousTime = m_time;
     params->m_previousXRel = m_xRel;
 
+    // This is an alignment which is not timestamp only. If we have a list of pendings timetamp
+    // alignments, then we now need to move them appropriately
+    if (!params->m_timestamps.empty() && params->m_lastNonTimestamp) {
+        int startXRel = params->m_lastNonTimestamp->GetXRel();
+        double startTime = params->m_lastNonTimestamp->GetTime();
+        double endTime = this->GetTime();
+        // We have timestamp alignments between the left barline and the first beat. We need
+        // to use the MeasureAligner::m_initialTstampDur to calculate the time (percentage) position
+        if (params->m_lastNonTimestamp->GetType() == ALIGNMENT_MEASURE_LEFT_BARLINE) {
+            startTime = params->m_measureAligner->GetInitialTstampDur();
+        }
+        // The duration since the last alignment and the current one
+        double duration = endTime - startTime;
+        int space = m_xRel - params->m_lastNonTimestamp->GetXRel();
+        // For each timestamp alignment, move them proportionally to the space we currently have
+        for (auto &alignment : params->m_timestamps) {
+            // Avoid division by zero (nothing to move with the alignment anyway
+            if (duration == 0.0) break;
+            double percent = (alignment->GetTime() - startTime) / duration;
+            alignment->SetXRel(startXRel + space * percent);
+        }
+        params->m_timestamps.clear();
+    }
+
+    // Do not use clef change and grancenote alignment as reference since these are not aligned at this stage
+    if (!this->IsOfType({ ALIGNMENT_CLEF, ALIGNMENT_GRACENOTE })) params->m_lastNonTimestamp = this;
+
     return FUNCTOR_CONTINUE;
 }
 
@@ -1034,20 +1253,19 @@ int Alignment::JustifyX(FunctorParams *functorParams)
     }
     else if (m_type < ALIGNMENT_MEASURE_RIGHT_BARLINE) {
         // All elements up to the next barline, move them but also take into account the leftBarlineX
-        SetXRel(ceil((((double)this->m_xRel - (double)params->m_leftBarLineX) * params->m_justifiableRatio)
-            + params->m_leftBarLineX));
+        SetXRel(ceil(
+            (((double)m_xRel - (double)params->m_leftBarLineX) * params->m_justifiableRatio) + params->m_leftBarLineX));
     }
     else {
         //  Now more the right barline and all right scoreDef elements
-        int shift = this->m_xRel - params->m_rightBarLineX;
-        this->m_xRel
-            = ceil(((double)params->m_rightBarLineX - (double)params->m_leftBarLineX) * params->m_justifiableRatio)
+        int shift = m_xRel - params->m_rightBarLineX;
+        m_xRel = ceil(((double)params->m_rightBarLineX - (double)params->m_leftBarLineX) * params->m_justifiableRatio)
             + params->m_leftBarLineX + shift;
     }
 
     // Finally, when reaching the end of the measure, update the measureXRel for the next measure
     if (m_type == ALIGNMENT_MEASURE_END) {
-        params->m_measureXRel += this->m_xRel;
+        params->m_measureXRel += m_xRel;
     }
 
     return FUNCTOR_CONTINUE;
@@ -1074,7 +1292,7 @@ int AlignmentReference::AdjustGraceXPos(FunctorParams *functorParams)
     AdjustGraceXPosParams *params = vrv_params_cast<AdjustGraceXPosParams *>(functorParams);
     assert(params);
 
-    // Because we are processing grace notes aligment backward (see Alignment::AdjustGraceXPos) we need
+    // Because we are processing grace notes alignment backward (see Alignment::AdjustGraceXPos) we need
     // to process the children (LayerElement) "by hand" in FORWARD manner
     // (filters can be NULL because filtering was already applied in the parent)
     for (auto child : *this->GetChildren()) {
@@ -1151,7 +1369,7 @@ int AlignmentReference::AdjustAccidX(FunctorParams *functorParams)
     return FUNCTOR_SIBLINGS;
 }
 
-int AlignmentReference::UnsetCurrentScoreDef(FunctorParams *functorParams)
+int AlignmentReference::ScoreDefUnsetCurrent(FunctorParams *functorParams)
 {
     Alignment *alignment = vrv_cast<Alignment *>(this->GetParent());
     assert(alignment);

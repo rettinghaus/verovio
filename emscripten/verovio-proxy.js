@@ -30,6 +30,12 @@ verovio.vrvToolkit.getExpansionIdsForElement = Module.cwrap( 'vrvToolkit_getExpa
 // char *getHumdrum(Toolkit *ic)
 verovio.vrvToolkit.getHumdrum = Module.cwrap( 'vrvToolkit_getHumdrum', 'string' );
 
+// char *convertMEIToHumdrum(Toolkit *ic, const char *meiData)
+verovio.vrvToolkit.convertMEIToHumdrum = Module.cwrap( 'vrvToolkit_convertMEIToHumdrum', 'string', ['number', 'string'] );
+
+// char *convertHumdrumToHumdrum(Toolkit *ic, const char *humdrumData)
+verovio.vrvToolkit.convertHumdrumToHumdrum = Module.cwrap( 'vrvToolkit_convertHumdrumToHumdrum', 'string', ['number', 'string'] );
+
 // char *getLog(Toolkit *ic)
 verovio.vrvToolkit.getLog = Module.cwrap( 'vrvToolkit_getLog', 'string', ['number'] );
 
@@ -51,6 +57,9 @@ verovio.vrvToolkit.getPageWithElement = Module.cwrap( 'vrvToolkit_getPageWithEle
 // double getTimeForElement(Toolkit *ic, const char *xmlId)
 verovio.vrvToolkit.getTimeForElement = Module.cwrap( 'vrvToolkit_getTimeForElement', 'number', ['number', 'string'] );
 
+// char *getTimesForElement(Toolkit *ic, const char *xmlId)
+verovio.vrvToolkit.getTimesForElement = Module.cwrap( 'vrvToolkit_getTimesForElement', 'string', ['number', 'string'] );
+
 // char *getMIDIValuesForElement(Toolkit *ic, const char *xmlId)
 verovio.vrvToolkit.getMIDIValuesForElement = Module.cwrap( 'vrvToolkit_getMIDIValuesForElement', 'string', ['number', 'string'] );
 
@@ -59,6 +68,12 @@ verovio.vrvToolkit.getVersion = Module.cwrap( 'vrvToolkit_getVersion', 'string',
 
 // bool loadData(Toolkit *ic, const char *data)
 verovio.vrvToolkit.loadData = Module.cwrap( 'vrvToolkit_loadData', 'number', ['number', 'string'] );
+
+// bool loadZipDataBase64(Toolkit *ic, const char *data)
+verovio.vrvToolkit.loadZipDataBase64 = Module.cwrap( 'vrvToolkit_loadZipDataBase64', 'number', ['number', 'string'] );
+
+// bool loadZipDataBuffer(Toolkit *ic, const unsigned char *data, int length)
+verovio.vrvToolkit.loadZipDataBuffer = Module.cwrap( 'vrvToolkit_loadZipDataBuffer', 'number', ['number', 'number', 'number'] );
 
 // void redoLayout(Toolkit *ic)
 verovio.vrvToolkit.redoLayout = Module.cwrap( 'vrvToolkit_redoLayout', null, ['number'] );
@@ -71,6 +86,9 @@ verovio.vrvToolkit.renderData = Module.cwrap( 'vrvToolkit_renderData', 'string',
 
 // char *renderToMidi(Toolkit *ic, const char *rendering_options)
 verovio.vrvToolkit.renderToMIDI = Module.cwrap( 'vrvToolkit_renderToMIDI', 'string', ['number', 'string'] );
+
+// char *renderToPAE(Toolkit *ic)
+verovio.vrvToolkit.renderToPAE = Module.cwrap( 'vrvToolkit_renderToPAE', 'string' );
 
 // char *renderToSvg(Toolkit *ic, int pageNo, const char *rendering_options)
 verovio.vrvToolkit.renderToSVG = Module.cwrap( 'vrvToolkit_renderToSVG', 'string', ['number', 'number', 'string'] );
@@ -135,6 +153,16 @@ verovio.toolkit.prototype.getHumdrum = function ()
     return verovio.vrvToolkit.getHumdrum( this.ptr );
 };
 
+verovio.toolkit.prototype.convertHumdrumToHumdrum = function ( data )
+{
+    return verovio.vrvToolkit.convertHumdrumToHumdrum( this.ptr, data );
+};
+
+verovio.toolkit.prototype.convertMEIToHumdrum = function ( data )
+{
+    return verovio.vrvToolkit.convertMEIToHumdrum( this.ptr, data );
+};
+
 verovio.toolkit.prototype.getLog = function ()
 {
     return verovio.vrvToolkit.getLog( this.ptr );
@@ -188,6 +216,11 @@ verovio.toolkit.prototype.getTimeForElement = function ( xmlId )
     return verovio.vrvToolkit.getTimeForElement( this.ptr, xmlId );
 };
 
+verovio.toolkit.prototype.getTimesForElement = function ( xmlId )
+{
+    return JSON.parse( verovio.vrvToolkit.getTimesForElement( this.ptr, xmlId ) );
+};
+
 verovio.toolkit.prototype.getVersion = function ()
 {
     return verovio.vrvToolkit.getVersion( this.ptr );
@@ -196,6 +229,27 @@ verovio.toolkit.prototype.getVersion = function ()
 verovio.toolkit.prototype.loadData = function ( data )
 {
     return verovio.vrvToolkit.loadData( this.ptr, data );
+};
+
+verovio.toolkit.prototype.loadZipDataBase64 = function ( data )
+{
+    return verovio.vrvToolkit.loadZipDataBase64( this.ptr, data );
+};
+
+verovio.toolkit.prototype.loadZipDataBuffer = function ( data )
+{
+    if ( !(data instanceof ArrayBuffer ) )
+    {
+        console.error( "Parameter for loadZipDataBuffer has to be of type ArrayBuffer" );
+        return false;
+    }
+    var dataArray = new Uint8Array( data ); 
+    var dataSize = dataArray.length * dataArray.BYTES_PER_ELEMENT;
+    var dataPtr = Module._malloc( dataSize );
+    Module.HEAPU8.set( dataArray, dataPtr );
+    var res = verovio.vrvToolkit.loadZipDataBuffer( this.ptr, dataPtr, dataSize );
+    Module._free( dataPtr );
+    return res;
 };
 
 verovio.toolkit.prototype.redoLayout = function ()
@@ -228,6 +282,11 @@ verovio.toolkit.prototype.renderToMidi = function ( options )
 {
     console.warn( "Method renderToMidi is deprecated; use renderToMIDI instead" );
     return verovio.vrvToolkit.renderToMIDI( this.ptr, JSON.stringify( options ) );
+};
+
+verovio.toolkit.prototype.renderToPAE = function ()
+{
+    return verovio.vrvToolkit.renderToPAE( this.ptr );
 };
 
 verovio.toolkit.prototype.renderToSVG = function ( pageNo, options )

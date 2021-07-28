@@ -18,6 +18,8 @@
 #include "chord.h"
 #include "clef.h"
 #include "comparison.h"
+#include "dir.h"
+#include "dynam.h"
 #include "hairpin.h"
 #include "layer.h"
 #include "measure.h"
@@ -27,6 +29,7 @@
 #include "rest.h"
 #include "slur.h"
 #include "staff.h"
+#include "tie.h"
 #include "vrv.h"
 
 //--------------------------------------------------------------------------------
@@ -41,7 +44,7 @@ namespace vrv {
 
 std::string EditorToolkitCMN::EditInfo()
 {
-    return m_chainedId;
+    return m_editInfo.json();
 }
 
 bool EditorToolkitCMN::ParseEditorAction(const std::string &json_editorAction, bool commitOnly)
@@ -205,7 +208,7 @@ bool EditorToolkitCMN::Chain(jsonxx::Array actions)
     m_chainedId = "";
     for (int i = 0; i < (int)actions.size(); i++) {
         status = this->ParseEditorAction(actions.get<jsonxx::Object>(i).json(), !status);
-        m_editInfo = m_chainedId;
+        m_editInfo.import("uuid", m_chainedId);
     }
     return status;
 }
@@ -290,6 +293,9 @@ bool EditorToolkitCMN::Insert(std::string &elementType, std::string const &start
     if (elementType == "slur") {
         element = new Slur();
     }
+    else if (elementType == "tie") {
+        element = new Tie();
+    }
     else if (elementType == "hairpin") {
         element = new Hairpin();
     }
@@ -302,10 +308,11 @@ bool EditorToolkitCMN::Insert(std::string &elementType, std::string const &start
     TimeSpanningInterface *interface = element->GetTimeSpanningInterface();
     assert(interface);
     measure->AddChild(element);
-    interface->SetStartid(startid);
-    interface->SetEndid(endid);
+    interface->SetStartid("#" + startid);
+    interface->SetEndid("#" + endid);
 
-    this->m_chainedId = element->GetUuid();
+    m_chainedId = element->GetUuid();
+    m_editInfo.import("uuid", element->GetUuid());
 
     return true;
 }
@@ -329,16 +336,15 @@ bool EditorToolkitCMN::Insert(std::string &elementType, std::string const &start
         return false;
     }
 
-    /*
     Measure *measure = vrv_cast<Measure *>(start->GetFirstAncestor(MEASURE));
     assert(measure);
 
     ControlElement *element = NULL;
-    if (elementType == "dynam") {
-        element = new Slur();
+    if (elementType == "dir") {
+        element = new Dir();
     }
-    else if (elementType == "hairpin") {
-        element = new Hairpin();
+    else if (elementType == "dynam") {
+        element = new Dynam();
     }
     else {
         LogMessage("Inserting control event '%s' is not supported", elementType.c_str());
@@ -349,11 +355,10 @@ bool EditorToolkitCMN::Insert(std::string &elementType, std::string const &start
     TimeSpanningInterface *interface = element->GetTimeSpanningInterface();
     assert(interface);
     measure->AddChild(element);
-    interface->SetStartid(startid);
-    interface->SetEndid(endid);
+    interface->SetStartid("#" + startid);
 
-    this->m_chainedId = element->GetUuid();
-    */
+    m_chainedId = element->GetUuid();
+    m_editInfo.import("uuid", element->GetUuid());
 
     return true;
 }
@@ -401,10 +406,10 @@ bool EditorToolkitCMN::Set(std::string &elementId, std::string const &attribute,
 Object *EditorToolkitCMN::GetElement(std::string &elementId)
 {
     if (elementId == CHAINED_ID) {
-        elementId = this->m_chainedId;
+        elementId = m_chainedId;
     }
     else {
-        this->m_chainedId = elementId;
+        m_chainedId = elementId;
     }
 
     Object *element = NULL;
@@ -435,7 +440,7 @@ bool EditorToolkitCMN::InsertNote(Object *object)
         assert(currentChord);
         Note *note = new Note();
         currentChord->AddChild(note);
-        this->m_chainedId = note->GetUuid();
+        m_chainedId = note->GetUuid();
         return true;
     }
     else if (object->Is(NOTE)) {
@@ -446,7 +451,7 @@ bool EditorToolkitCMN::InsertNote(Object *object)
         if (currentChord) {
             Note *note = new Note();
             currentChord->AddChild(note);
-            this->m_chainedId = note->GetUuid();
+            m_chainedId = note->GetUuid();
             return true;
         }
 
@@ -489,7 +494,7 @@ bool EditorToolkitCMN::InsertNote(Object *object)
         }
         currentNote->ClearRelinquishedChildren();
 
-        this->m_chainedId = note->GetUuid();
+        m_chainedId = note->GetUuid();
         return true;
     }
     else if (object->Is(REST)) {
@@ -501,7 +506,7 @@ bool EditorToolkitCMN::InsertNote(Object *object)
         assert(parent);
         parent->ReplaceChild(rest, note);
         delete rest;
-        this->m_chainedId = note->GetUuid();
+        m_chainedId = note->GetUuid();
         return true;
     }
     return false;
@@ -542,13 +547,13 @@ bool EditorToolkitCMN::DeleteNote(Note *note)
             for (auto &artic : artics) {
                 artic->MoveItselfTo(otherNote);
             }
-            this->m_chainedId = chord->GetUuid();
+            m_chainedId = chord->GetUuid();
             delete chord;
             return true;
         }
         else if (count > 2) {
             chord->DeleteChild(note);
-            this->m_chainedId = chord->GetUuid();
+            m_chainedId = chord->GetUuid();
             return true;
         }
         // Handle cases of chords with one single note
@@ -584,7 +589,7 @@ bool EditorToolkitCMN::DeleteNote(Note *note)
             beam->DetachChild(otherElement->GetIdx());
             parent->ReplaceChild(beam, otherElement);
             delete beam;
-            this->m_chainedId = rest->GetUuid();
+            m_chainedId = rest->GetUuid();
             return true;
         }
         if (beam->IsFirstIn(beam, note)) {
@@ -594,7 +599,7 @@ bool EditorToolkitCMN::DeleteNote(Note *note)
             assert(parent);
             parent->InsertBefore(beam, rest);
             beam->DeleteChild(note);
-            this->m_chainedId = rest->GetUuid();
+            m_chainedId = rest->GetUuid();
             return true;
         }
         else if (beam->IsLastIn(beam, note)) {
@@ -604,7 +609,7 @@ bool EditorToolkitCMN::DeleteNote(Note *note)
             assert(parent);
             parent->InsertAfter(beam, rest);
             beam->DeleteChild(note);
-            this->m_chainedId = rest->GetUuid();
+            m_chainedId = rest->GetUuid();
             return true;
         }
         else {
@@ -612,7 +617,7 @@ bool EditorToolkitCMN::DeleteNote(Note *note)
             rest->DurationInterface::operator=(*note);
             beam->ReplaceChild(note, rest);
             delete note;
-            this->m_chainedId = rest->GetUuid();
+            m_chainedId = rest->GetUuid();
             return true;
         }
     }
@@ -623,7 +628,7 @@ bool EditorToolkitCMN::DeleteNote(Note *note)
         assert(parent);
         parent->ReplaceChild(note, rest);
         delete note;
-        this->m_chainedId = rest->GetUuid();
+        m_chainedId = rest->GetUuid();
         return true;
     }
 }

@@ -83,7 +83,7 @@ void TimePointInterface::SetUuidStr()
 Measure *TimePointInterface::GetStartMeasure()
 {
     if (!m_start) return NULL;
-    return dynamic_cast<Measure *>(this->m_start->GetFirstAncestor(MEASURE));
+    return dynamic_cast<Measure *>(m_start->GetFirstAncestor(MEASURE));
 }
 
 bool TimePointInterface::IsOnStaff(int n)
@@ -115,7 +115,7 @@ std::vector<Staff *> TimePointInterface::GetTstampStaves(Measure *measure, Objec
         bool isInBetween = false;
         // limit between support to some elements?
         if (object->Is({ DYNAM, DIR, HAIRPIN, TEMPO })) {
-            AttPlacement *att = dynamic_cast<AttPlacement *>(object);
+            AttPlacementRelStaff *att = dynamic_cast<AttPlacementRelStaff *>(object);
             assert(att);
             isInBetween = (att->GetPlace() == STAFFREL_between);
         }
@@ -204,7 +204,7 @@ bool TimeSpanningInterface::SetStartAndEnd(LayerElement *element)
 Measure *TimeSpanningInterface::GetEndMeasure()
 {
     if (!m_end) return NULL;
-    return dynamic_cast<Measure *>(this->m_end->GetFirstAncestor(MEASURE));
+    return dynamic_cast<Measure *>(m_end->GetFirstAncestor(MEASURE));
 }
 
 bool TimeSpanningInterface::IsSpanningMeasures()
@@ -227,23 +227,34 @@ void TimeSpanningInterface::GetCrossStaffOverflows(
     if (this->GetStart()->Is(CHORD)) {
         Chord *chord = vrv_cast<Chord *>(this->GetStart());
         assert(chord);
-        Staff *staffAbove = NULL;
-        Staff *staffBelow = NULL;
-        chord->GetCrossStaffExtremes(staffAbove, staffBelow);
-        startStaff = (cuvreDir == curvature_CURVEDIR_above) ? staffAbove : staffBelow;
+        // First check if the chord itself is cross-staff
+        startStaff = chord->GetCrossStaff(layer);
+        if (!startStaff) {
+            // If not look at its content
+            Staff *staffAbove = NULL;
+            Staff *staffBelow = NULL;
+            chord->GetCrossStaffExtremes(staffAbove, staffBelow);
+            startStaff = (cuvreDir == curvature_CURVEDIR_above) ? staffAbove : staffBelow;
+        }
     }
-    else
+    else {
         startStaff = this->GetStart()->GetCrossStaff(layer);
+    }
 
     // Same for the end point
     Staff *endStaff = NULL;
     if (this->GetEnd()->Is(CHORD)) {
         Chord *chord = vrv_cast<Chord *>(this->GetEnd());
         assert(chord);
-        Staff *staffAbove = NULL;
-        Staff *staffBelow = NULL;
-        chord->GetCrossStaffExtremes(staffAbove, staffBelow);
-        endStaff = (cuvreDir == curvature_CURVEDIR_above) ? staffAbove : staffBelow;
+        // First check if the chord itself is cross-staff
+        endStaff = chord->GetCrossStaff(layer);
+        if (!endStaff) {
+            // If not look at its content
+            Staff *staffAbove = NULL;
+            Staff *staffBelow = NULL;
+            chord->GetCrossStaffExtremes(staffAbove, staffBelow);
+            endStaff = (cuvreDir == curvature_CURVEDIR_above) ? staffAbove : staffBelow;
+        }
     }
     else {
         endStaff = this->GetEnd()->GetCrossStaff(layer);

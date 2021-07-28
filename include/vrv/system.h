@@ -21,6 +21,7 @@ class DeviceContext;
 class Ending;
 class Measure;
 class ScoreDef;
+class Slur;
 class Staff;
 
 //----------------------------------------------------------------------------
@@ -114,6 +115,11 @@ public:
     bool HasMixedDrawingStemDir(LayerElement *start, LayerElement *end);
 
     /**
+     * Get preferred curve direction based on the starting and ending point of the slur
+     */
+    curvature_CURVEDIR GetPreferredCurveDirection(LayerElement *start, LayerElement *end, Slur *slur);
+
+    /**
      * @name Setter and getter of the drawing visible flag
      */
     ///@{
@@ -132,17 +138,22 @@ public:
     //----------//
 
     /**
-     * See Object::UnsetCurrentScoreDef
+     * See Object::UnscoreDefSetCurrent
      */
-    virtual int UnsetCurrentScoreDef(FunctorParams *functorParams);
+    virtual int ScoreDefUnsetCurrent(FunctorParams *functorParams);
 
     /**
-     * See Object::OptimizeScoreDef
+     * See Object::ScoreDefOptimize
      */
     ///@{
-    virtual int OptimizeScoreDef(FunctorParams *functorParams);
-    virtual int OptimizeScoreDefEnd(FunctorParams *functorParams);
+    virtual int ScoreDefOptimize(FunctorParams *functorParams);
+    virtual int ScoreDefOptimizeEnd(FunctorParams *functorParams);
     ///@}
+
+    /**
+     * See Object::ScoreDefSetGrpSym
+     */
+    virtual int ScoreDefSetGrpSym(FunctorParams *functorParams);
 
     /**
      * See Object::ResetHorizontalAlignment
@@ -187,6 +198,11 @@ public:
     virtual int AdjustSylSpacing(FunctorParams *functorParams);
     virtual int AdjustSylSpacingEnd(FunctorParams *functorParams);
     ///@}
+
+    /**
+     * See Object::AdjustTempo
+     */
+    virtual int AdjustTempo(FunctorParams *functorParams);
 
     /**
      * See Object::AlignVertically
