@@ -46,7 +46,7 @@ public:
     ///@}
 
     /**
-     * @name Getter, setter and checker for the drawing curve direction
+     * @name Getter, setter and checker for the drawing curve direction and cross-staff flag
      */
     ///@{
     curvature_CURVEDIR GetDrawingCurvedir() const { return m_drawingCurvedir; }
@@ -56,15 +56,22 @@ public:
 
     bool AdjustSlur(Doc *doc, FloatingCurvePositioner *curve, Staff *staff);
 
-    int AdjustSlurCurve(Doc *doc, const ArrayOfCurveSpannedElements *spannedElements, Point &p1, Point &p2, Point &c1,
-        Point &c2, curvature_CURVEDIR curveDir, float angle, int staffSize, bool posRatio = true);
-    void AdjustSlurPosition(Doc *doc, FloatingCurvePositioner *curve,
-        const ArrayOfCurveSpannedElements *spannedElements, Point &p1, Point &p2, Point &c1, Point &c2,
-        curvature_CURVEDIR curveDir, float &angle, bool forceBothSides);
+    int AdjustSlurCurve(Doc *doc, const ArrayOfCurveSpannedElements *spannedElements, BezierCurve &bezierCurve,
+        curvature_CURVEDIR curveDir, float angle, int staffSize, bool posRatio = true);
+
+    /**
+     * Adjust slur position based on overlapping objects within its spanning elements
+     */
+    bool AdjustSlurPosition(
+        Doc *doc, FloatingCurvePositioner *curve, BezierCurve &bezierCurve, float &angle, bool forceBothSides);
+    /**
+     * Calculate slur left/right maximum shifts required for slur not to overlap with other objects
+     */
+    std::pair<int, int> CalculateAdjustedSlurShift(FloatingCurvePositioner *curve, const BezierCurve &bezierCurve,
+        int margin, bool forceBothSides, bool &isNotAdjustable);
 
     float GetAdjustedSlurAngle(Doc *doc, Point &p1, Point &p2, curvature_CURVEDIR curveDir, bool withPoints);
-    void GetControlPoints(
-        Doc *doc, Point &p1, Point &p2, Point &c1, Point &c2, curvature_CURVEDIR curveDir, int height, int staffSize);
+    void GetControlPoints(BezierCurve &curve, curvature_CURVEDIR curveDir, bool ignoreAngle = false);
     void GetSpannedPointPositions(Doc *doc, const ArrayOfCurveSpannedElements *spannedElements, Point p1, float angle,
         curvature_CURVEDIR curveDir, int staffSize);
 

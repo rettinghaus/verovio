@@ -15,6 +15,7 @@
 
 namespace vrv {
 
+class Dots;
 class StaffAlignment;
 
 //----------------------------------------------------------------------------
@@ -104,13 +105,8 @@ public:
     /**
      * Return the cross staff above or below (if  any).
      */
-    void GetCrossStaffExtremes(Staff *&staffAbove, Staff *&staffBelow);
-
-    /**
-     * Check if the part of a chord needs to be taken into account as overflow above or below in case of cross-staff
-     * chord.
-     */
-    void GetCrossStaffOverflows(LayerElement *element, StaffAlignment *alignment, bool &skipAbove, bool &skipBelow);
+    void GetCrossStaffExtremes(
+        Staff *&staffAbove, Staff *&staffBelow, Layer **layerAbove = NULL, Layer **layerBelow = NULL);
 
     /**
      * Return true if the chord has some cross staff notes.
@@ -137,7 +133,7 @@ public:
     ///@{
     virtual Point GetStemUpSE(Doc *doc, int staffSize, bool isCueSize);
     virtual Point GetStemDownNW(Doc *doc, int staffSize, bool isCueSize);
-    virtual int CalcStemLenInThirdUnits(Staff *staff);
+    virtual int CalcStemLenInThirdUnits(Staff *staff, data_STEMDIRECTION stemDir);
     ///@}
 
     /**
@@ -151,9 +147,10 @@ public:
     bool HasNoteWithDots();
 
     /**
-     * Helper to adjust overlaping layers for chords
+     * Helper to adjust overlapping layers for chords
      */
-    virtual void AdjustOverlappingLayers(Doc *doc, const std::vector<LayerElement *> &otherElements, bool &isUnison);
+    virtual void AdjustOverlappingLayers(
+        Doc *doc, const std::vector<LayerElement *> &otherElements, bool areDotsAdjusted, bool &isUnison);
 
     //----------//
     // Functors //
@@ -165,12 +162,22 @@ public:
     virtual int AdjustCrossStaffYPos(FunctorParams *functorParams);
 
     /**
+     * See Object::AdjustArtic
+     */
+    virtual int AdjustArtic(FunctorParams *functorParams);
+
+    /**
      * See Object::ConvertMarkupAnalytical
      */
     ///@{
     virtual int ConvertMarkupAnalytical(FunctorParams *functorParams);
     virtual int ConvertMarkupAnalyticalEnd(FunctorParams *functorParams);
     ///@}
+
+    /**
+     * See Object::CalcArtic
+     */
+    virtual int CalcArtic(FunctorParams *functorParams);
 
     /**
      * See Object::CalcStem
@@ -197,7 +204,24 @@ public:
      */
     virtual int ResetDrawing(FunctorParams *functorParams);
 
+    /**
+     * See Object::JustifyY
+     */
+    virtual int JustifyY(FunctorParams *functorParams);
+
 protected:
+    /**
+     * The note locations w.r.t. each staff
+     */
+    virtual MapOfNoteLocs CalcNoteLocations();
+
+    /**
+     * The dot locations w.r.t. each staff
+     * Since dots for notes on staff lines can be shifted upwards or downwards, there are two choices: primary and
+     * secondary
+     */
+    virtual MapOfDotLocs CalcDotLocations(int layerCount, bool primary);
+
     /**
      * Clear the m_clusters vector and delete all the objects.
      */

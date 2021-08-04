@@ -13,6 +13,7 @@
 
 //----------------------------------------------------------------------------
 
+#include "artic.h"
 #include "controlelement.h"
 #include "fig.h"
 #include "functorparams.h"
@@ -121,7 +122,7 @@ int EditorialElement::ConvertToPageBasedEnd(FunctorParams *functorParams)
     ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
     assert(params);
 
-    if (this->m_visibility == Visible) ConvertToPageBasedBoundary(this, params->m_pageBasedSystem);
+    if (m_visibility == Visible) ConvertToPageBasedBoundary(this, params->m_pageBasedSystem);
 
     return FUNCTOR_CONTINUE;
 }

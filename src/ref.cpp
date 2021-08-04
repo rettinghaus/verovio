@@ -21,6 +21,8 @@ namespace vrv {
 // Ref
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<Ref> s_factory("ref", REF);
+
 Ref::Ref() : EditorialElement("ref-")
 {
     Reset();

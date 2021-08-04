@@ -64,16 +64,20 @@ public:
 private:
     //
 public:
+    //----------------//
+    // Static members //
+    //----------------//
+
     /**
      * Static member for setting a value from a controller.
      * Used for example in SetValue
      */
-    static int s_num;
+    static const int s_num;
     /**
      * Static member for setting a value from a controller.
      * Used for examle in SetValue.
      */
-    static int s_numBase;
+    static const int s_numBase;
 
 private:
 };

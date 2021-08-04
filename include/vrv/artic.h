@@ -8,18 +8,22 @@
 #ifndef __VRV_ARTIC_H__
 #define __VRV_ARTIC_H__
 
+#include "atts_externalsymbols.h"
 #include "atts_shared.h"
 #include "layerelement.h"
 
 namespace vrv {
 
-class ArticPart;
-
 //----------------------------------------------------------------------------
 // Artic
 //----------------------------------------------------------------------------
 
-class Artic : public LayerElement, public AttArticulation, public AttColor, public AttPlacement {
+class Artic : public LayerElement,
+              public AttArticulation,
+              public AttColor,
+              public AttEnclosingChars,
+              public AttExtSym,
+              public AttPlacementRelEvent {
 public:
     /**
      * @name Constructors, destructors, and other standard methods
@@ -34,10 +38,21 @@ public:
     virtual ClassId GetClassId() const { return ARTIC; }
     ///@}
 
+    /** Override the method since alignment is required */
+    virtual bool HasToBeAligned() const { return true; }
+
+    /** Override the method since it is align to the staff */
+    virtual bool IsRelativeToStaff() const { return true; }
+
+    data_ARTICULATION GetArticFirst() const;
+
     /**
-     * Add an element (an articPart) to a artic.
+     * Split the multi-valued artic attributes into distinct artic elements.
+     * Applied by ConvertMarkupArtic functor.
      */
-    virtual bool IsSupportedChild(Object *object);
+    void SplitMultival(Object *parent);
+
+    void GetAllArtics(bool direction, std::vector<Artic *> &artics);
 
     /**
      * Split the articulation content into an array with the values to be displayed inside the staff / slur
@@ -47,98 +62,11 @@ public:
     void SplitArtic(std::vector<data_ARTICULATION> *insideSlur, std::vector<data_ARTICULATION> *outsideSlur);
 
     /**
-     * Static method that retrieves the appropriate SMuFL code for a data_ARTICULATION with data_STAFFREL
-     */
-    static wchar_t GetSmuflCode(data_ARTICULATION artic, const data_STAFFREL &place);
-
-    /**
-     * Static method that retrieves the vertical correctoin for a SMuFL code for with data_STAFFREL.
-     * The reason for this is that SMuFL sometimes has the glyph below the line, sometimes above.
-     * See bow indications for an example where is is always above
-     */
-    static bool VerticalCorr(wchar_t code, const data_STAFFREL &place);
-
-    /**
-     * Static method that returns true if the data_ARTICULATION has to be centered between staff lines
-     */
-    static bool IsCentered(data_ARTICULATION artic);
-
-    /**
      * Return the inside and outside part of an artic if any (NULL otherwiser)
      */
     ///@{
-    ArticPart *GetInsidePart();
-    ArticPart *GetOutsidePart();
-    ///@}
-
-    //----------//
-    // Functors //
-    //----------//
-
-    /**
-     * See Object::CalcArtic
-     */
-    virtual int CalcArtic(FunctorParams *functorParams);
-
-    /**
-     * See Object::PrepareLayerElementParts
-     */
-    virtual int PrepareLayerElementParts(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetDrawing
-     */
-    virtual int ResetDrawing(FunctorParams *functorParams);
-
-private:
-    //
-public:
-    /**
-     * A static array for storing the articulation that have to be placed outside the staff
-     */
-    static std::vector<data_ARTICULATION> s_outStaffArtic;
-    /**
-     * A static array for storing the articulation that have to be place above the staff is possible
-     */
-    static std::vector<data_ARTICULATION> s_aboveStaffArtic;
-
-private:
-};
-
-//----------------------------------------------------------------------------
-// ArticPart
-//----------------------------------------------------------------------------
-
-/**
- * This class models a sub-part of an artic element and has not direct MEI equivlatent.
- */
-
-class ArticPart : public LayerElement, public AttArticulation, public AttColor, public AttPlacement {
-public:
-    /**
-     * @name Constructors, destructors, and other standard methods
-     * Reset method resets all attribute classes
-     */
-    ///@{
-    ArticPart(ArticPartType type, Artic *artic);
-    virtual ~ArticPart();
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "ArticPart"; }
-    virtual ClassId GetClassId() const { return ARTIC_PART; }
-    ///@}
-
-    /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
-
-    /** Override the method since it is align to the staff */
-    virtual bool IsRelativeToStaff() const { return true; }
-
-    /**
-     * @name Set and get the type of the alignment
-     */
-    ///@{
-    void SetType(ArticPartType type) { m_type = type; }
-    ArticPartType GetType() const { return m_type; }
+    bool IsInsideArtic() const;
+    bool IsOutsideArtic() const { return !IsInsideArtic(); };
     ///@}
 
     /**
@@ -148,17 +76,52 @@ public:
 
     void AddSlurPositioner(FloatingCurvePositioner *positioner, bool start);
 
+    data_STAFFREL GetDrawingPlace() const { return m_drawingPlace; }
+
+    /**
+     * Retrieves the appropriate SMuFL code for a data_ARTICULATION with data_STAFFREL
+     */
+    wchar_t GetArticGlyph(data_ARTICULATION artic, data_STAFFREL place) const;
+
+    /**
+     * Retrieves parentheses / brackets from the enclose attribute
+     */
+    wchar_t GetEnclosingGlyph(bool beforeArtic) const;
+
+    //----------------//
+    // Static methods //
+    //----------------//
+
+    /**
+     * Static method that retrieves the vertical correction for a SMuFL code with data_STAFFREL.
+     * The reason for this is that SMuFL sometimes has the glyph below the line, sometimes above.
+     * See bow indications for an example where is is always above
+     */
+    static bool VerticalCorr(wchar_t code, data_STAFFREL place);
+
+    /**
+     * Static method that returns true if the data_ARTICULATION has to be centered between staff lines
+     */
+    static bool IsCentered(data_ARTICULATION artic);
+
     //----------//
     // Functors //
     //----------//
 
     /**
-     * Overwritten version of Save that avoids anything to be written
+     * See Object::ConvertMarkupArtic
      */
-    ///@{
-    virtual int Save(FunctorParams *) { return FUNCTOR_CONTINUE; }
-    virtual int SaveEnd(FunctorParams *) { return FUNCTOR_CONTINUE; }
-    ///@}
+    virtual int ConvertMarkupArtic(FunctorParams *functorParams);
+
+    /**
+     * See Object::CalcArtic
+     */
+    virtual int CalcArtic(FunctorParams *functorParams);
+
+    /**
+     * See Object::AdjustArtic
+     */
+    virtual int AdjustArtic(FunctorParams *functorParams);
 
     /**
      * See Object::AdjustArticWithSlurs
@@ -170,17 +133,30 @@ public:
      */
     virtual int ResetVerticalAlignment(FunctorParams *functorParams);
 
+    /**
+     * See Object::ResetDrawing
+     */
+    virtual int ResetDrawing(FunctorParams *functorParams);
+
 private:
-    //
-public:
-    //
-private:
-    /** the type of artic part */
-    ArticPartType m_type;
+    bool IsInsideArtic(data_ARTICULATION artic) const;
 
 public:
     std::vector<FloatingCurvePositioner *> m_startSlurPositioners;
     std::vector<FloatingCurvePositioner *> m_endSlurPositioners;
+
+    /**
+     * A static array for storing the articulation that have to be placed outside the staff
+     */
+    static const std::vector<data_ARTICULATION> s_outStaffArtic;
+    /**
+     * A static array for storing the articulation that have to be place above the staff is possible
+     */
+    static const std::vector<data_ARTICULATION> s_aboveStaffArtic;
+
+private:
+    //
+    data_STAFFREL m_drawingPlace;
 };
 
 } // namespace vrv

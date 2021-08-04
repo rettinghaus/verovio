@@ -15,6 +15,7 @@
 namespace vrv {
 
 class BeamElementCoord;
+class StaffAlignment;
 
 // the maximum allowed number of partials
 #define MAX_DURATION_PARTIALS 16
@@ -47,7 +48,7 @@ public:
     /**
      *
      */
-    const ArrayOfBeamElementCoords *GetElementCoordRefs();
+    const ArrayOfBeamElementCoords *GetElementCoordRefs() const;
 
     /**
      * Initializes the m_beamElementCoords vector objects.
@@ -75,7 +76,7 @@ private:
     void CalcBeamPlace(Layer *layer, BeamDrawingInterface *beamInterface, data_BEAMPLACE place);
 
     // Helper to calculate the longest stem length of the beam (which will be used uniformely)
-    void CalcBeamStemLength(Staff *staff, data_STEMDIRECTION stemDir);
+    void CalcBeamStemLength(Staff *staff, data_BEAMPLACE place);
 
     // Helper to calculate relative position of the beam to for each of the coordinates
     void CalcMixedBeamPlace(Staff *staff);
@@ -119,7 +120,6 @@ public:
 //----------------------------------------------------------------------------
 
 class Beam : public LayerElement,
-             public ObjectListInterface,
              public BeamDrawingInterface,
              public AttColor,
              public AttBeamedWith,
@@ -145,15 +145,6 @@ public:
      * Only Note or Rest elements will be actually added to the beam.
      */
     virtual bool IsSupportedChild(Object *object);
-
-    /**
-     * Return information about the position in the beam.
-     * (no const since the cached list is updated)
-     */
-    ///@{
-    bool IsFirstInBeam(LayerElement *element);
-    bool IsLastInBeam(LayerElement *element);
-    ///@}
 
     /**
      *
@@ -192,10 +183,10 @@ protected:
     virtual void FilterList(ArrayOfObjects *childList);
 
     /**
-     * Return the position of the element in the beam.
-     * For notes, lookup the position of the parent chord.
+     * Helper function to calculate overlap with layer elements that
+     * are placed within the duration of the beam
      */
-    int GetPosition(LayerElement *element);
+    int CalcLayerOverlap(Doc *doc, Object *beam, int directionBias, int y1, int y2);
 
 private:
     //
@@ -220,6 +211,7 @@ public:
         m_closestNote = NULL;
         m_stem = NULL;
         m_overlapMargin = 0;
+        m_maxShortening = -1;
         m_beamRelativePlace = BEAMPLACE_NONE;
         m_partialFlagPlace = BEAMPLACE_NONE;
     }
@@ -229,7 +221,7 @@ public:
      * Return the encoded stem direction.
      * Access the value in the Stem element if already set.
      */
-    data_STEMDIRECTION GetStemDir();
+    data_STEMDIRECTION GetStemDir() const;
 
     void SetDrawingStemDir(
         data_STEMDIRECTION stemDir, Staff *staff, Doc *doc, BeamSegment *segment, BeamDrawingInterface *interface);
@@ -237,11 +229,17 @@ public:
 
     int CalculateStemLength(Staff *staff, data_STEMDIRECTION stemDir);
 
+    /**
+     * Return stem length adjustment in half units, depending on the @stem.mode attribute
+     */
+    int CalculateStemModAdjustment(int stemLength, int directionBias);
+
     int m_x;
     int m_yBeam; // y value of stem top position
     int m_dur; // drawing duration
     int m_breaksec;
     int m_overlapMargin;
+    int m_maxShortening; // maximum allowed shortening in half units
     bool m_centered; // beam is centered on the line
     bool m_shortened; // stem is shortened because pointing oustide the staff
     data_BEAMPLACE m_beamRelativePlace;

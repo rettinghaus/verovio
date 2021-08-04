@@ -13,6 +13,7 @@
 #import <VerovioFramework/toolkit.h>
 #import <VerovioFramework/rest.h>
 #import <VerovioFramework/tuplet.h>
+#import <VerovioFramework/plica.h>
 #import <VerovioFramework/bboxdevicecontext.h>
 #import <VerovioFramework/damage.h>
 #import <VerovioFramework/beatrpt.h>
@@ -38,6 +39,7 @@
 #import <VerovioFramework/breath.h>
 #import <VerovioFramework/hairpin.h>
 #import <VerovioFramework/staffgrp.h>
+#import <VerovioFramework/pitchinflection.h>
 #import <VerovioFramework/text.h>
 #import <VerovioFramework/space.h>
 #import <VerovioFramework/vrv.h>
@@ -90,6 +92,7 @@
 #import <VerovioFramework/svg.h>
 #import <VerovioFramework/section.h>
 #import <VerovioFramework/trill.h>
+#import <VerovioFramework/tabgrp.h>
 #import <VerovioFramework/scoredef.h>
 #import <VerovioFramework/view.h>
 #import <VerovioFramework/options.h>
@@ -102,6 +105,7 @@
 #import <VerovioFramework/git_commit.h>
 #import <VerovioFramework/rend.h>
 #import <VerovioFramework/sic.h>
+#import <VerovioFramework/grpsym.h>
 #import <VerovioFramework/fig.h>
 #import <VerovioFramework/ioabc.h>
 #import <VerovioFramework/fb.h>
@@ -111,6 +115,7 @@
 #import <VerovioFramework/slur.h>
 #import <VerovioFramework/mrpt.h>
 #import <VerovioFramework/io.h>
+#import <VerovioFramework/course.h>
 #import <VerovioFramework/pghead.h>
 #import <VerovioFramework/custos.h>
 #import <VerovioFramework/mrpt2.h>
@@ -118,6 +123,7 @@
 #import <VerovioFramework/attdef.h>
 #import <VerovioFramework/unclear.h>
 #import <VerovioFramework/mnum.h>
+#import <VerovioFramework/tabdursym.h>
 #import <VerovioFramework/dot.h>
 #import <VerovioFramework/object.h>
 #import <VerovioFramework/orig.h>
@@ -141,6 +147,7 @@
 #import <VerovioFramework/anchoredtext.h>
 #import <VerovioFramework/editortoolkit_neume.h>
 #import <VerovioFramework/del.h>
+#import <VerovioFramework/tuning.h>
 #import <VerovioFramework/smufl.h>
 #import <VerovioFramework/tempo.h>
 #import <VerovioFramework/lem.h>

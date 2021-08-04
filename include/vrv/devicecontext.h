@@ -139,8 +139,9 @@ public:
      * @name Drawing methods
      */
     ///@{
-    virtual void DrawSimpleBezierPath(Point bezier[4]) = 0;
-    virtual void DrawComplexBezierPath(Point bezier1[4], Point bezier2[4]) = 0;
+    virtual void DrawQuadBezierPath(Point bezier[3]) = 0;
+    virtual void DrawCubicBezierPath(Point bezier[4]) = 0;
+    virtual void DrawCubicBezierPathFilled(Point bezier1[4], Point bezier2[4]) = 0;
     virtual void DrawCircle(int x, int y, int radius) = 0;
     virtual void DrawEllipse(int x, int y, int width, int height) = 0;
     virtual void DrawEllipticArc(int x, int y, int width, int height, double start, double end) = 0;
@@ -255,9 +256,6 @@ public:
     virtual void EndPage() = 0;
     ///@}
 
-    /** Colour conversion method **/
-    static int RGB2Int(char red, char green, char blue) { return (red << 16 | green << 8 | blue); }
-
     /**
      * @name Method for adding description element
      */
@@ -271,6 +269,13 @@ public:
      * Global styling is false by default.
      */
     virtual bool UseGlobalStyling() { return false; }
+
+    //----------------//
+    // Static methods //
+    //----------------//
+
+    /** Colour conversion method **/
+    static int RGB2Int(char red, char green, char blue) { return (red << 16 | green << 8 | blue); }
 
 private:
     void AddGlyphToTextExtend(Glyph *glyph, TextExtend *extend);

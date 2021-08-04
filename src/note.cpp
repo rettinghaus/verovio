@@ -24,10 +24,12 @@
 #include "glyph.h"
 #include "layer.h"
 #include "ligature.h"
+#include "plica.h"
 #include "slur.h"
 #include "smufl.h"
 #include "staff.h"
 #include "syl.h"
+#include "tabgrp.h"
 #include "tie.h"
 #include "transposition.h"
 #include "verse.h"
@@ -43,6 +45,8 @@ namespace vrv {
 // Note
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<Note> s_factory("note", NOTE);
+
 Note::Note()
     : LayerElement("note-")
     , StemmedDrawingInterface()
@@ -55,6 +59,7 @@ Note::Note()
     , AttExtSym()
     , AttGraced()
     , AttMidiVelocity()
+    , AttNoteGesTab()
     , AttNoteHeads()
     , AttNoteVisMensural()
     , AttStems()
@@ -70,6 +75,7 @@ Note::Note()
     RegisterAttClass(ATT_CUE);
     RegisterAttClass(ATT_EXTSYM);
     RegisterAttClass(ATT_GRACED);
+    RegisterAttClass(ATT_NOTEGESTAB);
     RegisterAttClass(ATT_NOTEHEADS);
     RegisterAttClass(ATT_NOTEVISMENSURAL);
     RegisterAttClass(ATT_MIDIVELOCITY);
@@ -95,6 +101,7 @@ void Note::Reset()
     ResetCue();
     ResetExtSym();
     ResetGraced();
+    ResetNoteGesTab();
     ResetNoteHeads();
     ResetNoteVisMensural();
     ResetMidiVelocity();
@@ -120,7 +127,7 @@ void Note::Reset()
 
 bool Note::IsSupportedChild(Object *child)
 {
-    // additional verification for accid and artic - this will no be raised with editorial markup, though
+    // additional verification for accid and artic - this will not be raised with editorial markup, though
     if (child->Is(ACCID)) {
         IsAttributeComparison isAttributeComparison(ACCID);
         if (this->FindDescendantByComparison(&isAttributeComparison))
@@ -140,6 +147,9 @@ bool Note::IsSupportedChild(Object *child)
     }
     else if (child->Is(DOTS)) {
         assert(dynamic_cast<Dots *>(child));
+    }
+    else if (child->Is(PLICA)) {
+        assert(dynamic_cast<Plica *>(child));
     }
     else if (child->Is(STEM)) {
         assert(dynamic_cast<Stem *>(child));
@@ -179,6 +189,16 @@ void Note::AddChild(Object *child)
         children->push_back(child);
     }
     Modify();
+}
+
+void Note::AlignDotsShift(Note *otherNote)
+{
+    Dots *dots = vrv_cast<Dots *>(this->FindDescendantByType(DOTS, 1));
+    Dots *otherDots = vrv_cast<Dots *>(otherNote->FindDescendantByType(DOTS, 1));
+    if (!dots || !otherDots) return;
+    if (otherDots->GetFlagShift()) {
+        dots->SetFlagShift(otherDots->GetFlagShift());
+    }
 }
 
 Accid *Note::GetDrawingAccid()
@@ -221,7 +241,7 @@ int Note::GetDrawingDur() const
 
 bool Note::IsClusterExtreme() const
 {
-    ChordCluster *cluster = this->m_cluster;
+    ChordCluster *cluster = m_cluster;
     if (this == cluster->at(0)) return true;
     if (this == cluster->at(cluster->size() - 1))
         return true;
@@ -229,7 +249,80 @@ bool Note::IsClusterExtreme() const
         return false;
 }
 
-bool Note::IsUnissonWith(Note *note, bool ignoreAccid)
+TabGrp *Note::IsTabGrpNote() const
+{
+    return dynamic_cast<TabGrp *>(this->GetFirstAncestor(TABGRP, MAX_TABGRP_DEPTH));
+}
+
+std::wstring Note::GetTabFretString(data_NOTATIONTYPE notationType) const
+{
+    if (notationType == NOTATIONTYPE_tab_lute_italian) {
+        std::wstring fretStr;
+        int fret = this->GetTabFret();
+        // Maximum allowed would be 19 (always bindly addind 1 as first figure)
+        if (fret > 9) fretStr.push_back(SMUFL_EBE1_luteItalianFret1);
+        switch (fret % 10) {
+            case 0: fretStr.push_back(SMUFL_EBE0_luteItalianFret0); break;
+            case 1: fretStr.push_back(SMUFL_EBE1_luteItalianFret1); break;
+            case 2: fretStr.push_back(SMUFL_EBE2_luteItalianFret2); break;
+            case 3: fretStr.push_back(SMUFL_EBE3_luteItalianFret3); break;
+            case 4: fretStr.push_back(SMUFL_EBE4_luteItalianFret4); break;
+            case 5: fretStr.push_back(SMUFL_EBE5_luteItalianFret5); break;
+            case 6: fretStr.push_back(SMUFL_EBE6_luteItalianFret6); break;
+            case 7: fretStr.push_back(SMUFL_EBE7_luteItalianFret7); break;
+            case 8: fretStr.push_back(SMUFL_EBE8_luteItalianFret8); break;
+            case 9: fretStr.push_back(SMUFL_EBE9_luteItalianFret9); break;
+            default: break;
+        }
+        return fretStr;
+    }
+    else if (notationType == NOTATIONTYPE_tab_lute_french) {
+        std::wstring fretStr;
+        const int fret = GetTabFret();
+        const int course = GetTabCourse();
+        if (course >= 11) {
+            // french tab uses number 4 ... for courses 11 ..., always open fret a.
+            // TODO need Baroque font SMUFL_xxxx_luteDiapason4, 5, 6 ... or somesuch.
+            //      Temporary kludge, use SMUFL_EBE4_luteItalianFret4 ... .
+            fretStr.push_back(SMUFL_EBE4_luteItalianFret4 + course - 11);
+        }
+        else {
+            // courses 8..10 use slashes followed by fret letter
+            if (course >= 8) {
+                // TODO need SMUFL_xxxx_luteDiapasonSlash or 3 glyphs "/", "//", "///".
+                //      Temporary kludge, use SMUFL_E101_noteheadSlashHorizontalEnds, doesn't
+                //      look right but serves as a place holder.
+                fretStr = std::wstring(course - 7, SMUFL_E101_noteheadSlashHorizontalEnds);
+            }
+
+            static const wchar_t letter[] = {
+                SMUFL_EBC0_luteFrenchFretA,
+                SMUFL_EBC1_luteFrenchFretB,
+                SMUFL_EBC2_luteFrenchFretC,
+                SMUFL_EBC3_luteFrenchFretD,
+                SMUFL_EBC4_luteFrenchFretE,
+                SMUFL_EBC5_luteFrenchFretF,
+                SMUFL_EBC6_luteFrenchFretG,
+                SMUFL_EBC7_luteFrenchFretH,
+                SMUFL_EBC8_luteFrenchFretI,
+                SMUFL_EBC9_luteFrenchFretK,
+                SMUFL_EBCA_luteFrenchFretL,
+                SMUFL_EBCB_luteFrenchFretM,
+                SMUFL_EBCC_luteFrenchFretN,
+            };
+
+            // TODO what if fret > 12?  Some tablatures use fret p.
+            if (fret >= 0 && fret < static_cast<int>(sizeof(letter) / sizeof(letter[0]))) fretStr += letter[fret];
+        }
+        return fretStr;
+    }
+    else {
+        std::string str = StringFormat("%d", this->GetTabFret());
+        return UTF8to16(str);
+    }
+}
+
+bool Note::IsUnisonWith(Note *note, bool ignoreAccid)
 {
     if (!ignoreAccid) {
         Accid *accid = this->GetDrawingAccid();
@@ -260,10 +353,10 @@ Point Note::GetStemUpSE(Doc *doc, int staffSize, bool isCueSize)
     wchar_t code = GetNoteheadGlyph(GetDrawingDur());
 
     // This is never called for now because mensural notes do not have stem/flag children
-    // For changingg this, change Note::CalcStem and Note::PrepareLayerElementParts
+    // For changing this, change Note::CalcStem and Note::PrepareLayerElementParts
     if (this->IsMensuralDur()) {
         // For mensural notation, get the code and adjust the default stem position
-        code = this->GetMensuralSmuflNoteHead();
+        code = this->GetMensuralNoteheadGlyph();
         p.y = doc->GetGlyphHeight(code, staffSize, isCueSize) / 2;
         p.x = doc->GetGlyphWidth(code, staffSize, isCueSize);
     }
@@ -294,7 +387,7 @@ Point Note::GetStemDownNW(Doc *doc, int staffSize, bool isCueSize)
     // See comment above
     if (this->IsMensuralDur()) {
         // For mensural notation, get the code and adjust the default stem position
-        code = this->GetMensuralSmuflNoteHead();
+        code = this->GetMensuralNoteheadGlyph();
         p.y = -doc->GetGlyphHeight(code, staffSize, isCueSize) / 2;
         p.x = doc->GetGlyphWidth(code, staffSize, isCueSize);
     }
@@ -311,17 +404,20 @@ Point Note::GetStemDownNW(Doc *doc, int staffSize, bool isCueSize)
     return p;
 }
 
-int Note::CalcStemLenInThirdUnits(Staff *staff)
+int Note::CalcStemLenInThirdUnits(Staff *staff, data_STEMDIRECTION stemDir)
 {
     assert(staff);
+
+    if ((stemDir != STEMDIRECTION_down) && (stemDir != STEMDIRECTION_up)) {
+        return 0;
+    }
 
     int baseStem = STANDARD_STEMLENGTH * 3;
 
     int shortening = 0;
 
-    int unitToLine = (this->GetDrawingStemDir() == STEMDIRECTION_up)
-        ? -this->GetDrawingLoc() + (staff->m_drawingLines - 1) * 2
-        : this->GetDrawingLoc();
+    int unitToLine = (stemDir == STEMDIRECTION_up) ? -this->GetDrawingLoc() + (staff->m_drawingLines - 1) * 2
+                                                   : this->GetDrawingLoc();
     if (unitToLine < 5) {
         switch (unitToLine) {
             case 4: shortening = 1; break;
@@ -335,7 +431,7 @@ int Note::CalcStemLenInThirdUnits(Staff *staff)
 
     // Limit shortening with duration shorter than quarter not when not in a beam
     if ((this->GetDrawingDur() > DUR_4) && !this->IsInBeam()) {
-        if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
+        if (stemDir == STEMDIRECTION_up) {
             shortening = std::min(4, shortening);
         }
         else {
@@ -348,7 +444,7 @@ int Note::CalcStemLenInThirdUnits(Staff *staff)
     return baseStem;
 }
 
-wchar_t Note::GetMensuralSmuflNoteHead()
+wchar_t Note::GetMensuralNoteheadGlyph() const
 {
     assert(this->IsMensuralDur());
 
@@ -435,14 +531,14 @@ wchar_t Note::GetNoteheadGlyph(const int duration) const
     return SMUFL_E0A4_noteheadBlack;
 }
 
-bool Note::IsVisible()
+bool Note::IsVisible() const
 {
     if (this->HasVisible()) {
         return this->GetVisible() == BOOLEAN_true;
     }
     // if the chord doens't have it, see if all the children are invisible
-    else if (GetParent() && GetParent()->Is(CHORD)) {
-        Chord *chord = vrv_cast<Chord *>(GetParent());
+    else if (this->GetParent() && this->GetParent()->Is(CHORD)) {
+        Chord *chord = vrv_cast<Chord *>(this->GetParent());
         assert(chord);
         return chord->IsVisible();
     }
@@ -476,42 +572,70 @@ void Note::SetScoreTimeTiedDuration(double scoreTime)
     m_scoreTimeTiedDuration = scoreTime;
 }
 
-void Note::SetMIDIPitch(char pitch)
+void Note::CalcMIDIPitch(int shift)
 {
-    m_MIDIPitch = pitch;
+    if (this->HasPnum()) {
+        m_MIDIPitch = this->GetPnum();
+    }
+    else {
+        int midiBase = 0;
+        data_PITCHNAME pname = this->GetPname();
+        if (this->HasPnameGes()) pname = this->GetPnameGes();
+        switch (pname) {
+            case PITCHNAME_c: midiBase = 0; break;
+            case PITCHNAME_d: midiBase = 2; break;
+            case PITCHNAME_e: midiBase = 4; break;
+            case PITCHNAME_f: midiBase = 5; break;
+            case PITCHNAME_g: midiBase = 7; break;
+            case PITCHNAME_a: midiBase = 9; break;
+            case PITCHNAME_b: midiBase = 11; break;
+            default: break;
+        }
+
+        // Check for accidentals
+        midiBase += this->GetChromaticAlteration();
+
+        // Apply shift, i.e. from transposition instruments
+        midiBase += shift;
+
+        int oct = this->GetOct();
+        if (this->HasOctGes()) oct = this->GetOctGes();
+
+        m_MIDIPitch = midiBase + (oct + 1) * 12;
+    }
 }
 
-double Note::GetScoreTimeOnset()
+double Note::GetScoreTimeOnset() const
 {
     return m_scoreTimeOnset;
 }
 
-double Note::GetRealTimeOnsetMilliseconds()
+double Note::GetRealTimeOnsetMilliseconds() const
 {
     return m_realTimeOnsetMilliseconds;
 }
 
-double Note::GetScoreTimeOffset()
+double Note::GetScoreTimeOffset() const
 {
     return m_scoreTimeOffset;
 }
 
-double Note::GetRealTimeOffsetMilliseconds()
+double Note::GetRealTimeOffsetMilliseconds() const
 {
     return m_realTimeOffsetMilliseconds;
 }
 
-double Note::GetScoreTimeTiedDuration()
+double Note::GetScoreTimeTiedDuration() const
 {
     return m_scoreTimeTiedDuration;
 }
 
-double Note::GetScoreTimeDuration()
+double Note::GetScoreTimeDuration() const
 {
-    return GetScoreTimeOffset() - GetScoreTimeOnset();
+    return this->GetScoreTimeOffset() - this->GetScoreTimeOnset();
 }
 
-char Note::GetMIDIPitch()
+char Note::GetMIDIPitch() const
 {
     return m_MIDIPitch;
 }
@@ -571,7 +695,7 @@ void Note::UpdateFromTransPitch(const TransPitch &tp)
 
 bool Note::IsDotOverlappingWithFlag(Doc *doc, const int staffSize, bool isDotShifted)
 {
-    Object *stem = GetFirst(STEM);
+    Object *stem = this->GetFirst(STEM);
     if (!stem) return false;
 
     Flag *flag = dynamic_cast<Flag *>(stem->GetFirst(FLAG));
@@ -580,123 +704,13 @@ bool Note::IsDotOverlappingWithFlag(Doc *doc, const int staffSize, bool isDotShi
     // for the purposes of vertical spacing we care only up to 16th flags - shorter ones grow upwards
     wchar_t flagGlyph = SMUFL_E242_flag16thUp;
     data_DURATION dur = this->GetDur();
-    if (dur < DURATION_16) flagGlyph = flag->GetSmuflCode(GetDrawingStemDir());
-    const int flagHeight = doc->GetGlyphHeight(flagGlyph, staffSize, GetDrawingCueSize());
+    if (dur < DURATION_16) flagGlyph = flag->GetFlagGlyph(this->GetDrawingStemDir());
+    const int flagHeight = doc->GetGlyphHeight(flagGlyph, staffSize, this->GetDrawingCueSize());
 
-    const int dotMargin = flag->GetDrawingY() - GetDrawingY() - flagHeight - GetDrawingRadius(doc) / 2
+    const int dotMargin = flag->GetDrawingY() - this->GetDrawingY() - flagHeight - this->GetDrawingRadius(doc) / 2
         - (isDotShifted ? doc->GetDrawingUnit(staffSize) : 0);
 
     return dotMargin < 0;
-}
-
-std::pair<int, bool> Note::CalcNoteHorizontalOverlap(
-    Doc *doc, const std::vector<LayerElement *> &otherElements, bool isChordElement, bool isLowerElement, bool unison)
-{
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
-    assert(staff);
-
-    bool isInUnison = false;
-    int shift = 0;
-
-    for (int i = 0; i < int(otherElements.size()); ++i) {
-        int verticalMargin = 0;
-        int horizontalMargin = 2 * doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-        bool isUnisonElement = false;
-        if (Is(NOTE) && otherElements.at(i)->Is(NOTE)) {
-            Note *previousNote = vrv_cast<Note *>(otherElements.at(i));
-            assert(previousNote);
-            isUnisonElement = IsUnissonWith(previousNote, true);
-            // Unisson, look at the duration for the note heads
-            if (unison && IsUnissonWith(previousNote, false)) {
-                int previousDuration = previousNote->GetDrawingDur();
-                const bool isPreviousCoord = previousNote->GetParent()->Is(CHORD);
-                bool isEdgeElement = false;
-                if (isPreviousCoord) {
-                    Chord *parentChord = vrv_cast<Chord *>(previousNote->GetParent());
-                    data_STEMDIRECTION stemDir = GetDrawingStemDir();
-                    previousDuration = parentChord->GetDur();
-                    isEdgeElement = ((STEMDIRECTION_down == stemDir) && (parentChord->GetBottomNote() == previousNote))
-                        || ((STEMDIRECTION_up == stemDir) && (parentChord->GetTopNote() == previousNote));
-                }
-                // Reduce the margin to 0 for whole notes unisson
-                else if ((GetDrawingDur() == DUR_1) && (previousDuration == DUR_1)) {
-                    horizontalMargin = 0;
-                }
-                if (!isPreviousCoord || isEdgeElement || isChordElement) {
-                    if ((GetDrawingDur() == DUR_2) && (previousDuration == DUR_2)) {
-                        isInUnison = true;
-                        continue;
-                    }
-                    else if ((GetDrawingDur() > DUR_2) && (previousDuration > DUR_2)) {
-                        isInUnison = true;
-                        continue;
-                    }
-                }
-                else {
-                    horizontalMargin *= -1;
-                }
-            }
-            else if (previousNote->GetDrawingLoc() - GetDrawingLoc() > 1) {
-                continue;
-            }
-            else if (previousNote->GetDrawingLoc() - GetDrawingLoc() == 1) {
-                horizontalMargin = 0;
-            }
-            else if ((previousNote->GetDrawingLoc() - GetDrawingLoc() < 0)
-                && (previousNote->GetDrawingStemDir() != GetDrawingStemDir()) /* && !isChordElement*/) {
-                if (previousNote->GetDrawingLoc() - GetDrawingLoc() == -1) {
-                    horizontalMargin *= -1;
-                }
-                else if ((GetDrawingDur() <= DUR_1) && (previousNote->GetDrawingDur() <= DUR_1)) {
-                    continue;
-                }
-                else if (previousNote->m_crossStaff || m_crossStaff)
-                    continue;
-                else {
-                    horizontalMargin *= -1;
-                    verticalMargin = horizontalMargin;
-                }
-            }
-        }
-
-        // Nothing to do if we have no vertical overlap
-        if (!VerticalSelfOverlap(otherElements.at(i), verticalMargin)) continue;
-
-        // Nothing to do either if we have no horizontal overlap
-        if (!HorizontalSelfOverlap(otherElements.at(i), horizontalMargin + shift)) continue;
-
-        if (horizontalMargin < 0 || isLowerElement) {
-            shift -= HorizontalRightOverlap(otherElements.at(i), doc, -shift, verticalMargin);
-            if (!isUnisonElement) shift -= horizontalMargin;
-        }
-        else if ((horizontalMargin >= 0) || isChordElement) {
-            shift += HorizontalLeftOverlap(otherElements.at(i), doc, horizontalMargin - shift, verticalMargin);
-
-            // Make additional adjustments for cross-staff and unison notes
-            if (m_crossStaff) shift -= horizontalMargin;
-            if (isInUnison) shift *= -1;
-        }
-        else {
-            // Otherwise move the appropriate parent to the right
-            shift -= horizontalMargin
-                - HorizontalRightOverlap(otherElements.at(i), doc, horizontalMargin - shift, verticalMargin);
-        }
-    }
-
-    // If note is not in unison, has accidental and were to be shifted to the right - shift it to the left
-    // That way accidental will be near note that actually has accidental and not near lowest-layer note
-    if (isChordElement && unison && GetDrawingAccid() && (shift > 0)) shift *= -1;
-
-    return { shift, isInUnison };
-}
-
-void Note::AdjustOverlappingLayers(Doc *doc, const std::vector<LayerElement *> &otherElements, bool &isUnison)
-{
-    if (GetParent()->Is(CHORD)) return;
-
-    auto [margin, isInUnison] = CalcNoteHorizontalOverlap(doc, otherElements, false);
-    isUnison = isInUnison;
-    if (!isInUnison) SetDrawingXRel(GetDrawingXRel() + margin);
 }
 
 //----------------------------------------------------------------------------
@@ -759,6 +773,54 @@ int Note::ConvertMarkupAnalytical(FunctorParams *functorParams)
     return FUNCTOR_CONTINUE;
 }
 
+int Note::CalcArtic(FunctorParams *functorParams)
+{
+    CalcArticParams *params = vrv_params_cast<CalcArticParams *>(functorParams);
+    assert(params);
+
+    if (this->IsChordTone()) return FUNCTOR_CONTINUE;
+
+    params->m_parent = this;
+    params->m_stemDir = this->GetDrawingStemDir();
+
+    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    assert(staff);
+    Layer *layer = vrv_cast<Layer *>(this->GetFirstAncestor(LAYER));
+    assert(layer);
+
+    params->m_staffAbove = staff;
+    params->m_staffBelow = staff;
+    params->m_layerAbove = layer;
+    params->m_layerBelow = layer;
+    params->m_crossStaffAbove = false;
+    params->m_crossStaffBelow = false;
+
+    if (m_crossStaff) {
+        params->m_staffAbove = m_crossStaff;
+        params->m_staffBelow = m_crossStaff;
+        params->m_layerAbove = m_crossLayer;
+        params->m_layerBelow = m_crossLayer;
+        params->m_crossStaffAbove = true;
+        params->m_crossStaffBelow = true;
+    }
+
+    return FUNCTOR_CONTINUE;
+}
+
+int Note::AdjustArtic(FunctorParams *functorParams)
+{
+    AdjustArticParams *params = vrv_params_cast<AdjustArticParams *>(functorParams);
+    assert(params);
+
+    if (this->IsChordTone()) return FUNCTOR_CONTINUE;
+
+    params->m_parent = this;
+    params->m_articAbove.clear();
+    params->m_articBelow.clear();
+
+    return FUNCTOR_CONTINUE;
+}
+
 int Note::CalcStem(FunctorParams *functorParams)
 {
     CalcStemParams *params = vrv_params_cast<CalcStemParams *>(functorParams);
@@ -768,7 +830,7 @@ int Note::CalcStem(FunctorParams *functorParams)
         return FUNCTOR_SIBLINGS;
     }
 
-    // Stems have been calculated previously in Beam or FTrem - siblings becasue flags do not need to
+    // Stems have been calculated previously in Beam or fTrem - siblings because flags do not need to
     // be processed either
     if (this->IsInBeam() || this->IsInFTrem()) {
         return FUNCTOR_SIBLINGS;
@@ -795,7 +857,10 @@ int Note::CalcStem(FunctorParams *functorParams)
     Layer *layer = vrv_cast<Layer *>(this->GetFirstAncestor(LAYER));
     assert(layer);
 
-    if (this->m_crossStaff) staff = this->m_crossStaff;
+    if (m_crossStaff) {
+        staff = m_crossStaff;
+        layer = m_crossLayer;
+    }
 
     // Cache the in params to avoid further lookup
     params->m_staff = staff;
@@ -843,48 +908,99 @@ int Note::CalcChordNoteHeads(FunctorParams *functorParams)
     Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
 
-    // Nothing to do for notes that are not in a cluster
-    if (!this->m_cluster) return FUNCTOR_SIBLINGS;
+    bool mixedCue = false;
+    if (Chord *chord = this->IsChordTone(); chord != NULL) {
+        mixedCue = (chord->GetDrawingCueSize() != this->GetDrawingCueSize());
+    }
 
-    if (this->m_crossStaff) staff = this->m_crossStaff;
+    // Nothing to do for notes that are not in a cluster and without cue mixing
+    if (!m_cluster && !mixedCue) return FUNCTOR_SIBLINGS;
+
+    if (m_crossStaff) staff = m_crossStaff;
 
     int staffSize = staff->m_drawingStaffSize;
 
-    int radius = this->GetDrawingRadius(params->m_doc);
+    int diameter = 2 * this->GetDrawingRadius(params->m_doc);
+
+    // If chord consists partially of cue notes we may have to shift the noteheads
+    int cueShift = 0;
+    if (mixedCue && (this->GetDrawingStemDir() == STEMDIRECTION_up)) {
+        const double cueScaling = params->m_doc->GetCueScaling();
+        assert(cueScaling > 0.0);
+
+        if (this->GetDrawingCueSize()) {
+            // Note is cue and chord is not
+            cueShift = (1.0 / cueScaling - 1.0) * diameter; // shift to the right
+        }
+        else {
+            // Chord is cue and note is not
+            cueShift = (cueScaling - 1.0) * diameter; // shift to the left
+        }
+    }
 
     /************** notehead direction **************/
 
     bool flippedNotehead = false;
 
     // if the note is clustered, calculations are different
-    if (this->GetDrawingStemDir() == STEMDIRECTION_down) {
-        // stem down/even cluster = noteheads start on left (incorrect side)
-        if (this->m_cluster->size() % 2 == 0) {
-            flippedNotehead = (this->m_clusterPosition % 2 != 0);
+    if (m_cluster) {
+        if (this->GetDrawingStemDir() == STEMDIRECTION_down) {
+            // stem down/even cluster = noteheads start on left (incorrect side)
+            if (m_cluster->size() % 2 == 0) {
+                flippedNotehead = (m_clusterPosition % 2 != 0);
+            }
+            // else they start on normal side
+            else {
+                flippedNotehead = (m_clusterPosition % 2 == 0);
+            }
         }
-        // else they start on normal side
         else {
-            flippedNotehead = (this->m_clusterPosition % 2 == 0);
+            // flipped noteheads start on normal side no matter what
+            flippedNotehead = (m_clusterPosition % 2 == 0);
         }
-    }
-    else {
-        // flipped noteheads start on normal side no matter what
-        flippedNotehead = (this->m_clusterPosition % 2 == 0);
     }
 
     // positions notehead
     if (flippedNotehead) {
         if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
-            this->SetDrawingXRel(2 * radius - params->m_doc->GetDrawingStemWidth(staffSize));
+            this->SetDrawingXRel(diameter - params->m_doc->GetDrawingStemWidth(staffSize));
         }
         else {
-            this->SetDrawingXRel(-2 * radius + params->m_doc->GetDrawingStemWidth(staffSize));
+            this->SetDrawingXRel(-diameter + params->m_doc->GetDrawingStemWidth(staffSize));
         }
     }
+    this->SetDrawingXRel(this->GetDrawingXRel() + cueShift);
 
     this->SetFlippedNotehead(flippedNotehead);
 
     return FUNCTOR_SIBLINGS;
+}
+
+MapOfNoteLocs Note::CalcNoteLocations()
+{
+    Layer *layer = NULL;
+    Staff *staff = this->GetCrossStaff(layer);
+    if (!staff) staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
+    assert(staff);
+
+    MapOfNoteLocs noteLocations;
+    noteLocations[staff] = { this->GetDrawingLoc() };
+    return noteLocations;
+}
+
+MapOfDotLocs Note::CalcDotLocations(int layerCount, bool primary)
+{
+    const bool isUpwardDirection = (GetDrawingStemDir() == STEMDIRECTION_up) || (layerCount == 1);
+    const bool shiftUpwards = (isUpwardDirection && primary) || (!isUpwardDirection && !primary);
+    MapOfNoteLocs noteLocs = this->CalcNoteLocations();
+    assert(noteLocs.size() == 1);
+
+    MapOfDotLocs dotLocs;
+    Staff *staff = noteLocs.cbegin()->first;
+    int loc = *noteLocs.cbegin()->second.cbegin();
+    if (loc % 2 == 0) loc += (shiftUpwards ? 1 : -1);
+    dotLocs[staff] = { loc };
+    return dotLocs;
 }
 
 int Note::CalcDots(FunctorParams *functorParams)
@@ -903,7 +1019,7 @@ int Note::CalcDots(FunctorParams *functorParams)
     Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
     assert(staff);
 
-    if (this->m_crossStaff) staff = this->m_crossStaff;
+    if (m_crossStaff) staff = m_crossStaff;
 
     bool drawingCueSize = this->GetDrawingCueSize();
     int staffSize = staff->m_drawingStaffSize;
@@ -913,6 +1029,7 @@ int Note::CalcDots(FunctorParams *functorParams)
 
     // The shift to the left when a stem flag requires it
     int flagShift = 0;
+    int radius = this->GetDrawingRadius(params->m_doc);
 
     if (chord && (chord->GetDots() > 0)) {
         dots = params->m_chordDots;
@@ -927,35 +1044,33 @@ int Note::CalcDots(FunctorParams *functorParams)
                 flagShift += params->m_doc->GetGlyphWidth(SMUFL_E240_flag8thUp, staffSize, drawingCueSize) * 0.8;
             }
         }
+
+        int xRel = this->GetDrawingX() - params->m_chordDrawingX + 2 * radius + flagShift;
+        dots->SetDrawingXRel(std::max(dots->GetDrawingXRel(), xRel));
     }
-    else if (this->GetDots() > 0) {
+    if (this->GetDots() > 0) {
         // For single notes we need here to set the dot loc
         dots = vrv_cast<Dots *>(this->FindDescendantByType(DOTS, 1));
         assert(dots);
-        params->m_chordDrawingX = this->GetDrawingX();
 
-        std::list<int> *dotLocs = dots->GetDotLocsForStaff(staff);
-        int loc = this->GetDrawingLoc();
-
-        // if it's on a staff line to start with, we need to compensate here and add a full unit like DrawDots would
-        const bool isDotShifted(loc % 2 == 0);
-        if (isDotShifted) ++loc;
-        dotLocs->push_back(loc);
+        dots->SetMapOfDotLocs(this->CalcOptimalDotLocations());
+        const bool isDotShifted = (this->GetDrawingLoc() % 2 == 0);
 
         // Stem up, shorter than 4th and not in beam
-        if ((GetDrawingStemDir() == STEMDIRECTION_up) && (!this->IsInBeam()) && (GetDrawingStemLen() < 3)
+        if (const int shift = dots->GetFlagShift(); shift) {
+            flagShift += shift;
+        }
+        else if ((GetDrawingStemDir() == STEMDIRECTION_up) && (!this->IsInBeam()) && (GetDrawingStemLen() < 3)
             && (IsDotOverlappingWithFlag(params->m_doc, staffSize, isDotShifted))) {
             // HARDCODED
-            flagShift += params->m_doc->GetGlyphWidth(SMUFL_E240_flag8thUp, staffSize, drawingCueSize) * 0.8;
+            const int shift = params->m_doc->GetGlyphWidth(SMUFL_E240_flag8thUp, staffSize, drawingCueSize) * 0.8;
+            flagShift += shift;
+            dots->SetFlagShift(shift);
         }
-    }
-    else {
-        return FUNCTOR_SIBLINGS;
-    }
 
-    int radius = this->GetDrawingRadius(params->m_doc);
-    int xRel = this->GetDrawingX() - params->m_chordDrawingX + 2 * radius + flagShift;
-    dots->SetDrawingXRel(std::max(dots->GetDrawingXRel(), xRel));
+        int xRel = 2 * radius + flagShift;
+        dots->SetDrawingXRel(std::max(dots->GetDrawingXRel(), xRel));
+    }
 
     return FUNCTOR_SIBLINGS;
 }
@@ -976,7 +1091,7 @@ int Note::CalcLedgerLines(FunctorParams *functorParams)
         return FUNCTOR_SIBLINGS;
     }
 
-    if (this->m_crossStaff) staff = this->m_crossStaff;
+    if (m_crossStaff) staff = m_crossStaff;
 
     bool drawingCueSize = this->GetDrawingCueSize();
     int staffSize = staff->m_drawingStaffSize;
@@ -988,36 +1103,23 @@ int Note::CalcLedgerLines(FunctorParams *functorParams)
     int linesAbove = 0;
     int linesBelow = 0;
 
-    if (!this->HasLedgerLines(linesAbove, linesBelow, staff)) return FUNCTOR_CONTINUE;
+    if (!this->HasLedgerLines(linesAbove, linesBelow, staff)) return FUNCTOR_SIBLINGS;
 
-    const int ledgerLineExtension
-        = params->m_doc->GetOptions()->m_ledgerLineExtension.GetValue() * params->m_doc->GetDrawingUnit(staffSize);
-    int leftExtender = ledgerLineExtension;
-    int rightExtender = ledgerLineExtension;
-    if (drawingCueSize || (this->GetDrawingDur() >= DUR_8)) {
-        leftExtender = 0.7 * ledgerLineExtension;
-        rightExtender = 0.5 * ledgerLineExtension;
-    }
-
-    if (drawingCueSize) {
-        leftExtender = params->m_doc->GetCueSize(leftExtender);
-        rightExtender = params->m_doc->GetCueSize(rightExtender);
-    }
-
-    int left = this->GetDrawingX() - leftExtender - staffX;
-    int right = this->GetDrawingX() + 2 * radius + rightExtender - staffX;
+    const int extension = params->m_doc->GetDrawingLedgerLineExtension(staffSize, drawingCueSize);
+    const int left = this->GetDrawingX() - extension - staffX;
+    int right = this->GetDrawingX() + 2 * radius + extension - staffX;
     if (this->GetDrawingDur() == DUR_MX) {
         right += 2 * radius;
     }
 
     if (linesAbove > 0) {
-        staff->AddLedgerLineAbove(linesAbove, left, right, drawingCueSize);
+        staff->AddLedgerLineAbove(linesAbove, left, right, extension, drawingCueSize);
     }
     else {
-        staff->AddLedgerLineBelow(linesBelow, left, right, drawingCueSize);
+        staff->AddLedgerLineBelow(linesBelow, left, right, extension, drawingCueSize);
     }
 
-    return FUNCTOR_CONTINUE;
+    return FUNCTOR_SIBLINGS;
 }
 
 int Note::PrepareLayerElementParts(FunctorParams *functorParams)
@@ -1025,7 +1127,7 @@ int Note::PrepareLayerElementParts(FunctorParams *functorParams)
     Stem *currentStem = dynamic_cast<Stem *>(this->FindDescendantByType(STEM, 1));
     Flag *currentFlag = NULL;
     Chord *chord = this->IsChordTone();
-    if (currentStem) currentFlag = dynamic_cast<Flag *>(currentStem->FindDescendantByType(FLAG, 1));
+    if (currentStem) currentFlag = dynamic_cast<Flag *>(currentStem->GetFirst(FLAG));
 
     if (!this->IsChordTone() && !this->IsMensuralDur()) {
         if (!currentStem) {
@@ -1035,7 +1137,7 @@ int Note::PrepareLayerElementParts(FunctorParams *functorParams)
         currentStem->AttGraced::operator=(*this);
         currentStem->AttStems::operator=(*this);
         currentStem->AttStemsCmn::operator=(*this);
-        if (this->GetActualDur() < DUR_2) {
+        if (this->GetActualDur() < DUR_2 || (this->GetStemVisible() == BOOLEAN_false)) {
             currentStem->IsVirtual(true);
         }
     }
@@ -1106,19 +1208,6 @@ int Note::PrepareLyrics(FunctorParams *functorParams)
     return FUNCTOR_CONTINUE;
 }
 
-int Note::PreparePointersByLayer(FunctorParams *functorParams)
-{
-    // Call parent one too
-    LayerElement::PreparePointersByLayer(functorParams);
-
-    PreparePointersByLayerParams *params = vrv_params_cast<PreparePointersByLayerParams *>(functorParams);
-    assert(params);
-
-    params->m_currentNote = this;
-
-    return FUNCTOR_CONTINUE;
-}
-
 int Note::ResetDrawing(FunctorParams *functorParams)
 {
     // Call parent one too
@@ -1147,63 +1236,50 @@ int Note::GenerateMIDI(FunctorParams *functorParams)
     GenerateMIDIParams *params = vrv_params_cast<GenerateMIDIParams *>(functorParams);
     assert(params);
 
-    Note *note = vrv_cast<Note *>(this->ThisOrSameasAsLink());
-    assert(note);
+    // Skip linked notes
+    if (this->HasSameasLink()) {
+        return FUNCTOR_SIBLINGS;
+    }
 
     // If the note is a secondary tied note, then ignore it
-    if (note->GetScoreTimeTiedDuration() < 0.0) {
+    if (this->GetScoreTimeTiedDuration() < 0.0) {
         return FUNCTOR_SIBLINGS;
     }
 
     // For now just ignore grace notes
-    if (note->IsGraceNote()) {
+    if (this->IsGraceNote()) {
         return FUNCTOR_SIBLINGS;
     }
 
-    int pitch = 0;
-    if (note->HasPnum()) {
-        pitch = note->GetPnum();
-    }
-    else {
-        // calc pitch
-        int midiBase = 0;
-        data_PITCHNAME pname = note->GetPname();
-        if (note->HasPnameGes()) pname = note->GetPnameGes();
-        switch (pname) {
-            case PITCHNAME_c: midiBase = 0; break;
-            case PITCHNAME_d: midiBase = 2; break;
-            case PITCHNAME_e: midiBase = 4; break;
-            case PITCHNAME_f: midiBase = 5; break;
-            case PITCHNAME_g: midiBase = 7; break;
-            case PITCHNAME_a: midiBase = 9; break;
-            case PITCHNAME_b: midiBase = 11; break;
-            case PITCHNAME_NONE: break;
-        }
-        int oct = note->GetOct();
-        if (note->HasOctGes()) oct = note->GetOctGes();
-
-        // Check for accidentals
-        midiBase += note->GetChromaticAlteration();
-
-        // Adjustment for transposition intruments
-        midiBase += params->m_transSemi;
-
-        pitch = midiBase + (oct + 1) * 12;
-    }
-
-    // We do store the MIDIPitch in the note even with a sameas
-    this->SetMIDIPitch(pitch);
     int channel = params->m_midiChannel;
     int velocity = MIDI_VELOCITY;
-    if (note->HasVel()) velocity = note->GetVel();
+    if (this->HasVel()) velocity = this->GetVel();
 
-    double starttime = params->m_totalTime + note->GetScoreTimeOnset();
-    double stoptime = params->m_totalTime + note->GetScoreTimeOffset() + note->GetScoreTimeTiedDuration();
+    double starttime = params->m_totalTime + this->GetScoreTimeOnset();
 
     int tpq = params->m_midiFile->getTPQ();
 
-    params->m_midiFile->addNoteOn(params->m_midiTrack, starttime * tpq, channel, pitch, velocity);
-    params->m_midiFile->addNoteOff(params->m_midiTrack, stoptime * tpq, channel, pitch);
+    // Check if note was expanded into sequence of short notes due to trills/tremolandi
+    // Play either the expanded note sequence or a single note
+    if (params->m_expandedNotes.find(this) != params->m_expandedNotes.end()) {
+        for (const auto &midiNote : params->m_expandedNotes[this]) {
+            double stoptime = starttime + midiNote.duration;
+
+            params->m_midiFile->addNoteOn(params->m_midiTrack, starttime * tpq, channel, midiNote.pitch, velocity);
+            params->m_midiFile->addNoteOff(params->m_midiTrack, stoptime * tpq, channel, midiNote.pitch);
+
+            starttime = stoptime;
+        }
+    }
+    else {
+        double stoptime = params->m_totalTime + this->GetScoreTimeOffset() + this->GetScoreTimeTiedDuration();
+
+        this->CalcMIDIPitch(params->m_transSemi);
+        char pitch = this->GetMIDIPitch();
+
+        params->m_midiFile->addNoteOn(params->m_midiTrack, starttime * tpq, channel, pitch, velocity);
+        params->m_midiFile->addNoteOff(params->m_midiTrack, stoptime * tpq, channel, pitch);
+    }
 
     return FUNCTOR_SIBLINGS;
 }

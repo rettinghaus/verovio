@@ -59,6 +59,7 @@ class PgFoot;
 class PgFoot;
 class PgHead;
 class PgHead2;
+class PitchInflection;
 class Reh;
 class Rend;
 class RunningElement;
@@ -193,17 +194,20 @@ protected:
     void DrawStaffDef(DeviceContext *dc, Staff *staff, Measure *measure);
     void DrawStaffDefCautionary(DeviceContext *dc, Staff *staff, Measure *measure);
     void DrawStaffDefLabels(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, int x, bool abbreviations = false);
+    void DrawGrpSym(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, int &x);
     void DrawLabels(
         DeviceContext *dc, System *system, Object *object, int x, int y, bool abbreviations, int staffSize, int space);
     void DrawBracket(DeviceContext *dc, int x, int y1, int y2, int staffSize);
     void DrawBracketsq(DeviceContext *dc, int x, int y1, int y2, int staffSize);
     void DrawBrace(DeviceContext *dc, int x, int y1, int y2, int staffSize);
     void DrawBarLines(DeviceContext *dc, Measure *measure, StaffGrp *staffGrp, BarLine *barLine, bool isLastMeasure);
-    void DrawBarLine(DeviceContext *dc, int y_top, int y_bottom, BarLine *barLine, bool eraseIntersections = false);
+    void DrawBarLine(DeviceContext *dc, int y_top, int y_bottom, BarLine *barLine, data_BARRENDITION form,
+        bool eraseIntersections = false);
     void DrawBarLineDots(DeviceContext *dc, Staff *staff, BarLine *barLine);
-    void DrawLedgerLines(DeviceContext *dc, Staff *staff, ArrayOfLedgerLines *lines, bool below, bool cueSize);
+    void DrawLedgerLines(DeviceContext *dc, Staff *staff, const ArrayOfLedgerLines &lines, bool below, bool cueSize);
     void DrawMeasure(DeviceContext *dc, Measure *measure, System *system);
-    void DrawMNum(DeviceContext *dc, MNum *mnum, Measure *measure);
+    void DrawMeterSigGrp(DeviceContext *dc, Layer *layer, Staff *staff);
+    void DrawMNum(DeviceContext *dc, MNum *mnum, Measure *measure, int yOffset);
     void DrawStaff(DeviceContext *dc, Staff *staff, Measure *measure, System *system);
     void DrawStaffLines(DeviceContext *dc, Staff *staff, Measure *measure, System *system);
     void DrawLayer(DeviceContext *dc, Layer *layer, Staff *staff, Measure *measure);
@@ -282,7 +286,6 @@ protected:
     ///@{
     void DrawAccid(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     void DrawArtic(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
-    void DrawArticPart(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     void DrawBarLine(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     void DrawBeatRpt(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     void DrawBTrem(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
@@ -322,12 +325,9 @@ protected:
     ///@{
     void DrawAcciaccaturaSlash(DeviceContext *dc, Stem *stem, Staff *staff);
     void DrawDotsPart(DeviceContext *dc, int x, int y, unsigned char dots, Staff *staff);
-    void DrawLigatureNote(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff);
-    void DrawMeterSigFigures(DeviceContext *dc, int x, int y, int num, int den, Staff *staff);
+    void DrawMeterSigFigures(
+        DeviceContext *dc, int x, int y, const std::vector<int> &numSummands, int den, Staff *staff);
     void DrawMRptPart(DeviceContext *dc, int xCentered, wchar_t smulfCode, int num, bool line, Staff *staff);
-    void DrawRestBreve(DeviceContext *dc, int x, int y, Staff *staff);
-    void DrawRestLong(DeviceContext *dc, int x, int y, Staff *staff);
-    void DrawRestWhole(DeviceContext *dc, int x, int y, int valeur, bool cueSize, Staff *staff);
     ///@}
 
     /**
@@ -426,6 +426,8 @@ protected:
         DeviceContext *dc, Octave *octave, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
     void DrawPedalLine(
         DeviceContext *dc, Pedal *pedal, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
+    void DrawPitchInflection(DeviceContext *dc, PitchInflection *pitchInflection, int x1, int x2, Staff *staff,
+        char spanningType, Object *graphic = NULL);
     void DrawSlur(
         DeviceContext *dc, Slur *slur, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
     void DrawTie(DeviceContext *dc, Tie *tie, int x1, int x2, Staff *staff, char spanningType, Object *graphic = NULL);
@@ -463,7 +465,10 @@ protected:
     void DrawMensur(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     void DrawMensuralNote(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     void DrawMensuralRest(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
+    void DrawDotInLigature(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
+    void DrawPlica(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     void DrawProport(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
+    ///@}
 
     /**
      * @name Methods for drawing parts of mensural LayerElement child classes.
@@ -474,6 +479,20 @@ protected:
         int originY, int heightY = 0);
     void DrawMaximaToBrevis(DeviceContext *dc, int y, LayerElement *element, Layer *layer, Staff *staff);
     void DrawProportFigures(DeviceContext *dc, int x, int y, int num, int numBase, Staff *staff);
+    void DrawLigatureNote(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff);
+    ///@}
+
+    /**
+     * @name Methods for drawing tab LayerElement child classes.
+     * They are base drawing methods that are called directly from DrawLayerElement.
+     * Because some elements draw their children recursively (e.g., Note) they must all
+     * have the same parameters.
+     * Defined in view_tab.cpp
+     */
+    ///@{
+    void DrawTabDurSym(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
+    void DrawTabGrp(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
+    void DrawTabNote(DeviceContext *dc, LayerElement *element, Layer *layer, Staff *staff, Measure *measure);
     ///@}
 
     /**
@@ -560,16 +579,6 @@ private:
     void DrawBeamSegment(DeviceContext *dc, BeamSegment *segment, BeamDrawingInterface *beamInterface, Layer *layer,
         Staff *staff, Measure *measure);
 
-    /**
-     * Used for calculating clustered information/dot position
-     */
-    bool IsOnStaffLine(int y, Staff *staff);
-
-    /**
-     * Find the nearest unit position in the direction indicated by place.
-     */
-    int GetNearestInterStaffPosition(int y, Staff *staff, data_STAFFREL place);
-
 public:
     /** Document */
     Doc *m_doc;
@@ -615,10 +624,14 @@ protected:
     ScoreDef m_drawingScoreDef;
 
 private:
+    //----------------//
+    // Static members //
+    //----------------//
+
     /** @name Internal values for storing temporary values for ligatures */
     ///@{
-    static int s_drawingLigX[2], s_drawingLigY[2];
-    static bool s_drawingLigObliqua;
+    static thread_local int s_drawingLigX[2], s_drawingLigY[2];
+    static thread_local bool s_drawingLigObliqua;
     ///@}
 };
 

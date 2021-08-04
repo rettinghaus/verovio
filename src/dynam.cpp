@@ -32,6 +32,8 @@ std::wstring dynamSmufl[] = { L"\uE520", L"\uE521", L"\uE522", L"\uE523", L"\uE5
 // Dynam
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<Dynam> s_factory("dynam", DYNAM);
+
 Dynam::Dynam()
     : ControlElement("dynam-")
     , TextListInterface()
@@ -39,12 +41,16 @@ Dynam::Dynam()
     , TimeSpanningInterface()
     , AttExtender()
     , AttLineRendBase()
+    , AttMidiValue()
+    , AttMidiValue2()
     , AttVerticalGroup()
 {
     RegisterInterface(TextDirInterface::GetAttClasses(), TextDirInterface::IsInterface());
     RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
     RegisterAttClass(ATT_EXTENDER);
     RegisterAttClass(ATT_LINERENDBASE);
+    RegisterAttClass(ATT_MIDIVALUE);
+    RegisterAttClass(ATT_MIDIVALUE2);
     RegisterAttClass(ATT_VERTICALGROUP);
 
     Reset();

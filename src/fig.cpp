@@ -23,6 +23,8 @@ namespace vrv {
 // Fig
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<Fig> s_factory("fig", FIG);
+
 Fig::Fig() : TextElement("fig-"), AreaPosInterface()
 {
     RegisterInterface(AreaPosInterface::GetAttClasses(), AreaPosInterface::IsInterface());

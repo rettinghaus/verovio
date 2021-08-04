@@ -125,13 +125,17 @@ private:
     /* Drawing Id to group floating elements horizontally */
     int m_drawingGrpId;
 
+    //----------------//
+    // Static members //
+    //----------------//
+
     /**
      * A vector for storing object / ids mapping.
      * When a group is created based on an object address, it is stack on the vector.
      * The ids of the group is then the position in the vector + GRPS_BASE_ID.
      * Groups coded in MEI have negative ids (-@vgrp value)
      */
-    static std::vector<void *> s_drawingObjectIds;
+    static thread_local std::vector<void *> s_drawingObjectIds;
 };
 
 //----------------------------------------------------------------------------
@@ -281,7 +285,7 @@ public:
      * Calculate the adjustment needed for an element for the curve not to overlap with it.
      * Discard will be true if the element already fits.
      */
-    int CalcAdjustment(BoundingBox *boundingBox, bool &discard, int margin = 0);
+    int CalcAdjustment(BoundingBox *boundingBox, bool &discard, int margin = 0, bool horizontalOverlap = true);
 
     /**
      * @name Getters for the current parameters
@@ -309,6 +313,15 @@ public:
      */
     const ArrayOfCurveSpannedElements *GetSpannedElements() { return &m_spannedElements; }
 
+    /**
+     * @name Getter, setter and checker for the crossStaff
+     */
+    ///@{
+    void SetCrossStaff(Staff *crossStaff) { m_crossStaff = crossStaff; }
+    Staff *GetCrossStaff() const { return m_crossStaff; }
+    bool IsCrossStaff() const { return m_crossStaff != NULL; }
+    ///@}
+
 private:
     //
 public:
@@ -323,6 +336,7 @@ private:
     float m_angle;
     int m_thickness;
     curvature_CURVEDIR m_dir;
+    Staff *m_crossStaff;
     ///@}
 
     ArrayOfCurveSpannedElements m_spannedElements;

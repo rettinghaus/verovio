@@ -8,6 +8,7 @@
 #ifndef __VRV_REST_H__
 #define __VRV_REST_H__
 
+#include "atts_externalsymbols.h"
 #include "atts_mensural.h"
 #include "durationinterface.h"
 #include "layerelement.h"
@@ -37,6 +38,7 @@ class Rest : public LayerElement,
              public PositionInterface,
              public AttColor,
              public AttCue,
+             public AttExtSym,
              public AttRestVisMensural {
 public:
     /**
@@ -80,14 +82,14 @@ public:
      */
     wchar_t GetRestGlyph() const;
 
-    /**
-     * Get the vertical offset for each glyph.
-     */
-    int GetRestLocOffset(int loc);
-
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * See Object::AdjustBeams
+     */
+    virtual int AdjustBeams(FunctorParams *functorParams);
 
     /**
      * See Object::ConvertMarkupAnalytical
@@ -134,7 +136,7 @@ private:
      * Get the rest vertical location relative to location of elements placed on other layers
      */
     std::pair<int, RestAccidental> GetLocationRelativeToOtherLayers(
-        const ListOfObjects &layersList, Layer *currentLayer);
+        const ListOfObjects &layersList, Layer *currentLayer, bool isTopLayer);
 
     /**
      * Get the rest vertical location relative to location of elements placed on current layers
@@ -149,7 +151,7 @@ private:
     /**
      * Get location of the object on the layer if it's note, chord or ftrem
      */
-    std::pair<int, RestAccidental> GetElementLocation(Object *object, Layer *layer, bool isTopLayer);
+    std::pair<int, RestAccidental> GetElementLocation(Object *object, Layer *layer, bool isTopLayer) const;
 
     /**
      * Get correct offset for the rest from the options based on layer and location

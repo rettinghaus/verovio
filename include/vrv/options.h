@@ -51,15 +51,22 @@ class OptionGrp;
 // Option defines
 //----------------------------------------------------------------------------
 
-enum option_BREAKS { BREAKS_none = 0, BREAKS_auto, BREAKS_line, BREAKS_encoded };
+enum option_BREAKS { BREAKS_none = 0, BREAKS_auto, BREAKS_line, BREAKS_smart, BREAKS_encoded };
+
+enum option_CONDENSE { CONDENSE_none = 0, CONDENSE_auto, CONDENSE_all, CONDENSE_encoded };
 
 enum option_FOOTER { FOOTER_none = 0, FOOTER_auto, FOOTER_encoded, FOOTER_always };
 
 enum option_HEADER { HEADER_none = 0, HEADER_auto, HEADER_encoded };
 
-enum option_MEASURENUMBER { MEASURENUMBER_system = 0, MEASURENUMBER_interval };
+enum option_MULTIRESTSTYLE {
+    MULTIRESTSTYLE_auto = 0,
+    MULTIRESTSTYLE_default,
+    MULTIRESTSTYLE_block,
+    MULTIRESTSTYLE_symbols
+};
 
-enum option_SYSTEMDIVIDER { SYSTEMDIVIDER_none = 0, SYSTEMDIVIDER_left, SYSTEMDIVIDER_left_right };
+enum option_SYSTEMDIVIDER { SYSTEMDIVIDER_none = 0, SYSTEMDIVIDER_auto, SYSTEMDIVIDER_left, SYSTEMDIVIDER_left_right };
 
 //----------------------------------------------------------------------------
 // Option
@@ -71,9 +78,14 @@ enum option_SYSTEMDIVIDER { SYSTEMDIVIDER_none = 0, SYSTEMDIVIDER_left, SYSTEMDI
 class Option {
 public:
     // constructors and destructors
-    Option() : m_isSet(false) {}
+    Option()
+    {
+        m_isSet = false;
+        m_shortOption = 0;
+        m_isCmdOnly = false;
+    }
     virtual ~Option() {}
-    virtual void CopyTo(Option *option);
+    virtual void CopyTo(Option *option) = 0;
 
     void SetKey(const std::string &key) { m_key = key; }
     std::string GetKey() const { return m_key; }
@@ -82,24 +94,40 @@ public:
     virtual bool SetValueDbl(double value);
     virtual bool SetValueArray(const std::vector<std::string> &values);
     virtual bool SetValue(const std::string &value);
-    virtual std::string GetStrValue() const;
-    virtual std::string GetDefaultStrValue() const;
+    virtual std::string GetStrValue() const = 0;
+    virtual std::string GetDefaultStrValue() const = 0;
+
+    virtual void Reset() = 0;
 
     void SetInfo(const std::string &title, const std::string &description);
     std::string GetTitle() const { return m_title; }
     std::string GetDescription() const { return m_description; }
 
-    bool isSet() const { return m_isSet; }
+    bool IsSet() const { return m_isSet; }
+
+    void SetShortOption(char shortOption, bool isCmdOnly);
+    char GetShortOption() const { return m_shortOption; }
+    bool IsCmdOnly() const { return m_isCmdOnly; }
+
+    /**
+     * Return a JSON object for the option
+     */
+    jsonxx::Object ToJson() const;
 
 public:
+    //----------------//
+    // Static members //
+    //----------------//
+
     /**
      * Static maps used my OptionIntMap objects. Set in OptIntMap::Init
      */
-    static std::map<int, std::string> s_breaks;
-    static std::map<int, std::string> s_footer;
-    static std::map<int, std::string> s_header;
-    static std::map<int, std::string> s_measureNumber;
-    static std::map<int, std::string> s_systemDivider;
+    static const std::map<int, std::string> s_breaks;
+    static const std::map<int, std::string> s_condense;
+    static const std::map<int, std::string> s_footer;
+    static const std::map<int, std::string> s_header;
+    static const std::map<int, std::string> s_multiRestStyle;
+    static const std::map<int, std::string> s_systemDivider;
 
 protected:
     std::string m_title;
@@ -108,6 +136,10 @@ protected:
 
 private:
     std::string m_key;
+    /* the character for a short option - not set (0) by default) */
+    char m_shortOption;
+    /* a flag indicating that the option is available only on the command line */
+    bool m_isCmdOnly;
 };
 
 //----------------------------------------------------------------------------
@@ -120,7 +152,7 @@ private:
 class OptionBool : public Option {
 public:
     // constructors and destructors
-    OptionBool() {}
+    OptionBool() { m_defaultValue = false; }
     virtual ~OptionBool() {}
     virtual void CopyTo(Option *option);
     void Init(bool defaultValue);
@@ -130,6 +162,8 @@ public:
     virtual bool SetValue(const std::string &value);
     virtual std::string GetStrValue() const;
     virtual std::string GetDefaultStrValue() const;
+
+    virtual void Reset();
 
     bool GetValue() const { return m_value; }
     bool GetDefault() const { return m_defaultValue; }
@@ -154,7 +188,12 @@ private:
 class OptionDbl : public Option {
 public:
     // constructors and destructors
-    OptionDbl() {}
+    OptionDbl()
+    {
+        m_defaultValue = 0.0;
+        m_minValue = 0.0;
+        m_maxValue = 0.0;
+    }
     virtual ~OptionDbl() {}
     virtual void CopyTo(Option *option);
     void Init(double defaultValue, double minValue, double maxValue);
@@ -163,6 +202,8 @@ public:
     virtual bool SetValue(const std::string &value);
     virtual std::string GetStrValue() const;
     virtual std::string GetDefaultStrValue() const;
+
+    virtual void Reset();
 
     double GetValue() const { return m_value; }
     double GetDefault() const { return m_defaultValue; }
@@ -191,7 +232,12 @@ private:
 class OptionInt : public Option {
 public:
     // constructors and destructors
-    OptionInt() {}
+    OptionInt()
+    {
+        m_defaultValue = 0;
+        m_minValue = 0;
+        m_maxValue = 0;
+    }
     virtual ~OptionInt() {}
     virtual void CopyTo(Option *option);
     void Init(int defaultValue, int minValue, int maxValue, bool definitionFactor = false);
@@ -200,6 +246,8 @@ public:
     virtual bool SetValue(const std::string &value);
     virtual std::string GetStrValue() const;
     virtual std::string GetDefaultStrValue() const;
+
+    virtual void Reset();
 
     int GetValue() const;
     int GetUnfactoredValue() const;
@@ -242,6 +290,8 @@ public:
     std::string GetValue() const { return m_value; }
     std::string GetDefault() const { return m_defaultValue; }
 
+    virtual void Reset();
+
 private:
     //
 public:
@@ -275,6 +325,8 @@ public:
     std::vector<std::string> GetDefault() const { return m_defaultValues; }
     bool SetValue(std::vector<std::string> const &values);
 
+    virtual void Reset();
+
 private:
     //
 public:
@@ -297,7 +349,7 @@ public:
     OptionIntMap();
     virtual ~OptionIntMap() {}
     virtual void CopyTo(Option *option);
-    void Init(int defaultValue, std::map<int, std::string> *values);
+    void Init(int defaultValue, const std::map<int, std::string> *values);
 
     virtual bool SetValue(const std::string &value);
     virtual std::string GetStrValue() const;
@@ -310,12 +362,14 @@ public:
     std::vector<std::string> GetStrValues(bool withoutDefault) const;
     std::string GetStrValuesAsStr(bool withoutDefault) const;
 
+    virtual void Reset();
+
 private:
     //
 public:
     //
 private:
-    std::map<int, std::string> *m_values;
+    const std::map<int, std::string> *m_values;
     int m_value;
     int m_defaultValue;
 };
@@ -340,7 +394,9 @@ public:
     virtual std::string GetStrValue() const;
     virtual std::string GetDefaultStrValue() const;
 
-    // For altenate types return a reference to the value
+    virtual void Reset();
+
+    // For alternate types return a reference to the value
     // Alternatively we can have a values vector for each sub-type
     const data_STAFFREL *GetValueAlternate() const { return &m_value; }
     const data_STAFFREL *GetDefaultAlernate() const { return &m_defaultValue; }
@@ -355,66 +411,71 @@ private:
 };
 
 //----------------------------------------------------------------------------
-// OptionStaffrelBasic
-//----------------------------------------------------------------------------
-
-/**
- * This class is for map styling params
- */
-class OptionStaffrelBasic : public Option {
-public:
-    // constructors and destructors
-    OptionStaffrelBasic(){};
-    virtual ~OptionStaffrelBasic(){};
-    virtual void CopyTo(Option *option);
-    void Init(data_STAFFREL_basic defaultValue, const std::vector<data_STAFFREL_basic> &values);
-
-    virtual bool SetValue(const std::string &value);
-    virtual std::string GetStrValue() const;
-    virtual std::string GetDefaultStrValue() const;
-
-    data_STAFFREL_basic GetValue() const { return m_value; }
-    data_STAFFREL_basic GetDefault() const { return m_defaultValue; }
-
-private:
-    //
-public:
-    //
-private:
-    std::vector<data_STAFFREL_basic> m_values;
-    data_STAFFREL_basic m_value;
-    data_STAFFREL_basic m_defaultValue;
-};
-
-//----------------------------------------------------------------------------
 // OptionJson
 //----------------------------------------------------------------------------
+
+/// Distinguish whether Json is passed directly or should be read from file
+enum class JsonSource { String, FilePath };
 
 /**
  * This class is for Json input params
  */
 
 class OptionJson : public Option {
-    using JsonPath = std::vector<std::reference_wrapper<jsonxx::Value> >;
+    using JsonPath = std::vector<std::reference_wrapper<jsonxx::Value>>;
 
 public:
-    //
+    /**
+     * @name Constructor, destructor and initialization
+     */
+    ///@{
     OptionJson() = default;
     virtual ~OptionJson() = default;
-    virtual void Init(const std::string &defaultValue);
+    void CopyTo(Option *option) override;
+    void Init(JsonSource source, const std::string &defaultValue);
+    ///@}
 
-    virtual bool SetValue(const std::string &jsonFilePath);
-    // virtual std::string GetStrValue() const;
+    /**
+     * Member access
+     */
+    JsonSource GetSource() const;
+    jsonxx::Object GetValue(bool getDefault = false) const;
 
+    /**
+     * Interface methods: accessing values as string
+     */
+    ///@{
+    bool SetValue(const std::string &value) override;
+    std::string GetStrValue() const override;
+    std::string GetDefaultStrValue() const override;
+
+    void Reset() override;
+    ///@}
+
+    /**
+     * Accessing values as json node path
+     */
+    ///@{
+    bool HasValue(const std::vector<std::string> &jsonNodePath) const;
     int GetIntValue(const std::vector<std::string> &jsonNodePath, bool getDefault = false) const;
     double GetDoubleValue(const std::vector<std::string> &jsonNodePath, bool getDefault = false) const;
-    //
     bool UpdateNodeValue(const std::vector<std::string> &jsonNodePath, const std::string &value);
-    //
+    ///@}
+
+    /**
+     * Accessing all keys
+     */
+    std::set<std::string> GetKeys() const;
+
 protected:
     JsonPath StringPath2NodePath(const jsonxx::Object &obj, const std::vector<std::string> &jsonNodePath) const;
-    //
+
+    /// Read json from string or file
+    bool ReadJson(jsonxx::Object &output, const std::string &input) const;
+
 private:
+    JsonSource m_source = JsonSource::String;
+
     jsonxx::Object m_values;
     jsonxx::Object m_defaultValues;
 };
@@ -472,6 +533,10 @@ public:
 
     std::vector<OptionGrp *> *GetGrps() { return &m_grps; }
 
+    jsonxx::Object GetBaseOptGrp();
+
+    const std::vector<Option *> *GetBaseOptions();
+
     // post processing of parameters
     void Sync();
 
@@ -482,6 +547,21 @@ public:
     /**
      * Comments in implementation file options.cpp
      */
+    OptionGrp m_baseOptions;
+
+    // These options are only given for documentation - except for m_scale
+    // They are ordered by short option alphabetical order
+    OptionBool m_standardOutput;
+    OptionBool m_help;
+    OptionBool m_allPages;
+    OptionString m_inputFrom;
+    OptionString m_outfile;
+    OptionInt m_page;
+    OptionString m_resourcePath;
+    OptionInt m_scale;
+    OptionString m_outputTo;
+    OptionBool m_version;
+    OptionInt m_xmlIdSeed;
 
     /**
      * General
@@ -491,13 +571,16 @@ public:
     OptionBool m_adjustPageHeight;
     OptionBool m_adjustPageWidth;
     OptionIntMap m_breaks;
-    OptionBool m_condenseEncoded;
+    OptionDbl m_breaksSmartSb;
+    OptionIntMap m_condense;
     OptionBool m_condenseFirstPage;
     OptionBool m_condenseTempoPages;
     OptionBool m_evenNoteSpacing;
+    OptionString m_expand;
     OptionBool m_humType;
     OptionBool m_justifyVertically;
     OptionBool m_landscape;
+    OptionBool m_ligatureAsBracket;
     OptionBool m_mensuralToMeasure;
     OptionDbl m_midiTempoAdjustment;
     OptionDbl m_minLastJustification;
@@ -506,6 +589,7 @@ public:
     OptionIntMap m_header;
     OptionBool m_noJustification;
     OptionBool m_openControlEvents;
+    OptionBool m_outputFormatRaw;
     OptionInt m_outputIndent;
     OptionBool m_outputIndentTab;
     OptionBool m_outputSmuflXmlEntities;
@@ -515,11 +599,14 @@ public:
     OptionInt m_pageMarginRight;
     OptionInt m_pageMarginTop;
     OptionInt m_pageWidth;
-    OptionString m_expand;
+    OptionBool m_preserveAnalyticalMarkup;
+    OptionBool m_removeIds;
     OptionBool m_shrinkToFit;
     OptionBool m_svgBoundingBoxes;
     OptionBool m_svgViewBox;
     OptionBool m_svgHtml5;
+    OptionBool m_svgFormatRaw;
+    OptionBool m_svgRemoveXlink;
     OptionInt m_unit;
     OptionBool m_useFacsimile;
     OptionBool m_usePgFooterForAll;
@@ -536,13 +623,18 @@ public:
     OptionInt m_beamMaxSlope;
     OptionInt m_beamMinSlope;
     OptionDbl m_bracketThickness;
+    OptionDbl m_dynamDist;
+    OptionDbl m_clefChangeFactor;
     OptionJson m_engravingDefaults;
+    OptionJson m_engravingDefaultsFile;
+    OptionBool m_breaksNoWidow;
     OptionString m_font;
     OptionDbl m_graceFactor;
     OptionBool m_graceRhythmAlign;
     OptionBool m_graceRightAlign;
     OptionDbl m_hairpinSize;
     OptionDbl m_hairpinThickness;
+    OptionDbl m_harmDist;
     OptionDbl m_justificationBraceGroup;
     OptionDbl m_justificationBracketGroup;
     OptionDbl m_justificationStaff;
@@ -554,9 +646,14 @@ public:
     OptionBool m_lyricNoStartHyphen;
     OptionDbl m_lyricSize;
     OptionDbl m_lyricTopMinMargin;
+    OptionBool m_lyricVerseCollapse;
     OptionDbl m_lyricWordSpace;
     OptionInt m_measureMinWidth;
-    OptionIntMap m_measureNumber;
+    OptionInt m_mnumInterval;
+    OptionIntMap m_multiRestStyle;
+    OptionBool m_octaveAlternativeSymbols;
+    OptionDbl m_octaveLineThickness;
+    OptionDbl m_pedalLineThickness;
     OptionDbl m_repeatBarLineDotSeparation;
     OptionDbl m_repeatEndingLineThickness;
     OptionInt m_slurControlPoints;
@@ -584,6 +681,7 @@ public:
     OptionDbl m_tieEndpointThickness;
     OptionDbl m_tieMidpointThickness;
     OptionDbl m_tupletBracketThickness;
+    OptionBool m_tupletNumHead;
 
     /**
      * Selectors
@@ -607,6 +705,7 @@ public:
     OptionDbl m_defaultRightMargin;
     OptionDbl m_defaultTopMargin;
     //
+    OptionDbl m_bottomMarginArtic;
     OptionDbl m_bottomMarginHarm;
     OptionDbl m_bottomMarginPgHead;
     //
@@ -626,6 +725,7 @@ public:
     OptionDbl m_leftMarginNote;
     OptionDbl m_leftMarginRest;
     OptionDbl m_leftMarginRightBarLine;
+    OptionDbl m_leftMarginTabDurSym;
     //
     OptionDbl m_rightMarginAccid;
     OptionDbl m_rightMarginBarLine;
@@ -643,16 +743,15 @@ public:
     OptionDbl m_rightMarginNote;
     OptionDbl m_rightMarginRest;
     OptionDbl m_rightMarginRightBarLine;
+    OptionDbl m_rightMarginTabDurSym;
     //
+    OptionDbl m_topMarginArtic;
     OptionDbl m_topMarginHarm;
 
     /**
      * Deprecated options
      */
     OptionGrp m_deprecated;
-
-    OptionDbl m_slurThickness;
-    OptionDbl m_tieThickness;
 
 private:
     /** The array of style parameters */

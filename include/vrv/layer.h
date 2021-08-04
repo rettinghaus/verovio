@@ -104,28 +104,36 @@ public:
     ///@}
 
     /**
-     * Get the number of layer used for the duration of an element.
-     * Takes into account cross-staff situations.
+     * @name Get the layers used for the duration of an element.
+     * Takes into account cross-staff situations: cross staff layers have negative N.
      */
+    ///@{
+    std::set<int> GetLayersNForTimeSpanOf(LayerElement *element);
     int GetLayerCountForTimeSpanOf(LayerElement *element);
+    ///@}
 
     /**
-     * Get the number of layer used within a time span.
-     * Takes into account cross-staff situations.
+     * @name Get the layers used within a time span.
+     * Takes into account cross-staff situations: cross staff layers have negative N.
      */
+    ///@{
+    std::set<int> GetLayersNInTimeSpan(double time, double duration, Measure *measure, int staff);
     int GetLayerCountInTimeSpan(double time, double duration, Measure *measure, int staff);
+    ///@}
 
     /**
      * Get the list of the layer elements for the duration of an element
      * Takes into account cross-staff situations.
+     * If excludeCurrent is specified, gets the list of layer elements for all layers except current
      */
-    ListOfObjects GetLayerElementsForTimeSpanOf(LayerElement *element);
+    ListOfObjects GetLayerElementsForTimeSpanOf(LayerElement *element, bool excludeCurrent = false);
 
     /**
      * Get the list of the layer elements used within a time span.
      * Takes into account cross-staff situations.
      */
-    ListOfObjects GetLayerElementsInTimeSpan(double time, double duration, Measure *measure, int staff);
+    ListOfObjects GetLayerElementsInTimeSpan(
+        double time, double duration, Measure *measure, int staff, bool excludeCurrent);
 
     Clef *GetCurrentClef() const;
     KeySig *GetCurrentKeySig() const;
@@ -145,7 +153,11 @@ public:
     KeySig *GetStaffDefKeySig() { return m_staffDefKeySig; }
     Mensur *GetStaffDefMensur() { return m_staffDefMensur; }
     MeterSig *GetStaffDefMeterSig() { return m_staffDefMeterSig; }
-    bool HasStaffDef() { return (m_staffDefClef || m_staffDefKeySig || m_staffDefMensur || m_staffDefMeterSig); }
+    MeterSigGrp *GetStaffDefMeterSigGrp() { return m_staffDefMeterSigGrp; }
+    bool HasStaffDef()
+    {
+        return (m_staffDefClef || m_staffDefKeySig || m_staffDefMensur || m_staffDefMeterSig || m_staffDefMeterSigGrp);
+    }
 
     /**
      * Set drawing clef, keysig and mensur if necessary and if available.
@@ -164,9 +176,24 @@ public:
             m_cautionStaffDefClef || m_cautionStaffDefKeySig || m_cautionStaffDefMensur || m_cautionStaffDefMeterSig);
     }
 
+    /**
+     * @name Setter and getter for the cross-staff flags
+     */
+    //@{
+    void SetCrossStaffFromAbove(bool crossStaff) { m_crossStaffFromAbove = crossStaff; }
+    bool HasCrossStaffFromAbove() const { return m_crossStaffFromAbove; }
+    void SetCrossStaffFromBelow(bool crossStaff) { m_crossStaffFromBelow = crossStaff; }
+    bool HasCrossStaffFromBelow() const { return m_crossStaffFromBelow; }
+    ///@}
+
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * See Object::ConvertMarkupArtic
+     */
+    virtual int ConvertMarkupArticEnd(FunctorParams *functorParams);
 
     /**
      * See Object::ConvertToCastOffMensural
@@ -179,9 +206,9 @@ public:
     virtual int ConvertToUnCastOffMensural(FunctorParams *params);
 
     /**
-     * See Object::UnsetCurrentScoreDef
+     * See Object::UnscoreDefSetCurrent
      */
-    virtual int UnsetCurrentScoreDef(FunctorParams *functorParams);
+    virtual int ScoreDefUnsetCurrent(FunctorParams *functorParams);
 
     /**
      * See Object::ResetHorizontalAlignment
@@ -225,7 +252,7 @@ public:
      * See Object::ResetDrawing
      * To be added once Layer implements LinkingInterface
      */
-    // virtual int ResetDrawing(FunctorParams *);
+    virtual int ResetDrawing(FunctorParams *);
 
 private:
     //
@@ -233,15 +260,22 @@ public:
     //
 private:
     /**
-     *
+     * The drawing stem direction of the layer based on the number of layers in the staff
      */
     data_STEMDIRECTION m_drawingStemDir;
+
+    /**
+     * Two flags indicating when a layer is also used from cross-staff content from below or above
+     */
+    bool m_crossStaffFromBelow;
+    bool m_crossStaffFromAbove;
 
     /** */
     Clef *m_staffDefClef;
     KeySig *m_staffDefKeySig;
     Mensur *m_staffDefMensur;
     MeterSig *m_staffDefMeterSig;
+    MeterSigGrp *m_staffDefMeterSigGrp;
     bool m_drawKeySigCancellation;
 
     /** */

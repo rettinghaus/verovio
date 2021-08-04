@@ -21,6 +21,8 @@ namespace vrv {
 // Custos
 //----------------------------------------------------------------------------
 
+static const ClassRegistrar<Custos> s_factory("custos", CUSTOS);
+
 Custos::Custos() : LayerElement("custos-"), PitchInterface(), PositionInterface(), AttColor()
 {
     RegisterInterface(PitchInterface::GetAttClasses(), PitchInterface::IsInterface());
@@ -38,6 +40,17 @@ void Custos::Reset()
     PitchInterface::Reset();
     PositionInterface::Reset();
     ResetColor();
+}
+
+bool Custos::IsSupportedChild(Object *child)
+{
+    if (child->Is(ACCID)) {
+        assert(dynamic_cast<Accid *>(child));
+    }
+    else {
+        return false;
+    }
+    return true;
 }
 
 //----------------------------------------------------------------------------
