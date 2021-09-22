@@ -301,8 +301,11 @@ void View::DrawAccid(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
         y = (accid->GetPlace() == STAFFREL_below) ? y - extend.m_ascent - unit : y + extend.m_descent + unit;
     }
 
+    FontInfo *fontInfo = m_doc->GetDrawingSmuflFont(staff->m_drawingStaffSize, accid->GetDrawingCueSize());
+    fontInfo->SetInterval(m_doc->GetDrawingUnit(staff->m_drawingStaffSize) / 6);
     this->DrawSmuflString(
         dc, x, y, accidStr, HORIZONTALALIGNMENT_center, staff->m_drawingStaffSize, accid->GetDrawingCueSize(), true);
+    fontInfo->SetInterval(0);
 
     dc->EndGraphic(element, this);
 }

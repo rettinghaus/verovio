@@ -1077,6 +1077,16 @@ void SvgDeviceContext::DrawText(
     if (m_fontStack.top()->GetLetterSpacing() != 0.0) {
         textChild.append_attribute("letter-spacing")
             = StringFormat("%dpx", m_fontStack.top()->GetLetterSpacing()).c_str();
+    if (m_fontStack.top()->GetStyle() != FONTSTYLE_NONE) {
+        if (m_fontStack.top()->GetStyle() == FONTSTYLE_italic) {
+            textChild.append_attribute("font-style") = "italic";
+        }
+        else if (m_fontStack.top()->GetStyle() == FONTSTYLE_normal) {
+            textChild.append_attribute("font-style") = "normal";
+        }
+        else if (m_fontStack.top()->GetStyle() == FONTSTYLE_oblique) {
+            textChild.append_attribute("font-style") = "oblique";
+        }
     }
     textChild.text().set(svgText.c_str());
 
@@ -1141,6 +1151,9 @@ void SvgDeviceContext::DrawMusicText(const std::u32string &text, int x, int y, b
         else {
             glyph->GetBoundingBox(gx, gy, w, h);
             x += w * m_fontStack.top()->GetPointSize() / glyph->GetUnitsPerEm();
+        }
+        if (m_fontStack.top()->GetInterval() != 0) {
+            x += m_fontStack.top()->GetInterval();
         }
     }
 }

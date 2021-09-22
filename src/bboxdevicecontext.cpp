@@ -382,6 +382,9 @@ void BBoxDeviceContext::DrawMusicText(const std::u32string &text, int x, int y, 
 
         lastCharWidth = advX * m_fontStack.top()->GetPointSize() / glyph->GetUnitsPerEm();
         x += lastCharWidth; // move x to next char
+        if (m_fontStack.top()->GetInterval() != 0) {
+            x += m_fontStack.top()->GetInterval();
+        }
     }
 }
 
