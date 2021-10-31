@@ -428,36 +428,36 @@ public:
  * member 1: the current layerN set in the AlignmentRef (negative values for cross-staff)
  * member 2: the elements for the previous layer(s)
  * member 3: the elements of the current layer
- * member 4: the current note
- * member 5: the current chord (if any)
- * member 6: the doc
- * member 7: a pointer to the functor for passing it to the system aligner
- * member 8: flag whether element is in unison
+ * member 4: the doc
+ * member 5: a pointer to the functor for passing it to the system aligner
+ * member 6: a pointer to the end functor for passing it to the system aligner
+ * member 7: flag whether element is in unison
+ * member 8: the total shift of the current note or chord
  **/
 
 class AdjustLayersParams : public FunctorParams {
 public:
-    AdjustLayersParams(Doc *doc, Functor *functor, const std::vector<int> &staffNs)
+    AdjustLayersParams(Doc *doc, Functor *functor, Functor *functorEnd, const std::vector<int> &staffNs)
     {
         m_currentLayerN = VRV_UNSET;
-        m_currentNote = NULL;
-        m_currentChord = NULL;
         m_doc = doc;
         m_functor = functor;
+        m_functorEnd = functorEnd;
         m_staffNs = staffNs;
         m_unison = false;
         m_ignoreDots = true;
+        m_accumulatedShift = 0;
     }
     std::vector<int> m_staffNs;
     int m_currentLayerN;
     std::vector<LayerElement *> m_previous;
     std::vector<LayerElement *> m_current;
-    Note *m_currentNote;
-    Chord *m_currentChord;
     Doc *m_doc;
     Functor *m_functor;
+    Functor *m_functorEnd;
     bool m_unison;
     bool m_ignoreDots;
+    int m_accumulatedShift;
 };
 
 //----------------------------------------------------------------------------
@@ -492,17 +492,20 @@ public:
 
 /**
  * member 0: a pointer to the previous staff alignment
- * member 1: a pointer to the functor for passing it to the system aligner
+ * member 1: the doc
+ * member 2: a pointer to the functor for passing it to the system aligner
  **/
 
 class AdjustStaffOverlapParams : public FunctorParams {
 public:
-    AdjustStaffOverlapParams(Functor *functor)
+    AdjustStaffOverlapParams(Doc *doc, Functor *functor)
     {
         m_previous = NULL;
+        m_doc = doc;
         m_functor = functor;
     }
     StaffAlignment *m_previous;
+    Doc *m_doc;
     Functor *m_functor;
 };
 
@@ -652,11 +655,14 @@ public:
  * member 5: the list of staffN in the top-level scoreDef
  * member 6: the bounding box in the previous aligner
  * member 7: the upcoming bounding boxes (to be used in the next aligner)
- * member 8: the Doc
- * member 9: the Functor for redirection to the MeasureAligner
- * member 10: the end Functor for redirection
- * member 11: current aligner that is being processed
- * member 12: preceeding aligner that was handled before
+ * member 8: list of types to include
+ * member 9: list of types to exclude
+ * member 10: list of tie endpoints for the current measure
+ * member 11: the Doc
+ * member 12: the Functor for redirection to the MeasureAligner
+ * member 13: the end Functor for redirection
+ * member 14: current aligner that is being processed
+ * member 15: preceeding aligner that was handled before
  **/
 
 class AdjustXPosParams : public FunctorParams {
@@ -674,6 +680,7 @@ public:
         m_functorEnd = functorEnd;
         m_currentAlignment.Reset();
         m_previousAlignment.Reset();
+        m_measureTieEndpoints.clear();
     }
     int m_minPos;
     int m_upcomingMinPos;
@@ -685,6 +692,7 @@ public:
     std::vector<BoundingBox *> m_upcomingBoundingBoxes;
     std::vector<ClassId> m_includes;
     std::vector<ClassId> m_excludes;
+    std::vector<std::pair<LayerElement *, LayerElement *>> m_measureTieEndpoints;
     Doc *m_doc;
     Functor *m_functor;
     Functor *m_functorEnd;
@@ -2111,7 +2119,9 @@ public:
  * member 3: the previous measure (for setting cautionary scoreDef)
  * member 4: the current system (for setting the system scoreDef)
  * member 5: the flag indicating whereas full labels have to be drawn
- * member 6: the doc
+ * member 6: the flag indicating that the scoreDef restarts (draw brace and label)
+ * member 7: the flag indicating is we already have a measure in the system
+ * member 8: the doc
  **/
 
 class ScoreDefSetCurrentParams : public FunctorParams {
@@ -2124,6 +2134,8 @@ public:
         m_previousMeasure = NULL;
         m_currentSystem = NULL;
         m_drawLabels = false;
+        m_restart = false;
+        m_hasMeasure = false;
         m_doc = doc;
     }
     ScoreDef *m_currentScoreDef;
@@ -2132,6 +2144,8 @@ public:
     Measure *m_previousMeasure;
     System *m_currentSystem;
     bool m_drawLabels;
+    bool m_restart;
+    bool m_hasMeasure;
     Doc *m_doc;
 };
 

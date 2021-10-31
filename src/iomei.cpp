@@ -1016,6 +1016,7 @@ void MEIOutput::WriteSection(pugi::xml_node currentNode, Section *section)
 
     WriteSystemElement(currentNode, section);
     section->WriteNNumberLike(currentNode);
+    section->WriteSectionVis(currentNode);
 }
 
 void MEIOutput::WriteEnding(pugi::xml_node currentNode, Ending *ending)
@@ -1136,6 +1137,7 @@ void MEIOutput::WriteStaffGrp(pugi::xml_node currentNode, StaffGrp *staffGrp)
     WriteXmlId(currentNode, staffGrp);
     staffGrp->WriteBasic(currentNode);
     staffGrp->WriteLabelled(currentNode);
+    staffGrp->WriteNNumberLike(currentNode);
     staffGrp->WriteStaffGroupingSym(currentNode);
     staffGrp->WriteStaffGrpVis(currentNode);
     staffGrp->WriteTyped(currentNode);
@@ -3244,6 +3246,12 @@ bool MEIInput::ReadScore(Object *parent, pugi::xml_node score)
         else if (elementName == "section") {
             success = ReadSection(vrvScore, current);
         }
+        else if (elementName == "sb") {
+            success = ReadSb(vrvScore, current);
+        }
+        else if (elementName == "pb") {
+            success = ReadPb(vrvScore, current);
+        }
         // xml comment
         else if (std::string(current.name()) == "") {
             success = ReadXMLComment(parent, current);
@@ -3263,6 +3271,7 @@ bool MEIInput::ReadSection(Object *parent, pugi::xml_node section)
     SetMeiUuid(section, vrvSection);
 
     vrvSection->ReadNNumberLike(section);
+    vrvSection->ReadSectionVis(section);
 
     parent->AddChild(vrvSection);
     ReadUnsupportedAttr(section, vrvSection);
@@ -3807,6 +3816,7 @@ bool MEIInput::ReadStaffGrp(Object *parent, pugi::xml_node staffGrp)
 
     vrvStaffGrp->ReadBasic(staffGrp);
     vrvStaffGrp->ReadLabelled(staffGrp);
+    vrvStaffGrp->ReadNNumberLike(staffGrp);
     AttStaffGroupingSym groupingSym;
     groupingSym.ReadStaffGroupingSym(staffGrp);
     if (groupingSym.HasSymbol()) {
