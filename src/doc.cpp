@@ -146,6 +146,8 @@ void Doc::Reset()
 
     m_drawingSmuflFontSize = 0;
     m_drawingLyricFontSize = 0;
+    m_fingeringFontSize = 0;
+    m_drawingLyricLetterSpacing = 0;
 
     m_header.reset();
     m_front.reset();
@@ -2024,6 +2026,7 @@ FontInfo *Doc::GetDrawingSmuflFont(int staffSize, bool graceSize)
 FontInfo *Doc::GetDrawingLyricFont(int staffSize)
 {
     m_drawingLyricFont.SetPointSize(m_drawingLyricFontSize * staffSize / 100);
+    m_drawingLyricFont.SetLetterSpacing(m_drawingLyricLetterSpacing);
     return &m_drawingLyricFont;
 }
 
@@ -2293,6 +2296,9 @@ void Doc::UpdatePageDrawingSizes()
     m_drawingSmuflFontSize = this->CalcMusicFontSize();
     m_drawingLyricFontSize = m_options->m_unit.GetValue() * m_options->m_lyricSize.GetValue();
     m_fingeringFontSize = m_drawingLyricFontSize * m_options->m_fingeringScale.GetValue();
+
+    // values for font letter spacing
+    m_drawingLyricLetterSpacing = m_options->m_unit.GetValue() * m_options->m_lyricLetterSpacing.GetValue();
 
     glyph_size = this->GetGlyphWidth(SMUFL_E0A2_noteheadWhole, 100, 0);
 

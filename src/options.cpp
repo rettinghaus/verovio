@@ -1397,6 +1397,10 @@ Options::Options()
     m_lyricWordSpace.Init(1.20, 0.00, 10.00);
     this->Register(&m_lyricWordSpace, "lyricWordSpace", &m_generalLayout);
 
+    m_lyricLetterSpacing.SetInfo("Lyric letter spacing", "The lyric spacing between letters");
+    m_lyricLetterSpacing.Init(0.0, 0.0, 1.00);
+    this->Register(&m_lyricLetterSpacing, "lyricLetterSpacing", &m_generalLayout);
+
     m_lyricVerseCollapse.SetInfo("Lyric verse collapse", "Collapse empty verse lines in lyrics");
     m_lyricVerseCollapse.Init(false);
     this->Register(&m_lyricVerseCollapse, "lyricVerseCollapse", &m_generalLayout);

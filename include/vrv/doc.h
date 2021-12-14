@@ -688,8 +688,10 @@ private:
     int m_drawingSmuflFontSize;
     /** Lyric font size  */
     int m_drawingLyricFontSize;
-    /** Fingering font size*/
+    /** Fingering font size */
     int m_fingeringFontSize;
+    /** Lyric letter spacing */
+    int m_drawingLyricLetterSpacing;
     /** Current music font */
     FontInfo m_drawingSmuflFont;
     /** Current lyric font */

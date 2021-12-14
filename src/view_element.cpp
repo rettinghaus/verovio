@@ -302,10 +302,12 @@ void View::DrawAccid(DeviceContext *dc, LayerElement *element, Layer *layer, Sta
     }
 
     FontInfo *fontInfo = m_doc->GetDrawingSmuflFont(staff->m_drawingStaffSize, accid->GetDrawingCueSize());
-    fontInfo->SetInterval(m_doc->GetDrawingUnit(staff->m_drawingStaffSize) / 6);
+    // change interval based on the font size
+    const int interval = fontInfo->GetPointSize() / 50;
+    fontInfo->SetMusicTextInterval(interval);
     this->DrawSmuflString(
         dc, x, y, accidStr, HORIZONTALALIGNMENT_center, staff->m_drawingStaffSize, accid->GetDrawingCueSize(), true);
-    fontInfo->SetInterval(0);
+    fontInfo->SetMusicTextInterval(0);
 
     dc->EndGraphic(element, this);
 }

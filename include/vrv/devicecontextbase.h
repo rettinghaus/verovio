@@ -150,6 +150,8 @@ public:
         m_widthToHeightRatio = 1.0;
         m_smuflFont = SMUFL_NONE;
         m_interval = 0;
+        m_letterSpacing = 0;
+        m_musicTextInterval = 0;
     }
     virtual ~FontInfo() {}
 
@@ -166,7 +168,8 @@ public:
     float GetWidthToHeightRatio() const { return m_widthToHeightRatio; }
     SmuflTextFont GetSmuflFont() const { return m_smuflFont; }
 
-    void SetInterval(int interval) { m_interval = interval; }
+    void SetLetterSpacing(int letterSpacing) { m_letterSpacing = letterSpacing; }
+    void SetMusicTextInterval(int interval) { m_musicTextInterval = interval; }
     void SetPointSize(int pointSize) { m_pointSize = pointSize; }
     void SetLetterSpacing(double letterSpacing) { m_letterSpacing = letterSpacing; }
     void SetStyle(data_FONTSTYLE style) { m_style = style; }
@@ -181,7 +184,8 @@ public:
     void SetSmuflWithFallback(bool fallback) { m_smuflFont = (fallback) ? SMUFL_FONT_FALLBACK : SMUFL_FONT_SELECTED; }
 
 private:
-    int m_interval;
+    int m_letterSpacing;
+    int m_musicTextInterval;
     int m_pointSize;
     int m_letterSpacing;
     int m_family;

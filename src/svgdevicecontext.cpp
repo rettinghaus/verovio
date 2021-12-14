@@ -1152,8 +1152,8 @@ void SvgDeviceContext::DrawMusicText(const std::u32string &text, int x, int y, b
             glyph->GetBoundingBox(gx, gy, w, h);
             x += w * m_fontStack.top()->GetPointSize() / glyph->GetUnitsPerEm();
         }
-        if (m_fontStack.top()->GetInterval() != 0) {
-            x += m_fontStack.top()->GetInterval();
+        if (m_fontStack.top()->GetMusicTextInterval() != 0) {
+            x += m_fontStack.top()->GetMusicTextInterval();
         }
     }
 }
