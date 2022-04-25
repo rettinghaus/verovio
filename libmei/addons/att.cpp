@@ -32,7 +32,7 @@ std::string Att::StrToStr(std::string str) const
 
 std::string Att::DblToStr(double data) const
 {
-    return StringFormat("%f", data);
+    return StringFormat("%g", data);
 }
 
 std::string Att::IntToStr(int data) const
