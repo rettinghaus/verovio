@@ -324,10 +324,10 @@ void SvgDeviceContext::StartGraphic(
         AttVisibility *att = dynamic_cast<AttVisibility *>(object);
         assert(att);
         if (att->HasVisible()) {
-            if (att->GetVisible() == BOOLEAN_true) {
+            if (att->GetVisible()) {
                 m_currentNode.append_attribute("visibility") = "visible";
             }
-            else if (att->GetVisible() == BOOLEAN_false) {
+            else {
                 m_currentNode.append_attribute("visibility") = "hidden";
             }
         }
