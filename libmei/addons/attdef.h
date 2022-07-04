@@ -69,6 +69,11 @@ enum data_BEATRPT_REND {
 };
 
 /**
+ * MEI data.BOOLEAN
+ */
+enum data_BOOLEAN { BOOLEAN_NONE = -1, BOOLEAN_false, BOOLEAN_true, BOOLEAN_MAX };
+
+/**
  * For storing bulge values (see slur@bulge)
  */
 typedef std::vector<std::pair<double, double>> data_BULGE;

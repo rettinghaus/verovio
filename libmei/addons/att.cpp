@@ -122,6 +122,28 @@ data_BEATRPT_REND Att::StrToBeatrptRend(const std::string &value, bool logWarnin
     return BEATRPT_REND_NONE;
 }
 
+std::string Att::BooleanToStr(data_BOOLEAN data) const
+{
+    std::string value;
+    switch (data) {
+        case BOOLEAN_true: value = "true"; break;
+        case BOOLEAN_false: value = "false"; break;
+        default:
+            LogWarning("Unknown value '%d' for data.BOOLEAN", data);
+            value = "";
+            break;
+    }
+    return value;
+}
+
+data_BOOLEAN Att::StrToBoolean(const std::string &value, bool logWarning) const
+{
+    if (value == "true") return BOOLEAN_true;
+    if (value == "false") return BOOLEAN_false;
+    if (logWarning && !value.empty()) LogWarning("Unsupported value '%s' for data.BOOLEAN", value.c_str());
+    return BOOLEAN_NONE;
+}
+
 std::string Att::BulgeToStr(const data_BULGE &data) const
 {
     std::ostringstream ss;
