@@ -607,29 +607,6 @@ data_BETYPE AttConverter::StrToBetype(const std::string &value, bool logWarning)
     return BETYPE_NONE;
 }
 
-std::string AttConverter::BooleanToStr(data_BOOLEAN data) const
-{
-    std::string value;
-    switch (data) {
-        case BOOLEAN_true: value = "true"; break;
-        case BOOLEAN_false: value = "false"; break;
-        default:
-            LogWarning("Unknown value '%d' for data.BOOLEAN", data);
-            value = "";
-            break;
-    }
-    return value;
-}
-
-data_BOOLEAN AttConverter::StrToBoolean(const std::string &value, bool logWarning) const
-{
-    if (value == "true") return BOOLEAN_true;
-    if (value == "false") return BOOLEAN_false;
-    if (logWarning && !value.empty())
-        LogWarning("Unsupported value '%s' for data.BOOLEAN", value.c_str());
-    return BOOLEAN_NONE;
-}
-
 std::string AttConverter::CertaintyToStr(data_CERTAINTY data) const
 {
     std::string value;

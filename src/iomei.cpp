@@ -7774,7 +7774,8 @@ bool MEIInput::ReadTupletSpanAsTuplet(Measure *measure, pugi::xml_node tupletSpa
         tuplet->SetBracketPlace(converter.StrToStaffrelBasic(tupletSpan.attribute("bracket.place").value()));
     }
     if (tupletSpan.attribute("bracket.visible")) {
-        tuplet->SetBracketVisible(converter.StrToBoolean(tupletSpan.attribute("bracket.visible").value()));
+        tuplet->SetBracketVisible(
+            (strcmp(tupletSpan.attribute("bracket.visible").value(), "true") == 0) ? BOOLEAN_true : BOOLEAN_false);
     }
     if (tupletSpan.attribute("num.format")) {
         tuplet->SetNumFormat(converter.StrToTupletVisNumformat(tupletSpan.attribute("num.format").value()));
@@ -7786,7 +7787,8 @@ bool MEIInput::ReadTupletSpanAsTuplet(Measure *measure, pugi::xml_node tupletSpa
         tuplet->SetNumPlace(converter.StrToStaffrelBasic(tupletSpan.attribute("num.place").value()));
     }
     if (tupletSpan.attribute("num.visible")) {
-        tuplet->SetNumVisible(converter.StrToBoolean(tupletSpan.attribute("num.visible").value()));
+        tuplet->SetNumVisible(
+            (strcmp(tupletSpan.attribute("num.visible").value(), "true") == 0) ? BOOLEAN_true : BOOLEAN_false);
     }
 
     // position (pitch)

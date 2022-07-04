@@ -68,9 +68,6 @@ public:
     std::string BetypeToStr(data_BETYPE data) const;
     data_BETYPE StrToBetype(const std::string &value, bool logWarning = true) const;
 
-    std::string BooleanToStr(data_BOOLEAN data) const;
-    data_BOOLEAN StrToBoolean(const std::string &value, bool logWarning = true) const;
-
     std::string CertaintyToStr(data_CERTAINTY data) const;
     data_CERTAINTY StrToCertainty(const std::string &value, bool logWarning = true) const;
 

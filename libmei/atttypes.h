@@ -290,16 +290,6 @@ enum data_BETYPE {
 };
 
 /**
- * MEI data.BOOLEAN
- */
-enum data_BOOLEAN {
-    BOOLEAN_NONE = 0,
-    BOOLEAN_true,
-    BOOLEAN_false,
-    BOOLEAN_MAX
-};
-
-/**
  * MEI data.CERTAINTY
  */
 enum data_CERTAINTY {
