@@ -42,7 +42,6 @@ if __name__ == '__main__':
     print(f'Verovio {tk.getVersion()}')
 
     tk.setResourcePath('../../data')
-    #tk.initClock()
 
     # look if we have a shortlist file and read it
     if len(args.shortlist) > 0:
@@ -80,8 +79,8 @@ if __name__ == '__main__':
 
             # filenames (input MEI/XML and output SVG)
             inputFile = os.path.join(path1, item1, item2)
-            #options.update({"xmlIdSeed": int(hashlib.sha256(
-            #    inputFile.encode("utf-8")).hexdigest(), 16) % 10**9})
+            options.update({"xmlIdSeed": int(hashlib.sha256(
+                inputFile.encode("utf-8")).hexdigest(), 16) % 10**9})
             print(f'Rendering {item2}')
             name, ext = os.path.splitext(item2)
             svgFile = os.path.join(path2, item1, name + '.svg')
@@ -101,7 +100,6 @@ if __name__ == '__main__':
                     options |= metaOptions
 
             tk.setOptions(json.dumps(options))
-            print(json.dumps(options))
             tk.loadFile(inputFile)
             # render to SVG
             svgString = tk.renderToSVG(1)

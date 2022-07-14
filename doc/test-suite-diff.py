@@ -137,12 +137,8 @@ if __name__ == "__main__":
 
             json1 = json.load(open(jsonFile1, 'r'))
             json2 = json.load(open(jsonFile2, 'r'))
-            print(json1)
-            print(json2)
-            print('What the heck?')
             if jsondiff(json1, json2):
-                print(json1)
-                print(json2)
+                print(f'{name} produced a different time map')
 
             diffValue = pngdiff(pngFile1, pngFile2, delete_diff_file=True)
             if (diffValue > (args.threshold / 100.0)):
