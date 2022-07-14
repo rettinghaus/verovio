@@ -135,10 +135,13 @@ if __name__ == "__main__":
             pngFile2Out = os.path.join(path_out, item1, name + '.before.png')
             print(f'Comparing {name}')
 
+            for f in os.listdir(os.path.join(path_in1, item1)):
+                print(f)
+
             json1 = json.load(open(jsonFile1, 'r'))
             json2 = json.load(open(jsonFile2, 'r'))
             if jsondiff(json1, json2):
-                print(f'{name} produced a different time map')
+                print(f'{name} produced a changed time map')
 
             diffValue = pngdiff(pngFile1, pngFile2, delete_diff_file=True)
             if (diffValue > (args.threshold / 100.0)):
