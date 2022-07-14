@@ -2728,7 +2728,7 @@ void MidiFile::buildTimeMap(void) {
 
 	int i;
 	int tpq = getTicksPerQuarterNote();
-	double defaultTempo = 120.0;
+	double defaultTempo = 100.0;
 	double secondsPerTick = 60.0 / (defaultTempo * tpq);
 
 	double lastsec = 0.0;
