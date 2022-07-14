@@ -100,7 +100,6 @@ if __name__ == '__main__':
                     options |= metaOptions
 
             tk.setOptions(json.dumps(options))
-            print(json.dumps(options))
             tk.loadFile(inputFile)
             # render to SVG
             svgString = tk.renderToSVG(1)
