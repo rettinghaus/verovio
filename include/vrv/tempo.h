@@ -98,6 +98,11 @@ public:
      */
     int InitMaxMeasureDuration(FunctorParams *functorParams) override;
 
+    /**
+     * See Object::GenerateMIDI
+     */
+    virtual int GenerateMIDI(FunctorParams *functorParams);
+
     //----------//
     //  Static  //
     //----------//
