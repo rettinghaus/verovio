@@ -4623,6 +4623,7 @@ bool MEIInput::ReadPb(Object *parent, pugi::xml_node pb)
     this->ReadSystemElement(pb, vrvPb);
     this->ReadFacsimileInterface(pb, vrvPb);
 
+    vrvPb->ReadFacsimile(pb);
     vrvPb->ReadNNumberLike(pb);
 
     parent->AddChild(vrvPb);
