@@ -1680,6 +1680,7 @@ void MEIOutput::WritePb(pugi::xml_node currentNode, Pb *pb)
     assert(pb);
 
     this->WriteSystemElement(currentNode, pb);
+    pb->WriteFacsimile(currentNode);
     pb->WriteNNumberLike(currentNode);
 }
 
@@ -4410,6 +4411,7 @@ bool MEIInput::ReadPb(Object *parent, pugi::xml_node pb)
     Pb *vrvPb = new Pb();
     this->ReadSystemElement(pb, vrvPb);
 
+    vrvPb->ReadFacsimile(pb);
     vrvPb->ReadNNumberLike(pb);
 
     parent->AddChild(vrvPb);

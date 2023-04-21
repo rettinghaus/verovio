@@ -29,8 +29,9 @@ namespace vrv {
 
 static const ClassRegistrar<Pb> s_factory("pb", PB);
 
-Pb::Pb() : SystemElement(PB, "pb-"), AttNNumberLike()
+Pb::Pb() : SystemElement(PB, "pb-"), FacsimileInterface(), AttNNumberLike()
 {
+    this->RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
     this->RegisterAttClass(ATT_NNUMBERLIKE);
 
     this->Reset();
@@ -41,6 +42,7 @@ Pb::~Pb() {}
 void Pb::Reset()
 {
     SystemElement::Reset();
+    FacsimileInterface::Reset();
     this->ResetNNumberLike();
 }
 
