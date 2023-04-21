@@ -72,8 +72,14 @@ namespace vrv {
 // Page
 //----------------------------------------------------------------------------
 
-Page::Page() : Object(PAGE, "page-")
+Page::Page() : Object(PAGE, "page-"), FacsimileInterface(), AttMargins(), AttHeight(), AttTyped(), AttWidth()
 {
+    this->RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
+    this->RegisterAttClass(ATT_HEIGHT);
+    this->RegisterAttClass(ATT_MARGINS);
+    this->RegisterAttClass(ATT_TYPED);
+    this->RegisterAttClass(ATT_WIDTH);
+
     this->Reset();
 }
 
@@ -81,6 +87,12 @@ Page::~Page() {}
 
 void Page::Reset()
 {
+    FacsimileInterface::Reset();
+    ResetHeight();
+    ResetMargins();
+    ResetTyped();
+    ResetWidth();
+
     Object::Reset();
 
     m_drawingScoreDef.Reset();
