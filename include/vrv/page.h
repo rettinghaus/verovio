@@ -8,6 +8,8 @@
 #ifndef __VRV_PAGE_H__
 #define __VRV_PAGE_H__
 
+#include "atts_pagebased.h"
+#include "atts_shared.h"
 #include "object.h"
 #include "scoredef.h"
 
@@ -28,7 +30,12 @@ class System;
  * A Page is contained in a Doc.
  * It contains System objects.
  */
-class Page : public Object {
+class Page : public Object,
+             public FacsimileInterface,
+             public AttHeight,
+             public AttMargins,
+             public AttTyped,
+             public AttWidth {
 public:
     /**
      * @name Constructors, destructors, and other standard methods
@@ -184,11 +191,6 @@ public:
     int m_pageMarginRight;
     /** Page top margin (MEI scoredef@page.topmar). Saved if != 0 */
     int m_pageMarginTop;
-    /**
-     * Surface (MEI \@surface). Saved as facsimile for transciption layout.
-     * For now, the target of the <graphic> element within surface is loaded here.
-     */
-    std::string m_surface;
 
     /**
      * Hold the top scoreDef of the page.
