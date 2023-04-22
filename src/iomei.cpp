@@ -1574,6 +1574,9 @@ void MEIOutput::WritePage(pugi::xml_node currentNode, Page *page)
     assert(page);
 
     this->WriteXmlId(currentNode, page);
+    page->WriteFacsimile(currentNode);
+    page->WriteMargins(currentNode);
+
     // size and margins but only if any - we rely on page.height only to check this
     if (page->m_pageHeight != -1) {
         currentNode.append_attribute("page.width") = StringFormat("%d", page->m_pageWidth / DEFINITION_FACTOR).c_str();
@@ -4035,6 +4038,9 @@ bool MEIInput::ReadPage(Object *parent, pugi::xml_node page)
     Page *vrvPage = new Page();
     this->SetMeiID(page, vrvPage);
 
+    vrvPage->ReadFacsimile(page);
+    vrvPage->ReadTyped(page);
+
     if ((m_doc->GetType() == Transcription) && (m_meiversion == meiVersion_MEIVERSION_2013)) {
         UpgradePageTo_3_0_0(vrvPage, m_doc);
     }
@@ -4063,12 +4069,13 @@ bool MEIInput::ReadPage(Object *parent, pugi::xml_node page)
         vrvPage->m_pageMarginTop = page.attribute("page.topmar").as_int() * DEFINITION_FACTOR;
         page.remove_attribute("page.topmar");
     }
-    if (page.attribute("surface")) {
-        vrvPage->m_surface = page.attribute("surface").value();
-        page.remove_attribute("surface");
-    }
     if (page.attribute("ppu")) {
         vrvPage->m_PPUFactor = page.attribute("ppu").as_double();
+    }
+
+    if (page.attribute("surface")) {
+        vrvPage->SetFacsimile() = page.attribute("surface").value();
+        page.remove_attribute("surface");
     }
 
     parent->AddChild(vrvPage);
