@@ -45,11 +45,11 @@ static const ClassRegistrar<Staff> s_factory("staff", STAFF);
 Staff::Staff(int n)
     : Object(STAFF, "staff-"), FacsimileInterface(), AttCoordY1(), AttNInteger(), AttTyped(), AttVisibility()
 {
+    this->RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
     this->RegisterAttClass(ATT_COORDY1);
     this->RegisterAttClass(ATT_NINTEGER);
     this->RegisterAttClass(ATT_TYPED);
     this->RegisterAttClass(ATT_VISIBILITY);
-    this->RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
 
     this->Reset();
     this->SetN(n);
