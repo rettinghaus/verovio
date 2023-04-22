@@ -1627,9 +1627,6 @@ void MEIOutput::WritePage(pugi::xml_node currentNode, Page *page)
         currentNode.append_attribute("page.rightmar")
             = StringFormat("%d", page->m_pageMarginRight / DEFINITION_FACTOR).c_str();
     }
-    if (!page->m_surface.empty()) {
-        currentNode.append_attribute("surface") = page->m_surface.c_str();
-    }
     if (page->m_PPUFactor != 1.0) {
         currentNode.append_attribute("ppu") = StringFormat("%f", page->m_PPUFactor).c_str();
     }
@@ -4252,8 +4249,10 @@ bool MEIInput::ReadPage(Object *parent, pugi::xml_node page)
         vrvPage->m_PPUFactor = page.attribute("ppu").as_double();
     }
 
+    // Read legacy surface attribute to facs
     if (page.attribute("surface")) {
-        vrvPage->SetFacsimile() = page.attribute("surface").value();
+        FacsimileInterface *fi = vrvPage->GetFacsimileInterface();
+        fi->SetFacs(page.attribute("surface").value());
         page.remove_attribute("surface");
     }
 
