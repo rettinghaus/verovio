@@ -72,7 +72,7 @@ namespace vrv {
 // Page
 //----------------------------------------------------------------------------
 
-Page::Page() : Object(PAGE, "page-"), FacsimileInterface(), AttMargins(), AttHeight(), AttTyped(), AttWidth()
+Page::Page() : Object(PAGE, "page-"), FacsimileInterface(), AttHeight(), AttMargins(), AttTyped(), AttWidth()
 {
     this->RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
     this->RegisterAttClass(ATT_HEIGHT);
