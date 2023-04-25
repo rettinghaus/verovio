@@ -1613,7 +1613,7 @@ void MEIOutput::WritePage(pugi::xml_node currentNode, Page *page)
 
     this->WriteXmlId(currentNode, page);
     page->WriteFacsimile(currentNode);
-    page->WriteMargins(currentNode);
+    page->WriteTyped(currentNode);
 
     // size and margins but only if any - we rely on page.height only to check this
     if (page->m_pageHeight != -1) {
