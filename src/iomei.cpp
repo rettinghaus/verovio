@@ -1752,6 +1752,7 @@ void MEIOutput::WriteScoreDef(pugi::xml_node currentNode, ScoreDef *scoreDef)
     scoreDef->WriteDistances(currentNode);
     scoreDef->WriteEndings(currentNode);
     scoreDef->WriteOptimization(currentNode);
+    scoreDef->WriteRehearsal(currentNode);
     scoreDef->WriteTimeBase(currentNode);
     scoreDef->WriteTuning(currentNode);
 }
@@ -4908,6 +4909,7 @@ bool MEIInput::ReadScoreDef(Object *parent, pugi::xml_node scoreDef)
     vrvScoreDef->ReadDistances(scoreDef);
     vrvScoreDef->ReadEndings(scoreDef);
     vrvScoreDef->ReadOptimization(scoreDef);
+    vrvScoreDef->ReadRehearsal(scoreDef);
     vrvScoreDef->ReadTimeBase(scoreDef);
     vrvScoreDef->ReadTuning(scoreDef);
 
