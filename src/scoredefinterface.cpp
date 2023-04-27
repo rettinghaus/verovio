@@ -35,6 +35,7 @@ ScoreDefInterface::ScoreDefInterface()
     , AttMultinumMeasures()
     , AttOctaveDefault()
     , AttPianoPedals()
+    , AttRehearsal()
     , AttSpacing()
     , AttSystems()
     , AttTextStyle()
@@ -49,6 +50,7 @@ ScoreDefInterface::ScoreDefInterface()
     this->RegisterInterfaceAttClass(ATT_MULTINUMMEASURES);
     this->RegisterInterfaceAttClass(ATT_OCTAVEDEFAULT);
     this->RegisterInterfaceAttClass(ATT_PIANOPEDALS);
+    this->RegisterInterfaceAttClass(ATT_REHEARSAL);
     this->RegisterInterfaceAttClass(ATT_SPACING);
     this->RegisterInterfaceAttClass(ATT_SYSTEMS);
     this->RegisterInterfaceAttClass(ATT_TEXTSTYLE);
