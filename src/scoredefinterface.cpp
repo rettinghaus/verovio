@@ -33,6 +33,7 @@ ScoreDefInterface::ScoreDefInterface()
     , AttMmTempo()
     , AttMultinumMeasures()
     , AttPianoPedals()
+    , AttRehearsal()
     , AttSpacing()
     , AttSystems()
 {
@@ -46,6 +47,7 @@ ScoreDefInterface::ScoreDefInterface()
     this->RegisterInterfaceAttClass(ATT_MMTEMPO);
     this->RegisterInterfaceAttClass(ATT_MULTINUMMEASURES);
     this->RegisterInterfaceAttClass(ATT_PIANOPEDALS);
+    this->RegisterInterfaceAttClass(ATT_REHEARSAL);
     this->RegisterInterfaceAttClass(ATT_SPACING);
     this->RegisterInterfaceAttClass(ATT_SYSTEMS);
 

@@ -37,6 +37,7 @@ class ScoreDefInterface : public Interface,
                           public AttMmTempo,
                           public AttMultinumMeasures,
                           public AttPianoPedals,
+                          public AttRehearsal,
                           public AttSpacing,
                           public AttSystems {
 public:
