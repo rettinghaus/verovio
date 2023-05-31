@@ -157,6 +157,7 @@ setup(name='verovio',
           'verovio.data.Petaluma': os.listdir('./data/Petaluma'),
           'verovio.data.text': os.listdir('./data/text'),
       },
+      py_modules=['verovio'],
       python_requires='>=3.9',
       project_urls={
           'Bug Reports': 'https://github.com/rism-digital/verovio/issues',
