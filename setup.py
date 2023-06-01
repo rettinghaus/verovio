@@ -2,13 +2,15 @@
 
 # setup.py file for Verovio
 
-from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext as _build_ext
-from setuptools.command.sdist import sdist as _sdist
-from glob import glob
-import platform
 import os
+import platform
 import subprocess
+from glob import glob
+
+from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext as _build_ext
+from setuptools.command.build_py import build_py
+from setuptools.command.sdist import sdist as _sdist
 
 
 class build_ext(_build_ext):
@@ -123,7 +125,7 @@ verovio_module = Extension('verovio._verovio',
 
 setup(name='verovio',
       version=get_version(),
-      cmdclass={'sdist': sdist, 'build_ext': build_ext},
+      cmdclass={'sdist': sdist, 'build_ext': build_ext, 'build_py': build_py},
       url="https://www.verovio.org",
       description="""A library and toolkit for engraving MEI music notation into SVG""",
       long_description=get_readme(),
