@@ -26,6 +26,7 @@ namespace vrv {
 class Trill : public ControlElement,
               public TimeSpanningInterface,
               public AttColor,
+              public AttEnclosingChars,
               public AttExtender,
               public AttExtSymAuth,
               public AttExtSymNames,

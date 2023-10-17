@@ -30,6 +30,7 @@ Trill::Trill()
     : ControlElement(TRILL, "trill-")
     , TimeSpanningInterface()
     , AttColor()
+    , AttEnclosingChars()
     , AttExtender()
     , AttExtSymAuth()
     , AttExtSymNames()
@@ -40,6 +41,7 @@ Trill::Trill()
 {
     this->RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
     this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_ENCLOSINGCHARS);
     this->RegisterAttClass(ATT_EXTENDER);
     this->RegisterAttClass(ATT_EXTSYMAUTH);
     this->RegisterAttClass(ATT_EXTSYMNAMES);
@@ -58,6 +60,7 @@ void Trill::Reset()
     ControlElement::Reset();
     TimeSpanningInterface::Reset();
     this->ResetColor();
+    this->ResetEnclosingChars();
     this->ResetExtender();
     this->ResetExtSymAuth();
     this->ResetExtSymNames();
