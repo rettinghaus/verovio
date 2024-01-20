@@ -21,6 +21,10 @@ echo "Generating Gootville files ..."
 $PYTHON generate.py extract Gootville
 $PYTHON generate.py css Gootville
 
+echo "Generating Mozart files ..."
+$PYTHON generate.py extract Mozart
+$PYTHON generate.py css Mozart
+
 echo "Generating Petaluma files ..."
 $PYTHON generate.py extract Petaluma
 $PYTHON generate.py css Petaluma
