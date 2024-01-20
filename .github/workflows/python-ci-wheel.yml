@@ -52,6 +52,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
       - uses: nuget/setup-nuget@v1
         with:
           nuget-version: "latest"
@@ -88,7 +94,8 @@ jobs:
         env:
           CIBW_SKIP: cp38-win_arm64
           CIBW_BUILD: ${{ env.CIBW_BUILD_IDENTIFIER }}
-          CIBW_ARCHS_MACOS: x86_64 arm64
+          CIBW_ARCHS_LINUX: "auto aarch64"
+          CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
           CIBW_TEST_SKIP: cp*-macosx_arm64
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_MANYLINUX_I686_IMAGE: manylinux2014
