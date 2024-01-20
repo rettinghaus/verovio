@@ -25,7 +25,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-        architecture: [x86, x64]
+        architecture: [all]
         include:
           - os: macos-latest
             architecture: x64
@@ -82,11 +82,11 @@ jobs:
       #===============================================#
       # wheels
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.1
+        uses: pypa/cibuildwheel@v2.16.2
         with:
           output-dir: wheelhouse
         env:
-          CIBW_SKIP: cp37-macosx_arm64
+          CIBW_SKIP: cp38-win_arm64
           CIBW_BUILD: ${{ env.CIBW_BUILD_IDENTIFIER }}
           CIBW_ARCHS_MACOS: x86_64 arm64
           CIBW_TEST_SKIP: cp*-macosx_arm64
