@@ -25,7 +25,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-        architecture: [x86, x64]
+        architecture: [x86, x64, arm64]
         include:
           - os: macos-latest
             architecture: x64
@@ -39,9 +39,16 @@ jobs:
           - os: ubuntu-latest
             architecture: x64
             platform_id: manylinux_x86_64
+          - os: ubuntu-latest
+            architecture: aarch
+            platform_id: manylinux_aarch64
         exclude:
           - os: macos-latest
+            architecture: arm64
+          - os: macos-latest
             architecture: x86
+          - os: windows-latest
+            architecture: arm64
           - os: ubuntu-latest
             architecture: x86
 
