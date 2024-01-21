@@ -40,7 +40,7 @@ jobs:
             architecture: x64
             platform_id: manylinux_x86_64
           - os: ubuntu-latest
-            architecture: aarch
+            architecture: aarch64
             platform_id: manylinux_aarch64
         exclude:
           - os: macos-latest
@@ -59,12 +59,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up QEMU
-        if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: all
-
       - uses: nuget/setup-nuget@v1
         with:
           nuget-version: "latest"
@@ -75,6 +69,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
 
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+  
       #===============================================#
       # Dependencies
       - name: Install dependencies
@@ -103,13 +103,14 @@ jobs:
           CIBW_BUILD: ${{ env.CIBW_BUILD_IDENTIFIER }}
           CIBW_ARCHS_LINUX: "auto aarch64"
           CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
-          CIBW_TEST_SKIP: cp*-macosx_arm64
+          CIBW_TEST_SKIP: "*_arm64 *_universal2:arm64"
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_MANYLINUX_I686_IMAGE: manylinux2014
           CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
           CIBW_BEFORE_ALL_MACOS: brew update && brew install swig
           CIBW_BEFORE_ALL_WINDOWS: choco install swig -f -y
           CIBW_BEFORE_BUILD: swig -version && bash -c 'cd tools; ./get_git_commit.sh' && swig -c++ -python -py3 ./bindings/python/verovio.i
+          CMAKE_BUILD_PARALLEL_LEVEL: 12
 
       #===============================================#
       # Check build
