@@ -23,31 +23,34 @@ jobs:
       fail-fast: false
       # Build the wheels for Linux, Windows and macOS
       matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        architecture: [x86, x64]
         include:
           - os: macos-latest
-            archs: x64
+            architecture: x64
             platform_id: macosx_*
           - os: windows-latest
-            archs: x64
+            architecture: x64
             platform_id: win_amd64
           - os: windows-latest
-            archs: x86
+            architecture: x86
             platform_id: win32
           - os: ubuntu-latest
-            archs: x64
+            architecture: x64
             platform_id: manylinux_x86_64
           - os: ubuntu-latest
-            archs: aarch64
+            architecture: aarch64
             platform_id: manylinux_aarch64
         exclude:
           - os: macos-latest
-            archs: arm64
+            architecture: arm64
           - os: macos-latest
-            archs: x86
+            architecture: x86
           - os: windows-latest
-            archs: arm64
+            architecture: arm64
           - os: ubuntu-latest
-            archs: x86
+            architecture: x86
 
     steps:
       #===============================================#
