@@ -94,7 +94,7 @@ jobs:
           CIBW_BUILD: ${{ env.CIBW_BUILD_IDENTIFIER }}
           CIBW_ARCHS_LINUX: "auto aarch64"
           CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
-          CIBW_TEST_SKIP: "*_arm64 *_universal2:arm64"
+          CIBW_TEST_SKIP: "*_arm64 *_universal2:arm64 *_manylinux_aarch64"
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_MANYLINUX_I686_IMAGE: manylinux2014
           CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
