@@ -90,7 +90,7 @@ jobs:
         with:
           output-dir: wheelhouse
         env:
-          CIBW_SKIP: cp38-win_arm64
+          CIBW_SKIP: cp38-win_arm64, *_musllinux*
           CIBW_BUILD: ${{ env.CIBW_BUILD_IDENTIFIER }}
           CIBW_ARCHS_LINUX: "auto aarch64"
           CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
