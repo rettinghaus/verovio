@@ -38,6 +38,9 @@ jobs:
             architecture: x64
             platform_id: manylinux_x86_64
           - os: ubuntu-latest
+            architecture: x64
+            platform_id: manylinux_aarch64
+          - os: ubuntu-latest
             architecture: aarch64
             platform_id: manylinux_aarch64
 

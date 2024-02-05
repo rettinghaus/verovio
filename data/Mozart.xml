@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<bounding-boxes font-family="Mozart12" units-per-em="1000">
+  <g c="0020" x="0.0" y="0.0" w="0.0" h="0.0" h-a-x="409" n="space" />
+  <g c="0020" x="0.0" y="0.0" w="0.0" h="0.0" h-a-x="409" n="space" />
+  <g c="0020" x="0.0" y="0.0" w="0.0" h="0.0" h-a-x="409" n="space" />
+  <g c="266D" x="49.0" y="-143.0" w="339.0" h="1141.0" h-a-x="402" n="musicFlatSign" />
+  <g c="266E" x="49.0" y="-199.0" w="300.0" h="1194.0" h-a-x="363" n="musicNaturalSign" />
+  <g c="266F" x="39.0" y="-191.0" w="355.0" h="1192.0" h-a-x="433" n="musicSharpSign" />
+  <g c="E082" x="15.0" y="-215.0" w="340.0" h="434.0" h-a-x="380" n="timeSig2" />
+  <g c="E0F5" x="2.0" y="-259.0" w="105.0" h="507.0" h-a-x="115" n="noteheadParenthesisLeft" />
+  <g c="E0F6" x="-1.0" y="-252.0" w="106.0" h="506.0" h-a-x="106" n="noteheadParenthesisRight" />
+  <g c="E003" x="0.0" y="-47.0" w="233.0" h="94.0" h-a-x="234" n="bracketTop" />
+  <g c="E004" x="2.0" y="-47.0" w="329.0" h="94.0" h-a-x="331" n="bracketBottom" />
+  <g c="E083" x="15.0" y="-217.07" w="324.0" h="436.07" h-a-x="354" n="timeSig3" />
+  <g c="E084" x="15.0" y="-209.0" w="328.0" h="418.0" h-a-x="358" n="timeSig4" />
+  <g c="E085" x="13.0" y="-209.0" w="301.05" h="418.0" h-a-x="329" n="timeSig5" />
+  <g c="E086" x="15.0" y="-219.05" w="334.0" h="436.05" h-a-x="364" n="timeSig6" />
+  <g c="E087" x="15.0" y="-217.0" w="342.0" h="432.0" h-a-x="372" n="timeSig7" />
+  <g c="E088" x="15.0" y="-217.0" w="326.0" h="436.0" h-a-x="356" n="timeSig8" />
+  <g c="E089" x="15.0" y="-217.0" w="336.0" h="434.0" h-a-x="366" n="timeSig9" />
+  <g c="E08A" x="15.0" y="-254.0" w="422.0" h="510.03" h-a-x="452" n="timeSigCommon" />
+  <g c="E08B" x="15.0" y="-426.0" w="420.0" h="850.0" h-a-x="450" n="timeSigCutCommon" />
+  <g c="E4E2" x="0.0" y="0.0" w="148.0" h="250.0" h-a-x="154" n="restDoubleWhole" />
+  <g c="E4E3" x="0.0" y="-125.0" w="299.0" h="125.0" h-a-x="298" n="restWhole" />
+  <g c="E4E4" x="0.0" y="0.0" w="299.0" h="125.0" h-a-x="298" n="restHalf" />
+  <g c="E4E5" x="0.0" y="-355.0" w="256.0" h="755.0" h-a-x="268" n="restQuarter" />
+  <g c="E4E6" x="0.0" y="-255.0" w="262.0" h="462.0" h-a-x="272" n="rest8th" />
+  <g c="E4E7" x="0.0" y="-500.0" w="330.0" h="706.0" h-a-x="346" n="rest16th" />
+  <g c="E4E8" x="0.0" y="-500.0" w="400.0" h="961.0" h-a-x="419" n="rest32nd" />
+  <g c="E4E9" x="0.0" y="-615.0" w="469.0" h="1212.0" h-a-x="492" n="rest64th" />
+</bounding-boxes>
