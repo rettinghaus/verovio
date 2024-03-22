@@ -2848,6 +2848,26 @@ void MEIOutput::WriteStem(pugi::xml_node currentNode, Stem *stem)
     stem->WriteVisibility(currentNode);
 }
 
+void MEIOutput::WriteSyl(pugi::xml_node currentNode, Syl *syl)
+{
+    assert(syl);
+
+    this->WriteLayerElement(currentNode, syl);
+    syl->WriteLang(currentNode);
+    syl->WritePlacementRelStaff(currentNode);
+    syl->WriteTypography(currentNode);
+    syl->WriteSylLog(currentNode);
+}
+
+void MEIOutput::WriteSyllable(pugi::xml_node currentNode, Syllable *syllable)
+{
+    assert(syllable);
+
+    this->WriteLayerElement(currentNode, syllable);
+    syllable->WriteColor(currentNode);
+    syllable->WriteSlashCount(currentNode);
+}
+
 void MEIOutput::WriteTabDurSym(pugi::xml_node currentNode, TabDurSym *tabDurSym)
 {
     assert(tabDurSym);
@@ -2883,26 +2903,8 @@ void MEIOutput::WriteVerse(pugi::xml_node currentNode, Verse *verse)
     verse->WriteColor(currentNode);
     verse->WriteLang(currentNode);
     verse->WriteNInteger(currentNode);
+    verse->WritePlacementRelStaff(currentNode);
     verse->WriteTypography(currentNode);
-}
-
-void MEIOutput::WriteSyl(pugi::xml_node currentNode, Syl *syl)
-{
-    assert(syl);
-
-    this->WriteLayerElement(currentNode, syl);
-    syl->WriteLang(currentNode);
-    syl->WriteTypography(currentNode);
-    syl->WriteSylLog(currentNode);
-}
-
-void MEIOutput::WriteSyllable(pugi::xml_node currentNode, Syllable *syllable)
-{
-    assert(syllable);
-
-    this->WriteLayerElement(currentNode, syllable);
-    syllable->WriteColor(currentNode);
-    syllable->WriteSlashCount(currentNode);
 }
 
 void MEIOutput::WriteFacsimile(pugi::xml_node currentNode, Facsimile *facsimile)
@@ -7114,6 +7116,7 @@ bool MEIInput::ReadSyl(Object *parent, pugi::xml_node syl)
     this->ReadLayerElement(syl, vrvSyl);
 
     vrvSyl->ReadLang(syl);
+    vrvSyl->ReadPlacementRelStaff(syl);
     vrvSyl->ReadTypography(syl);
     vrvSyl->ReadSylLog(syl);
 
@@ -7183,6 +7186,7 @@ bool MEIInput::ReadVerse(Object *parent, pugi::xml_node verse)
     vrvVerse->ReadColor(verse);
     vrvVerse->ReadLang(verse);
     vrvVerse->ReadNInteger(verse);
+    vrvVerse->ReadPlacementRelStaff(verse);
     vrvVerse->ReadTypography(verse);
 
     parent->AddChild(vrvVerse);

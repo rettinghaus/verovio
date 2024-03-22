@@ -33,11 +33,13 @@ namespace vrv {
 
 static const ClassRegistrar<Verse> s_factory("verse", VERSE);
 
-Verse::Verse() : LayerElement(VERSE, "verse-"), AttColor(), AttLang(), AttNInteger(), AttTypography()
+Verse::Verse()
+    : LayerElement(VERSE, "verse-"), AttColor(), AttLang(), AttNInteger(), AttPlacementRelStaff(), AttTypography()
 {
     this->RegisterAttClass(ATT_COLOR);
     this->RegisterAttClass(ATT_LANG);
     this->RegisterAttClass(ATT_NINTEGER);
+    this->RegisterAttClass(ATT_PLACEMENTONSTAFF);
     this->RegisterAttClass(ATT_TYPOGRAPHY);
 
     this->Reset();
@@ -51,6 +53,7 @@ void Verse::Reset()
     this->ResetColor();
     this->ResetLang();
     this->ResetNInteger();
+    this->ResetPlacementRelStaff();
     this->ResetTypography();
 
     m_drawingLabelAbbr = NULL;

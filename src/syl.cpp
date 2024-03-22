@@ -39,10 +39,17 @@ namespace vrv {
 static const ClassRegistrar<Syl> s_factory("syl", SYL);
 
 Syl::Syl()
-    : LayerElement(SYL, "syl-"), TextListInterface(), TimeSpanningInterface(), AttLang(), AttTypography(), AttSylLog()
+    : LayerElement(SYL, "syl-")
+    , TextListInterface()
+    , TimeSpanningInterface()
+    , AttLang()
+    , AttPlacementRelStaff()
+    , AttTypography()
+    , AttSylLog()
 {
     this->RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
     this->RegisterAttClass(ATT_LANG);
+    this->RegisterAttClass(ATT_PLACEMENTONSTAFF);
     this->RegisterAttClass(ATT_TYPOGRAPHY);
     this->RegisterAttClass(ATT_SYLLOG);
 
@@ -56,6 +63,7 @@ void Syl::Reset()
     LayerElement::Reset();
     TimeSpanningInterface::Reset();
     this->ResetLang();
+    this->ResetPlacementRelStaff();
     this->ResetTypography();
     this->ResetSylLog();
 
