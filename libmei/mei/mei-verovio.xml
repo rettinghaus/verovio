@@ -2,7 +2,7 @@
 
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<TEI xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns="http://www.tei-c.org/ns/1.0">
+<TEI xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns="http://www.tei-c.org/ns/1.0">
 	<teiHeader>
 		<fileDesc>
 			<titleStmt>
@@ -36,10 +36,10 @@
 				<desc xml:lang="en">Include tablature preliminary proposal.</desc>
 			</change>
 			<change n="3" when="2013-11-08">
-				<desc xml:lang="en">Changing to /measure/staff organisation; adding /pages container in /mdiv; adding /page@position; changing scb to secb.</desc>
+				<desc xml:lang="en">Changing to /measure/staff organization; adding /pages container in /mdiv; adding /page@position; changing scb to secb.</desc>
 			</change>
 			<change n="2" when="2013-09-08">
-				<desc xml:lang="en">Adding /staff/measure organisation and other fixes.</desc>
+				<desc xml:lang="en">Adding /staff/measure organization and other fixes.</desc>
 			</change>
 			<change n="2" when="2013-09-02">
 				<desc xml:lang="en">Fixing naming according to MEI convention and other small fixes.</desc>
@@ -51,7 +51,7 @@
 	</teiHeader>
 	<text>
 		<front>
-			<divGen type="toc"/>
+			<divGen type="toc" />
 		</front>
 		<body>
 			<schemaSpec ident="mei-verovio" start="mei meiHead meiCorpus music" ns="http://www.music-encoding.org/ns/mei">
@@ -176,7 +176,7 @@
 				<!-- ****************************************************************** -->
 
 				<moduleSpec ident="MEI.pageBased" mode="add">
-					<desc/>
+					<desc />
 				</moduleSpec>
 
 				<classSpec ident="model.pagesLike" type="model" module="MEI.pageBased" mode="add">
@@ -186,13 +186,11 @@
 				<elementSpec ident="pages" module="MEI.pageBased" mode="add">
 					<desc xml:lang="en">A set of pages in a page-based encoding</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="model.pagesLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="model.pagesLike" />
 					</classes>
 					<content>
-						<rng:zeroOrMore>
-							<rng:ref name="model.pageLike"/>
-						</rng:zeroOrMore>
+						<classRef key="model.pageLike" minOccurs="0" maxOccurs="unbounded" />
 					</content>
 				</elementSpec>
 
@@ -203,24 +201,22 @@
 				<elementSpec ident="page" module="MEI.pageBased" mode="add">
 					<desc xml:lang="en">A page in a page-base encoding</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="att.dimensions"/>
-						<memberOf key="att.facsimile"/>
-						<memberOf key="att.margins"/>
+						<memberOf key="att.common" />
+						<memberOf key="att.dimensions" />
+						<memberOf key="att.facsimile" />
+						<memberOf key="att.margins" />
 						<!--<memberOf key="att.pageRef"/>-->
-						<memberOf key="model.pageLike"/>
+						<memberOf key="model.pageLike" />
 					</classes>
 					<content>
-						<rng:zeroOrMore>
-							<rng:choice>
-								<rng:ref name="model.systemLike"/>
-								<rng:ref name="model.milestoneLike"/>
-								<rng:ref name="model.secbLike"/>
-								<rng:ref name="model.mdivbLike"/>
-								<rng:ref name="model.scoreLike"/>
-								<rng:ref name="model.partsLike"/>
-							</rng:choice>
-						</rng:zeroOrMore>
+						<alternate minOccurs="0" maxOccurs="unbounded">
+							<classRef key="model.systemLike" />
+							<classRef key="model.milestoneLike" />
+							<classRef key="model.secbLike" />
+							<classRef key="model.mdivbLike" />
+							<classRef key="model.scoreLike" />
+							<classRef key="model.partsLike" />
+						</alternate>
 					</content>
 				</elementSpec>
 
@@ -236,13 +232,11 @@
 
 				<elementSpec ident="body" module="MEI.shared" mode="change">
 					<content>
-						<rng:oneOrMore>
-							<rng:choice>
-								<rng:ref name="model.divLike"/>
-								<rng:ref name="model.mdivLike"/>
-								<rng:ref name="model.pagesLike"/>
-							</rng:choice>
-						</rng:oneOrMore>
+						<alternate minOccurs="1" maxOccurs="unbounded">
+							<classRef key="model.divLike" />
+							<classRef key="model.mdivLike" />
+							<classRef key="model.pagesLike" />
+						</alternate>
 					</content>
 					<!--<constraintSpec ident="page-atts-on-scoreDef" scheme="isoschematron" mode="add">
 						<constraint>
@@ -261,27 +255,25 @@
 				<elementSpec ident="system" module="MEI.pageBased" mode="add">
 					<desc xml:lang="en">A system in a page-based encoding</desc>
 					<classes>
-						<memberOf key="att.systems"/>
-						<memberOf key="att.common"/>
-						<memberOf key="att.coordinated"/>
-						<memberOf key="model.systemLike"/>
+						<memberOf key="att.systems" />
+						<memberOf key="att.common" />
+						<memberOf key="att.coordinated" />
+						<memberOf key="model.systemLike" />
 					</classes>
 					<content>
 						<!-- then the actual content of a system -->
-						<rng:zeroOrMore>
-							<rng:choice>
-								<!-- section are turned into milestones -->
-								<rng:ref name="model.secbLike"/>
-								<!-- measures for measured music -->
-								<rng:ref name="model.measureLike"/>
-								<!-- staves for un-measured music -->
-								<rng:ref name="model.staffLike"/>
-								<!-- scoreDef for redefinition -->
-								<rng:ref name="model.scoreDefLike"/>
-								<rng:ref name="model.milestoneLike"/>
-								<!-- anything else? -->
-							</rng:choice>
-						</rng:zeroOrMore>
+						<alternate minOccurs="0" maxOccurs="unbounded">
+							<!-- section are turned into milestones -->
+							<classRef key="model.secbLike" />
+							<!-- measures for measured music -->
+							<classRef key="model.measureLike" />
+							<!-- staves for un-measured music -->
+							<classRef key="model.staffLike" />
+							<!-- scoreDef for redefinition -->
+							<classRef key="model.scoreDefLike" />
+							<classRef key="model.milestoneLike" />
+							<!-- anything else? -->
+						</alternate>
 					</content>
 				</elementSpec>
 
@@ -294,11 +286,11 @@
 					<gloss xml:lang="en">section beginning</gloss>
 					<desc xml:lang="en">A milestone element indicating the start of a new section in page-based MEI.</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="model.secbLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="model.secbLike" />
 					</classes>
 					<content>
-						<empty/>
+						<empty />
 					</content>
 				</elementSpec>
 
@@ -310,11 +302,11 @@
 					<gloss xml:lang="en">mdiv beginning</gloss>
 					<desc xml:lang="en">A milestone element indicating the start of a new mdiv in page-based MEI.</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="model.mdivbLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="model.mdivbLike" />
 					</classes>
 					<content>
-						<empty/>
+						<empty />
 					</content>
 				</elementSpec>
 
@@ -324,18 +316,18 @@
 
 				<elementSpec ident="scoreb" module="MEI.pageBased" mode="add">
 					<gloss xml:lang="en">score beginning</gloss>
-					<desc xml:lang="en">A milestone element indicating the start of a new score in page-based MEI.</desc>
+					<desc xml:lang="en">A milestone element indicating the start of a new score in
+						page-based MEI.</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="model.scorebLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="model.scorebLike" />
 					</classes>
 					<content>
-						<rng:optional>
-							<rng:ref name="model.scoreDefLike"/>
-						</rng:optional>
+						<classRef key="model.scoreDefLike" minOccurs="0" />
 					</content>
 					<remarks>
-						<p>This element is necessary to allow round-tripping between page-based and score-based (regular) MEI.</p>
+						<p>This element is necessary to allow round-tripping between page-based and
+							score-based (regular) MEI.</p>
 					</remarks>
 				</elementSpec>
 
@@ -345,16 +337,18 @@
 
 				<elementSpec ident="partsb" module="MEI.pageBased" mode="add">
 					<gloss xml:lang="en">parts beginning</gloss>
-					<desc xml:lang="en">A milestone element indicating the start of new parts in page-based MEI.</desc>
+					<desc xml:lang="en">A milestone element indicating the start of new parts in
+						page-based MEI.</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="model.scorebLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="model.scorebLike" />
 					</classes>
 					<content>
-						<empty/>
+						<empty />
 					</content>
 					<remarks>
-						<p>This element is necessary to allow round-tripping between page-based and score-based (regular) MEI.</p>
+						<p>This element is necessary to allow round-tripping between page-based and
+							score-based (regular) MEI.</p>
 					</remarks>
 				</elementSpec>
 
@@ -364,18 +358,18 @@
 
 				<elementSpec ident="partb" module="MEI.pageBased" mode="add">
 					<gloss xml:lang="en">part beginning</gloss>
-					<desc xml:lang="en">A milestone element indicating the start of a new part in page-based MEI.</desc>
+					<desc xml:lang="en">A milestone element indicating the start of a new part in
+						page-based MEI.</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="model.partbLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="model.partbLike" />
 					</classes>
 					<content>
-						<rng:optional>
-							<rng:ref name="model.scoreDefLike"/>
-						</rng:optional>
+						<classRef key="model.scoreDefLike" minOccurs="0" />
 					</content>
 					<remarks>
-						<p>This element is necessary to allow round-tripping between page-based and score-based (regular) MEI.</p>
+						<p>This element is necessary to allow round-tripping between page-based and
+							score-based (regular) MEI.</p>
 					</remarks>
 				</elementSpec>
 
@@ -385,16 +379,17 @@
 
 				<elementSpec ident="milestone" module="MEI.ptrref" mode="add">
 					<gloss xml:lang="en">milestone</gloss>
-					<desc xml:lang="en">A generic milestone element that can be used as anchor in an MEI file.</desc>
+					<desc xml:lang="en">A generic milestone element that can be used as anchor in an
+						MEI file.</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="model.milestoneLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="model.milestoneLike" />
 						<!-- the following two will allow milestone to appear in many places -->
-						<memberOf key="model.annotLike"/>
-						<memberOf key="model.eventLike"/>
+						<memberOf key="model.annotLike" />
+						<memberOf key="model.eventLike" />
 					</classes>
 					<content>
-						<empty/>
+						<empty />
 					</content>
 				</elementSpec>
 
@@ -402,15 +397,15 @@
 					<gloss xml:lang="en">milestone end</gloss>
 					<desc xml:lang="en">A milestone element that can be used to indicate the end of an arbitrary feature in MEI.</desc>
 					<classes>
-						<memberOf key="att.common"/>
-						<memberOf key="att.startId"/>
-						<memberOf key="model.milestoneLike"/>
+						<memberOf key="att.common" />
+						<memberOf key="att.startId" />
+						<memberOf key="model.milestoneLike" />
 						<!-- the following two will allow milestone to appear in many places -->
-						<memberOf key="model.annotLike"/>
-						<memberOf key="model.eventLike"/>
+						<memberOf key="model.annotLike" />
+						<memberOf key="model.eventLike" />
 					</classes>
 					<content>
-						<empty/>
+						<empty />
 					</content>
 					<constraintSpec ident="check_milestoneEnd" scheme="isoschematron">
 						<constraint>
@@ -430,9 +425,9 @@
 						<attDef ident="coord.x1" usage="opt">
 							<desc xml:lang="en">gives coordinates for the left side of a feature.</desc>
 							<datatype>
-								<rng:data type="decimal">
-									<rng:param name="minInclusive">0</rng:param>
-								</rng:data>
+								<dataRef name="decimal">
+									<dataFacet name="minInclusive" value="0" />
+								</dataRef>
 							</datatype>
 						</attDef>
 					</attList>
@@ -443,9 +438,9 @@
 						<attDef ident="coord.x2" usage="opt">
 							<desc xml:lang="en">gives coordinates for the right side of a feature.</desc>
 							<datatype>
-								<rng:data type="decimal">
-									<rng:param name="minInclusive">0</rng:param>
-								</rng:data>
+								<dataRef name="decimal">
+									<dataFacet name="minInclusive" value="0" />
+								</dataRef>
 							</datatype>
 						</attDef>
 					</attList>
@@ -456,9 +451,9 @@
 						<attDef ident="coord.y1" usage="opt">
 							<desc xml:lang="en">gives y coordinates for the top left of a feature.</desc>
 							<datatype>
-								<rng:data type="decimal">
-									<rng:param name="minInclusive">0</rng:param>
-								</rng:data>
+								<dataRef name="decimal">
+									<dataFacet name="minInclusive" value="0" />
+								</dataRef>
 							</datatype>
 						</attDef>
 					</attList>
@@ -469,9 +464,9 @@
 						<attDef ident="coord.y1" usage="opt">
 							<desc xml:lang="en">gives y coordinates for the top right of a feature.</desc>
 							<datatype>
-								<rng:data type="decimal">
-									<rng:param name="minInclusive">0</rng:param>
-								</rng:data>
+								<dataRef name="decimal">
+									<dataFacet name="minInclusive" value="0" />
+								</dataRef>
 							</datatype>
 						</attDef>
 					</attList>
@@ -480,26 +475,26 @@
 				<classSpec ident="att.coord.lr" module="MEI.shared" type="atts">
 					<desc xml:lang="en">Attributes for left/right coordinates.</desc>
 					<classes>
-						<memberOf key="att.coord.x1"/>
-						<memberOf key="att.coord.x2"/>
+						<memberOf key="att.coord.x1" />
+						<memberOf key="att.coord.x2" />
 					</classes>
 				</classSpec>
 
 				<elementSpec ident="measure" module="MEI.cmn" mode="change">
 					<classes mode="change">
-						<memberOf key="att.coord.lr" mode="add"/>
+						<memberOf key="att.coord.lr" mode="add" />
 					</classes>
 				</elementSpec>
 
 				<elementSpec ident="staff" module="MEI.shared" mode="change">
 					<classes mode="change">
-						<memberOf key="att.coord.y1" mode="add"/>
+						<memberOf key="att.coord.y1" mode="add" />
 					</classes>
 				</elementSpec>
 
 				<classSpec ident="att.xy" module="MEI.shared" type="atts" mode="change">
 					<classes mode="change">
-						<memberOf key="att.coord.x1"/>
+						<memberOf key="att.coord.x1" />
 					</classes>
 				</classSpec>
 
@@ -522,28 +517,28 @@
 							<gloss xml:lang="en">top margin</gloss>
 							<desc xml:lang="en">Indicates the amount of whitespace at the top of a page.</desc>
 							<datatype maxOccurs="1" minOccurs="1">
-								<dataRef key="data.MEASUREMENTUNSIGNED"/>
+								<dataRef key="data.MEASUREMENTUNSIGNED" />
 							</datatype>
 						</attDef>
 						<attDef ident="botmar" usage="opt">
 							<gloss xml:lang="en">bottom margin</gloss>
 							<desc xml:lang="en">Indicates the amount of whitespace at the bottom of a page.</desc>
 							<datatype maxOccurs="1" minOccurs="1">
-								<dataRef key="data.MEASUREMENTUNSIGNED"/>
+								<dataRef key="data.MEASUREMENTUNSIGNED" />
 							</datatype>
 						</attDef>
 						<attDef ident="leftmar" usage="opt">
 							<gloss xml:lang="en">left margin</gloss>
 							<desc xml:lang="en">Indicates the amount of whitespace at the left side of a page.</desc>
 							<datatype maxOccurs="1" minOccurs="1">
-								<dataRef key="data.MEASUREMENTUNSIGNED"/>
+								<dataRef key="data.MEASUREMENTUNSIGNED" />
 							</datatype>
 						</attDef>
 						<attDef ident="rightmar" usage="opt">
 							<gloss xml:lang="en">right margin</gloss>
 							<desc xml:lang="en">Indicates the amount of whitespace at the right side of a page.</desc>
 							<datatype maxOccurs="1" minOccurs="1">
-								<dataRef key="data.MEASUREMENTUNSIGNED"/>
+								<dataRef key="data.MEASUREMENTUNSIGNED" />
 							</datatype>
 						</attDef>
 					</attList>
@@ -555,7 +550,7 @@
 						<attDef ident="surface" usage="opt">
 							<desc xml:lang="en">contains a reference to a surface element</desc>
 							<datatype>
-								<dataRef key="data.URI"/>
+								<dataRef key="data.URI" />
 							</datatype>
 						</attDef>
 					</attList>
@@ -566,12 +561,12 @@
 				<!-- ****************************************************************** -->
 
 				<moduleSpec ident="MEI.frettab" mode="add">
-					<desc/>
+					<desc />
 				</moduleSpec>
 				<dataSpec ident="data.COURSENUMBER" module="MEI.stringtab" mode="add">
 					<desc xml:lang="en">In string tablature, the number of the course to be played.</desc>
 					<content>
-						<rng:data type="positiveInteger"/>
+						<dataRef name="positiveInteger" />
 					</content>
 				</dataSpec>
 				<dataSpec ident="data.COURSETUNING" module="MEI.frettab">
@@ -650,13 +645,13 @@
 						<attDef ident="tab.course" usage="opt" mode="add">
 							<desc xml:lang="en">Records which course is to be played.</desc>
 							<datatype>
-								<dataRef key="data.COURSENUMBER"/>
+								<dataRef key="data.COURSENUMBER" />
 							</datatype>
 						</attDef>
 						<attDef ident="tab.fret" usage="opt" mode="add">
 							<desc xml:lang="en">Records which course is to be played.</desc>
 							<datatype>
-								<dataRef key="data.FRETNUMBER"/>
+								<dataRef key="data.FRETNUMBER" />
 							</datatype>
 						</attDef>
 					</attList>
@@ -666,7 +661,7 @@
 						<attDef ident="tuning.standard" usage="opt" mode="add">
 							<desc xml:lang="en">Indicates a tuning standard for the course.</desc>
 							<datatype>
-								<dataRef key="data.COURSETUNING"/>
+								<dataRef key="data.COURSETUNING" />
 							</datatype>
 						</attDef>
 					</attList>
@@ -675,14 +670,14 @@
 					<gloss>course tuning information</gloss>
 					<desc xml:lang="en">Describes the tuning of a course on a lute.</desc>
 					<classes>
-						<memberOf key="att.course.log"/>
+						<memberOf key="att.course.log" />
 					</classes>
 				</elementSpec>
 				<elementSpec ident="foo" module="MEI.frettab" mode="add">
 					<gloss>foo information</gloss>
 					<desc xml:lang="en">Dummy element for enforcing that the att classes are used.</desc>
 					<classes>
-						<memberOf key="att.note.ges.tab"/>
+						<memberOf key="att.note.ges.tab" />
 					</classes>
 				</elementSpec>
 			</schemaSpec>
