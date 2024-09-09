@@ -771,9 +771,15 @@ protected:
     void ResetLogBuffer();
 
     /**
-     * Load a string data with or without resetting the log buffer
+     * Start capturing std::cerr from an external codebase for redirection to vrv::logBuffer.
+     * Only one capture should be active at a given time.  Finish by calling LogRedirectEnd.
      */
-    bool LoadData(const std::string &data, bool resetLogBuffer);
+    void LogRedirectStart();
+
+    /**
+     * End capturing std::cerr from an external codebase for redirection to vrv::logBuffer.
+     */
+    void LogRedirectEnd();
 
 private:
     bool SetFont(const std::string &fontName);
@@ -809,6 +815,18 @@ private:
      * The C buffer string.
      */
     char *m_cString;
+
+    /**
+     * Temporary capture buffer for redirecting std::cerr to vrv::LogWarning.
+     * Used to coordinate between LogRedirectStart()/LogRedirectEnd().
+     */
+    std::stringstream m_captured_cerr;
+
+    /**
+     * Temporary storage of the std::cerr read buffer during LogCapture. NULL when not in use.
+     * Used to coordinate between LogRedirectStart()/LogRedirectEnd().
+     */
+    std::streambuf *m_original_cerr_buf = NULL;
 
     EditorToolkit *m_editorToolkit;
 
