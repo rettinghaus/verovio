@@ -624,7 +624,7 @@ bool Toolkit::LoadData(const std::string &data, bool resetLogBuffer)
 
         LogRedirectStart();
         bool status = converter.convert(conversion, xmlfile);
-        LogRedirectEnd();
+        LogRedirectStop();
         if (!status) {
             LogWarning("Problem converting MusicXML to Humdrum (see warning above this line for possible reasons");
         }
@@ -679,7 +679,7 @@ bool Toolkit::LoadData(const std::string &data, bool resetLogBuffer)
 
         LogRedirectStart();
         bool status = converter.convertString(conversion, data);
-        LogRedirectEnd();
+        LogRedirectStop();
         if (!status) {
             LogWarning("Problem converting MuseData to Humdrum (see warning above this line for possible reasons");
         }
@@ -714,7 +714,7 @@ bool Toolkit::LoadData(const std::string &data, bool resetLogBuffer)
 
         LogRedirectStart();
         bool status = converter.convert(conversion, data);
-        LogRedirectEnd();
+        LogRedirectStop();
         if (!status) {
             LogWarning("Problem converting EsAC to Humdrum (see warning above this line for possible reasons");
         }
@@ -1498,7 +1498,7 @@ void Toolkit::LogRedirectStart()
     std::cerr.rdbuf(m_captured_cerr.rdbuf());
 }
 
-void Toolkit::LogRedirectEnd()
+void Toolkit::LogRedirectStop()
 {
     if (!m_captured_cerr.str().empty()) {
         vrv::LogWarning(m_captured_cerr.str().c_str());
@@ -2106,7 +2106,7 @@ const char *Toolkit::GetHumdrumBuffer()
 
         LogRedirectStart();
         bool status = converter.convert(out, infile);
-        LogRedirectEnd();
+        LogRedirectStop();
         if (!status) {
             LogWarning("Problem converting MEI to Humdrum (see warning above this line for possible reasons");
         }
@@ -2174,7 +2174,7 @@ std::string Toolkit::ConvertMEIToHumdrum(const std::string &meiData)
 
     LogRedirectStart();
     bool status = converter.convert(conversion, xmlfile);
-    LogRedirectEnd();
+    LogRedirectStop();
 
     if (!status) {
         LogError("Error converting MEI data to Humdrum: %s", conversion.str().c_str());
