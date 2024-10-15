@@ -23,6 +23,7 @@
 #include "adjustgracexposfunctor.h"
 #include "adjustharmgrpsspacingfunctor.h"
 #include "adjustlayersfunctor.h"
+#include "adjustneumexfunctor.h"
 #include "adjustslursfunctor.h"
 #include "adjuststaffoverlapfunctor.h"
 #include "adjustsylspacingfunctor.h"
@@ -33,6 +34,7 @@
 #include "adjustxposfunctor.h"
 #include "adjustxrelfortranscriptionfunctor.h"
 #include "adjustyposfunctor.h"
+#include "adjustyrelfortranscriptionfunctor.h"
 #include "alignfunctor.h"
 #include "bboxdevicecontext.h"
 #include "cachehorizontallayoutfunctor.h"
@@ -43,7 +45,7 @@
 #include "calcchordnoteheadsfunctor.h"
 #include "calcdotsfunctor.h"
 #include "calcledgerlinesfunctor.h"
-#include "calcligaturenoteposfunctor.h"
+#include "calcligatureorneumeposfunctor.h"
 #include "calcslurdirectionfunctor.h"
 #include "calcspanningbeamspansfunctor.h"
 #include "calcstemfunctor.h"
@@ -251,6 +253,9 @@ void Page::LayOutTranscription(bool force)
     CalcAlignmentPitchPosFunctor calcAlignmentPitchPos(doc);
     this->Process(calcAlignmentPitchPos);
 
+    CalcLigatureOrNeumePosFunctor calcLigatureOrNeumePos(doc);
+    this->Process(calcLigatureOrNeumePos);
+
     CalcStemFunctor calcStem(doc);
     this->Process(calcStem);
 
@@ -260,16 +265,20 @@ void Page::LayOutTranscription(bool force)
     CalcDotsFunctor calcDots(doc);
     this->Process(calcDots);
 
-    // Render it for filling the bounding box
-    View view;
-    view.SetDoc(doc);
-    BBoxDeviceContext bBoxDC(&view, 0, 0, BBOX_HORIZONTAL_ONLY);
-    // Do not do the layout in this view - otherwise we will loop...
-    view.SetPage(this->GetIdx(), false);
-    view.DrawCurrentPage(&bBoxDC, false);
+    if (!m_layoutDone) {
+        // Render it for filling the bounding box
+        View view;
+        view.SetDoc(doc);
+        BBoxDeviceContext bBoxDC(&view, 0, 0, BBOX_HORIZONTAL_ONLY);
+        // Do not do the layout in this view - otherwise we will loop...
+        view.SetPage(this->GetIdx(), false);
+        view.DrawCurrentPage(&bBoxDC, false);
+    }
 
     AdjustXRelForTranscriptionFunctor adjustXRelForTranscription;
     this->Process(adjustXRelForTranscription);
+    AdjustYRelForTranscriptionFunctor adjustYRelForTranscription;
+    this->Process(adjustYRelForTranscription);
 
     CalcLedgerLinesFunctor calcLedgerLines(doc);
     this->Process(calcLedgerLines);
@@ -309,7 +318,7 @@ void Page::ResetAligners()
     // Unless duration-based spacing is disabled, set the X position of each Alignment.
     // Does non-linear spacing based on the duration space between two Alignment objects.
     if (!doc->GetOptions()->m_evenNoteSpacing.GetValue()) {
-        int longestActualDur = DUR_4;
+        data_DURATION longestActualDur = DURATION_4;
 
         // Detect the longest duration in order to adjust the spacing (false by default)
         if (doc->GetOptions()->m_spacingDurDetection.GetValue()) {
@@ -333,10 +342,8 @@ void Page::ResetAligners()
     CalcAlignmentPitchPosFunctor calcAlignmentPitchPos(doc);
     this->Process(calcAlignmentPitchPos);
 
-    if (IsMensuralType(doc->m_notationType)) {
-        CalcLigatureNotePosFunctor calcLigatureNotePos(doc);
-        this->Process(calcLigatureNotePos);
-    }
+    CalcLigatureOrNeumePosFunctor calcLigatureOrNeumePos(doc);
+    this->Process(calcLigatureOrNeumePos);
 
     CalcStemFunctor calcStem(doc);
     this->Process(calcStem);
@@ -395,6 +402,10 @@ void Page::LayOutHorizontally()
     // otherwise keep their relative positioning
     AdjustDotsFunctor adjustDots(doc, scoreDef->GetStaffNs());
     this->Process(adjustDots);
+
+    // Adjust the X position of the neume and syllables
+    AdjustNeumeXFunctor adjustNeumeX(doc);
+    this->Process(adjustNeumeX);
 
     // Adjust layers again, this time including dots positioning
     AdjustLayersFunctor adjustLayersWithDots(doc, scoreDef->GetStaffNs());
@@ -615,8 +626,7 @@ void Page::JustifyVertically()
         return;
     }
 
-    // Ignore vertical justification if it's not required
-    if (!this->IsJustificationRequired(doc)) return;
+    this->ReduceJustifiableHeight(doc);
 
     // Justify Y position
     JustifyYFunctor justifyY(doc);
@@ -632,42 +642,25 @@ void Page::JustifyVertically()
     }
 }
 
-bool Page::IsJustificationRequired(const Doc *doc)
+void Page::ReduceJustifiableHeight(const Doc *doc)
 {
     const Pages *pages = doc->GetPages();
     assert(pages);
 
-    const int childSystems = this->GetChildCount(SYSTEM);
-    // Last page and justification of last page is not enabled
+    double maxRatio = doc->GetOptions()->m_justificationMaxVertical.GetValue();
+    // Special handling for justification of last page
     if (pages->GetLast() == this) {
-        const int idx = this->GetIdx();
-        if (idx > 0) {
-            const Page *previousPage = dynamic_cast<const Page *>(pages->GetPrevious(this));
-            assert(previousPage);
-            const int previousJustifiableHeight = previousPage->m_drawingJustifiableHeight;
-            const int previousJustificationSum = previousPage->m_justificationSum;
-
-            if (previousJustifiableHeight < m_drawingJustifiableHeight) {
-                m_drawingJustifiableHeight = previousJustifiableHeight;
-            }
-
-            const int maxSystemsPerPage = doc->GetOptions()->m_systemMaxPerPage.GetValue();
-            if ((childSystems <= 2) || (childSystems < maxSystemsPerPage)) {
-                m_justificationSum = previousJustificationSum;
+        const Page *previousPage = vrv_cast<const Page *>(pages->GetPrevious(this, PAGE));
+        if (previousPage) {
+            const int systemCount = this->GetChildCount(SYSTEM);
+            const int previousSystemCount = previousPage->GetChildCount(SYSTEM);
+            if (systemCount < previousSystemCount) {
+                maxRatio *= (double)systemCount / (double)previousSystemCount;
             }
         }
-        else {
-            const int stavesPerSystem = m_drawingScoreDef.GetDescendantCount(STAFFDEF);
-            if (childSystems * stavesPerSystem < 8) return false;
-        }
-    }
-    const double ratio = (double)m_drawingJustifiableHeight / (double)doc->m_drawingPageHeight;
-    if (ratio > doc->GetOptions()->m_justificationMaxVertical.GetValue()) {
-        m_drawingJustifiableHeight
-            = doc->m_drawingPageHeight * doc->GetOptions()->m_justificationMaxVertical.GetValue();
     }
 
-    return true;
+    m_drawingJustifiableHeight = std::min<int>(doc->m_drawingPageHeight * maxRatio, m_drawingJustifiableHeight);
 }
 
 void Page::LayOutPitchPos()

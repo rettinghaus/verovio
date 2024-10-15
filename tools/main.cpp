@@ -72,6 +72,12 @@ bool optionExists(const std::string &option, int argc, char **argv, std::string 
     return false;
 }
 
+option optionStruct(vrv::Option *option, const std::map<vrv::Option *, std::string> &optionNames)
+{
+    return { optionNames.at(option).c_str(), option->IsArgumentRequired() ? required_argument : no_argument, 0,
+        option->GetShortOption() };
+}
+
 int main(int argc, char **argv)
 {
     std::string infile;
@@ -89,18 +95,34 @@ int main(int argc, char **argv)
     // The fonts will be loaded later with Resources::InitFonts()
     vrv::Toolkit toolkit(false);
 
+    vrv::Options *options = toolkit.GetOptionsObj();
+
+    // map storing lower-case option names
+    std::map<vrv::Option *, std::string> optionNames
+        = { { &options->m_allPages, vrv::FromCamelCase(options->m_allPages.GetKey()) },
+              { &options->m_inputFrom, vrv::FromCamelCase(options->m_inputFrom.GetKey()) },
+              { &options->m_help, vrv::FromCamelCase(options->m_help.GetKey()) },
+              { &options->m_logLevel, vrv::FromCamelCase(options->m_logLevel.GetKey()) },
+              { &options->m_outfile, vrv::FromCamelCase(options->m_outfile.GetKey()) },
+              { &options->m_page, vrv::FromCamelCase(options->m_page.GetKey()) },
+              { &options->m_resourcePath, vrv::FromCamelCase(options->m_resourcePath.GetKey()) },
+              { &options->m_scale, vrv::FromCamelCase(options->m_scale.GetKey()) },
+              { &options->m_outputTo, vrv::FromCamelCase(options->m_outputTo.GetKey()) },
+              { &options->m_version, vrv::FromCamelCase(options->m_version.GetKey()) },
+              { &options->m_xmlIdSeed, vrv::FromCamelCase(options->m_xmlIdSeed.GetKey()) } };
+
     static struct option base_options[] = { //
-        { "all-pages", no_argument, 0, 'a' }, //
-        { "input-from", required_argument, 0, 'f' }, //
-        { "help", required_argument, 0, 'h' }, //
-        { "log-level", required_argument, 0, 'l' }, //
-        { "outfile", required_argument, 0, 'o' }, //
-        { "page", required_argument, 0, 'p' }, //
-        { "resources", required_argument, 0, 'r' }, //
-        { "scale", required_argument, 0, 's' }, //
-        { "output-to", required_argument, 0, 't' }, //
-        { "version", no_argument, 0, 'v' }, //
-        { "xml-id-seed", required_argument, 0, 'x' }, //
+        optionStruct(&options->m_allPages, optionNames), //
+        optionStruct(&options->m_inputFrom, optionNames), //
+        optionStruct(&options->m_help, optionNames), //
+        optionStruct(&options->m_logLevel, optionNames), //
+        optionStruct(&options->m_outfile, optionNames), //
+        optionStruct(&options->m_page, optionNames), //
+        optionStruct(&options->m_resourcePath, optionNames), //
+        optionStruct(&options->m_scale, optionNames), //
+        optionStruct(&options->m_outputTo, optionNames), //
+        optionStruct(&options->m_version, optionNames), //
+        optionStruct(&options->m_xmlIdSeed, optionNames), //
         // standard input - long options only or - as filename
         { "stdin", no_argument, 0, 'z' }, //
         { 0, 0, 0, 0 }
@@ -108,7 +130,6 @@ int main(int argc, char **argv)
 
     int baseSize = sizeof(base_options) / sizeof(option);
 
-    vrv::Options *options = toolkit.GetOptionsObj();
     const vrv::MapOfStrOptions *params = options->GetItems();
     int mapSize = (int)params->size();
 
@@ -238,6 +259,8 @@ int main(int argc, char **argv)
     }
     options->Sync();
 
+    toolkit.SetLocale();
+
     if (show_version) {
         display_version();
         exit(0);
@@ -269,12 +292,6 @@ int main(int argc, char **argv)
     if (!toolkit.SetResourcePath(resourcePath)) {
         std::cerr << "The music font could not be loaded; please check the contents of the resource directory."
                   << std::endl;
-        exit(1);
-    }
-
-    // Load a specified font
-    if (!toolkit.SetOptions(vrv::StringFormat("{\"font\": \"%s\" }", options->m_font.GetValue().c_str()))) {
-        std::cerr << "Font '" << options->m_font.GetValue() << "' could not be loaded." << std::endl;
         exit(1);
     }
 
@@ -430,9 +447,9 @@ int main(int argc, char **argv)
         outfile += ".json";
         if (std_output) {
             std::string output;
-            std::cout << toolkit.RenderToTimemap();
+            std::cout << toolkit.RenderToTimemap(options->m_timemapOptions.GetValue());
         }
-        else if (!toolkit.RenderToTimemapFile(outfile)) {
+        else if (!toolkit.RenderToTimemapFile(outfile, options->m_timemapOptions.GetValue())) {
             std::cerr << "Unable to write timemap to " << outfile << "." << std::endl;
             exit(1);
         }

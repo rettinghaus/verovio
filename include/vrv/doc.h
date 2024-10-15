@@ -276,7 +276,7 @@ public:
      * Extract a timemap from the document to a JSON string.
      * Run trough all the layers and fill the timemap file content.
      */
-    bool ExportTimemap(std::string &output, bool includeRests, bool includeMeasures);
+    bool ExportTimemap(std::string &output, bool includeRests, bool includeMeasures, bool useFractions);
 
     /**
      *  Extract expansionMap from the document to JSON string.
@@ -449,6 +449,14 @@ public:
     ///@{
     void SetMensuralMusicOnly(bool isMensuralMusicOnly) { m_isMensuralMusicOnly = isMensuralMusicOnly; }
     bool IsMensuralMusicOnly() const { return m_isMensuralMusicOnly; }
+    ///@}
+
+    /**
+     * @name Setter for and getter for neume-line flag
+     */
+    ///@{
+    void SetNeumeLines(bool isNeumeLines) { m_isNeumeLines = isNeumeLines; }
+    bool IsNeumeLines() const { return m_isNeumeLines; }
     ///@}
 
     /**
@@ -659,6 +667,12 @@ private:
      * Mensural only music will be converted to cast-off segments by Doc::ConvertToCastOffMensuralDoc
      */
     bool m_isMensuralMusicOnly;
+
+    /**
+     * A flag to indicate that the document contains neume lines.
+     * This is a special document type where neume lines are encoded with <section type="neon-neume-line">
+     */
+    bool m_isNeumeLines;
 
     /** Page width (MEI scoredef@page.width) - currently not saved */
     int m_pageWidth;

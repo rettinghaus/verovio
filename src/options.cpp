@@ -32,6 +32,9 @@ const std::map<int, std::string> Option::s_condense
 const std::map<int, std::string> Option::s_elision = { { ELISION_regular, "regular" }, { ELISION_narrow, "narrow" },
     { ELISION_wide, "wide" }, { ELISION_unicode, "unicode" } };
 
+const std::map<int, std::string> Option::s_fontFallback
+    = { { FONT_FALLBACK_Leipzig, "Leipzig" }, { FONT_FALLBACK_Bravura, "Bravura" } };
+
 const std::map<int, std::string> Option::s_footer
     = { { FOOTER_none, "none" }, { FOOTER_auto, "auto" }, { FOOTER_encoded, "encoded" }, { FOOTER_always, "always" } };
 
@@ -108,13 +111,11 @@ jsonxx::Object Option::ToJson() const
     const OptionBool *optBool = dynamic_cast<const OptionBool *>(this);
 
     if (optBool) {
-        opt << "type"
-            << "bool";
+        opt << "type" << "bool";
         opt << "default" << optBool->GetDefault();
     }
     else if (optDbl) {
-        opt << "type"
-            << "double";
+        opt << "type" << "double";
         jsonxx::Value value(optDbl->GetDefault());
         value.precision_ = 2;
         opt << "default" << value;
@@ -126,20 +127,17 @@ jsonxx::Object Option::ToJson() const
         opt << "max" << value;
     }
     else if (optInt) {
-        opt << "type"
-            << "int";
+        opt << "type" << "int";
         opt << "default" << optInt->GetDefault();
         opt << "min" << optInt->GetMin();
         opt << "max" << optInt->GetMax();
     }
     else if (optString) {
-        opt << "type"
-            << "std::string";
+        opt << "type" << "std::string";
         opt << "default" << optString->GetDefault();
     }
     else if (optArray) {
-        opt << "type"
-            << "array";
+        opt << "type" << "array";
         std::vector<std::string> strValues = optArray->GetDefault();
         std::vector<std::string>::iterator strIter;
         jsonxx::Array values;
@@ -149,8 +147,7 @@ jsonxx::Object Option::ToJson() const
         opt << "default" << values;
     }
     else if (optIntMap) {
-        opt << "type"
-            << "std::string-list";
+        opt << "type" << "std::string-list";
         opt << "default" << optIntMap->GetDefaultStrValue();
         std::vector<std::string> strValues = optIntMap->GetStrValues(false);
         std::vector<std::string>::iterator strIter;
@@ -905,7 +902,7 @@ Options::Options()
     m_baseOptions.AddOption(&m_standardOutput);
 
     m_help.SetInfo("Help", "Display this message");
-    m_help.Init(false);
+    m_help.Init("");
     m_help.SetKey("help");
     m_help.SetShortOption('h', true);
     m_baseOptions.AddOption(&m_help);
@@ -917,7 +914,8 @@ Options::Options()
     m_baseOptions.AddOption(&m_allPages);
 
     m_inputFrom.SetInfo("Input from",
-        "Select input format from: \"abc\", \"darms\", \"humdrum\", \"mei\", \"pae\", \"xml\" (musicxml)");
+        "Select input format from: \"abc\", \"darms\", \"esac\", \"humdrum\", \"mei\", \"pae\", \"volpiano\", \"xml\" "
+        "(musicxml), \"musicxml-hum\" (musicxml via humdrum)");
     m_inputFrom.Init("mei");
     m_inputFrom.SetKey("inputFrom");
     m_inputFrom.SetShortOption('f', false);
@@ -1132,6 +1130,10 @@ Options::Options()
     m_scaleToPageSize.Init(false);
     this->Register(&m_scaleToPageSize, "scaleToPageSize", &m_general);
 
+    m_setLocale.SetInfo("Set the global locale", "Changes the global locale to C (this is not thread-safe)");
+    m_setLocale.Init(false);
+    this->Register(&m_setLocale, "setLocale", &m_general);
+
     m_showRuntime.SetInfo("Show runtime on CLI", "Display the total runtime on command-line");
     m_showRuntime.Init(false);
     this->Register(&m_showRuntime, "showRuntime", &m_general);
@@ -1290,6 +1292,18 @@ Options::Options()
     m_font.Init("Leipzig");
     this->Register(&m_font, "font", &m_generalLayout);
 
+    m_fontAddCustom.SetInfo("Add custom font", "Add a custom music font as zip file");
+    m_fontAddCustom.Init();
+    this->Register(&m_fontAddCustom, "fontAddCustom", &m_generalLayout);
+
+    m_fontFallback.SetInfo("Font fallback", "The music font fallback for missing glyphs");
+    m_fontFallback.Init(FONT_FALLBACK_Leipzig, &Option::s_fontFallback);
+    this->Register(&m_fontFallback, "fontFallback", &m_generalLayout);
+
+    m_fontLoadAll.SetInfo("Font init all", "Load all music fonts");
+    m_fontLoadAll.Init(false);
+    this->Register(&m_fontLoadAll, "fontLoadAll", &m_generalLayout);
+
     m_graceFactor.SetInfo("Grace factor", "The grace size ratio numerator");
     m_graceFactor.Init(0.75, 0.5, 1.0);
     this->Register(&m_graceFactor, "graceFactor", &m_generalLayout);
@@ -1339,7 +1353,7 @@ Options::Options()
 
     m_justificationMaxVertical.SetInfo("Maximum ratio of justifiable height for page",
         "Maximum ratio of justifiable height to page height that can be used for the vertical justification");
-    m_justificationMaxVertical.Init(0.3, 0.0, 1.0);
+    m_justificationMaxVertical.Init(0.2, 0.0, 1.0);
     this->Register(&m_justificationMaxVertical, "justificationMaxVertical", &m_generalLayout);
 
     m_ledgerLineThickness.SetInfo("Ledger line thickness", "The thickness of the ledger lines");
@@ -1784,7 +1798,7 @@ Options::Options()
     m_topMarginPgFooter.Init(2.0, 0.0, 24.0);
     this->Register(&m_topMarginPgFooter, "topMarginPgFooter", &m_elementMargins);
 
-    /********* midi *********/
+    /********* MIDI *********/
 
     m_midi.SetLabel("Midi options", "5-midi");
     m_midi.SetCategory(OptionsCategory::Midi);
@@ -1798,7 +1812,7 @@ Options::Options()
     m_midiTempoAdjustment.Init(1.0, 0.2, 4.0);
     this->Register(&m_midiTempoAdjustment, "midiTempoAdjustment", &m_midi);
 
-    /********* General *********/
+    /********* Mensural *********/
 
     m_mensural.SetLabel("Mensural notation options", "6-mensural");
     m_mensural.SetCategory(OptionsCategory::Mensural);
@@ -1811,6 +1825,16 @@ Options::Options()
     m_mensuralToMeasure.SetInfo("Mensural to measure", "Convert mensural sections to measure-based MEI");
     m_mensuralToMeasure.Init(false);
     this->Register(&m_mensuralToMeasure, "mensuralToMeasure", &m_mensural);
+
+    /********* Method JSON options to the command-line *********/
+
+    m_jsonCmdLineOptions.SetLabel("Method JSON options for the command-line", "7-methodJson");
+    m_jsonCmdLineOptions.SetCategory(OptionsCategory::Json);
+    m_grps.push_back(&m_jsonCmdLineOptions);
+
+    m_timemapOptions.SetInfo("Timemap options", "The JSON options to be passed when producing the timemap");
+    m_timemapOptions.Init("{}");
+    this->Register(&m_timemapOptions, "timemapOptions", &m_jsonCmdLineOptions);
 
     /********* Deprecated options *********/
 

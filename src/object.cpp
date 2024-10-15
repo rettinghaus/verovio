@@ -28,7 +28,7 @@
 #include "editorial.h"
 #include "featureextractor.h"
 #include "findfunctor.h"
-#include "io.h"
+#include "iobase.h"
 #include "keysig.h"
 #include "layer.h"
 #include "linkinginterface.h"
@@ -1199,6 +1199,18 @@ Object *Object::FindPreviousChild(Comparison *comp, Object *start)
     FindPreviousChildByComparisonFunctor findPreviousChildByComparison(comp, start);
     this->Process(findPreviousChildByComparison);
     return const_cast<Object *>(findPreviousChildByComparison.GetElement());
+}
+
+void Object::LogDebugTree(int maxDepth, int level)
+{
+    std::string indent(level, '\t');
+    LogDebug("%s%s", indent.c_str(), this->LogDebugTreeMsg().c_str());
+
+    if (maxDepth == level) return;
+
+    for (auto &child : this->GetChildren()) {
+        child->LogDebugTree(maxDepth, level + 1);
+    }
 }
 
 //----------------------------------------------------------------------------

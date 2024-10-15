@@ -132,6 +132,7 @@ void Doc::Reset()
     m_timemapTempo = 0.0;
     m_markup = MARKUP_DEFAULT;
     m_isMensuralMusicOnly = false;
+    m_isNeumeLines = false;
     m_isCastOff = false;
     m_visibleScores.clear();
 
@@ -405,16 +406,20 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
     }
 
     double tempo = MIDI_TEMPO;
+    std::set<int> tempoEventTicks; // track the ticks of added tempo events
 
     // set MIDI tempo
     ScoreDef *scoreDef = this->GetFirstVisibleScore()->GetScoreDef();
     if (scoreDef->HasMidiBpm()) {
         tempo = scoreDef->GetMidiBpm();
+        tempoEventTicks.insert(0);
+        midiFile->addTempo(0, 0, tempo);
     }
     else if (scoreDef->HasMm()) {
         tempo = Tempo::CalcTempo(scoreDef);
+        tempoEventTicks.insert(0);
+        midiFile->addTempo(0, 0, tempo);
     }
-    midiFile->addTempo(0, 0, tempo);
 
     // Capture information for MIDI generation, i.e. from control elements
     InitMIDIFunctor initMIDI;
@@ -498,6 +503,9 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
             if (meterSig && meterSig->HasCount() && meterSig->HasUnit()) {
                 midiFile->addTimeSignature(midiTrack, 0, meterSig->GetTotalCount(), meterSig->GetUnit());
             }
+            else if (meterSig && meterSig->HasSym()) {
+                midiFile->addTimeSignature(midiTrack, 0, meterSig->GetTotalCount(), meterSig->GetSymImplicitUnit());
+            }
         }
 
         // Set initial scoreDef values for tuning
@@ -520,6 +528,7 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
             generateMIDI.SetChannel(midiChannel);
             generateMIDI.SetTrack(midiTrack);
             generateMIDI.SetStaffN(staves->first);
+            generateMIDI.SetTempoEventTicks(tempoEventTicks);
             generateMIDI.SetTransSemi(transSemi);
             generateMIDI.SetCurrentTempo(tempo);
             generateMIDI.SetDeferredNotes(initMIDI.GetDeferredNotes());
@@ -527,11 +536,13 @@ void Doc::ExportMIDI(smf::MidiFile *midiFile)
 
             // LogDebug("Exporting track %d ----------------", midiTrack);
             this->Process(generateMIDI);
+
+            tempoEventTicks = generateMIDI.GetTempoEventTicks();
         }
     }
 }
 
-bool Doc::ExportTimemap(std::string &output, bool includeRests, bool includeMeasures)
+bool Doc::ExportTimemap(std::string &output, bool includeRests, bool includeMeasures, bool useFractions)
 {
     if (!this->HasTimemap()) {
         // generate MIDI timemap before progressing
@@ -547,7 +558,7 @@ bool Doc::ExportTimemap(std::string &output, bool includeRests, bool includeMeas
     generateTimemap.SetCueExclusion(this->GetOptions()->m_midiNoCue.GetValue());
     this->Process(generateTimemap);
 
-    timemap.ToJson(output, includeRests, includeMeasures);
+    timemap.ToJson(output, includeRests, includeMeasures, useFractions);
 
     return true;
 }
@@ -609,18 +620,16 @@ void Doc::PrepareData()
 
     // Try to match all spanning elements (slur, tie, etc) by processing backwards
     PrepareTimeSpanningFunctor prepareTimeSpanning;
-    prepareTimeSpanning.SetDirection(BACKWARD);
     this->Process(prepareTimeSpanning);
     prepareTimeSpanning.SetDataCollectionCompleted();
 
-    // First we try backwards because normally the spanning elements are at the end of
-    // the measure. However, in some case, one (or both) end points will appear afterwards
-    // in the encoding. For these, the previous iteration will not have resolved the link and
-    // the spanning elements will remain in the timeSpanningElements array. We try again forwards
-    // but this time without filling the list (that is only will the remaining elements)
+    // First we try a forward pass which should collect most of the spanning elements.
+    // However, in some cases, one (or both) end points might appear a few measures
+    // before the spanning element in the encoding. For these, the previous iteration will not have resolved the link
+    // and the spanning elements will remain in the timeSpanningElements array. We try again forwards but this time
+    // without filling the list (that is only resolving remaining elements).
     const ListOfSpanningInterOwnerPairs &interfaceOwnerPairs = prepareTimeSpanning.GetInterfaceOwnerPairs();
     if (!interfaceOwnerPairs.empty()) {
-        prepareTimeSpanning.SetDirection(FORWARD);
         this->Process(prepareTimeSpanning);
     }
 
@@ -1409,6 +1418,8 @@ void Doc::SyncToFacsimileDoc()
     if (!m_facsimile->FindDescendantByType(SURFACE)) {
         m_facsimile->AddChild(new Surface());
     }
+    this->ScoreDefSetCurrentDoc();
+
     m_facsimile->SetType("transcription");
     m_facsimile->ClearChildren();
 
@@ -1845,7 +1856,7 @@ double Doc::GetCueScaling() const
 
 FontInfo *Doc::GetDrawingSmuflFont(int staffSize, bool graceSize)
 {
-    m_drawingSmuflFont.SetFaceName(m_options->m_font.GetValue().c_str());
+    m_drawingSmuflFont.SetFaceName(this->GetResources().GetCurrentFont().c_str());
     int value = m_drawingSmuflFontSize * staffSize / 100;
     if (graceSize) value = value * m_options->m_graceFactor.GetValue();
     m_drawingSmuflFont.SetPointSize(value);
@@ -2130,8 +2141,10 @@ int Doc::GetAdjustedDrawingPageHeight() const
 {
     assert(m_drawingPage);
 
+    // Take into account the PPU when getting the page height in facsimile
     if (this->IsTranscription() || this->IsFacs()) {
-        return m_drawingPage->m_pageHeight / DEFINITION_FACTOR;
+        const int factor = DEFINITION_FACTOR / m_drawingPage->GetPPUFactor();
+        return m_drawingPage->m_pageHeight / factor;
     }
 
     int contentHeight = m_drawingPage->GetContentHeight();
@@ -2142,8 +2155,10 @@ int Doc::GetAdjustedDrawingPageWidth() const
 {
     assert(m_drawingPage);
 
+    // Take into account the PPU when getting the page width in facsimile
     if (this->IsTranscription() || this->IsFacs()) {
-        return m_drawingPage->m_pageWidth / DEFINITION_FACTOR;
+        const int factor = DEFINITION_FACTOR / m_drawingPage->GetPPUFactor();
+        return m_drawingPage->m_pageWidth / factor;
     }
 
     int contentWidth = m_drawingPage->GetContentWidth();
