@@ -9,7 +9,7 @@
 #define __VRV_RUNNING_ELEMENT_H__
 
 #include "atts_shared.h"
-#include "object.h"
+#include "textlayoutelement.h"
 
 namespace vrv {
 
@@ -25,32 +25,25 @@ class TextElement;
  * This class represents running elements (headers and footers).
  * It is not an abstract class but should not be instanciated directly.
  */
-class RunningElement : public Object, public ObjectListInterface, public AttHorizontalAlign, public AttTyped {
+class RunningElement : public TextLayoutElement, public AttFormework {
 public:
     /**
      * @name Constructors, destructors, reset methods
      * Reset method resets all attribute classes
      */
     ///@{
-    RunningElement();
-    RunningElement(const std::string &classid);
+    // RunningElement();
+    // RunningElement(ClassId classId);
+    RunningElement(ClassId classId, const std::string &classIdStr);
     virtual ~RunningElement();
-    virtual void Reset();
-    virtual ClassId GetClassId() const { return RUNNING_ELEMENT; }
+    void Reset() override;
     ///@}
 
     /**
      * Disable cloning of the running elements (for now?).
      * It does not make sense you carry copying the running element across the systems.
      */
-    virtual Object *Clone() const { return NULL; }
-
-    /**
-     * @name Methods for adding allowed content
-     */
-    ///@{
-    virtual bool IsSupportedChild(Object *object);
-    ///@}
+    Object *Clone() const override { return NULL; }
 
     /**
      * @name Setter and getter of the generated flag
@@ -64,11 +57,11 @@ public:
      * @name Get and set the X and Y drawing position
      */
     ///@{
-    virtual int GetDrawingX() const;
-    virtual int GetDrawingY() const;
+    int GetDrawingX() const override;
+    int GetDrawingY() const override;
     ///@}
 
-    int GetWidth() const;
+    int GetTotalWidth(const Doc *doc) const override;
 
     /*
      * @name Setter and getter for the current drawing page
@@ -76,6 +69,7 @@ public:
     ///@{
     void SetDrawingPage(Page *page);
     Page *GetDrawingPage() { return m_drawingPage; }
+    const Page *GetDrawingPage() const { return m_drawingPage; }
     ///@}
 
     /**
@@ -87,39 +81,14 @@ public:
     ///@}
 
     /**
-     * @name Get the size of row, cols or cells
-     */
-    ///@{
-    int GetTotalHeight();
-    /** Row from 0 to 2 */
-    int GetRowHeight(int row);
-    /** Col from 0 to 2 */
-    int GetColHeight(int col);
-    /** Row from 0 to 8 */
-    int GetCellHeight(int cell);
-    ///@}
-
-    /**
-     * Scale the content of the running element.
-     * Currently unused.
-     */
-    bool AdjustDrawingScaling(int width);
-
-    /**
-     * Adjust the postition of the content of the running element.
-     * First adjust the content of each cell, and then the cells themselves.
-     */
-    bool AdjustRunningElementYPos();
-
-    /**
      * Set the current page number by looking for a <num label="page">#</num> element.
      */
-    void SetCurrentPageNum(Page *currentPage);
+    void SetCurrentPageNum(const Page *currentPage);
 
     /**
      * Load the footer from the resources (footer.svg)
      */
-    void LoadFooter();
+    void LoadFooter(const Doc *doc);
 
     /**
      * Add page numbering to the running element.
@@ -131,32 +100,17 @@ public:
     //----------//
 
     /**
-     * See Object::Save
+     * Interface for class functor visitation
      */
     ///@{
-    virtual int Save(FunctorParams *functorParams);
-    virtual int SaveEnd(FunctorParams *functorParams);
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
-
-    /**
-     * See Object::AlignVertically
-     */
-    ///@{
-    virtual int AlignVertically(FunctorParams *functorParams);
-    ///@}
-
-protected:
-    /**
-     * Filter the list for a specific class.
-     * Keep only the top <rend> and <fig>
-     */
-    virtual void FilterList(ArrayOfObjects *childList);
 
 private:
-    /**
-     *
-     */
-    int GetAlignmentPos(data_HORIZONTALALIGNMENT h, data_VERTICALALIGNMENT v);
+    //
 
 public:
     //
@@ -172,20 +126,9 @@ private:
     int m_drawingYRel;
 
     /**
-     * Stored the top <rend> or <fig> with the 9 possible positioning combinations, from
-     * top-left to bottom-right (going left to right first)
-     */
-    ArrayOfTextElements m_cells[9];
-
-    /**
      * Flag indicating whether or not the element was generated
      */
     bool m_isGenerated;
-
-    /**
-     *
-     */
-    int m_drawingScalingPercent[3];
 };
 
 } // namespace vrv

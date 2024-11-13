@@ -26,7 +26,8 @@ namespace vrv {
 class Turn : public ControlElement,
              public TimePointInterface,
              public AttColor,
-             public AttExtSym,
+             public AttExtSymAuth,
+             public AttExtSymNames,
              public AttOrnamentAccid,
              public AttPlacementRelStaff,
              public AttTurnLog {
@@ -38,34 +39,56 @@ public:
     ///@{
     Turn();
     virtual ~Turn();
-    virtual Object *Clone() const { return new Turn(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Turn"; }
-    virtual ClassId GetClassId() const { return TURN; }
+    Object *Clone() const override { return new Turn(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Turn"; }
     ///@}
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual TimePointInterface *GetTimePointInterface() { return dynamic_cast<TimePointInterface *>(this); }
+    TimePointInterface *GetTimePointInterface() override { return vrv_cast<TimePointInterface *>(this); }
+    const TimePointInterface *GetTimePointInterface() const override
+    {
+        return vrv_cast<const TimePointInterface *>(this);
+    }
     ///@}
 
     /**
      * Get the SMuFL glyph for the turn based on form or glyph.num
      */
-    wchar_t GetTurnGlyph() const;
+    char32_t GetTurnGlyph() const;
+
+    /**
+     * Get the turn height ignoring slash
+     */
+    int GetTurnHeight(const Doc *doc, int staffSize) const;
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     //
 private:
     //
 public:
-    //
+    /**
+     * The end point of a delayed turn when @startid is used
+     */
+    LayerElement *m_drawingEndElement;
+
 private:
     //
 };

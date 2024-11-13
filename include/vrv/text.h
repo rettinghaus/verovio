@@ -29,20 +29,37 @@ public:
     ///@{
     Text();
     virtual ~Text();
-    virtual Object *Clone() const { return new Text(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Text"; }
-    virtual ClassId GetClassId() const { return TEXT; }
+    Object *Clone() const override { return new Text(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Text"; }
     ///@}
 
     /**
      * @name Set and get the text content.
-     * The text content is a std::wstring that needs to be converted to UTF16.
+     * The text content is a std::u32string that needs to be converted to UTF16.
      * See MEIInput::ReadText and MEIInput ::WriteText
      */
     ///@{
-    void SetText(std::wstring text) { m_text = text; }
-    std::wstring GetText() const { return m_text; }
+    void SetText(const std::u32string &text) { m_text = text; }
+    std::u32string GetText() const { return m_text; }
+    ///@}
+
+    /**
+     * @name Setter and getter of the generated flag
+     */
+    ///@{
+    bool IsGenerated() const { return m_isGenerated; }
+    void IsGenerated(bool isGenerated) { m_isGenerated = isGenerated; }
+    ///@}
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
 
 private:
@@ -51,9 +68,13 @@ public:
     //
 protected:
     /** The text content */
-    std::wstring m_text;
+    std::u32string m_text;
 
 private:
+    /**
+     * Flag indicating whether or not the text content was generated
+     */
+    bool m_isGenerated;
 };
 
 } // namespace vrv

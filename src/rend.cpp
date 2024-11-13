@@ -9,14 +9,15 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "editorial.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "lb.h"
 #include "num.h"
+#include "symbol.h"
 #include "text.h"
 #include "vrv.h"
 
@@ -29,22 +30,26 @@ namespace vrv {
 static const ClassRegistrar<Rend> s_factory("rend", REND);
 
 Rend::Rend()
-    : TextElement("rend-")
+    : TextElement(REND, "rend-")
     , AreaPosInterface()
     , AttColor()
+    , AttExtSymAuth()
     , AttLang()
+    , AttNNumberLike()
     , AttTextRendition()
     , AttTypography()
     , AttWhitespace()
 {
-    RegisterInterface(AreaPosInterface::GetAttClasses(), AreaPosInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_LANG);
-    RegisterAttClass(ATT_TEXTRENDITION);
-    RegisterAttClass(ATT_TYPOGRAPHY);
-    RegisterAttClass(ATT_WHITESPACE);
+    this->RegisterInterface(AreaPosInterface::GetAttClasses(), AreaPosInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_EXTSYMAUTH);
+    this->RegisterAttClass(ATT_LANG);
+    this->RegisterAttClass(ATT_NNUMBERLIKE);
+    this->RegisterAttClass(ATT_TEXTRENDITION);
+    this->RegisterAttClass(ATT_TYPOGRAPHY);
+    this->RegisterAttClass(ATT_WHITESPACE);
 
-    Reset();
+    this->Reset();
 }
 
 Rend::~Rend() {}
@@ -53,11 +58,13 @@ void Rend::Reset()
 {
     TextElement::Reset();
     AreaPosInterface::Reset();
-    ResetColor();
-    ResetLang();
-    ResetTextRendition();
-    ResetTypography();
-    ResetWhitespace();
+    this->ResetColor();
+    this->ResetExtSymAuth();
+    this->ResetLang();
+    this->ResetNNumberLike();
+    this->ResetTextRendition();
+    this->ResetTypography();
+    this->ResetWhitespace();
 }
 
 bool Rend::IsSupportedChild(Object *child)
@@ -71,6 +78,9 @@ bool Rend::IsSupportedChild(Object *child)
     else if (child->Is(REND)) {
         assert(dynamic_cast<Rend *>(child));
     }
+    else if (child->Is(SYMBOL)) {
+        assert(dynamic_cast<Symbol *>(child));
+    }
     else if (child->Is(TEXT)) {
         assert(dynamic_cast<Text *>(child));
     }
@@ -83,24 +93,37 @@ bool Rend::IsSupportedChild(Object *child)
     return true;
 }
 
+bool Rend::HasEnclosure() const
+{
+    if (!this->HasRend()) return false;
+
+    const bool hasEnclosure = ((this->GetRend() == TEXTRENDITION_box) || (this->GetRend() == TEXTRENDITION_circle)
+        || (this->GetRend() == TEXTRENDITION_dbox) || (this->GetRend() == TEXTRENDITION_tbox));
+    return hasEnclosure;
+}
+
 //----------------------------------------------------------------------------
 // Functor methods
 //----------------------------------------------------------------------------
 
-int Rend::AlignVertically(FunctorParams *functorParams)
+FunctorCode Rend::Accept(Functor &functor)
 {
-    AlignVerticallyParams *params = vrv_params_cast<AlignVerticallyParams *>(functorParams);
-    assert(params);
+    return functor.VisitRend(this);
+}
 
-    if (this->GetHalign()) {
-        switch (this->GetHalign()) {
-            case (HORIZONTALALIGNMENT_right): this->SetDrawingXRel(params->m_pageWidth); break;
-            case (HORIZONTALALIGNMENT_center): this->SetDrawingXRel(params->m_pageWidth / 2); break;
-            default: break;
-        }
-    }
+FunctorCode Rend::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitRend(this);
+}
 
-    return FUNCTOR_SIBLINGS;
+FunctorCode Rend::AcceptEnd(Functor &functor)
+{
+    return functor.VisitRendEnd(this);
+}
+
+FunctorCode Rend::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitRendEnd(this);
 }
 
 } // namespace vrv

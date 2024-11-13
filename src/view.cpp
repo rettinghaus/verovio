@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 #include <sstream>
 
 //----------------------------------------------------------------------------
@@ -29,10 +29,9 @@ View::View()
     m_doc = NULL;
     m_options = NULL;
     m_pageIdx = 0;
-    m_tieThicknessCoeficient = 0.0;
-    m_slurThicknessCoeficient = 0.0;
+    m_slurHandling = SlurHandling::Initialize;
 
-    m_currentColour = AxNONE;
+    m_currentColor = AxNONE;
     m_currentElement = NULL;
     m_currentLayer = NULL;
     m_currentMeasure = NULL;
@@ -73,13 +72,14 @@ void View::SetPage(int pageIdx, bool doLayout)
 
     if (doLayout) {
         m_doc->ScoreDefSetCurrentDoc();
-        m_doc->ScoreDefSetGrpSymDoc();
         // if we once deal with multiple views, it would be better
         // to redo the layout only when necessary?
-        if (m_doc->GetType() == Transcription || m_doc->GetType() == Facs)
+        if (m_doc->IsTranscription() || m_doc->IsFacs()) {
             m_currentPage->LayOutTranscription();
-        else
+        }
+        else {
             m_currentPage->LayOut();
+        }
     }
 
     m_currentElement = NULL;
@@ -108,7 +108,7 @@ void View::Next(bool forward)
     else if (!forward && this->HasNext(false)) {
         m_pageIdx--;
     }
-    SetPage(m_pageIdx);
+    this->SetPage(m_pageIdx);
 }
 
 int View::ToDeviceContextX(int i)
@@ -152,25 +152,24 @@ Point View::ToLogical(Point p)
     return Point(ToLogicalX(p.x), ToLogicalY(p.y));
 }
 
-std::wstring View::IntToTupletFigures(unsigned short number)
+std::u32string View::IntToTupletFigures(unsigned short number)
 {
     return IntToSmuflFigures(number, 0xE880);
 }
 
-std::wstring View::IntToTimeSigFigures(unsigned short number)
+std::u32string View::IntToTimeSigFigures(unsigned short number)
 {
     return IntToSmuflFigures(number, 0xE080);
 }
 
-std::wstring View::IntToSmuflFigures(unsigned short number, int offset)
+std::u32string View::IntToSmuflFigures(unsigned short number, int offset)
 {
-    std::wostringstream stream;
+    std::ostringstream stream;
     stream << number;
-    std::wstring str = stream.str();
+    std::u32string str = UTF8to32(stream.str());
 
-    int i;
-    for (i = 0; i < (int)str.size(); ++i) {
-        str[i] += offset - 48;
+    for (char32_t &c : str) {
+        c += offset - 48;
     }
     return str;
 }

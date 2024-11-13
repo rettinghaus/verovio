@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script need to be run from ./doc in the branch with the changes
 # add parameter true to rebuild the develop (reference) branch and tests
@@ -17,7 +17,7 @@ devdir="/Users/laurent/projects/verovio_lpugin"
 shortlist="/Users/laurent/tmp/shortlist.txt"
 
 # The version of python we want to use (we can be more specific here, e.g., python3.8)
-PYTHON=python3.9
+PYTHON=python3
 
 # Store the path where we are
 home=`pwd`
@@ -30,8 +30,10 @@ then
     echo "Emptying directories ..."
     rm $indir1/*/*.png
     rm $indir1/*/*.svg
+    rm $indir1/*/*.json
     rm $indir2/*/*.png
     rm $indir2/*/*.svg
+    rm $indir2/*/*.json
     rm $outdir/*/*.png
     rm $outdir/index.html
 fi

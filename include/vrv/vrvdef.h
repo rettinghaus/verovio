@@ -13,11 +13,14 @@
 #include <list>
 #include <map>
 #include <set>
+#include <tuple>
 #include <vector>
 
 //----------------------------------------------------------------------------
 
 #include "attdef.h"
+
+#define VRV_UNSET MEI_UNSET
 
 //----------------------------------------------------------------------------
 
@@ -35,13 +38,20 @@ namespace vrv {
 // Version
 //----------------------------------------------------------------------------
 
-#define VERSION_MAJOR 3
-#define VERSION_MINOR 6
+#define VERSION_MAJOR 4
+#define VERSION_MINOR 4
 #define VERSION_REVISION 0
 // Adds "-dev" in the version number - should be set to false for releases
 #define VERSION_DEV true
 
-enum MEIVersion { MEI_UNDEFINED = 0, MEI_2013, MEI_3_0_0, MEI_4_0_0, MEI_4_0_1, MEI_5_0_0_dev };
+//----------------------------------------------------------------------------
+// Resource directory
+//----------------------------------------------------------------------------
+#ifdef RESOURCE_DIR
+#define VRV_RESOURCE_DIR RESOURCE_DIR
+#else
+#define VRV_RESOURCE_DIR "/usr/local/share/verovio"
+#endif
 
 //----------------------------------------------------------------------------
 // Cast redefinition
@@ -51,11 +61,8 @@ enum MEIVersion { MEI_UNDEFINED = 0, MEI_2013, MEI_3_0_0, MEI_4_0_0, MEI_4_0_1, 
 #ifdef VRV_DYNAMIC_CAST
 // To be used for all cases where type is cheched through Object::m_type
 #define vrv_cast dynamic_cast
-// To be used for all FunctorParams casts within Functors
-#define vrv_params_cast dynamic_cast
 #else
 #define vrv_cast static_cast
-#define vrv_params_cast static_cast
 #endif
 
 //----------------------------------------------------------------------------
@@ -65,18 +72,20 @@ enum MEIVersion { MEI_UNDEFINED = 0, MEI_2013, MEI_3_0_0, MEI_4_0_0, MEI_4_0_1, 
 #define MIDI_VELOCITY 90
 #define MIDI_TEMPO 120
 
+#define UNACC_GRACENOTE_DUR 27 // in milliseconds
+
 //----------------------------------------------------------------------------
 // Object defines
 //----------------------------------------------------------------------------
 
 /**
  * The ClassIds are used to identify Object child classes through the Object::Is virtual method.
- * Each Object child class has to have its own id and has to override the GetClassId() method.
+ * Each Object child class has to have its own id which is stored in the member variable m_classId.
  * Base classes (e.g., LayerElement) that are never instanciated have boundary ids
  * used for checking if an Object is child of a base class. See for example
  * Object::IsLayerElement.
  */
-enum ClassId {
+enum ClassId : uint16_t {
     BOUNDING_BOX = 0, // Should not be instanciated as is
     OBJECT, // Should not be instanciated as is
     DEVICE_CONTEXT, // Should not be instanciated as is,
@@ -93,25 +102,25 @@ enum ClassId {
     FB,
     GRPSYM,
     GRACE_ALIGNER,
+    GRAPHIC,
     INSTRDEF,
     KEYSIG_ATTR,
     LABEL,
     LABELABBR,
     LAYER,
-    MDIV,
     MEASURE,
     MEASURE_ALIGNER,
     MENSUR_ATTR,
     METERSIG_ATTR,
-    METERSIGGRP,
     PAGE,
     PAGES,
-    SCORE,
     STAFF,
     STAFF_ALIGNMENT,
     STAFFGRP,
     SURFACE,
     SVG,
+    SYMBOLDEF,
+    SYMBOLTABLE,
     SYSTEM,
     SYSTEM_ALIGNER,
     SYSTEM_ALIGNMENT,
@@ -140,16 +149,24 @@ enum ClassId {
     SUPPLIED,
     UNCLEAR,
     EDITORIAL_ELEMENT_max,
+    // Ids for TextLayoutElement child classes
+    TEXT_LAYOUT_ELEMENT,
+    DIV,
     // Ids for RunningElement child classes
     RUNNING_ELEMENT,
     PGFOOT,
-    PGFOOT2,
     PGHEAD,
-    PGHEAD2,
     RUNNING_ELEMENT_max,
+    TEXT_LAYOUT_ELEMENT_max,
+    // Ids for PageElement child classes
+    PAGE_ELEMENT,
+    PAGE_MILESTONE_END,
+    MDIV,
+    SCORE,
+    PAGE_ELEMENT_max,
     // Ids for SystemElement child classes
     SYSTEM_ELEMENT,
-    BOUNDARY_END,
+    SYSTEM_MILESTONE_END,
     ENDING,
     EXPANSION,
     PB,
@@ -160,6 +177,7 @@ enum ClassId {
     CONTROL_ELEMENT,
     ANCHOREDTEXT,
     ARPEG,
+    BEAMSPAN,
     BRACKETSPAN,
     BREATH,
     CAESURA,
@@ -173,11 +191,13 @@ enum ClassId {
     LV,
     MORDENT,
     MNUM,
+    ORNAM,
     OCTAVE,
     PEDAL,
     PHRASE,
     PITCHINFLECTION,
     REH,
+    REPEATMARK,
     SLUR,
     TEMPO,
     TIE,
@@ -189,25 +209,27 @@ enum ClassId {
     ACCID,
     ARTIC,
     BARLINE,
-    BARLINE_ATTR_LEFT,
-    BARLINE_ATTR_RIGHT,
     BEAM,
     BEATRPT,
     BTREM,
     CHORD,
     CLEF,
     CUSTOS,
+    DIVLINE,
     DOT,
     DOTS,
     FLAG,
     FTREM,
+    GENERIC_ELEMENT,
     GRACEGRP,
     HALFMRPT,
     KEYSIG,
     KEYACCID,
     LIGATURE,
+    LIQUESCENT,
     MENSUR,
     METERSIG,
+    METERSIGGRP,
     MREST,
     MRPT,
     MRPT2,
@@ -217,8 +239,10 @@ enum ClassId {
     NC,
     NOTE,
     NEUME,
+    ORISCUS,
     PLICA,
     PROPORT,
+    QUILISMA,
     REST,
     SPACE,
     STEM,
@@ -234,6 +258,7 @@ enum ClassId {
     LAYER_ELEMENT_max,
     // Ids for ScoreDefElement child classes
     SCOREDEF_ELEMENT,
+    LAYERDEF,
     SCOREDEF,
     STAFFDEF,
     SCOREDEF_ELEMENT_max,
@@ -244,6 +269,7 @@ enum ClassId {
     LB,
     NUM,
     REND,
+    SYMBOL,
     TEXT,
     TEXT_ELEMENT_max,
     //
@@ -260,6 +286,7 @@ enum ClassId {
  */
 enum InterfaceId {
     INTERFACE,
+    INTERFACE_ALT_SYM,
     INTERFACE_AREA_POS,
     INTERFACE_BOUNDARY,
     INTERFACE_DURATION,
@@ -285,12 +312,15 @@ class BeamElementCoord;
 class BoundingBox;
 class Comparison;
 class CurveSpannedElement;
+class DivLine;
 class FloatingPositioner;
+class FloatingCurvePositioner;
 class GraceAligner;
 class InterfaceComparison;
 class LayerElement;
 class LedgerLine;
 class LinkingInterface;
+class Liquescent;
 class Nc;
 class Note;
 class Neume;
@@ -305,23 +335,27 @@ class TimeSpanningInterface;
 
 typedef std::vector<Object *> ArrayOfObjects;
 
+typedef std::vector<const Object *> ArrayOfConstObjects;
+
 typedef std::list<Object *> ListOfObjects;
 
-typedef std::vector<Comparison *> ArrayOfComparisons;
+typedef std::list<const Object *> ListOfConstObjects;
 
-typedef std::vector<Note *> ChordCluster;
+typedef std::vector<Note *> ChordNoteGroup;
 
 typedef std::vector<std::tuple<Alignment *, Alignment *, int>> ArrayOfAdjustmentTuples;
 
-typedef std::vector<std::tuple<Alignment *, Arpeg *, int, bool>> ArrayOfAligmentArpegTuples;
+typedef std::vector<std::tuple<Alignment *, Arpeg *, int, bool>> ArrayOfAlignmentArpegTuples;
 
 typedef std::vector<BeamElementCoord *> ArrayOfBeamElementCoords;
 
 typedef std::vector<std::pair<int, int>> ArrayOfIntPairs;
 
-typedef std::multimap<std::string, LinkingInterface *> MapOfLinkingInterfaceUuidPairs;
+typedef std::multimap<std::string, LinkingInterface *> MapOfLinkingInterfaceIDPairs;
 
-typedef std::vector<std::pair<PlistInterface *, std::string>> ArrayOfPlistInterfaceUuidPairs;
+typedef std::map<std::string, Note *> MapOfNoteIDPairs;
+
+typedef std::vector<std::pair<PlistInterface *, std::string>> ArrayOfPlistInterfaceIDPairs;
 
 typedef std::vector<CurveSpannedElement *> ArrayOfCurveSpannedElements;
 
@@ -331,7 +365,11 @@ typedef std::list<std::pair<TimePointInterface *, ClassId>> ListOfPointingInterC
 
 typedef std::list<std::pair<TimeSpanningInterface *, ClassId>> ListOfSpanningInterClassIdPairs;
 
+typedef std::list<std::pair<TimeSpanningInterface *, Object *>> ListOfSpanningInterOwnerPairs;
+
 typedef std::vector<FloatingPositioner *> ArrayOfFloatingPositioners;
+
+typedef std::vector<FloatingCurvePositioner *> ArrayOfFloatingCurvePositioners;
 
 typedef std::vector<BoundingBox *> ArrayOfBoundingBoxes;
 
@@ -339,30 +377,34 @@ typedef std::vector<LedgerLine> ArrayOfLedgerLines;
 
 typedef std::vector<TextElement *> ArrayOfTextElements;
 
-typedef std::map<Staff *, std::multiset<int>> MapOfNoteLocs;
+typedef std::map<const Staff *, std::multiset<int>> MapOfNoteLocs;
 
-typedef std::map<Staff *, std::set<int>> MapOfDotLocs;
+typedef std::map<const Staff *, std::set<int>> MapOfDotLocs;
 
 typedef std::map<std::string, Option *> MapOfStrOptions;
 
-typedef std::map<data_PITCHNAME, data_ACCIDENTAL_WRITTEN> MapOfPitchAccid;
+typedef std::map<int, data_ACCIDENTAL_WRITTEN> MapOfOctavedPitchAccid;
 
 typedef std::map<int, GraceAligner *> MapOfIntGraceAligners;
 
-typedef std::vector<std::pair<std::wstring, bool>> ArrayOfStringDynamTypePairs;
+typedef std::vector<std::pair<std::u32string, bool>> ArrayOfStringDynamTypePairs;
 
 typedef std::map<std::string, std::function<Object *(void)>> MapOfStrConstructors;
 
 typedef std::map<std::string, ClassId> MapOfStrClassIds;
 
+typedef std::vector<std::pair<LayerElement *, LayerElement *>> MeasureTieEndpoints;
+
+typedef bool (*NotePredicate)(const Note *);
+
 /**
  * Generic int map recursive structure for storing hierachy of values
  * For example, we want to process all staves one by one, and within each staff
  * all layer one by one, and so one (lyrics, etc.). In IntTree, we can store
- * @n with all existing values (1 => 1 => 1; 2 => 1 => 1)
+ * \@n with all existing values (1 => 1 => 1; 2 => 1 => 1)
  * The stucture must be filled first and can then be used by instanciating a vector
- * of corresponding Comparison (typically AttNIntegerComparison for @n attribute).
- * See Doc::PrepareDrawing for an example.
+ * of corresponding Comparison (typically AttNIntegerComparison for \@n attribute).
+ * See Doc::PrepareData for an example.
  */
 struct IntTree {
     std::map<int, IntTree> child;
@@ -374,7 +416,7 @@ typedef std::map<int, IntTree> IntTree_t;
  * This is the alternate way for representing map of maps. With this solution,
  * we can easily have different types of key (attribute) at each level. We could
  * mix int, string, or even MEI data_* types. The drawback is that a type has to
- * be defined at each level. Also see Doc::PrepareDrawing for an example.
+ * be defined at each level. Also see Doc::PrepareData for an example.
  */
 typedef std::map<int, bool> VerseN_t;
 typedef std::map<int, VerseN_t> LayerN_VerserN_t;
@@ -387,8 +429,6 @@ typedef std::map<int, LayerN_VerserN_t> StaffN_LayerN_VerseN_t;
 #define DEFINITION_FACTOR 10
 
 #define isIn(x, a, b) (((x) >= std::min((a), (b))) && ((x) <= std::max((a), (b))))
-
-#define durRound(dur) round(dur *pow(10, 8)) / pow(10, 8)
 
 /**
  * Codes returned by Functors.
@@ -432,18 +472,26 @@ enum FunctorCode { FUNCTOR_CONTINUE = 0, FUNCTOR_SIBLINGS, FUNCTOR_STOP };
 #define MAX_NOTE_DEPTH -1
 
 //----------------------------------------------------------------------------
-// VerovioText codepoints
+// Unicode music codepoints
 //----------------------------------------------------------------------------
 
-/**
- * These are SMuFL codepoints for the VerovioText font used for embedding
- * SMuFL text glyph within text, as for example with <annot> or <syl>
- * Verovio uses a very small subset of glyph defined below (for now)
- */
+#define UNICODE_FLAT U'\u266D' // ♭
+#define UNICODE_NATURAL U'\u266E' // ♮
+#define UNICODE_SHARP U'\u266F' // ♯
 
-#define VRV_TEXT_E550 0xE550
-#define VRV_TEXT_E551 0xE551
-#define VRV_TEXT_E552 0xE552
+#define UNICODE_UNDERTIE U'\u203F' // ‿
+
+#define UNICODE_DAL_SEGNO U'\U0001D109' // 𝄉
+#define UNICODE_DA_CAPO U'\U0001D10A' // 𝄊
+#define UNICODE_SEGNO U'\U0001D10B' // 𝄋
+#define UNICODE_CODA U'\U0001D10C' // 𝄌
+
+#define UNICODE_DOUBLE_FLAT U'\U0001D12B' // 𝄫
+#define UNICODE_DOUBLE_SHARP U'\U0001D12A' // 𝄪
+
+//----------------------------------------------------------------------------
+// VerovioText codepoints
+//----------------------------------------------------------------------------
 
 /**
  * SMUFL Symbols used in figured bass included in VerovioText
@@ -454,17 +502,17 @@ enum FunctorCode { FUNCTOR_CONTINUE = 0, FUNCTOR_SIBLINGS, FUNCTOR_STOP };
  */
 
 #define VRV_TEXT_HARM                                                                                                  \
-    L"\u266D\u266E\u266F"                                                                                              \
-    L"\uE260\uE261\uE262\uE263\uE264"                                                                                  \
-    L"\uEA50\uEA51\uEA52\uEA53\uEA54\uEA55\uEA56\uEA57\uEA58\uEA59\uEA5A\uEA5B\uEA5C\uEA5D\uEA5E"                      \
-    L"\uEA5F\uEA60\uEA61\uEA62"                                                                                        \
-    L"\uECC0"
+    U"\u266D\u266E\u266F"                                                                                              \
+    U"\uE260\uE261\uE262\uE263\uE264"                                                                                  \
+    U"\uEA50\uEA51\uEA52\uEA53\uEA54\uEA55\uEA56\uEA57\uEA58\uEA59\uEA5A\uEA5B\uEA5C\uEA5D\uEA5E"                      \
+    U"\uEA5F\uEA60\uEA61\uEA62\uEA63\uEA64\uEA65\uEA66\uEA67"                                                          \
+    U"\uECC0"
 
 //----------------------------------------------------------------------------
 // data.LINEWIDTHTERM factors
 //----------------------------------------------------------------------------
 
-#define LINEWIDTHTERM_factor_narrow 0.5
+#define LINEWIDTHTERM_factor_narrow 1.0
 #define LINEWIDTHTERM_factor_medium 2.0
 #define LINEWIDTHTERM_factor_wide 4.0
 
@@ -574,8 +622,15 @@ enum {
     MARKUP_ANALYTICAL_TIE = 1,
     MARKUP_ANALYTICAL_FERMATA = 2,
     MARKUP_GRACE_ATTRIBUTE = 4,
-    MARKUP_ARTIC_MULTIVAL = 8
+    MARKUP_ARTIC_MULTIVAL = 8,
+    MARKUP_SCOREDEF_DEFINITIONS = 16
 };
+
+//----------------------------------------------------------------------------
+// Layout information
+//----------------------------------------------------------------------------
+
+enum LayoutInformation { LAYOUT_NONE = 0, LAYOUT_ENCODED, LAYOUT_DONE };
 
 //----------------------------------------------------------------------------
 // Bounding box access
@@ -590,6 +645,42 @@ enum Accessor { SELF = 0, CONTENT };
 enum { KEY_LEFT = 37, KEY_UP = 38, KEY_RIGHT = 39, KEY_DOWN = 40 };
 
 //----------------------------------------------------------------------------
+// Stem sameas drawing role
+//----------------------------------------------------------------------------
+
+enum StemSameasDrawingRole { SAMEAS_NONE = 0, SAMEAS_UNSET, SAMEAS_PRIMARY, SAMEAS_SECONDARY };
+
+//----------------------------------------------------------------------------
+// Smufl text font (selected font or fallback)
+//----------------------------------------------------------------------------
+
+enum SmuflTextFont { SMUFL_NONE = 0, SMUFL_FONT_SELECTED, SMUFL_FONT_FALLBACK };
+
+//----------------------------------------------------------------------------
+// Graphic ID type
+//----------------------------------------------------------------------------
+
+enum GraphicID { PRIMARY = 0, SPANNING, SYMBOLREF };
+
+//----------------------------------------------------------------------------
+// Measure type
+//----------------------------------------------------------------------------
+
+enum MeasureType { MEASURED = 0, UNMEASURED, NEUMELINE };
+
+//----------------------------------------------------------------------------
+// The score time unit (quarter note)
+//----------------------------------------------------------------------------
+
+#define SCORE_TIME_UNIT 4
+
+//----------------------------------------------------------------------------
+// Section representing a line in neon
+//----------------------------------------------------------------------------
+
+#define NEUME_LINE_TYPE "neon-neume-line"
+
+//----------------------------------------------------------------------------
 // Legacy Wolfgang defines
 //----------------------------------------------------------------------------
 
@@ -597,16 +688,24 @@ enum { KEY_LEFT = 37, KEY_UP = 38, KEY_RIGHT = 39, KEY_DOWN = 40 };
 
 // in half staff spaces (but should be 6 in two-voice notation)
 #define STANDARD_STEMLENGTH 7
+#define STANDARD_STEMLENGTH_TAB 3
 
 //----------------------------------------------------------------------------
 // Temporary - to be made an option?
 //----------------------------------------------------------------------------
 
-#define TABLATURE_STAFF_RATIO 1.3
+#define TABLATURE_STAFF_RATIO 1.75
 
 #define SUPER_SCRIPT_FACTOR 0.58
 #define SUPER_SCRIPT_POSITION -0.20 // lowered down from the midline
 #define SUB_SCRIPT_POSITION -0.17 // lowered down from the baseline
+
+//----------------------------------------------------------------------------
+// Neume notation note size to staff size ratio defines
+//----------------------------------------------------------------------------
+
+#define NOTE_HEIGHT_TO_STAFF_SIZE_RATIO 2
+#define NOTE_WIDTH_TO_STAFF_SIZE_RATIO 1.4
 
 } // namespace vrv
 

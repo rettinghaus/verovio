@@ -30,22 +30,35 @@ public:
     ///@{
     Breath();
     virtual ~Breath();
-    virtual Object *Clone() const { return new Breath(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Breath"; }
-    virtual ClassId GetClassId() const { return BREATH; }
+    Object *Clone() const override { return new Breath(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Breath"; }
     ///@}
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual TimePointInterface *GetTimePointInterface() { return dynamic_cast<TimePointInterface *>(this); }
+    TimePointInterface *GetTimePointInterface() override { return vrv_cast<TimePointInterface *>(this); }
+    const TimePointInterface *GetTimePointInterface() const override
+    {
+        return vrv_cast<const TimePointInterface *>(this);
+    }
     ///@}
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     //

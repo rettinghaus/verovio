@@ -14,43 +14,57 @@ option(VRV_DYNAMIC_CAST         "Enable <dynamic_cast>"                        O
 option(NO_DARMS_SUPPORT         "Disable DARMS support"                        ON)
 option(NO_PAE_SUPPORT           "Disable Plaine & Easie support"               OFF)
 option(NO_ABC_SUPPORT           "Disable ABC support"                          OFF)
+option(NO_MUSICXML_SUPPORT      "Disable MusicXML support"                     OFF)
 option(NO_MXL_SUPPORT           "Disable compressed MusicXML support"          OFF)
 option(NO_HUMDRUM_SUPPORT       "Disable Humdrum support"                      OFF)
 option(MUSICXML_DEFAULT_HUMDRUM "Enable MusicXML to Humdrum by default"        OFF)
-option(BUILD_AS_LIBRARY         "Build verovio as library"                     OFF)
+option(NO_RUNTIME               "Disable runtime clock support"                ON)
+option(BUILD_AS_LIBRARY         "Build Verovio as library"                     OFF)
+option(BUILD_AS_ANDROID_LIBRARY "Build Verovio as library for Android"         OFF)
+option(USE_PAE_OLD_PARSER       "Use old PAE parser"                           OFF)
 
 if (NO_HUMDRUM_SUPPORT AND MUSICXML_DEFAULT_HUMDRUM)
     message(SEND_ERROR "Default MusicXML to Humdrum cannot be enabled by default without Humdrum support")
 endif()
 
+# Sets the compile-time value for the RESOURCE_DIR macro in the source code.
+add_compile_definitions(RESOURCE_DIR="${CMAKE_INSTALL_PREFIX}/share/verovio")
+
 include_directories(
     ../include
+    ../include/crc
     ../include/midi
     ../include/hum
     ../include/json
     ../include/pugi
-    ../include/utf8
     ../include/zip
     ../include/vrv
-    ../libmei
+    ../libmei/dist
+    ../libmei/addons
 )
 
 if(MSVC)
     add_definitions(/W2)
     add_definitions(/wd4244)          # suppress warning of possible loss of precision
     add_definitions(-DNO_PAE_SUPPORT) # regex is working differently under Windows so PAE is not supported (yet)
-    add_definitions(/std:c++17)
+    add_definitions(-DUSE_PAE_OLD_PARSER)
+    add_definitions(/std:c++20)
     include_directories(../include/win32)
 else()
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         message(STATUS "Enabling debug information")
         add_definitions(-g)
+        add_definitions(-DDEBUG)
+    endif()
+
+    if(WIN32)
+        include_directories(../include/win32)
     endif()
 
     # jsonxx raises -Wdollar-in-identifier-extension
     # gcc 8.3.1 does not like -Wdollar-in-identifier-extension option.
     add_definitions(-Wall -W -pedantic -Wno-unused-parameter -Wno-dollar-in-identifier-extension)
-    add_definitions(-std=c++17)
+    add_definitions(-std=c++20)
 
     # extra warnings similar to Xcode compiling settings (most probably covered by -Wall):
     # https://github.com/llvm-mirror/clang/blob/master/include/clang/Basic/DiagnosticGroups.td
@@ -113,6 +127,12 @@ endif()
 
 if(NO_PAE_SUPPORT)
     add_definitions(-DNO_PAE_SUPPORT)
+elseif(USE_PAE_OLD_PARSER)
+    add_definitions(-DUSE_PAE_OLD_PARSER)
+endif()
+
+if(NO_MUSICXML_SUPPORT)
+    add_definitions(-DNO_MUSICXML_SUPPORT)
 endif()
 
 if(NO_MXL_SUPPORT)
@@ -128,8 +148,15 @@ else()
     endif()
 endif()
 
+if(NO_RUNTIME)
+    add_definitions(-DNO_RUNTIME)
+endif()
+
 file(GLOB verovio_SRC "../src/*.cpp")
+file(GLOB libmei_dist_SRC "../libmei/dist/*.cpp")
+file(GLOB libmei_addons_SRC "../libmei/addons/*.cpp")
 file(GLOB midi_SRC "../src/midi/*.cpp")
+file(GLOB crc_SRC "../src/crc/*.cpp")
 
 # Add header files to custom target, otherwise they are not shown in some IDEs (e.g. QtCreator)
 file(GLOB_RECURSE LibFiles "../include/*.h")
@@ -137,41 +164,36 @@ add_custom_target(headers SOURCES ${LibFiles})
 
 set(all_SRC
     ${verovio_SRC}
+    ${libmei_dist_SRC}
+    ${libmei_addons_SRC}
     ${hum_SRC}
+    ${crc_SRC}
     ${midi_SRC}
     ../src/json/jsonxx.cc
     ../src/pugi/pugixml.cpp
-    ../libmei/attconverter.cpp
-    ../libmei/atts_analytical.cpp
-    ../libmei/atts_cmn.cpp
-    ../libmei/atts_cmnornaments.cpp
-    ../libmei/atts_critapp.cpp
-    ../libmei/atts_gestural.cpp
-    ../libmei/atts_externalsymbols.cpp
-    ../libmei/atts_facsimile.cpp
-    ../libmei/atts_frettab.cpp
-    ../libmei/atts_mei.cpp
-    ../libmei/atts_mensural.cpp
-    ../libmei/atts_midi.cpp
-    ../libmei/atts_neumes.cpp
-    ../libmei/atts_pagebased.cpp
-    ../libmei/atts_shared.cpp
-    ../libmei/atts_visual.cpp
 )
 
 ##################
 # Shared library #
 ##################
 
-if (BUILD_AS_LIBRARY)
+if (BUILD_AS_LIBRARY OR  BUILD_AS_ANDROID_LIBRARY)
     message(STATUS "***** Building Verovio as shared library *****")
-    add_library(verovio SHARED ../tools/c_wrapper.cpp ${all_SRC})
+    if(WIN32)
+		add_definitions(-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS)
+    endif()
+    add_library(verovio SHARED "../tools/c_wrapper.cpp" ${all_SRC})
+    # list all headers to be copied for all installation
+    file(GLOB_RECURSE all_HEADERS "../include/*/*.h*" "../libmei/*/*.h*" "../tools/c_wrapper.h")
 
 ###########
 # WASM BC #
 ###########
 
 elseif (BUILD_AS_WASM)
+    if (EMSCRIPTEN_VERSION VERSION_LESS "3.1.27")
+        message(FATAL_ERROR "You need em++ 3.1.27 or greater")
+    endif()
     message(STATUS "***** Building Verovio as WASM BC *****")
     add_library(verovio STATIC ../tools/c_wrapper.cpp ${all_SRC})
 
@@ -190,8 +212,15 @@ elseif (BUILD_AS_PYTHON)
     include(${SWIG_USE_FILE})
     set(CMAKE_SWIG_FLAGS "")
 
-    if(Python_VERSION VERSION_GREATER_EQUAL 3)
-      list(APPEND CMAKE_SWIG_FLAGS "-py3;-DPY3")
+    set(PYTHON_VERSION "3" CACHE STRING "Python Version to use")
+    find_package(Python EXACT ${PYTHON_VERSION} MODULE REQUIRED)
+
+    if(${SWIG_VERSION} VERSION_GREATER_EQUAL "4.1.0")
+        list(APPEND CMAKE_SWIG_FLAGS "-doxygen")
+        list(APPEND CMAKE_SWIG_FLAGS "-fastproxy")
+        list(APPEND CMAKE_SWIG_FLAGS "-olddefs")
+    else()
+        list(APPEND CMAKE_SWIG_FLAGS "-py3;-DPY3")
     endif()
 
     set_source_files_properties(../bindings/python/verovio.i PROPERTIES CPLUSPLUS ON)
@@ -199,22 +228,15 @@ elseif (BUILD_AS_PYTHON)
     # needed for static build on linux
     add_definitions(-fPIC)
 
-    ### For building for specific version of Python (example for 3.4 on OS X with MacPorts installation)
-    #set(PYTHON_INCLUDE_DIR /opt/local/Library/Frameworks/Python.framework/Versions/3.4/include/python3.4m)
-    #set(PYTHON_LIBRARY /opt/local/Library/Frameworks/Python.framework/Versions/3.4/lib/libpython3.4.dylib)
-    #include_directories(${PYTHON_INCLUDE_DIR})
-    #swig_add_library(verovio_module_custom LANGUAGE python TYPE MODULE SOURCES ../bindings/python/verovio.i)
-    #swig_link_libraries(verovio_module_custom verovio ${PYTHON_LIBRARY})
-
     ### For building for found version of Python (comment when specific version is set)
-    find_package(PythonLibs)
-    include_directories(${PYTHON_INCLUDE_PATH})
-    message(STATUS "***** Building for Python ${PYTHONLIBS_VERSION_STRING} *****")
-    string(REPLACE "." "_" OUTPUT_VERSION_STRING ${PYTHONLIBS_VERSION_STRING})
+    find_package(Python COMPONENTS Interpreter Development)
+    include_directories(${Python_INCLUDE_DIRS})
+    message(STATUS "***** Building for Python ${Python_VERSION} *****")
+    string(REPLACE "." "_" OUTPUT_VERSION_STRING ${Python_VERSION})
     swig_add_library(verovio_module_${OUTPUT_VERSION_STRING} LANGUAGE python TYPE MODULE SOURCES ../bindings/python/verovio.i)
-    swig_link_libraries(verovio_module_${OUTPUT_VERSION_STRING} verovio ${PYTHON_LIBRARIES})
+    swig_link_libraries(verovio_module_${OUTPUT_VERSION_STRING} verovio ${Python_LIBRARIES})
 
-    add_library(verovio STATIC ../tools/c_wrapper.cpp ${all_SRC})
+    add_library(verovio STATIC ${all_SRC})
 
 #####################
 # Command-line tool #
@@ -226,12 +248,27 @@ else()
 
 endif()
 
-install(
-    TARGETS verovio
-    DESTINATION /usr/local/bin
+if (BUILD_AS_ANDROID_LIBRARY)
+    find_library(log-lib log)
+    target_link_libraries(verovio ${log-lib})
+endif()
+
+install(TARGETS verovio
+        # for executables and dll on Win
+        RUNTIME DESTINATION bin
+        # shared libraries
+        LIBRARY DESTINATION lib
+        # for static libraries
+        ARCHIVE DESTINATION lib
+        # public headers
+        INCLUDES DESTINATION include
 )
 install(
     DIRECTORY ../data/
     DESTINATION share/verovio
-    FILES_MATCHING PATTERN "*.xml" PATTERN "*.svg"
+    FILES_MATCHING PATTERN "*.xml" PATTERN "*.svg" PATTERN "*.css"
 )
+# install all headers in /usr/local/include/verovio
+if (BUILD_AS_LIBRARY)
+    install(FILES ${all_HEADERS} DESTINATION include/verovio)
+endif()

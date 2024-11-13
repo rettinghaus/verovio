@@ -10,6 +10,7 @@
 
 #include "atts_gestural.h"
 #include "atts_shared.h"
+#include "interface.h"
 
 namespace vrv {
 
@@ -24,7 +25,7 @@ class Layer;
  * This class is an interface for elements with pitch, such as notes and neumes.
  * It is not an abstract class but should not be instanciated directly.
  */
-class PitchInterface : public Interface, public AttNoteGes, public AttOctave, public AttPitch {
+class PitchInterface : public Interface, public AttNoteGes, public AttOctave, public AttPitch, public AttPitchGes {
 public:
     /**
      * @name Constructors, destructors, reset methods
@@ -33,15 +34,24 @@ public:
     ///@{
     PitchInterface();
     virtual ~PitchInterface();
-    virtual void Reset();
-    virtual InterfaceId IsInterface() { return INTERFACE_PITCH; }
+    void Reset() override;
+    InterfaceId IsInterface() const override { return INTERFACE_PITCH; }
+    ///@}
+
+    /**
+     * @name Set and get the default octave
+     */
+    ///@{
+    void SetOctDefault(data_OCTAVE oct) { m_octDefault = oct; }
+    data_OCTAVE GetOctDefault() const { return m_octDefault; }
+    bool HasOctDefault() const { return (m_octDefault != MEI_UNSET_OCT); }
     ///@}
 
     /**
      * Interface comparison operator.
      * Checks if the LayerElement has a PitchInterface and compares attributes
      */
-    bool HasIdenticalPitchInterface(PitchInterface *otherPitchInterface);
+    bool HasIdenticalPitchInterface(const PitchInterface *otherPitchInterface) const;
 
     /**
      * Shift pname and octave by a certain number of steps.
@@ -52,13 +62,13 @@ public:
      * Get steps between calling object and parameter.
      * Returns calling pitch minus parameter pitch.
      */
-    int PitchDifferenceTo(PitchInterface *pi);
+    int PitchDifferenceTo(const PitchInterface *pi) const;
 
     /**
      * adjust the pitch value so that it stays in the same x,y position
      * given it's new and old clefs
      */
-    void AdjustPitchForNewClef(Clef *oldClef, Clef *newClef);
+    void AdjustPitchForNewClef(const Clef *oldClef, const Clef *newClef);
 
     //----------------//
     // Static methods //
@@ -75,7 +85,8 @@ public:
      * By default for chord takes the top note, but the bottom note otherwise.
      * E.g., return 0 for and C4 with clef C1, -2 with clef G2.
      */
-    static int CalcLoc(LayerElement *element, Layer *layer, LayerElement *crossStaffElement, bool topChordNote = true);
+    static int CalcLoc(const LayerElement *element, const Layer *layer, const LayerElement *crossStaffElement,
+        bool topChordNote = true);
 
     /**
      * Calculate the loc for a pitch and octave and considerting the clef loc offset.
@@ -88,7 +99,10 @@ private:
 public:
     //
 private:
-    //
+    /**
+     * The default octave: extracted from scoreDef/staffDef and used when no octave attribute is given
+     */
+    data_OCTAVE m_octDefault;
 };
 
 } // namespace vrv

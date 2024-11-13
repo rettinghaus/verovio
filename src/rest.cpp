@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -18,7 +18,7 @@
 #include "editorial.h"
 #include "elementpart.h"
 #include "fermata.h"
-#include "functorparams.h"
+#include "findlayerelementsfunctor.h"
 #include "layer.h"
 #include "smufl.h"
 #include "staff.h"
@@ -37,100 +37,118 @@ RestOffsets g_defaultRests{
         { { RA_none,
               { { RLP_restOnTopLayer,
                     { { RNP_noteInSpace,
-                          { { DUR_1, 3 }, { DUR_2, 3 }, { DUR_4, 5 }, { DUR_8, 5 }, { DUR_16, 7 }, { DUR_32, 7 },
-                              { DUR_64, 9 }, { DUR_128, 9 }, { DUR_LG, 5 }, { DUR_BR, 5 } } },
+                          { { DURATION_1, 3 }, { DURATION_2, 3 }, { DURATION_4, 5 }, { DURATION_8, 5 },
+                              { DURATION_16, 7 }, { DURATION_32, 7 }, { DURATION_64, 9 }, { DURATION_128, 9 },
+                              { DURATION_long, 5 }, { DURATION_breve, 5 } } },
                         { RNP_noteOnLine,
-                            { { DUR_1, 2 }, { DUR_2, 4 }, { DUR_4, 6 }, { DUR_8, 4 }, { DUR_16, 6 }, { DUR_32, 6 },
-                                { DUR_64, 8 }, { DUR_128, 8 }, { DUR_LG, 6 }, { DUR_BR, 4 } } } } },
+                            { { DURATION_1, 2 }, { DURATION_2, 4 }, { DURATION_4, 6 }, { DURATION_8, 4 },
+                                { DURATION_16, 6 }, { DURATION_32, 6 }, { DURATION_64, 8 }, { DURATION_128, 8 },
+                                { DURATION_long, 6 }, { DURATION_breve, 4 } } } } },
                   { RLP_restOnBottomLayer,
                       { { RNP_noteInSpace,
-                            { { DUR_1, -5 }, { DUR_2, -5 }, { DUR_4, -5 }, { DUR_8, -5 }, { DUR_16, -5 },
-                                { DUR_32, -7 }, { DUR_64, -7 }, { DUR_128, -9 }, { DUR_LG, -5 }, { DUR_BR, -5 } } },
+                            { { DURATION_1, -5 }, { DURATION_2, -5 }, { DURATION_4, -5 }, { DURATION_8, -5 },
+                                { DURATION_16, -5 }, { DURATION_32, -7 }, { DURATION_64, -7 }, { DURATION_128, -9 },
+                                { DURATION_long, -5 }, { DURATION_breve, -5 } } },
                           { RNP_noteOnLine,
-                              { { DUR_1, -6 }, { DUR_2, -6 }, { DUR_4, -6 }, { DUR_8, -4 }, { DUR_16, -4 },
-                                  { DUR_32, -6 }, { DUR_64, -6 }, { DUR_128, -8 }, { DUR_LG, -6 },
-                                  { DUR_BR, -6 } } } } } } },
+                              { { DURATION_1, -6 }, { DURATION_2, -6 }, { DURATION_4, -6 }, { DURATION_8, -4 },
+                                  { DURATION_16, -4 }, { DURATION_32, -6 }, { DURATION_64, -6 }, { DURATION_128, -8 },
+                                  { DURATION_long, -6 }, { DURATION_breve, -6 } } } } } } },
             { RA_s,
                 { { RLP_restOnTopLayer,
                       { { RNP_noteInSpace,
-                            { { DUR_1, 3 }, { DUR_2, 5 }, { DUR_4, 7 }, { DUR_8, 5 }, { DUR_16, 7 }, { DUR_32, 7 },
-                                { DUR_64, 9 }, { DUR_128, 9 }, { DUR_LG, 5 }, { DUR_BR, 5 } } },
+                            { { DURATION_1, 3 }, { DURATION_2, 5 }, { DURATION_4, 7 }, { DURATION_8, 5 },
+                                { DURATION_16, 7 }, { DURATION_32, 7 }, { DURATION_64, 9 }, { DURATION_128, 9 },
+                                { DURATION_long, 5 }, { DURATION_breve, 5 } } },
                           { RNP_noteOnLine,
-                              { { DUR_1, 2 }, { DUR_2, 4 }, { DUR_4, 6 }, { DUR_8, 6 }, { DUR_16, 8 }, { DUR_32, 8 },
-                                  { DUR_64, 10 }, { DUR_128, 10 }, { DUR_LG, 6 }, { DUR_BR, 4 } } } } },
+                              { { DURATION_1, 2 }, { DURATION_2, 4 }, { DURATION_4, 6 }, { DURATION_8, 6 },
+                                  { DURATION_16, 8 }, { DURATION_32, 8 }, { DURATION_64, 10 }, { DURATION_128, 10 },
+                                  { DURATION_long, 6 }, { DURATION_breve, 4 } } } } },
                     { RLP_restOnBottomLayer,
                         { { RNP_noteInSpace,
-                              { { DUR_1, -5 }, { DUR_2, -5 }, { DUR_4, -5 }, { DUR_8, -5 }, { DUR_16, -5 },
-                                  { DUR_32, -7 }, { DUR_64, -7 }, { DUR_128, -9 }, { DUR_LG, -5 }, { DUR_BR, -5 } } },
+                              { { DURATION_1, -5 }, { DURATION_2, -5 }, { DURATION_4, -5 }, { DURATION_8, -5 },
+                                  { DURATION_16, -5 }, { DURATION_32, -7 }, { DURATION_64, -7 }, { DURATION_128, -9 },
+                                  { DURATION_long, -5 }, { DURATION_breve, -5 } } },
                             { RNP_noteOnLine,
-                                { { DUR_1, -6 }, { DUR_2, -6 }, { DUR_4, -6 }, { DUR_8, -6 }, { DUR_16, -6 },
-                                    { DUR_32, -6 }, { DUR_64, -6 }, { DUR_128, -8 }, { DUR_LG, -6 },
-                                    { DUR_BR, -6 } } } } } } },
+                                { { DURATION_1, -6 }, { DURATION_2, -6 }, { DURATION_4, -6 }, { DURATION_8, -6 },
+                                    { DURATION_16, -6 }, { DURATION_32, -6 }, { DURATION_64, -6 }, { DURATION_128, -8 },
+                                    { DURATION_long, -6 }, { DURATION_breve, -6 } } } } } } },
             { RA_f,
                 { { RLP_restOnTopLayer,
                       { { RNP_noteInSpace,
-                            { { DUR_1, 3 }, { DUR_2, 5 }, { DUR_4, 5 }, { DUR_8, 5 }, { DUR_16, 7 }, { DUR_32, 7 },
-                                { DUR_64, 9 }, { DUR_128, 9 }, { DUR_LG, 5 }, { DUR_BR, 5 } } },
+                            { { DURATION_1, 3 }, { DURATION_2, 5 }, { DURATION_4, 5 }, { DURATION_8, 5 },
+                                { DURATION_16, 7 }, { DURATION_32, 7 }, { DURATION_64, 9 }, { DURATION_128, 9 },
+                                { DURATION_long, 5 }, { DURATION_breve, 5 } } },
                           { RNP_noteOnLine,
-                              { { DUR_1, 4 }, { DUR_2, 4 }, { DUR_4, 6 }, { DUR_8, 6 }, { DUR_16, 8 }, { DUR_32, 8 },
-                                  { DUR_64, 10 }, { DUR_128, 10 }, { DUR_LG, 6 }, { DUR_BR, 4 } } } } },
+                              { { DURATION_1, 4 }, { DURATION_2, 4 }, { DURATION_4, 6 }, { DURATION_8, 6 },
+                                  { DURATION_16, 8 }, { DURATION_32, 8 }, { DURATION_64, 10 }, { DURATION_128, 10 },
+                                  { DURATION_long, 6 }, { DURATION_breve, 4 } } } } },
                     { RLP_restOnBottomLayer,
                         { { RNP_noteInSpace,
-                              { { DUR_1, -5 }, { DUR_2, -5 }, { DUR_4, -5 }, { DUR_8, -5 }, { DUR_16, -5 },
-                                  { DUR_32, -7 }, { DUR_64, -7 }, { DUR_128, -9 }, { DUR_LG, -5 }, { DUR_BR, -5 } } },
+                              { { DURATION_1, -5 }, { DURATION_2, -5 }, { DURATION_4, -5 }, { DURATION_8, -5 },
+                                  { DURATION_16, -5 }, { DURATION_32, -7 }, { DURATION_64, -7 }, { DURATION_128, -9 },
+                                  { DURATION_long, -5 }, { DURATION_breve, -5 } } },
                             { RNP_noteOnLine,
-                                { { DUR_1, -6 }, { DUR_2, -6 }, { DUR_4, -6 }, { DUR_8, -4 }, { DUR_16, -4 },
-                                    { DUR_32, -6 }, { DUR_64, -6 }, { DUR_128, -8 }, { DUR_LG, -6 },
-                                    { DUR_BR, -6 } } } } } } },
+                                { { DURATION_1, -6 }, { DURATION_2, -6 }, { DURATION_4, -6 }, { DURATION_8, -4 },
+                                    { DURATION_16, -4 }, { DURATION_32, -6 }, { DURATION_64, -6 }, { DURATION_128, -8 },
+                                    { DURATION_long, -6 }, { DURATION_breve, -6 } } } } } } },
             { RA_x,
                 { { RLP_restOnTopLayer,
                       { { RNP_noteInSpace,
-                            { { DUR_1, 3 }, { DUR_2, 3 }, { DUR_4, 5 }, { DUR_8, 5 }, { DUR_16, 7 }, { DUR_32, 7 },
-                                { DUR_64, 9 }, { DUR_128, 9 }, { DUR_LG, 5 }, { DUR_BR, 5 } } },
+                            { { DURATION_1, 3 }, { DURATION_2, 3 }, { DURATION_4, 5 }, { DURATION_8, 5 },
+                                { DURATION_16, 7 }, { DURATION_32, 7 }, { DURATION_64, 9 }, { DURATION_128, 9 },
+                                { DURATION_long, 5 }, { DURATION_breve, 5 } } },
                           { RNP_noteOnLine,
-                              { { DUR_1, 2 }, { DUR_2, 4 }, { DUR_4, 6 }, { DUR_8, 6 }, { DUR_16, 8 }, { DUR_32, 8 },
-                                  { DUR_64, 10 }, { DUR_128, 10 }, { DUR_LG, 6 }, { DUR_BR, 4 } } } } },
+                              { { DURATION_1, 2 }, { DURATION_2, 4 }, { DURATION_4, 6 }, { DURATION_8, 6 },
+                                  { DURATION_16, 8 }, { DURATION_32, 8 }, { DURATION_64, 10 }, { DURATION_128, 10 },
+                                  { DURATION_long, 6 }, { DURATION_breve, 4 } } } } },
                     { RLP_restOnBottomLayer,
                         { { RNP_noteInSpace,
-                              { { DUR_1, -5 }, { DUR_2, -5 }, { DUR_4, -5 }, { DUR_8, -5 }, { DUR_16, -5 },
-                                  { DUR_32, -7 }, { DUR_64, -7 }, { DUR_128, -9 }, { DUR_LG, -5 }, { DUR_BR, -5 } } },
+                              { { DURATION_1, -5 }, { DURATION_2, -5 }, { DURATION_4, -5 }, { DURATION_8, -5 },
+                                  { DURATION_16, -5 }, { DURATION_32, -7 }, { DURATION_64, -7 }, { DURATION_128, -9 },
+                                  { DURATION_long, -5 }, { DURATION_breve, -5 } } },
                             { RNP_noteOnLine,
-                                { { DUR_1, -6 }, { DUR_2, -4 }, { DUR_4, -6 }, { DUR_8, -4 }, { DUR_16, -4 },
-                                    { DUR_32, -6 }, { DUR_64, -6 }, { DUR_128, -8 }, { DUR_LG, -6 },
-                                    { DUR_BR, -6 } } } } } } },
-            { RA_x,
+                                { { DURATION_1, -6 }, { DURATION_2, -4 }, { DURATION_4, -6 }, { DURATION_8, -4 },
+                                    { DURATION_16, -4 }, { DURATION_32, -6 }, { DURATION_64, -6 }, { DURATION_128, -8 },
+                                    { DURATION_long, -6 }, { DURATION_breve, -6 } } } } } } },
+            { RA_n,
                 { { RLP_restOnTopLayer,
                       { { RNP_noteInSpace,
-                            { { DUR_1, 3 }, { DUR_2, 3 }, { DUR_4, 5 }, { DUR_8, 5 }, { DUR_16, 7 }, { DUR_32, 7 },
-                                { DUR_64, 9 }, { DUR_128, 9 }, { DUR_LG, 5 }, { DUR_BR, 5 } } },
+                            { { DURATION_1, 3 }, { DURATION_2, 3 }, { DURATION_4, 5 }, { DURATION_8, 5 },
+                                { DURATION_16, 7 }, { DURATION_32, 7 }, { DURATION_64, 9 }, { DURATION_128, 9 },
+                                { DURATION_long, 5 }, { DURATION_breve, 5 } } },
                           { RNP_noteOnLine,
-                              { { DUR_1, 2 }, { DUR_2, 6 }, { DUR_4, 6 }, { DUR_8, 6 }, { DUR_16, 8 }, { DUR_32, 8 },
-                                  { DUR_64, 10 }, { DUR_128, 10 }, { DUR_LG, 6 }, { DUR_BR, 4 } } } } },
+                              { { DURATION_1, 2 }, { DURATION_2, 6 }, { DURATION_4, 6 }, { DURATION_8, 6 },
+                                  { DURATION_16, 8 }, { DURATION_32, 8 }, { DURATION_64, 10 }, { DURATION_128, 10 },
+                                  { DURATION_long, 6 }, { DURATION_breve, 4 } } } } },
                     { RLP_restOnBottomLayer,
                         { { RNP_noteInSpace,
-                              { { DUR_1, -7 }, { DUR_2, -5 }, { DUR_4, -7 }, { DUR_8, -5 }, { DUR_16, -5 },
-                                  { DUR_32, -7 }, { DUR_64, -7 }, { DUR_128, -9 }, { DUR_LG, -5 }, { DUR_BR, -5 } } },
+                              { { DURATION_1, -7 }, { DURATION_2, -5 }, { DURATION_4, -7 }, { DURATION_8, -5 },
+                                  { DURATION_16, -5 }, { DURATION_32, -7 }, { DURATION_64, -7 }, { DURATION_128, -9 },
+                                  { DURATION_long, -5 }, { DURATION_breve, -5 } } },
                             { RNP_noteOnLine,
-                                { { DUR_1, -6 }, { DUR_2, -6 }, { DUR_4, -6 }, { DUR_8, -6 }, { DUR_16, -6 },
-                                    { DUR_32, -6 }, { DUR_64, -6 }, { DUR_128, -8 }, { DUR_LG, -6 },
-                                    { DUR_BR, -6 } } } } } } } } },
+                                { { DURATION_1, -6 }, { DURATION_2, -6 }, { DURATION_4, -6 }, { DURATION_8, -6 },
+                                    { DURATION_16, -6 }, { DURATION_32, -6 }, { DURATION_64, -6 }, { DURATION_128, -8 },
+                                    { DURATION_long, -6 }, { DURATION_breve, -6 } } } } } } } } },
     { RL_sameLayer,
         { { RA_none,
             { { RLP_restOnTopLayer,
                   { { RNP_noteInSpace,
-                        { { DUR_1, -1 }, { DUR_2, 1 }, { DUR_4, 1 }, { DUR_8, 1 }, { DUR_16, 3 }, { DUR_32, 3 },
-                            { DUR_64, 5 }, { DUR_128, 5 }, { DUR_LG, 3 }, { DUR_BR, 1 } } },
+                        { { DURATION_1, -1 }, { DURATION_2, 1 }, { DURATION_4, 1 }, { DURATION_8, 1 },
+                            { DURATION_16, 3 }, { DURATION_32, 3 }, { DURATION_64, 5 }, { DURATION_128, 5 },
+                            { DURATION_long, 3 }, { DURATION_breve, 1 } } },
                       { RNP_noteOnLine,
-                          { { DUR_1, 0 }, { DUR_2, 0 }, { DUR_4, 2 }, { DUR_8, 2 }, { DUR_16, 2 }, { DUR_32, 2 },
-                              { DUR_64, 4 }, { DUR_128, 4 }, { DUR_LG, 2 }, { DUR_BR, 2 } } } } },
+                          { { DURATION_1, 0 }, { DURATION_2, 0 }, { DURATION_4, 2 }, { DURATION_8, 2 },
+                              { DURATION_16, 2 }, { DURATION_32, 2 }, { DURATION_64, 4 }, { DURATION_128, 4 },
+                              { DURATION_long, 2 }, { DURATION_breve, 2 } } } } },
                 { RLP_restOnBottomLayer,
                     { { RNP_noteInSpace,
-                          { { DUR_1, -3 }, { DUR_2, -1 }, { DUR_4, -1 }, { DUR_8, -1 }, { DUR_16, -1 }, { DUR_32, -3 },
-                              { DUR_64, -3 }, { DUR_128, -5 }, { DUR_LG, -3 }, { DUR_BR, -3 } } },
+                          { { DURATION_1, -3 }, { DURATION_2, -1 }, { DURATION_4, -1 }, { DURATION_8, -1 },
+                              { DURATION_16, -1 }, { DURATION_32, -3 }, { DURATION_64, -3 }, { DURATION_128, -5 },
+                              { DURATION_long, -3 }, { DURATION_breve, -3 } } },
                         { RNP_noteOnLine,
-                            { { DUR_1, -2 }, { DUR_2, -2 }, { DUR_4, -2 }, { DUR_8, -2 }, { DUR_16, -2 },
-                                { DUR_32, -4 }, { DUR_64, -4 }, { DUR_128, -6 }, { DUR_LG, -2 },
-                                { DUR_BR, -2 } } } } } } } } }
+                            { { DURATION_1, -2 }, { DURATION_2, -2 }, { DURATION_4, -2 }, { DURATION_8, -2 },
+                                { DURATION_16, -2 }, { DURATION_32, -4 }, { DURATION_64, -4 }, { DURATION_128, -6 },
+                                { DURATION_long, -2 }, { DURATION_breve, -2 } } } } } } } } }
 };
 
 // helper function for conversion
@@ -152,21 +170,23 @@ RestAccidental MeiAccidentalToRestAccidental(data_ACCIDENTAL_WRITTEN accidental)
 static const ClassRegistrar<Rest> s_factory("rest", REST);
 
 Rest::Rest()
-    : LayerElement("rest-")
+    : LayerElement(REST, "rest-")
     , DurationInterface()
     , PositionInterface()
     , AttColor()
     , AttCue()
-    , AttExtSym()
+    , AttExtSymAuth()
+    , AttExtSymNames()
     , AttRestVisMensural()
 {
-    RegisterInterface(DurationInterface::GetAttClasses(), DurationInterface::IsInterface());
-    RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_CUE);
-    RegisterAttClass(ATT_EXTSYM);
-    RegisterAttClass(ATT_RESTVISMENSURAL);
-    Reset();
+    this->RegisterInterface(DurationInterface::GetAttClasses(), DurationInterface::IsInterface());
+    this->RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_CUE);
+    this->RegisterAttClass(ATT_EXTSYMAUTH);
+    this->RegisterAttClass(ATT_EXTSYMNAMES);
+    this->RegisterAttClass(ATT_RESTVISMENSURAL);
+    this->Reset();
 }
 
 Rest::~Rest() {}
@@ -176,10 +196,11 @@ void Rest::Reset()
     LayerElement::Reset();
     DurationInterface::Reset();
     PositionInterface::Reset();
-    ResetColor();
-    ResetCue();
-    ResetExtSym();
-    ResetRestVisMensural();
+    this->ResetColor();
+    this->ResetCue();
+    this->ResetExtSymAuth();
+    this->ResetExtSymNames();
+    this->ResetRestVisMensural();
 }
 
 bool Rest::IsSupportedChild(Object *child)
@@ -205,101 +226,152 @@ void Rest::AddChild(Object *child)
 
     child->SetParent(this);
 
-    ArrayOfObjects *children = this->GetChildrenForModification();
+    ArrayOfObjects &children = this->GetChildrenForModification();
 
     // Dots are always added by PrepareLayerElementParts (for now) and we want them to be in the front
     // for the drawing order in the SVG output
     if (child->Is(DOTS)) {
-        children->insert(children->begin(), child);
+        children.insert(children.begin(), child);
     }
     else {
-        children->push_back(child);
+        children.push_back(child);
     }
     Modify();
 }
 
-wchar_t Rest::GetRestGlyph() const
+char32_t Rest::GetRestGlyph() const
 {
+    return this->GetRestGlyph(this->GetActualDur());
+}
+
+char32_t Rest::GetRestGlyph(const data_DURATION duration) const
+{
+    const Resources *resources = this->GetDocResources();
+    if (!resources) return 0;
+
     // If there is glyph.num, prioritize it
-    if (HasGlyphNum()) {
-        wchar_t code = GetGlyphNum();
-        if (NULL != Resources::GetGlyph(code)) return code;
+    if (this->HasGlyphNum()) {
+        char32_t code = this->GetGlyphNum();
+        if (NULL != resources->GetGlyph(code)) return code;
     }
     // If there is glyph.name (second priority)
-    else if (HasGlyphName()) {
-        wchar_t code = Resources::GetGlyphCode(GetGlyphName());
-        if (NULL != Resources::GetGlyph(code)) return code;
+    else if (this->HasGlyphName()) {
+        char32_t code = resources->GetGlyphCode(this->GetGlyphName());
+        if (NULL != resources->GetGlyph(code)) return code;
     }
 
-    switch (this->GetActualDur()) {
-        case DUR_LG: return SMUFL_E4E1_restLonga; break;
-        case DUR_BR: return SMUFL_E4E2_restDoubleWhole; break;
-        case DUR_1: return SMUFL_E4E3_restWhole; break;
-        case DUR_2: return SMUFL_E4E4_restHalf; break;
-        case DUR_4: return SMUFL_E4E5_restQuarter; break;
-        case DUR_8: return SMUFL_E4E6_rest8th; break;
-        case DUR_16: return SMUFL_E4E7_rest16th; break;
-        case DUR_32: return SMUFL_E4E8_rest32nd; break;
-        case DUR_64: return SMUFL_E4E9_rest64th; break;
-        case DUR_128: return SMUFL_E4EA_rest128th; break;
-        case DUR_256: return SMUFL_E4EB_rest256th; break;
-        case DUR_512: return SMUFL_E4EC_rest512th; break;
-        case DUR_1024: return SMUFL_E4ED_rest1024th; break;
+    if (this->IsMensuralDur()) {
+        switch (duration) {
+            case DURATION_maxima: return SMUFL_E9F0_mensuralRestMaxima; break;
+            case DURATION_long: return SMUFL_E9F2_mensuralRestLongaImperfecta; break;
+            case DURATION_breve: return SMUFL_E9F3_mensuralRestBrevis; break;
+            case DURATION_1: return SMUFL_E9F4_mensuralRestSemibrevis; break;
+            case DURATION_2: return SMUFL_E9F5_mensuralRestMinima; break;
+            case DURATION_4: return SMUFL_E9F6_mensuralRestSemiminima; break;
+            case DURATION_8: return SMUFL_E9F7_mensuralRestFusa; break;
+            case DURATION_16: return SMUFL_E9F8_mensuralRestSemifusa; break;
+            default: return 0;
+        }
     }
+    else {
+        switch (duration) {
+            case DURATION_long: return SMUFL_E4E1_restLonga; break;
+            case DURATION_breve: return SMUFL_E4E2_restDoubleWhole; break;
+            case DURATION_1: return SMUFL_E4E3_restWhole; break;
+            case DURATION_2: return SMUFL_E4E4_restHalf; break;
+            case DURATION_4: return SMUFL_E4E5_restQuarter; break;
+            case DURATION_8: return SMUFL_E4E6_rest8th; break;
+            case DURATION_16: return SMUFL_E4E7_rest16th; break;
+            case DURATION_32: return SMUFL_E4E8_rest32nd; break;
+            case DURATION_64: return SMUFL_E4E9_rest64th; break;
+            case DURATION_128: return SMUFL_E4EA_rest128th; break;
+            case DURATION_256: return SMUFL_E4EB_rest256th; break;
+            case DURATION_512: return SMUFL_E4EC_rest512th; break;
+            case DURATION_1024: return SMUFL_E4ED_rest1024th; break;
+            default: return 0;
+        }
+    }
+
     return 0;
 }
 
 void Rest::UpdateFromTransLoc(const TransPitch &tp)
 {
-    if (HasOloc() && HasPloc()) {
-        SetPloc(tp.GetPitchName());
+    if (this->HasOloc() && this->HasPloc()) {
+        this->SetPloc(tp.GetPitchName());
 
-        if (GetOloc() != tp.m_oct) {
-            SetOloc(tp.m_oct);
+        if (this->GetOloc() != tp.m_oct) {
+            this->SetOloc(tp.m_oct);
         }
     }
 }
 
-int Rest::GetOptimalLayerLocation(Staff *staff, Layer *layer, int defaultLocation)
+bool Rest::DetermineRestPosition(const Staff *staff, const Layer *layer, bool &isTopLayer) const
 {
-    Layer *parentLayer = vrv_cast<Layer *>(this->GetFirstAncestor(LAYER));
-    if (!layer) return defaultLocation;
-    const std::set<int> layersN = parentLayer->GetLayersNForTimeSpanOf(this);
-    // handle rest positioning for 2 layers. 3 layers and more are much more complex to solve
-    if (layersN.size() != 2) return defaultLocation;
+    ListOfConstObjects elements = layer->GetLayerElementsForTimeSpanOf(this, true);
+    if (elements.empty()) return false;
 
-    const bool isTopLayer
-        = m_crossStaff ? (staff->GetN() < m_crossStaff->GetN()) : (layer->GetN() == *layersN.cbegin());
+    const LayerElement *firstElement = NULL;
+    std::set<int> layers;
+    for (const Object *element : elements) {
+        const LayerElement *layerElement = vrv_cast<const LayerElement *>(element);
+        layers.insert(layerElement->GetAlignmentLayerN());
+        if (!firstElement) firstElement = layerElement;
+    }
+
+    if (!firstElement) return false;
+
+    // handle rest positioning for 2 layers. 3 layers and more are much more complex to solve
+    if (layers.size() == 1) {
+        if (m_crossStaff) {
+            isTopLayer = staff->GetN() < m_crossStaff->GetN();
+        }
+        else if (layer->GetN() < (*layers.begin())) {
+            isTopLayer = true;
+        }
+        else {
+            if (*layers.begin() < 0) {
+                isTopLayer = staff->GetN() < firstElement->GetAncestorStaff()->GetN();
+            }
+            else {
+                isTopLayer = false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+int Rest::GetOptimalLayerLocation(const Staff *staff, const Layer *layer, int defaultLocation) const
+{
+    if (!layer || this->HasSameasLink()) return defaultLocation;
+    bool isTopLayer = false;
+    if (!this->DetermineRestPosition(staff, layer, isTopLayer)) return defaultLocation;
 
     // find best rest location relative to elements on other layers
-    Staff *realStaff = m_crossStaff ? m_crossStaff : staff;
-    ListOfObjects layers;
-    ClassIdComparison matchType(LAYER);
-    realStaff->FindAllDescendantByComparison(&layers, &matchType);
-    const auto otherLayerRelativeLocationInfo = GetLocationRelativeToOtherLayers(layers, layer, isTopLayer);
-    int currentLayerRelativeLocation = GetLocationRelativeToCurrentLayer(staff, layer, isTopLayer);
+    bool restOverlap = true;
+    const auto otherLayerRelativeLocationInfo = this->GetLocationRelativeToOtherLayers(layer, isTopLayer, restOverlap);
+    int currentLayerRelativeLocation = this->GetLocationRelativeToCurrentLayer(staff, layer, isTopLayer);
     int otherLayerRelativeLocation = otherLayerRelativeLocationInfo.first
-        + GetRestOffsetFromOptions(RL_otherLayer, otherLayerRelativeLocationInfo, isTopLayer);
+        + this->GetRestOffsetFromOptions(RL_otherLayer, otherLayerRelativeLocationInfo, isTopLayer);
     if (currentLayerRelativeLocation == VRV_UNSET) {
         currentLayerRelativeLocation = defaultLocation;
     }
     else {
         std::pair<int, RestAccidental> currentLayerRelativeLocationInfo(currentLayerRelativeLocation, RA_none);
         currentLayerRelativeLocation
-            += GetRestOffsetFromOptions(RL_sameLayer, currentLayerRelativeLocationInfo, isTopLayer);
+            += this->GetRestOffsetFromOptions(RL_sameLayer, currentLayerRelativeLocationInfo, isTopLayer);
     }
     if (m_crossStaff) {
         if (isTopLayer) {
             otherLayerRelativeLocation += defaultLocation + 2;
         }
         else {
-            otherLayerRelativeLocation -= defaultLocation + 2;
+            otherLayerRelativeLocation -= 2;
         }
     }
 
-    // for two layers, top layer shouldn't go below center and lower layer shouldn't go above it. Enforce this by adding
-    // margin that will adjust rest position
-    const int marginLocation = isTopLayer ? 6 : 2;
+    const int marginLocation = this->GetMarginLayerLocation(isTopLayer, restOverlap);
     const int optimalLocation = isTopLayer
         ? std::max({ otherLayerRelativeLocation, currentLayerRelativeLocation, defaultLocation, marginLocation })
         : std::min({ otherLayerRelativeLocation, currentLayerRelativeLocation, defaultLocation, marginLocation });
@@ -308,27 +380,25 @@ int Rest::GetOptimalLayerLocation(Staff *staff, Layer *layer, int defaultLocatio
 }
 
 std::pair<int, RestAccidental> Rest::GetLocationRelativeToOtherLayers(
-    const ListOfObjects &layersList, Layer *currentLayer, bool isTopLayer)
+    const Layer *currentLayer, bool isTopLayer, bool &restOverlap) const
 {
     if (!currentLayer) return { VRV_UNSET, RA_none };
 
-    // Get iterator to another layer. We're going to find coliding elements there
-    auto layerIter = std::find_if(layersList.begin(), layersList.end(),
-        [&](Object *foundLayer) { return vrv_cast<Layer *>(foundLayer)->GetN() != currentLayer->GetN(); });
-    if (layerIter == layersList.end()) {
-        if (!m_crossStaff) return { VRV_UNSET, RA_none };
-        // if we're dealing with cross-staff item, get first/last layer, depending whether rest is on top or bottom
-        layerIter = isTopLayer ? layersList.begin() : std::prev(layersList.end());
-    }
-    auto collidingElementsList = vrv_cast<Layer *>(*layerIter)->GetLayerElementsForTimeSpanOf(this);
+    auto collidingElementsList = currentLayer->GetLayerElementsForTimeSpanOf(this, true);
+    if (collidingElementsList.empty()) return { VRV_UNSET, RA_none };
 
     std::pair<int, RestAccidental> finalElementInfo = { VRV_UNSET, RA_none };
     // Go through each colliding element and figure out optimal location for the rest
-    for (Object *object : collidingElementsList) {
-        auto currentElementInfo = GetElementLocation(object, vrv_cast<Layer *>(*layerIter), isTopLayer);
+    for (const Object *object : collidingElementsList) {
+        const LayerElement *layerElement = vrv_cast<const LayerElement *>(object);
+        const Layer *objectLayer = layerElement->m_crossLayer
+            ? layerElement->m_crossLayer
+            : vrv_cast<const Layer *>(object->GetFirstAncestor(LAYER));
+        if (object->Is(NOTE)) restOverlap = false;
+        auto currentElementInfo = this->GetElementLocation(object, objectLayer, isTopLayer);
         if (currentElementInfo.first == VRV_UNSET) continue;
         //  If note on other layer is not on the same x position as rest - ignore its accidental
-        if (GetAlignment()->GetTime() != vrv_cast<LayerElement *>(object)->GetAlignment()->GetTime()) {
+        if (this->GetAlignment()->GetTime() != vrv_cast<const LayerElement *>(object)->GetAlignment()->GetTime()) {
             currentElementInfo.second = RA_none;
             // limit how much rest can be offset when there is duration overlap, but no x position overlap
             if ((isTopLayer && (currentElementInfo.first > 12)) || (!isTopLayer && (currentElementInfo.first < -4))) {
@@ -345,48 +415,53 @@ std::pair<int, RestAccidental> Rest::GetLocationRelativeToOtherLayers(
     return finalElementInfo;
 }
 
-int Rest::GetLocationRelativeToCurrentLayer(Staff *currentStaff, Layer *currentLayer, bool isTopLayer)
+int Rest::GetLocationRelativeToCurrentLayer(const Staff *currentStaff, const Layer *currentLayer, bool isTopLayer) const
 {
     if (!currentStaff || !currentLayer) return VRV_UNSET;
 
-    Functor getRelativeLayerElement(&Object::GetRelativeLayerElement);
-    GetRelativeLayerElementParams getRelativeLayerElementParams(GetIdx(), BACKWARD, false);
-
-    Object *previousElement = NULL;
-    Object *nextElement = NULL;
+    const Object *previousElement = NULL;
+    const Object *nextElement = NULL;
     // Get previous and next elements from the current layer
     if (currentLayer->GetFirstChildNot(REST)) {
-        currentLayer->Process(
-            &getRelativeLayerElement, &getRelativeLayerElementParams, NULL, NULL, UNLIMITED_DEPTH, BACKWARD);
-        previousElement = getRelativeLayerElementParams.m_relativeElement;
-        // reset and search in other direction
-        getRelativeLayerElementParams.m_relativeElement = NULL;
-        getRelativeLayerElementParams.m_searchDirection = FORWARD;
-        getRelativeLayerElement.m_returnCode = FUNCTOR_CONTINUE;
-        currentLayer->Process(
-            &getRelativeLayerElement, &getRelativeLayerElementParams, NULL, NULL, UNLIMITED_DEPTH, FORWARD);
-        nextElement = getRelativeLayerElementParams.m_relativeElement;
+        GetRelativeLayerElementFunctor getRelativeLayerElementBackwards(this->GetIdx(), false);
+        getRelativeLayerElementBackwards.SetDirection(BACKWARD);
+        currentLayer->Process(getRelativeLayerElementBackwards);
+        previousElement = getRelativeLayerElementBackwards.GetRelativeElement();
+
+        // search in other direction
+        GetRelativeLayerElementFunctor getRelativeLayerElementForwards(this->GetIdx(), false);
+        currentLayer->Process(getRelativeLayerElementForwards);
+        nextElement = getRelativeLayerElementForwards.GetRelativeElement();
     }
 
     // For chords we want to get the closest element to opposite layer, hence we pass negative 'isTopLayer' value
     // That way we'll get bottom chord note for top layer and top chord note for bottom layer
     const int previousElementLoc = previousElement
-        ? GetElementLocation(previousElement, currentLayer, !isTopLayer).first
-        : GetFirstRelativeElementLocation(currentStaff, currentLayer, true, isTopLayer);
+        ? this->GetElementLocation(previousElement, currentLayer, !isTopLayer).first
+        : this->GetFirstRelativeElementLocation(currentStaff, currentLayer, true, isTopLayer);
     const int nextElementLoc = nextElement
-        ? GetElementLocation(nextElement, currentLayer, !isTopLayer).first
-        : GetFirstRelativeElementLocation(currentStaff, currentLayer, false, isTopLayer);
+        ? this->GetElementLocation(nextElement, currentLayer, !isTopLayer).first
+        : this->GetFirstRelativeElementLocation(currentStaff, currentLayer, false, isTopLayer);
 
+    // Calculate optimal location depending on existence of values for previous and next element location
     int currentOptimalLocation = 0;
     if (VRV_UNSET == previousElementLoc) {
-        currentOptimalLocation = nextElementLoc;
-    }
-    else if (VRV_UNSET == nextElementLoc) {
-        currentOptimalLocation = previousElementLoc;
+        if (VRV_UNSET == nextElementLoc) {
+            return VRV_UNSET;
+        }
+        else {
+            currentOptimalLocation = nextElementLoc;
+        }
     }
     else {
-        currentOptimalLocation = (previousElementLoc + nextElementLoc) / 2;
+        if (VRV_UNSET == nextElementLoc) {
+            currentOptimalLocation = previousElementLoc;
+        }
+        else {
+            currentOptimalLocation = (previousElementLoc + nextElementLoc) / 2;
+        }
     }
+
     const int marginLocation = isTopLayer ? 10 : -2;
     currentOptimalLocation = isTopLayer ? std::min(currentOptimalLocation, marginLocation)
                                         : std::max(currentOptimalLocation, marginLocation);
@@ -394,85 +469,102 @@ int Rest::GetLocationRelativeToCurrentLayer(Staff *currentStaff, Layer *currentL
     return currentOptimalLocation;
 }
 
-int Rest::GetFirstRelativeElementLocation(Staff *currentStaff, Layer *currentLayer, bool isPrevious, bool isTopLayer)
+int Rest::GetFirstRelativeElementLocation(
+    const Staff *currentStaff, const Layer *currentLayer, bool isPrevious, bool isTopLayer) const
 {
     // current system
-    System *system = vrv_cast<System *>(GetFirstAncestor(SYSTEM));
+    const System *system = vrv_cast<const System *>(this->GetFirstAncestor(SYSTEM));
     assert(system);
     // current measure
-    Measure *measure = vrv_cast<Measure *>(GetFirstAncestor(MEASURE));
+    const Measure *measure = vrv_cast<const Measure *>(this->GetFirstAncestor(MEASURE));
     assert(measure);
 
     const int index = system->GetChildIndex(measure);
-    Object *relativeMeasure = system->GetChild(isPrevious ? index - 1 : index + 1);
+    const Object *relativeMeasure = system->GetChild(isPrevious ? index - 1 : index + 1);
     if (!relativeMeasure || !relativeMeasure->Is(MEASURE)) return VRV_UNSET;
 
     // Find staff with the same N as current staff
     AttNIntegerComparison snc(STAFF, currentStaff->GetN());
-    Staff *previousStaff = vrv_cast<Staff *>(relativeMeasure->FindDescendantByComparison(&snc));
+    const Staff *previousStaff = vrv_cast<const Staff *>(relativeMeasure->FindDescendantByComparison(&snc));
     if (!previousStaff) return VRV_UNSET;
 
     // Compare number of layers in the next/previous staff and if it's the same - find layer with same N
-    ListOfObjects layers;
-    ClassIdComparison matchType(LAYER);
-    previousStaff->FindAllDescendantByComparison(&layers, &matchType);
+    ListOfConstObjects layers = previousStaff->FindAllDescendantsByType(LAYER, false);
     auto layerIter = std::find_if(layers.begin(), layers.end(),
-        [&](Object *foundLayer) { return vrv_cast<Layer *>(foundLayer)->GetN() == currentLayer->GetN(); });
+        [&](const Object *foundLayer) { return vrv_cast<const Layer *>(foundLayer)->GetN() == currentLayer->GetN(); });
     if (((int)layers.size() != currentStaff->GetChildCount(LAYER)) || (layerIter == layers.end())) return VRV_UNSET;
 
     // Get last element if it's previous layer, get first one otherwise
-    Functor getRelativeLayerElement(&Object::GetRelativeLayerElement);
-    GetRelativeLayerElementParams getRelativeLayerElementParams(GetIdx(), !isPrevious, true);
-    (*layerIter)
-        ->Process(&getRelativeLayerElement, &getRelativeLayerElementParams, NULL, NULL, UNLIMITED_DEPTH, !isPrevious);
+    GetRelativeLayerElementFunctor getRelativeLayerElement(this->GetIdx(), true);
+    getRelativeLayerElement.SetDirection(!isPrevious);
+    (*layerIter)->Process(getRelativeLayerElement);
 
-    Object *lastLayerElement = getRelativeLayerElementParams.m_relativeElement;
+    const Object *lastLayerElement = getRelativeLayerElement.GetRelativeElement();
     if (lastLayerElement && lastLayerElement->Is({ NOTE, CHORD, FTREM })) {
-        return GetElementLocation(lastLayerElement, vrv_cast<Layer *>(*layerIter), !isTopLayer).first;
+        return this->GetElementLocation(lastLayerElement, vrv_cast<const Layer *>(*layerIter), !isTopLayer).first;
     }
 
     return VRV_UNSET;
 }
 
-std::pair<int, RestAccidental> Rest::GetElementLocation(Object *object, Layer *layer, bool isTopLayer) const
+std::pair<int, RestAccidental> Rest::GetElementLocation(const Object *object, const Layer *layer, bool isTopLayer) const
 {
     if (object->Is(NOTE)) {
-        Note *note = vrv_cast<Note *>(object);
+        const Note *note = vrv_cast<const Note *>(object);
         assert(note);
-        Accid *accid = note->GetDrawingAccid();
+        const Accid *accid = note->GetDrawingAccid();
         return { PitchInterface::CalcLoc(note, layer, note),
             (accid && accid->GetAccid() != 0) ? MeiAccidentalToRestAccidental(accid->GetAccid()) : RA_none };
     }
     if (object->Is(CHORD)) {
-        Chord *chord = vrv_cast<Chord *>(object);
+        const Chord *chord = vrv_cast<const Chord *>(object);
         assert(chord);
-        Note *relevantNote = isTopLayer ? chord->GetTopNote() : chord->GetBottomNote();
-        Accid *accid = relevantNote->GetDrawingAccid();
+        const Note *relevantNote = isTopLayer ? chord->GetTopNote() : chord->GetBottomNote();
+        const Accid *accid = relevantNote->GetDrawingAccid();
         return { PitchInterface::CalcLoc(chord, layer, relevantNote, isTopLayer),
             (accid && accid->GetAccid() != 0) ? MeiAccidentalToRestAccidental(accid->GetAccid()) : RA_none };
     }
     if (object->Is(FTREM)) {
         std::vector<std::pair<int, RestAccidental>> btremElements;
         for (int i = 0; i < object->GetChildCount(); ++i) {
-            btremElements.emplace_back(GetElementLocation(object->GetChild(i), layer, isTopLayer));
+            btremElements.emplace_back(this->GetElementLocation(object->GetChild(i), layer, isTopLayer));
         }
         return isTopLayer ? *std::max_element(btremElements.begin(), btremElements.end())
                           : *std::min_element(btremElements.begin(), btremElements.end());
     }
     if (object->Is(REST)) {
         if (!m_crossStaff) return { VRV_UNSET, RA_none };
-        Rest *rest = vrv_cast<Rest *>(object);
+        const Rest *rest = vrv_cast<const Rest *>(object);
         assert(rest);
         return { rest->GetDrawingLoc(), RA_none };
     }
     return { VRV_UNSET, RA_none };
 }
 
+int Rest::GetMarginLayerLocation(bool isTopLayer, bool restOverlap) const
+{
+    int marginLocation = isTopLayer ? 6 : 2;
+    if ((this->GetDur() == DURATION_long) || ((this->GetDur() == DURATION_4) && restOverlap)) {
+        marginLocation = isTopLayer ? 8 : 0;
+    }
+    else if (this->GetDur() >= DURATION_8) {
+        marginLocation
+            = isTopLayer ? (6 + (this->GetDur() - DURATION_4) / 2 * 2) : (2 - (this->GetDur() - DURATION_8) / 2 * 2);
+    }
+    if (this->GetDur() >= DURATION_1024) {
+        marginLocation -= 2;
+    }
+
+    return marginLocation;
+}
+
 int Rest::GetRestOffsetFromOptions(
     RestLayer layer, const std::pair<int, RestAccidental> &location, bool isTopLayer) const
 {
-    int duration = GetActualDur();
+    data_DURATION duration = this->GetActualDur();
+    // Make sure we are in the boundaries of g_defaultRests
     if (duration > DURATION_128) duration = DURATION_128;
+    if (duration < DURATION_long) duration = DURATION_long;
     return g_defaultRests.at(layer)
         .at(RL_sameLayer == layer ? location.second : RA_none)
         .at(isTopLayer ? RLP_restOnTopLayer : RLP_restOnBottomLayer)
@@ -484,248 +576,24 @@ int Rest::GetRestOffsetFromOptions(
 // Functors methods
 //----------------------------------------------------------------------------
 
-int Rest::AdjustBeams(FunctorParams *functorParams)
+FunctorCode Rest::Accept(Functor &functor)
 {
-    AdjustBeamParams *params = vrv_params_cast<AdjustBeamParams *>(functorParams);
-    assert(params);
-
-    if (!params->m_beam) return FUNCTOR_SIBLINGS;
-
-    // Calculate possible overlap for the rest with beams
-    int leftMargin = 0, rightMargin = 0;
-    const int beams = vrv_cast<Beam *>(params->m_beam)->m_shortestDur - DUR_4;
-    const int beamWidth = vrv_cast<Beam *>(params->m_beam)->m_beamWidth;
-    if (params->m_directionBias > 0) {
-        leftMargin = params->m_y1 - beams * beamWidth - GetSelfTop();
-        rightMargin = params->m_y2 - beams * beamWidth - GetSelfTop();
-    }
-    else {
-        leftMargin = GetSelfBottom() - params->m_y1 - beams * beamWidth;
-        rightMargin = GetSelfBottom() - params->m_y2 - beams * beamWidth;
-    }
-
-    // Adjust drawing location for the rest based on the overlap with beams.
-    // Adjustment should be an even number, so that the rest is positioned properly
-    const int overlapMargin = std::min(leftMargin, rightMargin);
-    if (overlapMargin < 0) {
-        Staff *staff = vrv_cast<Staff *>(GetFirstAncestor(STAFF));
-        assert(staff);
-        if ((!HasOloc() || !HasPloc()) && !HasLoc()) {
-            const int unit = params->m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
-            const int locAdjust = (params->m_directionBias * (overlapMargin - 2 * unit + 1) / unit);
-            const int oldLoc = GetDrawingLoc();
-            const int newLoc = oldLoc + locAdjust - locAdjust % 2;
-            SetDrawingLoc(newLoc);
-            SetDrawingYRel(staff->CalcPitchPosYRel(params->m_doc, newLoc));
-            // If there are dots, adjust their location as well
-            if (GetDots() > 0) {
-                Dots *dots = vrv_cast<Dots *>(FindDescendantByType(DOTS, 1));
-                if (dots) {
-                    std::set<int> &dotLocs = dots->ModifyDotLocsForStaff(staff);
-                    const int dotLoc = (oldLoc % 2) ? oldLoc : oldLoc + 1;
-                    if (std::find(dotLocs.cbegin(), dotLocs.cend(), dotLoc) != dotLocs.cend()) {
-                        dotLocs.erase(dotLoc);
-                        dotLocs.insert(newLoc);
-                    }
-                }
-            }
-        }
-        else {
-            const int staffOffset = params->m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
-            params->m_overlapMargin
-                = (((overlapMargin * params->m_directionBias + staffOffset - 1) / staffOffset + 1.5) * staffOffset)
-                * params->m_directionBias;
-        }
-    }
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitRest(this);
 }
 
-int Rest::ConvertMarkupAnalytical(FunctorParams *functorParams)
+FunctorCode Rest::Accept(ConstFunctor &functor) const
 {
-    ConvertMarkupAnalyticalParams *params = vrv_params_cast<ConvertMarkupAnalyticalParams *>(functorParams);
-    assert(params);
-
-    if (this->HasFermata()) {
-        Fermata *fermata = new Fermata();
-        fermata->ConvertFromAnalyticalMarkup(this, this->GetUuid(), params);
-    }
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitRest(this);
 }
 
-int Rest::PrepareLayerElementParts(FunctorParams *functorParams)
+FunctorCode Rest::AcceptEnd(Functor &functor)
 {
-    Dots *currentDots = dynamic_cast<Dots *>(this->FindDescendantByType(DOTS, 1));
-
-    if ((this->GetDur() > DUR_BR) && (this->GetDots() > 0)) {
-        if (!currentDots) {
-            currentDots = new Dots();
-            this->AddChild(currentDots);
-        }
-        currentDots->AttAugmentDots::operator=(*this);
-    }
-    // This will happen only if the duration has changed
-    else if (currentDots) {
-        if (this->DeleteChild(currentDots)) {
-            currentDots = NULL;
-        }
-    }
-
-    /************ Prepare the drawing cue size ************/
-
-    Functor prepareDrawingCueSize(&Object::PrepareDrawingCueSize);
-    this->Process(&prepareDrawingCueSize, NULL);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitRestEnd(this);
 }
 
-int Rest::CalcDots(FunctorParams *functorParams)
+FunctorCode Rest::AcceptEnd(ConstFunctor &functor) const
 {
-    CalcDotsParams *params = vrv_params_cast<CalcDotsParams *>(functorParams);
-    assert(params);
-
-    // We currently have no dots object with mensural rests
-    if (this->IsMensuralDur()) {
-        return FUNCTOR_SIBLINGS;
-    }
-
-    // Nothing to do
-    if ((this->GetDur() <= DUR_BR) || (this->GetDots() < 1)) {
-        return FUNCTOR_SIBLINGS;
-    }
-
-    Staff *staff = vrv_cast<Staff *>(this->GetFirstAncestor(STAFF));
-    assert(staff);
-
-    if (m_crossStaff) staff = m_crossStaff;
-
-    const bool drawingCueSize = this->GetDrawingCueSize();
-    const int staffSize = staff->m_drawingStaffSize;
-
-    // For single rests we need here to set the dot loc
-    Dots *dots = vrv_cast<Dots *>(this->FindDescendantByType(DOTS, 1));
-    assert(dots);
-
-    std::set<int> &dotLocs = dots->ModifyDotLocsForStaff(staff);
-    int loc = this->GetDrawingLoc();
-
-    // if it's on a staff line to start with, we need to compensate here and add a full unit like DrawDots would
-    if ((loc % 2) == 0) {
-        loc += 1;
-    }
-
-    switch (this->GetActualDur()) {
-        case DUR_32:
-        case DUR_64: loc += 2; break;
-        case DUR_128:
-        case DUR_256: loc += 4; break;
-        case DUR_512: loc += 6; break;
-        case DUR_1024: loc += 8; break;
-        default: break;
-    }
-
-    dotLocs.insert(loc);
-
-    // HARDCODED
-    int xRel = params->m_doc->GetDrawingUnit(staffSize) * 2.5;
-    if (drawingCueSize) xRel = params->m_doc->GetCueSize(xRel);
-    if (this->GetDur() > DUR_2) {
-        xRel = params->m_doc->GetGlyphWidth(this->GetRestGlyph(), staff->m_drawingStaffSize, drawingCueSize);
-    }
-    dots->SetDrawingXRel(std::max(dots->GetDrawingXRel(), xRel));
-
-    return FUNCTOR_SIBLINGS;
-}
-
-int Rest::ResetDrawing(FunctorParams *functorParams)
-{
-    // Call parent one too
-    LayerElement::ResetDrawing(functorParams);
-    PositionInterface::InterfaceResetDrawing(functorParams, this);
-
-    return FUNCTOR_CONTINUE;
-}
-
-int Rest::ResetHorizontalAlignment(FunctorParams *functorParams)
-{
-    LayerElement::ResetHorizontalAlignment(functorParams);
-    PositionInterface::InterfaceResetHorizontalAlignment(functorParams, this);
-
-    return FUNCTOR_CONTINUE;
-}
-
-int Rest::Transpose(FunctorParams *functorParams)
-{
-    TransposeParams *params = vrv_params_cast<TransposeParams *>(functorParams);
-    assert(params);
-
-    if ((!HasOloc() || !HasPloc()) && !HasLoc()) return FUNCTOR_SIBLINGS;
-
-    // Find whether current layer is top, middle (either one if multiple) or bottom
-    Staff *parentStaff = vrv_cast<Staff *>(GetFirstAncestor(STAFF));
-    assert(parentStaff);
-
-    Layer *parentLayer = vrv_cast<Layer *>(GetFirstAncestor(LAYER));
-    assert(parentLayer);
-
-    ListOfObjects objects;
-    ClassIdComparison matchClassId(LAYER);
-    parentStaff->FindAllDescendantByComparison(&objects, &matchClassId);
-    const int layerCount = (int)objects.size();
-
-    Layer *firstLayer = vrv_cast<Layer *>(objects.front());
-    Layer *lastLayer = vrv_cast<Layer *>(objects.back());
-
-    const bool isTopLayer = (firstLayer->GetN() == parentLayer->GetN());
-    const bool isBottomLayer = (lastLayer->GetN() == parentLayer->GetN());
-
-    // transpose based on @oloc and @ploc
-    if (HasOloc() && HasPloc()) {
-        const TransPitch centralLocation(6, 0, 4); // middle location of the staff
-        TransPitch restLoc(GetPloc() - PITCHNAME_c, 0, GetOloc());
-        params->m_transposer->Transpose(restLoc);
-        const bool isRestOnSpace = static_cast<bool>((restLoc.m_oct * 7 + restLoc.m_pname) % 2);
-        // on outer layers move rest on odd locations one line further
-        // in middle layers tolerate even locations to not risk collisions
-        if (layerCount > 1) {
-            if (isTopLayer && isRestOnSpace) {
-                restLoc++;
-            }
-            else if (isBottomLayer && isRestOnSpace) {
-                restLoc--;
-            }
-            if ((isTopLayer && (restLoc < centralLocation)) || (isBottomLayer && (restLoc > centralLocation))) {
-                restLoc = centralLocation;
-            }
-        }
-
-        UpdateFromTransLoc(restLoc);
-    }
-    // transpose based on @loc
-    else if (HasLoc()) {
-        constexpr int centralLocation(4);
-        int transval = params->m_transposer->GetTranspositionIntervalClass();
-        int diatonic;
-        int chromatic;
-        params->m_transposer->IntervalToDiatonicChromatic(diatonic, chromatic, transval);
-        int transposedLoc = GetLoc() + diatonic;
-        // on outer layers move rest on odd locations one line further
-        // in middle layers tolerate even locations to not risk collisions
-        if (layerCount > 1) {
-            if (isTopLayer)
-                transposedLoc += abs(transposedLoc % 2);
-            else if (isBottomLayer)
-                transposedLoc -= abs(transposedLoc % 2);
-            if ((isTopLayer && (transposedLoc < centralLocation))
-                || (isBottomLayer && (transposedLoc > centralLocation))) {
-                transposedLoc = centralLocation;
-            }
-        }
-        SetLoc(transposedLoc);
-    }
-
-    return FUNCTOR_SIBLINGS;
+    return functor.VisitRestEnd(this);
 }
 
 } // namespace vrv

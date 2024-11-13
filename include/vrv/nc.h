@@ -8,13 +8,14 @@
 #ifndef __VRV_NC_H__
 #define __VRV_NC_H__
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "atts_analytical.h"
 #include "atts_neumes.h"
 #include "atts_shared.h"
+#include "atts_visual.h"
 #include "durationinterface.h"
 #include "layerelement.h"
 #include "pitchinterface.h"
@@ -35,6 +36,7 @@ class Nc : public LayerElement,
            public PitchInterface,
            public PositionInterface,
            public AttColor,
+           public AttCurvatureDirection,
            public AttIntervalMelodic,
            public AttNcForm {
 public:
@@ -45,21 +47,62 @@ public:
     ///@{
     Nc();
     virtual ~Nc();
-    virtual Object *Clone() const { return new Nc(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Nc"; }
-    virtual ClassId GetClassId() const { return NC; }
+    Object *Clone() const override { return new Nc(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Nc"; }
     ///@}
+
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual DurationInterface *GetDurationInterface() { return dynamic_cast<DurationInterface *>(this); }
-    virtual PitchInterface *GetPitchInterface() { return dynamic_cast<PitchInterface *>(this); }
+    DurationInterface *GetDurationInterface() override { return vrv_cast<DurationInterface *>(this); }
+    const DurationInterface *GetDurationInterface() const override { return vrv_cast<const DurationInterface *>(this); }
+    PitchInterface *GetPitchInterface() override { return vrv_cast<PitchInterface *>(this); }
+    const PitchInterface *GetPitchInterface() const override { return vrv_cast<const PitchInterface *>(this); }
     ///@}
 
+    /**
+     * Calclulate the pitch or loc difference between to nc.
+     * The Pitch difference takes precedence over the loc difference.
+     */
+    int PitchOrLocDifferenceTo(const Nc *nc) const;
+
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
+
+    /**
+     * A Structure holding a glyph paramter for the nc.
+     * One single nc might need more than one glyph (e.g., liquescent).
+     * Set in CalcLigatureOrNeumePosFunctor::VisitNeume
+     */
+    struct DrawingGlyph {
+        wchar_t m_fontNo = 0;
+        float m_xOffset = 0.0;
+        float m_yOffset = 0.0;
+    };
+
 private:
+    //
+public:
+    /** Drawing glyphs */
+    std::vector<DrawingGlyph> m_drawingGlyphs;
+
+private:
+    //
 };
 
 } // namespace vrv

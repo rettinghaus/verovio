@@ -11,13 +11,11 @@
 #include "atts_cmn.h"
 #include "atts_mei.h"
 #include "atts_shared.h"
-#include "linkinginterface.h"
-#include "object.h"
+#include "layerelement.h"
 
 namespace vrv {
 
 class Measure;
-class MeterSig;
 
 //----------------------------------------------------------------------------
 // MeterSigGrp
@@ -27,13 +25,7 @@ class MeterSig;
  * This class represents a MEI meterSigGrp.
  * It contains meterSigGrp objects.
  */
-class MeterSigGrp : public Object,
-                    public ObjectListInterface,
-                    public LinkingInterface,
-                    public AttBasic,
-                    public AttLabelled,
-                    public AttMeterSigGrpLog,
-                    public AttTyped {
+class MeterSigGrp : public LayerElement, public ObjectListInterface, public AttBasic, public AttMeterSigGrpLog {
 public:
     /**
      * @name Constructors, destructors, and other standard methods
@@ -42,54 +34,55 @@ public:
     ///@{
     MeterSigGrp();
     virtual ~MeterSigGrp();
-    virtual Object *Clone() const { return new MeterSigGrp(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "MeterSigGrp"; }
-    virtual ClassId GetClassId() const { return METERSIGGRP; }
-    ///@}
-
-    /**
-     * @name Getter to interfaces
-     */
-    ///@{
-    virtual LinkingInterface *GetLinkingInterface() { return this; }
+    Object *Clone() const override { return new MeterSigGrp(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "MeterSigGrp"; }
     ///@}
 
     /**
      * @name Methods for adding allowed content
      */
     ///@{
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
     ///@}
+
+    /** Override the method since check is required */
+    bool IsScoreDefElement() const override { return (this->GetParent() && this->GetFirstAncestor(SCOREDEF)); }
 
     /**
      * Add specified measureId to the m_alternatingMeasures vector
      */
-    void AddAlternatingMeasureToVector(Measure *measure);
+    void AddAlternatingMeasureToVector(const Measure *measure);
 
     /**
      * Get simplified (i.e. single metersig with count/unit) based on the MeterSigGrp function
      */
-    MeterSig *GetSimplifiedMeterSig();
+    MeterSig *GetSimplifiedMeterSig() const;
 
     /**
      * Set counter for the alternating meterSigGrp based on the provided measureId
      */
-    void SetMeasureBasedCount(Measure *measure);
+    void SetMeasureBasedCount(const Measure *measure);
 
     //----------//
     // Functors //
     //----------//
+
     /**
-     * See Object::AlignHorizontally
+     * Interface for class functor visitation
      */
-    int AlignHorizontally(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     /**
      * Filter the flat list and keep only meterSigGrp elements.
      */
-    virtual void FilterList(ArrayOfObjects *childList);
+    void FilterList(ListOfConstObjects &childList) const override;
 
 private:
     // vector with alternating measures to be used only with meterSigGrpLog_FUNC_alternating

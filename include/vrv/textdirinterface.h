@@ -9,6 +9,7 @@
 #define __VRV_TEXT_DIR_INTERFACE_H__
 
 #include "atts_shared.h"
+#include "interface.h"
 #include "vrvdef.h"
 
 namespace vrv {
@@ -31,14 +32,19 @@ public:
     ///@{
     TextDirInterface();
     virtual ~TextDirInterface();
-    virtual void Reset();
-    virtual InterfaceId IsInterface() { return INTERFACE_TEXT_DIR; }
+    void Reset() override;
+    InterfaceId IsInterface() const override { return INTERFACE_TEXT_DIR; }
     ///@}
 
     /**
      * Return the number of lines in the text object by counting <lb> children
      */
-    int GetNumberOfLines(Object *object);
+    int GetNumberOfLines(const Object *object) const;
+
+    /**
+     * Check whether one of the children has hAlign attribute set to `alignment` value
+     */
+    bool AreChildrenAlignedTo(const Object *object, data_HORIZONTALALIGNMENT alignment) const;
 
 private:
     //

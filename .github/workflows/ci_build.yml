@@ -6,7 +6,7 @@ on:
     # but only for the branches specified
     branches:
       # Push events on develop branch
-      - develop
+      - 'develop'
       # Push events on ci-test branch (uncomment if needed for testing purposes)
       # - ci-test
     paths-ignore:
@@ -34,7 +34,6 @@ env:
     # Will be programmatically set to 'false' for rism-digital repo.
 
   # build artifacts
-  CLI_BUILD: cli-build
   DOC_BUILD: doc-build
   TOOLKIT_BUILD: toolkit-build
 
@@ -45,6 +44,7 @@ env:
   # emscripten
   EM_VERSION: latest
   EM_CACHE_FOLDER: "emsdk-cache"
+  EM_CACHE_ID: 3
 
   # gh-pages
   GH_PAGES_REPO: ${{ github.repository_owner }}/verovio.org # works from rism-digital and from forks
@@ -76,39 +76,43 @@ jobs:
         include:
           - os: ubuntu-20.04
             compiler: g++
-            version: "9"
+            version: "10"
+
+          - os: ubuntu-22.04
+            compiler: g++
+            version: "11"
+
+          - os: ubuntu-22.04
+            compiler: g++
+            version: "12"
 
           - os: ubuntu-20.04
-            compiler: g++
+            compiler: clang
             version: "10"
 
           - os: ubuntu-20.04
             compiler: clang
-            version: "6.0"
+            version: "11"
 
           - os: ubuntu-20.04
             compiler: clang
-            version: "9"
+            version: "12"
 
-          - os: ubuntu-20.04
-            compiler: clang
-            version: "10"
-
-          - os: macos-10.15
+          - os: macos-latest
             compiler: xcode
-            version: "11.7"
+            version: "14.3"
 
-          - os: macos-10.15
+          - os: macos-latest
             compiler: xcode
-            version: "12.1"
+            version: "15.3"
 
-          - os: macos-10.15
+          - os: macos-latest
             compiler: g++
-            version: "9"
+            version: "12"
 
     steps:
       - name: Checkout main repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Installation step for Ubuntu
       - name: Configure Ubuntu with ${{ matrix.compiler }}-${{ matrix.version }}
@@ -137,7 +141,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           if [ "${{ matrix.compiler }}" == "g++" ]; then
-            # set environment variables (use alias gcc-9)
+            # set environment variables (use alias gcc)
             echo CC=gcc-${{ matrix.version }} >> $GITHUB_ENV
             echo CXX=g++-${{ matrix.version }} >> $GITHUB_ENV
 
@@ -174,40 +178,6 @@ jobs:
           cmake ../cmake
           make -j8
 
-  ###########################
-  # Build the CLI artifacts #
-  ###########################
-  build_cli:
-    # skip job if commit message contains "[skip-ci]"
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
-
-    name: Build cli
-    runs-on: ubuntu-20.04
-
-    steps:
-      - name: Checkout main repo
-        uses: actions/checkout@v2
-
-      - name: Create temp dir
-        working-directory: ${{ github.workspace }}
-        run: mkdir -p $TEMP_DIR/
-
-      - name: Run make
-        working-directory: ${{ github.workspace }}/tools
-        run: |
-          cmake ../cmake
-          make -j8
-
-      - name: Update cli.txt
-        working-directory: ${{ github.workspace }}/tools
-        run: ./verovio -h > $GITHUB_WORKSPACE/$TEMP_DIR/cli.txt
-
-      - name: Upload cli artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.CLI_BUILD }}
-          path: ${{ github.workspace }}/${{ env.TEMP_DIR }}/cli.txt
-
   #####################################
   # Set up and cache emscripten build #
   #####################################
@@ -220,16 +190,16 @@ jobs:
 
     steps:
       - name: Set up cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: cache
         with:
           # path for cache
           path: ${{ env.EM_CACHE_FOLDER }}
           # key for cache
-          key: ${{ runner.os }}-emsdk-${{ env.EM_VERSION }}
+          key: ${{ runner.os }}-emsdk-${{ env.EM_VERSION }}-${{ env.EM_CACHE_ID }}
 
       - name: Set up emsdk
-        uses: mymindstorm/setup-emsdk@v7
+        uses: mymindstorm/setup-emsdk@v11
         with:
           version: ${{ env.EM_VERSION }}
           actions-cache-folder: ${{ env.EM_CACHE_FOLDER }}
@@ -261,6 +231,7 @@ jobs:
             message: "Building toolkit without humdrum as wasm"
             options: "-c -H -w -M"
             filepath: "verovio*wasm*"
+            upload: true
           - target: default
             message: "Building default toolkit with humdrum"
             options: "-c -M"
@@ -268,7 +239,7 @@ jobs:
 
     steps:
       - name: Checkout main repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Create TEMP_DIR
         working-directory: ${{ github.workspace }}
@@ -277,16 +248,16 @@ jobs:
       # Restore system libraries from cache
       - name: Restore cache
         id: restore_cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           # path for cache
           path: ${{ env.EM_CACHE_FOLDER }}
           # key for cache
-          key: ${{ runner.os }}-emsdk-${{ env.EM_VERSION }}
+          key: ${{ runner.os }}-emsdk-${{ env.EM_VERSION }}-${{ env.EM_CACHE_ID }}
 
       # Install and/or activate emsdk
       - name: Set up emsdk
-        uses: mymindstorm/setup-emsdk@v7
+        uses: mymindstorm/setup-emsdk@v11
         with:
           version: ${{ env.EM_VERSION }}
           actions-cache-folder: ${{ env.EM_CACHE_FOLDER }}
@@ -299,14 +270,41 @@ jobs:
         run: ./buildToolkit ${{ matrix.toolkit.options }}
 
       - name: Copy build into TEMP_DIR
+        if: ${{ matrix.toolkit.upload == true }}
         working-directory: ${{ github.workspace }}/emscripten
         run: cp build/${{ matrix.toolkit.filepath }} $GITHUB_WORKSPACE/$TEMP_DIR/
 
       - name: Upload js build artifact (${{ matrix.toolkit.target }})
-        uses: actions/upload-artifact@v2
+        if: ${{ matrix.toolkit.upload == true }}
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.TOOLKIT_BUILD }}
           path: ${{ github.workspace }}/${{ env.TEMP_DIR }}/${{ matrix.toolkit.filepath }}
+
+
+  ############################
+  # Copy the font CSS files  #
+  ############################
+  copy_font_files:
+    name: Copy the font files
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+
+      - name: Create TEMP_DIR
+        working-directory: ${{ github.workspace }}
+        run: mkdir -p $TEMP_DIR/data
+
+      - name: Copy build into TEMP_DIR
+        run: cp data/*.css $GITHUB_WORKSPACE/$TEMP_DIR/data/
+
+      - name: Upload font data artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.TOOLKIT_BUILD }}
+          path: ${{ github.workspace }}/${{ env.TEMP_DIR }}
 
   ##################################
   # Check settings for deployment  #
@@ -315,7 +313,7 @@ jobs:
     name: Check settings for deployment
     runs-on: ubuntu-20.04
     # run deployment only after finishing the build jobs
-    needs: [build_cpp, build_cli, build_js]
+    needs: [build_cpp, build_js]
 
     # Github Environment Variables persist only on job level.
     # To transfer values to later jobs, outputs mechanism has to be used.
@@ -351,11 +349,11 @@ jobs:
     runs-on: ubuntu-20.04
     if: ${{ needs.check_deploy_settings.outputs._DISABLE_DEPLOY_STEPS == 'false' }}
     # run deployment only after finishing the build jobs
-    needs: [build_cpp, build_cli, build_js, check_deploy_settings]
+    needs: [build_cpp, build_js, check_deploy_settings]
 
     steps:
       - name: Checkout GH_PAGES_REPO into GH_PAGES_DIR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           # repository to check out
           repository: ${{ env.GH_PAGES_REPO }}
@@ -367,22 +365,15 @@ jobs:
           # relative path under $GITHUB_WORKSPACE to place the repository
           path: ${{ env.GH_PAGES_DIR }}
 
-      - name: Download CLI_BUILD artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ env.CLI_BUILD }}
-          path: artifacts/${{ env.CLI_BUILD }}
-
       - name: Download TOOLKIT_BUILD artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ env.TOOLKIT_BUILD }}
           path: artifacts/${{ env.TOOLKIT_BUILD }}
 
       - name: Copy artifacts to gh-pages
         run: |
-          cp artifacts/$CLI_BUILD/cli.txt $GH_PAGES_DIR/_includes/
-          cp artifacts/$TOOLKIT_BUILD/* $GH_PAGES_DIR/javascript/develop/
+          cp -r artifacts/$TOOLKIT_BUILD/* $GH_PAGES_DIR/javascript/develop/
 
       - name: Check git status before commit
         working-directory: ${{ env.GH_PAGES_DIR }}
@@ -440,11 +431,11 @@ jobs:
     name: Build documentation
     runs-on: ubuntu-20.04
     # run only after finishing other build jobs
-    needs: [build_cpp, build_cli, build_js]
+    needs: [build_cpp, build_js]
 
     steps:
       - name: Checkout main repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install doxygen
         run: |
@@ -464,7 +455,7 @@ jobs:
         run: (cat verovio.conf ; echo "OUTPUT_DIRECTORY = $GITHUB_WORKSPACE/$DOXYGEN_DIR") | doxygen -
 
       - name: Upload doxygen build artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.DOC_BUILD }}
           path: ${{ github.workspace }}/${{ env.DOXYGEN_DIR }}
@@ -481,7 +472,7 @@ jobs:
 
     steps:
       - name: Checkout DOXYGEN_REPO into DOXYGEN_DIR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           # repository to check out
           repository: ${{ env.DOXYGEN_REPO }}
@@ -494,13 +485,16 @@ jobs:
           path: ${{ env.DOXYGEN_DIR }}
 
       - name: Download DOC_BUILD artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{ env.DOC_BUILD }}
           path: artifacts/${{ env.DOC_BUILD }}
 
-      - name: Copy build artifacts to DOXYGEN_DIR
-        run: cp -a artifacts/$DOC_BUILD/* $DOXYGEN_DIR/
+      - name: Remove old doc and copy build artifacts to DOXYGEN_DIR
+        run: |
+          rm -rf $DOXYGEN_DIR/html/*
+          rm -rf $DOXYGEN_DIR/xml/*
+          cp -a artifacts/$DOC_BUILD/* $DOXYGEN_DIR/
 
       - name: Check git status before commit
         working-directory: ${{ env.DOXYGEN_DIR }}

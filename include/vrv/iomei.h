@@ -9,11 +9,12 @@
 #define __VRV_IOMEI_H__
 
 #include <sstream>
+#include <stack>
 
 //----------------------------------------------------------------------------
 
 #include "doc.h"
-#include "io.h"
+#include "iobase.h"
 
 //----------------------------------------------------------------------------
 
@@ -24,6 +25,7 @@ namespace vrv {
 class Abbr;
 class Accid;
 class Add;
+class AltSymInterface;
 class AnchoredText;
 class Annot;
 class App;
@@ -32,8 +34,8 @@ class Arpeg;
 class Artic;
 class BarLine;
 class Beam;
+class BeamSpan;
 class BeatRpt;
-class BoundaryEnd;
 class BracketSpan;
 class Breath;
 class BTrem;
@@ -49,6 +51,8 @@ class Damage;
 class Del;
 class Dot;
 class Dir;
+class Div;
+class DivLine;
 class DurationInterface;
 class Dynam;
 class Ending;
@@ -61,8 +65,10 @@ class Fing;
 class Fermata;
 class FloatingElement;
 class FTrem;
+class GenericLayerElement;
 class Gliss;
 class GraceGrp;
+class Graphic;
 class GrpSym;
 class Hairpin;
 class HalfmRpt;
@@ -74,10 +80,12 @@ class InstrDef;
 class Label;
 class LabelAbbr;
 class Layer;
+class LayerDef;
 class LayerElement;
 class Lb;
 class Lem;
 class Ligature;
+class Liquescent;
 class Lv;
 class Mdiv;
 class Measure;
@@ -98,14 +106,16 @@ class Note;
 class Num;
 class Octave;
 class Orig;
+class Oriscus;
+class Ornam;
 class Page;
+class PageElement;
+class PageMilestoneEnd;
 class Pages;
 class Pb;
 class Pedal;
 class PgFoot;
-class PgFoot2;
 class PgHead;
-class PgHead2;
 class Phrase;
 class PitchInflection;
 class PitchInterface;
@@ -113,11 +123,13 @@ class Plica;
 class PlistInterface;
 class PositionInterface;
 class Proport;
+class Quilisma;
 class Rdg;
 class Ref;
 class Reg;
 class Reh;
 class Rend;
+class RepeatMark;
 class Rest;
 class Restore;
 class RunningElement;
@@ -131,20 +143,26 @@ class Sic;
 class Slur;
 class Space;
 class Staff;
+class Stem;
 class Subst;
 class Supplied;
 class Surface;
 class Svg;
 class Syl;
 class Syllable;
+class Symbol;
+class SymbolDef;
+class SymbolTable;
 class System;
 class SystemElement;
+class SystemMilestoneEnd;
 class TabDurSym;
 class TabGrp;
 class Tempo;
 class Text;
 class TextDirInterface;
 class TextElement;
+class TextLayoutElement;
 class Tie;
 class TimePointInterface;
 class TimeSpanningInterface;
@@ -155,6 +173,12 @@ class Tuplet;
 class Unclear;
 class Verse;
 class Zone;
+
+// Helper enums
+///@{
+enum class MatchLocation { Before, Here, After };
+enum class RangeMatchLocation { BeforeStart, AtStart, BetweenStartEnd, AtEnd, AfterEnd };
+///@}
 
 //----------------------------------------------------------------------------
 // MEIOutput
@@ -179,24 +203,54 @@ public:
     bool Export();
 
     /**
-     * The main method for write objects.
+     * The main method for writing objects.
      */
-    virtual bool WriteObject(Object *object);
-
-    /**
-     * Writing object method that must be overridden in the child class.
-     */
-    virtual bool WriteObjectEnd(Object *object);
+    ///@{
+    bool WriteObject(Object *object) override;
+    bool WriteObjectEnd(Object *object) override;
+    ///@}
 
     /**
      * Return the output as a string by writing it to the stringstream member.
      */
-    std::string GetOutput(int page = -1);
+    std::string GetOutput();
 
     /**
-     * Setter for score-based MEI output
+     * @name Setter and getter for score-based MEI output
      */
+    ///@{
     void SetScoreBasedMEI(bool scoreBasedMEI) { m_scoreBasedMEI = scoreBasedMEI; }
+    bool GetScoreBasedMEI() const { return m_scoreBasedMEI; }
+    ///@}
+
+    /**
+     * @name Setter and getter for MEI basic output
+     */
+    ///@{
+    void SetBasic(bool basic) { m_basic = basic; }
+    bool GetBasic() const { return m_basic; }
+    ///@}
+
+    /**
+     * Score based filtering by measure, page or mdiv
+     */
+    ///@{
+    bool HasFilter() const;
+    void SetFirstPage(int page);
+    void SetLastPage(int page);
+    void SetFirstMeasure(const std::string &id);
+    void SetLastMeasure(const std::string &id);
+    void SetMdiv(const std::string &id);
+    void ResetFilter();
+    ///@}
+
+    /**
+     * @name Gettersto improve code readability
+     */
+    ///@{
+    bool IsScoreBasedMEI() const { return m_scoreBasedMEI; }
+    bool IsPageBasedMEI() const { return !m_scoreBasedMEI; }
+    ///@}
 
     /**
      * Setter for indent for the MEI output (default is 3, -1 for tabs)
@@ -204,15 +258,74 @@ public:
     void SetIndent(int indent) { m_indent = indent; }
 
     /**
-     * Setter for remove Ids flag for the MEI output (default is false)
+     * Setter for ignore header flag for the MEI output (default is false)
+     */
+    void SetIgnoreHeader(bool ignoreHeader) { m_ignoreHeader = ignoreHeader; }
+
+    /**
+     * Setter for remove ids flag for the MEI output (default is false)
      */
     void SetRemoveIds(bool removeIds) { m_removeIds = removeIds; }
 
 private:
+    /**
+     * Reset
+     */
+    void Reset();
+
+    /**
+     * Helper checking if the object is tree object in score-based MEI
+     * For MEI basic output, also check if objects marked as attribute need to be kept as element (e.g., accid)
+     * or if some need to be written as attributes (e.g. scoreDef/clef)
+     */
+    bool IsTreeObject(Object *object) const;
+
+    /**
+     * Score based filtering
+     */
+    ///@{
+    bool HasValidFilter() const;
+    bool IsMatchingFilter() const;
+    void UpdateFilter(Object *object);
+    void UpdatePageFilter(Object *object);
+    void UpdateMeasureFilter(Object *object);
+    void UpdateMdivFilter(Object *object);
+    bool ProcessScoreBasedFilter(Object *object);
+    bool ProcessScoreBasedFilterEnd(Object *object);
+    void PruneAttributes(pugi::xml_node node);
+    ///@}
+
+    /**
+     * Writing objects
+     */
+    ///@{
+    bool WriteObjectInternal(Object *object, bool useCustomScoreDef);
+    bool WriteObjectInternalEnd(Object *object);
+    void WriteStackedObjects();
+    void WriteStackedObjectsEnd();
+    ///@}
+
+    /**
+     * Scoredef manipulation
+     */
+    ///@{
+    void WriteCustomScoreDef(ScoreDef *scoreDef);
+    void AdjustStaffDef(StaffDef *staffDef, Measure *measure);
+    bool AdjustLabel(Label *label);
+    ///@}
+
+    /**
+     * Write the document
+     */
     bool WriteDoc(Doc *doc);
 
     /**
-     * Write the @xml:id to the currentNode
+     * Write revisionDesc to the header
+     */
+    void WriteRevisionDesc(pugi::xml_node meiHead);
+
+    /**
+     * Write the \@xml:id to the currentNode
      */
     void WriteXmlId(pugi::xml_node currentNode, Object *object);
 
@@ -241,21 +354,24 @@ private:
      */
     ///@{
     void WritePage(pugi::xml_node currentNode, Page *page);
+    void WritePageElement(pugi::xml_node element, PageElement *object);
+    void WritePageMilestoneEnd(pugi::xml_node currentNode, PageMilestoneEnd *milestoneEnd);
     void WriteSystem(pugi::xml_node currentNode, System *system);
-    void WriteBoundaryEnd(pugi::xml_node currentNode, BoundaryEnd *boundaryEnd);
+    void WriteSystemMilestoneEnd(pugi::xml_node currentNode, SystemMilestoneEnd *milestoneEnd);
     void WriteScoreDef(pugi::xml_node currentNode, ScoreDef *scoreDef);
     void WriteGrpSym(pugi::xml_node currentNode, GrpSym *grmSym);
     void WritePgFoot(pugi::xml_node currentNode, PgFoot *pgFoot);
-    void WritePgFoot2(pugi::xml_node currentNode, PgFoot2 *pgFoot2);
     void WritePgHead(pugi::xml_node currentNode, PgHead *pgHead);
-    void WritePgHead2(pugi::xml_node currentNode, PgHead2 *pgHead2);
+    void WriteDiv(pugi::xml_node currentNode, Div *div);
     void WriteStaffGrp(pugi::xml_node currentNode, StaffGrp *staffGrp);
     void WriteStaffDef(pugi::xml_node currentNode, StaffDef *staffDef);
     void WriteInstrDef(pugi::xml_node currentNode, InstrDef *instrDef);
     void WriteLabel(pugi::xml_node currentNode, Label *label);
     void WriteLabelAbbr(pugi::xml_node currentNode, LabelAbbr *labelAbbr);
+    void WriteLayerDef(pugi::xml_node currentNode, LayerDef *layerDef);
     void WriteTuning(pugi::xml_node currentNode, Tuning *tuning);
     void WriteCourse(pugi::xml_node currentNode, Course *course);
+    void WriteSymbolTable(pugi::xml_node currentNode, SymbolTable *symbolTable);
     void WriteMeasure(pugi::xml_node currentNode, Measure *measure);
     void WriteMeterSigGrp(pugi::xml_node currentNode, MeterSigGrp *meterSigGrp);
     void WriteFb(pugi::xml_node currentNode, Fb *fb);
@@ -277,13 +393,16 @@ private:
     void WriteChord(pugi::xml_node currentNode, Chord *chord);
     void WriteClef(pugi::xml_node currentNode, Clef *clef);
     void WriteCustos(pugi::xml_node currentNode, Custos *custos);
+    void WriteDivLine(pugi::xml_node currentNode, DivLine *divLine);
     void WriteDot(pugi::xml_node currentNode, Dot *dot);
     void WriteFTrem(pugi::xml_node currentNode, FTrem *fTrem);
+    void WriteGenericLayerElement(pugi::xml_node currentNode, GenericLayerElement *element);
     void WriteGraceGrp(pugi::xml_node currentNode, GraceGrp *graceGrp);
     void WriteHalfmRpt(pugi::xml_node currentNode, HalfmRpt *halfmRpt);
     void WriteKeyAccid(pugi::xml_node currentNode, KeyAccid *keyAccid);
     void WriteKeySig(pugi::xml_node currentNode, KeySig *keySig);
     void WriteLigature(pugi::xml_node currentNode, Ligature *ligature);
+    void WriteLiquescent(pugi::xml_node currentNode, Liquescent *liquescent);
     void WriteMensur(pugi::xml_node currentNode, Mensur *mensur);
     void WriteMeterSig(pugi::xml_node currentNode, MeterSig *meterSig);
     void WriteMRest(pugi::xml_node currentNode, MRest *mRest);
@@ -295,10 +414,13 @@ private:
     void WriteNc(pugi::xml_node currentNode, Nc *nc);
     void WriteNeume(pugi::xml_node currentNode, Neume *neume);
     void WriteNote(pugi::xml_node currentNode, Note *note);
+    void WriteOriscus(pugi::xml_node currentNode, Oriscus *oriscus);
     void WritePlica(pugi::xml_node currentNode, Plica *plica);
     void WriteProport(pugi::xml_node currentNode, Proport *proport);
+    void WriteQuilisma(pugi::xml_node currentNode, Quilisma *quilisma);
     void WriteRest(pugi::xml_node currentNode, Rest *rest);
     void WriteSpace(pugi::xml_node currentNode, Space *space);
+    void WriteStem(pugi::xml_node currentNode, Stem *stem);
     void WriteSyllable(pugi::xml_node currentNode, Syllable *syllable);
     void WriteTabDurSym(pugi::xml_node currentNode, TabDurSym *tabDurSym);
     void WriteTabGrp(pugi::xml_node currentNode, TabGrp *tabGrp);
@@ -311,6 +433,7 @@ private:
     ///@{
     void WriteAnchoredText(pugi::xml_node currentNode, AnchoredText *anchoredText);
     void WriteArpeg(pugi::xml_node currentNode, Arpeg *arpeg);
+    void WriteBeamSpan(pugi::xml_node currentNode, BeamSpan *beamSpan);
     void WriteBracketSpan(pugi::xml_node currentNode, BracketSpan *bracketSpan);
     void WriteBreath(pugi::xml_node currentNode, Breath *breath);
     void WriteCaesura(pugi::xml_node currentNode, Caesura *caesura);
@@ -325,10 +448,12 @@ private:
     void WriteMNum(pugi::xml_node currentNode, MNum *mnum);
     void WriteMordent(pugi::xml_node currentNode, Mordent *mordent);
     void WriteOctave(pugi::xml_node currentNode, Octave *octave);
+    void WriteOrnam(pugi::xml_node currentNode, Ornam *ornam);
     void WritePedal(pugi::xml_node currentNode, Pedal *pedal);
     void WritePhrase(pugi::xml_node currentNode, Phrase *phrase);
     void WritePitchInflection(pugi::xml_node currentNode, PitchInflection *pitchInflection);
     void WriteReh(pugi::xml_node currentNode, Reh *reh);
+    void WriteRepeatMark(pugi::xml_node currentNode, RepeatMark *repeatMark);
     void WriteSlur(pugi::xml_node currentNode, Slur *slur);
     void WriteTempo(pugi::xml_node currentNode, Tempo *tempo);
     void WriteTie(pugi::xml_node currentNode, Tie *tie);
@@ -346,6 +471,8 @@ private:
     void WriteNum(pugi::xml_node currentNode, Num *num);
     void WriteRend(pugi::xml_node currentNode, Rend *rend);
     void WriteSvg(pugi::xml_node currentNode, Svg *svg);
+    void WriteSymbol(pugi::xml_node currentNode, Symbol *symbol);
+    void WriteSymbolDef(pugi::xml_node currentNode, SymbolDef *symbolDef);
     void WriteText(pugi::xml_node currentNode, Text *text);
     ///@}
 
@@ -383,6 +510,7 @@ private:
     void WriteZone(pugi::xml_node currentNode, Zone *zone);
     void WriteSurface(pugi::xml_node currentNode, Surface *surface);
     void WriteFacsimile(pugi::xml_node currentNode, Facsimile *facsimile);
+    void WriteGraphic(pugi::xml_node currentNode, Graphic *graphic);
     ///@}
 
     /**
@@ -398,11 +526,13 @@ private:
     void WriteControlElement(pugi::xml_node element, ControlElement *object);
     void WriteEditorialElement(pugi::xml_node element, EditorialElement *object);
     void WriteLayerElement(pugi::xml_node element, LayerElement *object);
+    void WriteTextLayoutElement(pugi::xml_node element, TextLayoutElement *object);
     void WriteRunningElement(pugi::xml_node element, RunningElement *object);
     void WriteScoreDefElement(pugi::xml_node element, ScoreDefElement *object);
     void WriteSystemElement(pugi::xml_node element, SystemElement *object);
     void WriteTextElement(pugi::xml_node element, TextElement *object);
     //
+    void WriteAltSymInterface(pugi::xml_node currentNode, AltSymInterface *interface);
     void WriteAreaPosInterface(pugi::xml_node currentNode, AreaPosInterface *interface);
     void WriteDurationInterface(pugi::xml_node currentNode, DurationInterface *interface);
     void WriteLinkingInterface(pugi::xml_node currentNode, LinkingInterface *interface);
@@ -421,11 +551,11 @@ private:
      * Must be used in conjunction with (pugi::format_default | pugi::format_no_escapes).
      * Unused for now (see WriteText) because of un-escaped entities in the header.
      */
-    std::wstring EscapeSMuFL(std::wstring data);
+    std::u32string EscapeSMuFL(std::u32string data);
 
     /** @name Methods for converting members into MEI attributes. */
     ///@{
-    std::string UuidToMeiStr(Object *element);
+    std::string IDToMeiStr(Object *element);
     std::string DocTypeToStr(DocType type);
     ///@}
 
@@ -434,12 +564,36 @@ public:
 private:
     std::ostringstream m_streamStringOutput;
     int m_indent;
-    int m_page;
     bool m_scoreBasedMEI;
+    /** A flag indicating that we want to produce MEI basic */
+    bool m_basic;
     pugi::xml_node m_mei;
-    /** @name Current element */
+
+    /** Current xml element */
     pugi::xml_node m_currentNode;
+    /** Xml node stack */
     std::list<pugi::xml_node> m_nodeStack;
+    /** Boundary objects which are merged into one xml element */
+    std::stack<Object *> m_boundaries;
+    /** The object stack */
+    std::deque<Object *> m_objectStack;
+
+    /** Score based filtering */
+    ///@{
+    bool m_hasFilter;
+    MatchLocation m_filterMatchLocation;
+    Object *m_firstFilterMatch;
+    int m_firstPage;
+    int m_currentPage;
+    int m_lastPage;
+    std::string m_firstMeasureID;
+    std::string m_lastMeasureID;
+    RangeMatchLocation m_measureFilterMatchLocation;
+    std::string m_mdivID;
+    MatchLocation m_mdivFilterMatchLocation;
+    ///@}
+
+    bool m_ignoreHeader;
     bool m_removeIds;
     ListOfObjects m_referredObjects;
 };
@@ -459,16 +613,29 @@ public:
     MEIInput(Doc *doc);
     virtual ~MEIInput();
 
-    virtual bool Import(const std::string &mei);
+    bool Import(const std::string &mei) override;
 
 private:
     bool ReadDoc(pugi::xml_node root);
+    bool ReadIncipits(pugi::xml_node root);
 
     ///@{
     bool ReadMdiv(Object *parent, pugi::xml_node parentNode, bool isVisible);
     bool ReadMdivChildren(Object *parent, pugi::xml_node parentNode, bool isVisible);
-    bool ReadPages(Object *parent, pugi::xml_node parentNode);
     bool ReadScore(Object *parent, pugi::xml_node parentNode);
+    ///@}
+
+    /**
+     * @name Methods for reading MEI page-based elements
+     */
+    ///@{
+    bool ReadPages(Object *parent, pugi::xml_node parentNode);
+    bool ReadPage(Object *parent, pugi::xml_node parentNode);
+    bool ReadPageChildren(Object *parent, pugi::xml_node parentNode);
+    bool ReadPageMilestoneEnd(Object *parent, pugi::xml_node milestoneEnd);
+    bool ReadSystem(Object *parent, pugi::xml_node system);
+    bool ReadSystemChildren(Object *parent, pugi::xml_node parentNode);
+    bool ReadSystemMilestoneEnd(Object *parent, pugi::xml_node milestoneEnd);
     ///@}
 
     /**
@@ -485,25 +652,19 @@ private:
 
     /**
      * @name Methods for reading  MEI containers (measures, staff, etc) scoreDef and related.
-     * For each container (page, system, measure, staff and layer) there is one method for
+     * For each container (measure, staff and layer) there is one method for
      * reading the element and one method for reading its children. The method for reading
      * the children can also be called when reading EditorialElement objects (<lem> or <rdg>
      * for example. The filter object is optional and can be set for filtering the allowed
      * children (see MEIInput::IsAllowed)
      */
     ///@{
-    bool ReadPage(Object *parent, pugi::xml_node parentNode);
-    bool ReadPageChildren(Object *parent, pugi::xml_node parentNode);
-    bool ReadSystem(Object *parent, pugi::xml_node system);
-    bool ReadSystemChildren(Object *parent, pugi::xml_node parentNode);
-    bool ReadBoundaryEnd(Object *parent, pugi::xml_node boundaryEnd);
     bool ReadScoreDef(Object *parent, pugi::xml_node scoreDef);
     bool ReadScoreDefChildren(Object *parent, pugi::xml_node parentNode);
     bool ReadGrpSym(Object *parent, pugi::xml_node grpSym);
     bool ReadPgFoot(Object *parent, pugi::xml_node pgFoot);
-    bool ReadPgFoot2(Object *parent, pugi::xml_node pgFoot2);
     bool ReadPgHead(Object *parent, pugi::xml_node pgHead);
-    bool ReadPgHead2(Object *parent, pugi::xml_node pgHead2);
+    bool ReadDiv(Object *parent, pugi::xml_node div);
     bool ReadRunningChildren(Object *parent, pugi::xml_node parentNode, Object *filter = NULL);
     bool ReadStaffGrp(Object *parent, pugi::xml_node staffGrp);
     bool ReadStaffGrpChildren(Object *parent, pugi::xml_node parentNode);
@@ -515,6 +676,7 @@ private:
     bool ReadTuning(Object *parent, pugi::xml_node tuning);
     bool ReadTuningChildren(Object *parent, pugi::xml_node parentNode);
     bool ReadCourse(Object *parent, pugi::xml_node course);
+    bool ReadSymbolTable(Object *parent, pugi::xml_node parentNode);
     bool ReadMeasure(Object *parent, pugi::xml_node measure);
     bool ReadMeasureChildren(Object *parent, pugi::xml_node parentNode);
     bool ReadMeterSigGrp(Object *parent, pugi::xml_node meterSigGrp);
@@ -525,8 +687,11 @@ private:
     bool ReadStaff(Object *parent, pugi::xml_node staff);
     bool ReadStaffChildren(Object *parent, pugi::xml_node parentNode);
     bool ReadLayer(Object *parent, pugi::xml_node layer);
+    bool ReadLayerDef(Object *parent, pugi::xml_node layerDef);
+    bool ReadLayerDefChildren(Object *parent, pugi::xml_node parentNode);
     bool ReadLayerChildren(Object *parent, pugi::xml_node parentNode, Object *filter = NULL);
     bool ReadTextChildren(Object *parent, pugi::xml_node parentNode, Object *filter = NULL);
+    bool ReadSymbolDefChildren(Object *parent, pugi::xml_node parentNode, Object *filter = NULL);
     ///@}
 
     /**
@@ -542,13 +707,16 @@ private:
     bool ReadChord(Object *parent, pugi::xml_node chord);
     bool ReadClef(Object *parent, pugi::xml_node clef);
     bool ReadCustos(Object *parent, pugi::xml_node custos);
+    bool ReadDivLine(Object *parent, pugi::xml_node divLine);
     bool ReadDot(Object *parent, pugi::xml_node dot);
     bool ReadFTrem(Object *parent, pugi::xml_node fTrem);
+    bool ReadGenericLayerElement(Object *parent, pugi::xml_node element);
     bool ReadGraceGrp(Object *parent, pugi::xml_node graceGrp);
     bool ReadHalfmRpt(Object *parent, pugi::xml_node halfmRpt);
     bool ReadKeyAccid(Object *parent, pugi::xml_node keyAccid);
     bool ReadKeySig(Object *parent, pugi::xml_node keySig);
     bool ReadLigature(Object *parent, pugi::xml_node ligature);
+    bool ReadLiquescent(Object *parent, pugi::xml_node liquescent);
     bool ReadMensur(Object *parent, pugi::xml_node mensur);
     bool ReadMeterSig(Object *parent, pugi::xml_node meterSig);
     bool ReadMRest(Object *parent, pugi::xml_node mRest);
@@ -560,10 +728,13 @@ private:
     bool ReadNc(Object *parent, pugi::xml_node nc);
     bool ReadNeume(Object *parent, pugi::xml_node note);
     bool ReadNote(Object *parent, pugi::xml_node note);
+    bool ReadOriscus(Object *parent, pugi::xml_node oriscus);
     bool ReadPlica(Object *parent, pugi::xml_node plica);
     bool ReadProport(Object *parent, pugi::xml_node proport);
+    bool ReadQuilisma(Object *parent, pugi::xml_node quilisma);
     bool ReadRest(Object *parent, pugi::xml_node rest);
     bool ReadSpace(Object *parent, pugi::xml_node space);
+    bool ReadStem(Object *parent, pugi::xml_node stem);
     bool ReadSyl(Object *parent, pugi::xml_node syl);
     bool ReadSyllable(Object *parent, pugi::xml_node syllable);
     bool ReadTabDurSym(Object *parent, pugi::xml_node tabDurSym);
@@ -578,6 +749,7 @@ private:
     ///@{
     bool ReadAnchoredText(Object *parent, pugi::xml_node anchoredText);
     bool ReadArpeg(Object *parent, pugi::xml_node arpeg);
+    bool ReadBeamSpan(Object *parent, pugi::xml_node beamSpan);
     bool ReadBracketSpan(Object *parent, pugi::xml_node bracketSpan);
     bool ReadBreath(Object *parent, pugi::xml_node breath);
     bool ReadCaesura(Object *parent, pugi::xml_node caesura);
@@ -592,9 +764,11 @@ private:
     bool ReadMNum(Object *parent, pugi::xml_node mnum);
     bool ReadMordent(Object *parent, pugi::xml_node mordent);
     bool ReadOctave(Object *parent, pugi::xml_node octave);
+    bool ReadOrnam(Object *parent, pugi::xml_node ornam);
     bool ReadPedal(Object *parent, pugi::xml_node pedal);
     bool ReadPhrase(Object *parent, pugi::xml_node phrase);
     bool ReadPitchInflection(Object *parent, pugi::xml_node pitchInflection);
+    bool ReadRepeatMark(Object *parent, pugi::xml_node repeatMark);
     bool ReadReh(Object *parent, pugi::xml_node reh);
     bool ReadSlur(Object *parent, pugi::xml_node slur);
     bool ReadTempo(Object *parent, pugi::xml_node tempo);
@@ -612,6 +786,8 @@ private:
     bool ReadLb(Object *parent, pugi::xml_node lb);
     bool ReadRend(Object *parent, pugi::xml_node rend);
     bool ReadSvg(Object *parent, pugi::xml_node svg);
+    bool ReadSymbol(Object *parent, pugi::xml_node symbol);
+    bool ReadSymbolDef(Object *parent, pugi::xml_node symbolDef);
     bool ReadText(Object *parent, pugi::xml_node text, bool trimLeft, bool trimRight);
     ///@}
 
@@ -653,11 +829,13 @@ private:
     bool ReadControlElement(pugi::xml_node element, ControlElement *object);
     bool ReadEditorialElement(pugi::xml_node element, EditorialElement *object);
     bool ReadLayerElement(pugi::xml_node element, LayerElement *object);
+    bool ReadTextLayoutElement(pugi::xml_node element, TextLayoutElement *object);
     bool ReadRunningElement(pugi::xml_node element, RunningElement *object);
     bool ReadScoreDefElement(pugi::xml_node element, ScoreDefElement *object);
     bool ReadSystemElement(pugi::xml_node element, SystemElement *object);
     bool ReadTextElement(pugi::xml_node element, TextElement *object);
 
+    bool ReadAltSymInterface(pugi::xml_node element, AltSymInterface *interface);
     bool ReadAreaPosInterface(pugi::xml_node element, AreaPosInterface *interface);
     bool ReadDurationInterface(pugi::xml_node element, DurationInterface *interface);
     bool ReadLinkingInterface(pugi::xml_node element, LinkingInterface *interface);
@@ -676,8 +854,8 @@ private:
      */
     ///@{
     bool ReadFacsimile(Doc *doc, pugi::xml_node facsimile);
+    bool ReadGraphic(Object *parent, pugi::xml_node graphic);
     bool ReadSurface(Facsimile *parent, pugi::xml_node surface);
-    bool ReadBeamSpanAsBeam(Measure *measure, pugi::xml_node beamSpan);
     bool ReadTupletSpanAsTuplet(Measure *measure, pugi::xml_node tupletSpan);
     bool ReadZone(Surface *parent, pugi::xml_node zone);
     ///@}
@@ -693,6 +871,11 @@ private:
     bool IsEditorialElementName(std::string elementName);
 
     /**
+     * Normalize attributes of xmlElement, removing white spaces if necessary
+     */
+    void NormalizeAttributes(pugi::xml_node &xmlElement);
+
+    /**
      * Read score-based MEI.
      * The data is read into an object, which is then converted to page-based MEI.
      * See MEIInput::ReadDoc, Doc::CreateScoreBuffer and Doc::ConvertToPageBasedDoc
@@ -703,10 +886,10 @@ private:
      * @name Various methods for reading / converting values.
      */
     ///@{
-    void SetMeiUuid(pugi::xml_node element, Object *object);
+    void SetMeiID(pugi::xml_node element, Object *object);
     DocType StrToDocType(std::string type);
-    std::wstring LeftTrim(std::wstring str);
-    std::wstring RightTrim(std::wstring str);
+    std::u32string LeftTrim(std::u32string str);
+    std::u32string RightTrim(std::u32string str);
     bool ReadXMLComment(Object *object, pugi::xml_node element);
     ///@}
 
@@ -714,11 +897,21 @@ private:
      * @name Various methods for upgrading older MEI files
      */
     ///@{
+    // to MEI 5.0.0
+    void UpgradeKeySigTo_5_0(pugi::xml_node keySig);
+    void UpgradePageTo_5_0(Page *page);
+    void UpgradePgHeadFootTo_5_0(pugi::xml_node element);
+    void UpgradeMeasureTo_5_0(pugi::xml_node measure);
+    void UpgradeMeterSigTo_5_0(pugi::xml_node meterSig, MeterSig *vrvMeterSig);
+    void UpgradeScoreDefElementTo_5_0(pugi::xml_node scoreDefElement);
+    void UpgradeStaffTo_5_0(pugi::xml_node staff);
+    void UpgradeLayerElementTo_5_0(pugi::xml_node element);
+    void UpgradeRendTo_5_0(pugi::xml_node element);
     // to MEI 4.0.0
     void UpgradeBeatRptTo_4_0_0(pugi::xml_node beatRpt, BeatRpt *vrvBeatRpt);
     void UpgradeDurGesTo_4_0_0(pugi::xml_node element, DurationInterface *interface);
     void UpgradeFTremTo_4_0_0(pugi::xml_node fTrem, FTrem *vrvFTrem);
-    void UpgradeMensurTo_5_0_0(pugi::xml_node mensur, Mensur *vrvMensur);
+    void UpgradeMensurTo_5_0(pugi::xml_node mensur, Mensur *vrvMensur);
     void UpgradeMordentTo_4_0_0(pugi::xml_node mordent, Mordent *vrvMordent);
     void UpgradeScoreDefElementTo_4_0_0(pugi::xml_node scoreDefElement, ScoreDefElement *vrvScoreDefElement);
     void UpgradeStaffDefTo_4_0_0(pugi::xml_node staffDef, StaffDef *vrvStaffDef);
@@ -747,7 +940,7 @@ private:
     /**
      * The version of the file being read
      */
-    MEIVersion m_version;
+    meiVersion_MEIVERSION m_meiversion;
 
     /**
      * A flag indicating wheather we are reading page-based or score-based MEI
@@ -755,7 +948,7 @@ private:
     bool m_readingScoreBased;
 
     /**
-     * This is used when reading a standard MEI file to specify if a scoreDef has already been read or not.
+     * This is used to specify if a scoreDef has been read or not.
      */
     bool m_hasScoreDef;
 
@@ -769,12 +962,6 @@ private:
      * If not specified by --mdiv-x-path query, then it is the first <mdiv> in the body
      */
     pugi::xml_node m_selectedMdiv;
-
-    /**
-     * A flag indicating if the first scoreDef has to be used as Doc scoreDef.
-     * This is not the case when selecting a mDiv that is not the first one with a score in the tree.
-     */
-    bool m_useScoreDefForDoc;
 
     /**
      * The comment to be attached to the next Object

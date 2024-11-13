@@ -9,6 +9,7 @@
 #define __VRV_ARTIC_H__
 
 #include "atts_externalsymbols.h"
+#include "atts_gestural.h"
 #include "atts_shared.h"
 #include "layerelement.h"
 
@@ -20,9 +21,11 @@ namespace vrv {
 
 class Artic : public LayerElement,
               public AttArticulation,
+              public AttArticulationGes,
               public AttColor,
               public AttEnclosingChars,
-              public AttExtSym,
+              public AttExtSymAuth,
+              public AttExtSymNames,
               public AttPlacementRelEvent {
 public:
     /**
@@ -32,34 +35,20 @@ public:
     ///@{
     Artic();
     virtual ~Artic();
-    virtual Object *Clone() const { return new Artic(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Artic"; }
-    virtual ClassId GetClassId() const { return ARTIC; }
+    Object *Clone() const override { return new Artic(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Artic"; }
     ///@}
 
     /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    bool HasToBeAligned() const override { return true; }
 
     /** Override the method since it is align to the staff */
-    virtual bool IsRelativeToStaff() const { return true; }
+    bool IsRelativeToStaff() const override { return true; }
 
     data_ARTICULATION GetArticFirst() const;
 
-    /**
-     * Split the multi-valued artic attributes into distinct artic elements.
-     * Applied by ConvertMarkupArtic functor.
-     */
-    void SplitMultival(Object *parent);
-
     void GetAllArtics(bool direction, std::vector<Artic *> &artics);
-
-    /**
-     * Split the articulation content into an array with the values to be displayed inside the staff / slur
-     * and the values to be displayed outside.
-     * Used by Artic::PrepareLayerElementParts that then creates the corresponding ArticPart objects.
-     */
-    void SplitArtic(std::vector<data_ARTICULATION> *insideSlur, std::vector<data_ARTICULATION> *outsideSlur);
 
     /**
      * Return the inside and outside part of an artic if any (NULL otherwiser)
@@ -72,21 +61,27 @@ public:
     /**
      * Check if the articList contains data_ARTICULATION has to be place above staff.
      */
-    bool AlwaysAbove();
+    bool AlwaysAbove() const;
 
     void AddSlurPositioner(FloatingCurvePositioner *positioner, bool start);
 
+    /**
+     * Getter and setter for the drawing place
+     */
+    ///@{
     data_STAFFREL GetDrawingPlace() const { return m_drawingPlace; }
+    void SetDrawingPlace(data_STAFFREL drawingPlace) { m_drawingPlace = drawingPlace; }
+    ///@}
 
     /**
      * Retrieves the appropriate SMuFL code for a data_ARTICULATION with data_STAFFREL
      */
-    wchar_t GetArticGlyph(data_ARTICULATION artic, data_STAFFREL place) const;
+    char32_t GetArticGlyph(data_ARTICULATION artic, data_STAFFREL place) const;
 
     /**
-     * Retrieves parentheses / brackets from the enclose attribute
+     * Retrieve parentheses / brackets from the enclose attribute
      */
-    wchar_t GetEnclosingGlyph(bool beforeArtic) const;
+    std::pair<char32_t, char32_t> GetEnclosingGlyphs() const;
 
     //----------------//
     // Static methods //
@@ -97,7 +92,7 @@ public:
      * The reason for this is that SMuFL sometimes has the glyph below the line, sometimes above.
      * See bow indications for an example where is is always above
      */
-    static bool VerticalCorr(wchar_t code, data_STAFFREL place);
+    static bool VerticalCorr(char32_t code, data_STAFFREL place);
 
     /**
      * Static method that returns true if the data_ARTICULATION has to be centered between staff lines
@@ -109,39 +104,17 @@ public:
     //----------//
 
     /**
-     * See Object::ConvertMarkupArtic
+     * Interface for class functor visitation
      */
-    virtual int ConvertMarkupArtic(FunctorParams *functorParams);
-
-    /**
-     * See Object::CalcArtic
-     */
-    virtual int CalcArtic(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustArtic
-     */
-    virtual int AdjustArtic(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustArticWithSlurs
-     */
-    virtual int AdjustArticWithSlurs(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetVerticalAlignment
-     */
-    virtual int ResetVerticalAlignment(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetDrawing
-     */
-    virtual int ResetDrawing(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     bool IsInsideArtic(data_ARTICULATION artic) const;
-    // Calculate shift for the articulation based on its type and presence of other articulations
-    int CalculateHorizontalShift(Doc *doc, LayerElement *parent, data_STEMDIRECTION stemDir) const;
 
 public:
     std::vector<FloatingCurvePositioner *> m_startSlurPositioners;

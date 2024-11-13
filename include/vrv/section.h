@@ -10,8 +10,8 @@
 
 #include "atts_shared.h"
 #include "atts_visual.h"
-#include "boundary.h"
 #include "systemelement.h"
+#include "systemmilestone.h"
 
 namespace vrv {
 
@@ -23,9 +23,9 @@ class Section;
 
 /**
  * This class represents a MEI section.
- * It can be both a container (in score-based MEI) and a boundary (in page-based MEI)
+ * It can be both a container (in score-based MEI) and a milestone (in page-based MEI)
  */
-class Section : public SystemElement, public BoundaryStartInterface, public AttNNumberLike, public AttSectionVis {
+class Section : public SystemElement, public SystemMilestoneInterface, public AttNNumberLike, public AttSectionVis {
 public:
     /**
      * @name Constructors, destructors, and other standard methods
@@ -34,43 +34,29 @@ public:
     ///@{
     Section();
     virtual ~Section();
-    virtual Object *Clone() const { return new Section(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Section"; }
-    virtual ClassId GetClassId() const { return SECTION; }
+    Object *Clone() const override { return new Section(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Section"; }
     ///@}
 
     /**
      * Method for adding allowed content
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::ConvertToPageBased
+     * Interface for class functor visitation
      */
     ///@{
-    virtual int ConvertToPageBased(FunctorParams *functorParams);
-    virtual int ConvertToPageBasedEnd(FunctorParams *functorParams);
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
-
-    /**
-     * See Object::ConvertToUnCastOffMensural
-     */
-    virtual int ConvertToUnCastOffMensural(FunctorParams *params);
-
-    /**
-     * See Object::PrepareBoundaries
-     */
-    virtual int PrepareBoundaries(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetDrawing
-     */
-    virtual int ResetDrawing(FunctorParams *functorParams);
 
 private:
     //

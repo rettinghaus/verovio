@@ -9,13 +9,13 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "comparison.h"
 #include "fermata.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "layer.h"
 #include "pitchinterface.h"
 #include "rest.h"
@@ -29,15 +29,16 @@ namespace vrv {
 
 static const ClassRegistrar<MRest> s_factory("mRest", MREST);
 
-MRest::MRest() : LayerElement("mrest-"), PositionInterface(), AttColor(), AttCue(), AttFermataPresent(), AttVisibility()
+MRest::MRest()
+    : LayerElement(MREST, "mrest-"), PositionInterface(), AttColor(), AttCue(), AttFermataPresent(), AttVisibility()
 {
-    RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_CUE);
-    RegisterAttClass(ATT_FERMATAPRESENT);
-    RegisterAttClass(ATT_VISIBILITY);
+    this->RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_CUE);
+    this->RegisterAttClass(ATT_FERMATAPRESENT);
+    this->RegisterAttClass(ATT_VISIBILITY);
 
-    Reset();
+    this->Reset();
 }
 
 MRest::~MRest() {}
@@ -46,81 +47,72 @@ void MRest::Reset()
 {
     LayerElement::Reset();
     PositionInterface::Reset();
-    ResetColor();
-    ResetCue();
-    ResetFermataPresent();
-    ResetVisibility();
+    this->ResetColor();
+    this->ResetCue();
+    this->ResetFermataPresent();
+    this->ResetVisibility();
 }
 
 //----------------------------------------------------------------------------
 // Functors methods
 //----------------------------------------------------------------------------
 
-int MRest::ConvertMarkupAnalytical(FunctorParams *functorParams)
+FunctorCode MRest::Accept(Functor &functor)
 {
-    ConvertMarkupAnalyticalParams *params = vrv_params_cast<ConvertMarkupAnalyticalParams *>(functorParams);
-    assert(params);
-
-    if (this->HasFermata()) {
-        Fermata *fermata = new Fermata();
-        fermata->ConvertFromAnalyticalMarkup(this, this->GetUuid(), params);
-    }
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitMRest(this);
 }
 
-int MRest::ResetDrawing(FunctorParams *functorParams)
+FunctorCode MRest::Accept(ConstFunctor &functor) const
 {
-    // Call parent one too
-    LayerElement::ResetDrawing(functorParams);
-    PositionInterface::InterfaceResetDrawing(functorParams, this);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitMRest(this);
 }
 
-int MRest::ResetHorizontalAlignment(FunctorParams *functorParams)
+FunctorCode MRest::AcceptEnd(Functor &functor)
 {
-    LayerElement::ResetHorizontalAlignment(functorParams);
-    PositionInterface::InterfaceResetHorizontalAlignment(functorParams, this);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitMRestEnd(this);
 }
 
-int MRest::GetOptimalLayerLocation(Staff *staff, Layer *layer, int defaultLocation)
+FunctorCode MRest::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitMRestEnd(this);
+}
+
+int MRest::GetOptimalLayerLocation(const Layer *layer, int defaultLocation) const
 {
     if (!layer) return defaultLocation;
-    Staff *parentStaff = vrv_cast<Staff *>(GetFirstAncestor(STAFF));
-    assert(parentStaff);
+    const Staff *parentStaff = this->GetAncestorStaff();
 
     // handle rest positioning for 2 layers. 3 layers and more are much more complex to solve
     if (parentStaff->GetChildCount(LAYER) != 2) return defaultLocation;
 
-    ListOfObjects layers;
-    ClassIdComparison matchType(LAYER);
-    parentStaff->FindAllDescendantByComparison(&layers, &matchType);
-    const bool isTopLayer = (vrv_cast<Layer *>(*layers.begin())->GetN() == layer->GetN());
+    ListOfConstObjects layers = parentStaff->FindAllDescendantsByType(LAYER, false);
+    const bool isTopLayer = (vrv_cast<const Layer *>(*layers.begin())->GetN() == layer->GetN());
 
-    ListOfObjects::iterator otherLayerIter = isTopLayer ? std::prev(layers.end()) : layers.begin();
-    ListOfObjects collidingElementsList = vrv_cast<Layer *>(*otherLayerIter)->GetLayerElementsForTimeSpanOf(this);
+    ListOfConstObjects::iterator otherLayerIter = isTopLayer ? std::prev(layers.end()) : layers.begin();
+    ListOfConstObjects collidingElementsList
+        = vrv_cast<const Layer *>(*otherLayerIter)->GetLayerElementsForTimeSpanOf(this);
 
     // find all locations for other layer
     std::vector<int> locations;
-    for (auto element : collidingElementsList) {
+    for (const Object *element : collidingElementsList) {
         if (element->Is({ CHORD, NOTE })) {
-            LayerElement *layerElement = vrv_cast<LayerElement *>(element);
+            const LayerElement *layerElement = vrv_cast<const LayerElement *>(element);
             int loc = PitchInterface::CalcLoc(layerElement, layer, layerElement, isTopLayer);
             locations.push_back(loc);
         }
         else if (element->Is(REST)) {
-            Rest *rest = vrv_cast<Rest *>(element);
+            const Rest *rest = vrv_cast<const Rest *>(element);
             int loc = rest->GetDrawingLoc();
             locations.push_back(loc);
+        }
+        else if (element->Is(MREST)) {
+            locations.push_back(4);
         }
     }
     // if there are no other elements - just return default location
     if (locations.empty()) return defaultLocation;
 
-    const int locAdjust = isTopLayer ? 3 : -2;
+    const int locAdjust = isTopLayer ? 4 : -3;
     int extremePoint = isTopLayer ? *std::max_element(locations.begin(), locations.end())
                                   : *std::min_element(locations.begin(), locations.end());
     extremePoint += locAdjust;

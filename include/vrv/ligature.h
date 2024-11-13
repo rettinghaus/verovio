@@ -34,60 +34,53 @@ public:
     ///@{
     Ligature();
     virtual ~Ligature();
-    virtual Object *Clone() const { return new Ligature(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Ligature"; }
-    virtual ClassId GetClassId() const { return LIGATURE; }
+    Object *Clone() const override { return new Ligature(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Ligature"; }
     ///@}
 
     /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    bool HasToBeAligned() const override { return true; }
 
     /**
      * Add children (notes or editorial markup)
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Return the first or last note
      */
     ///@{
     Note *GetFirstNote();
+    const Note *GetFirstNote() const;
     Note *GetLastNote();
+    const Note *GetLastNote() const;
     ///@}
 
     /**
      * @name Return shape information about the note ligature
      */
-    ///@{
-    int GetDrawingNoteShape(Note *note);
-    int GetDrawingPreviousNoteShape(Note *note);
-    ///@}
+    int GetDrawingNoteShape(const Note *note) const;
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::CalcLigatureNotePos
+     * Interface for class functor visitation
      */
-    virtual int CalcLigatureNotePos(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetDrawing
-     */
-    virtual int ResetDrawing(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     /**
-     * Clear the m_clusters vector and delete all the objects.
-     */
-    void ClearClusters();
-
-    /**
      * Filter the flat list and keep only Note elements.
      */
-    virtual void FilterList(ArrayOfObjects *childlist);
+    void FilterList(ListOfConstObjects &childList) const override;
 
 public:
     /**

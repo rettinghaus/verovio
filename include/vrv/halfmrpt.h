@@ -32,30 +32,27 @@ public:
     ///@{
     HalfmRpt();
     virtual ~HalfmRpt();
-    virtual Object *Clone() const { return new HalfmRpt(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "HalfmRpt"; }
-    virtual ClassId GetClassId() const { return HALFMRPT; }
+    Object *Clone() const override { return new HalfmRpt(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "HalfmRpt"; }
     ///@}
 
     /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    bool HasToBeAligned() const override { return true; }
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * @name See Object::GenerateMIDI
+     * Interface for class functor visitation
      */
     ///@{
-    virtual int GenerateMIDI(FunctorParams *functorParams);
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
-
-    /**
-     * See Object::PrepareRpt
-     */
-    virtual int PrepareRpt(FunctorParams *functorParams);
 
 private:
     //

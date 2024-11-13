@@ -20,7 +20,7 @@ namespace vrv {
 /**
  * This class models the MEI <tabGrp> element.
  */
-class TabGrp : public LayerElement, public DurationInterface {
+class TabGrp : public LayerElement, public ObjectListInterface, public DurationInterface {
 public:
     /**
      * @name Constructors, destructors, and other standard methods
@@ -29,25 +29,55 @@ public:
     ///@{
     TabGrp();
     virtual ~TabGrp();
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "TabGrp"; };
-    virtual ClassId GetClassId() const { return TABGRP; };
+    void Reset() override;
+    std::string GetClassName() const override { return "TabGrp"; }
     ///@}
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual DurationInterface *GetDurationInterface() { return dynamic_cast<DurationInterface *>(this); }
+    DurationInterface *GetDurationInterface() override { return vrv_cast<DurationInterface *>(this); }
+    const DurationInterface *GetDurationInterface() const override { return vrv_cast<const DurationInterface *>(this); }
     ///@}
 
     /**
      * Add an element to a element.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
+
+    /**
+     * Return the top or bottom note or their Y position
+     */
+    ///@{
+    Note *GetTopNote();
+    const Note *GetTopNote() const;
+    Note *GetBottomNote();
+    const Note *GetBottomNote() const;
+    int GetYTop() const;
+    int GetYBottom() const;
+    ///@}
+
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
-    //
+    /**
+     * Filter the flat list and keep only Note elements.
+     */
+    void FilterList(ListOfConstObjects &childList) const override;
+
 private:
     //
 public:

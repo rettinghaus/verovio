@@ -10,8 +10,8 @@
 
 #include "atts_critapp.h"
 #include "atts_shared.h"
-#include "boundary.h"
 #include "object.h"
+#include "systemmilestone.h"
 
 namespace vrv {
 
@@ -33,9 +33,9 @@ class TextElement;
  * This class is a base class for the editorial element containing musical
  * content, for example <rgd> or <add>.
  * It is not an abstract class but should not be instantiated directly.
- * It can be both a container (in score-based MEI) and a boundary (in page-based MEI).
+ * It can be both a container (in score-based MEI) and a milestone (in page-based MEI).
  */
-class EditorialElement : public Object, public BoundaryStartInterface, public AttLabelled, public AttTyped {
+class EditorialElement : public Object, public SystemMilestoneInterface, public AttLabelled, public AttTyped {
 public:
     /**
      * @name Constructors, destructors, reset and class name methods
@@ -43,17 +43,17 @@ public:
      */
     ///@{
     EditorialElement();
-    EditorialElement(const std::string &classid);
+    EditorialElement(ClassId classId);
+    EditorialElement(ClassId classId, const std::string &classIdStr);
     virtual ~EditorialElement();
-    virtual void Reset();
-    virtual ClassId GetClassId() const { return EDITORIAL_ELEMENT; }
+    void Reset() override;
     ///@}
 
     /**
      * @name Add children to an editorial element.
      */
     ///@{
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
     ///@}
 
     //----------//
@@ -61,30 +61,14 @@ public:
     //----------//
 
     /**
-     * See Object::ConvertToPageBased
+     * Interface for class functor visitation
      */
-    virtual int ConvertToPageBased(FunctorParams *functorParams);
-    virtual int ConvertToPageBasedEnd(FunctorParams *functorParams);
-
-    /**
-     * See Object::PrepareBoundaries
-     */
-    virtual int PrepareBoundaries(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetDrawing
-     */
-    virtual int ResetDrawing(FunctorParams *functorParams);
-
-    /**
-     * See Object::CastOffSystems
-     */
-    virtual int CastOffSystems(FunctorParams *functorParams);
-
-    /**
-     * See Object::CastOffEncoding
-     */
-    virtual int CastOffEncoding(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //

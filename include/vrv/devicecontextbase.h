@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------
 
 #include "attdef.h"
-#include "vrv.h"
+#include "vrvdef.h"
 
 namespace vrv {
 
@@ -30,9 +30,6 @@ class Doc;
 #undef max
 #undef min
 
-/*  Polygon filling mode */
-enum { AxODDEVEN_RULE = 1, AxWINDING_RULE };
-
 enum {
     /*  Pen styles */
     AxSOLID = 100,
@@ -42,6 +39,24 @@ enum {
     AxDOT_DASH,
     AxUSER_DASH,
     AxTRANSPARENT
+};
+
+enum {
+    /* Line cap styles */
+    AxCAP_UNKNOWN = 0,
+    AxCAP_BUTT,
+    AxCAP_ROUND,
+    AxCAP_SQUARE
+};
+
+enum {
+    /* Line join styles */
+    AxJOIN_UNKNOWN = 0,
+    AxJOIN_ARCS,
+    AxJOIN_BEVEL,
+    AxJOIN_MITER,
+    AxJOIN_MITER_CLIP,
+    AxJOIN_ROUND
 };
 
 // ---------------------------------------------------------------------------
@@ -55,40 +70,53 @@ enum {
 
 class Pen {
 public:
-    Pen() : m_penColour(0), m_penWidth(0), m_dashLength(0), m_lineCap(0), m_penOpacity(0.0) {}
-    Pen(int colour, int width, float opacity, int dashLength, int lineCap)
-        : m_penColour(colour), m_penWidth(width), m_dashLength(dashLength), m_lineCap(lineCap), m_penOpacity(opacity)
+    Pen()
+        : m_penColor(0), m_penWidth(0), m_dashLength(0), m_gapLength(0), m_lineCap(0), m_lineJoin(0), m_penOpacity(0.0)
+    {
+    }
+    Pen(int color, int width, float opacity, int dashLength, int gapLength, int lineCap, int lineJoin)
+        : m_penColor(color)
+        , m_penWidth(width)
+        , m_dashLength(dashLength)
+        , m_gapLength(gapLength)
+        , m_lineCap(lineCap)
+        , m_lineJoin(lineJoin)
+        , m_penOpacity(opacity)
     {
     }
 
-    int GetColour() const { return m_penColour; }
-    void SetColour(int colour) { m_penColour = colour; }
+    int GetColor() const { return m_penColor; }
+    void SetColor(int color) { m_penColor = color; }
     int GetWidth() const { return m_penWidth; }
     void SetWidth(int width) { m_penWidth = width; }
     int GetDashLength() const { return m_dashLength; }
     void SetDashLength(int dashLength) { m_dashLength = dashLength; }
+    int GetGapLength() const { return m_gapLength; }
+    void SetGapLength(int gapLength) { m_gapLength = gapLength; }
     int GetLineCap() const { return m_lineCap; }
     void SetLineCap(int lineCap) { m_lineCap = lineCap; }
+    int GetLineJoin() const { return m_lineJoin; }
+    void SetLineJoin(int lineJoin) { m_lineJoin = lineJoin; }
     float GetOpacity() const { return m_penOpacity; }
     void SetOpacity(float opacity) { m_penOpacity = opacity; }
 
 private:
-    int m_penColour, m_penWidth, m_dashLength, m_lineCap;
+    int m_penColor, m_penWidth, m_dashLength, m_gapLength, m_lineCap, m_lineJoin;
     float m_penOpacity;
 };
 
 class Brush {
 public:
-    Brush() : m_brushColour(0), m_brushOpacity(0.0) {}
-    Brush(int colour, float opacity) : m_brushColour(colour), m_brushOpacity(opacity) {}
+    Brush() : m_brushColor(0), m_brushOpacity(0.0) {}
+    Brush(int color, float opacity) : m_brushColor(color), m_brushOpacity(opacity) {}
 
-    int GetColour() const { return m_brushColour; }
-    void SetColour(int colour) { m_brushColour = colour; }
+    int GetColor() const { return m_brushColor; }
+    void SetColor(int color) { m_brushColor = color; }
     float GetOpacity() const { return m_brushOpacity; }
     void SetOpacity(float opacity) { m_brushOpacity = opacity; }
 
 private:
-    int m_brushColour;
+    int m_brushColor;
     float m_brushOpacity;
 };
 
@@ -105,6 +133,7 @@ public:
     FontInfo()
     {
         m_pointSize = 0;
+        m_letterSpacing = 0.0;
         m_family = 0; // was wxFONTFAMILY_DEFAULT;
         m_style = FONTSTYLE_NONE;
         m_weight = FONTWEIGHT_NONE;
@@ -113,32 +142,39 @@ public:
         m_faceName.clear();
         m_encoding = 0; // was wxFONTENCODING_DEFAULT;
         m_widthToHeightRatio = 1.0;
+        m_smuflFont = SMUFL_NONE;
     }
-    virtual ~FontInfo(){};
+    virtual ~FontInfo() {}
 
     // accessors and modifiers for the font elements
-    int GetPointSize() { return m_pointSize; }
-    data_FONTSTYLE GetStyle() { return m_style; }
-    data_FONTWEIGHT GetWeight() { return m_weight; }
-    bool GetUnderlined() { return m_underlined; }
-    bool GetSupSubScript() { return m_supSubScript; }
-    std::string GetFaceName() { return m_faceName; }
-    int GetFamily() { return m_family; }
-    int GetEncoding() { return m_encoding; }
-    float GetWidthToHeightRatio() { return m_widthToHeightRatio; }
+    int GetPointSize() const { return m_pointSize; }
+    int GetLetterSpacing() const { return m_letterSpacing; }
+    data_FONTSTYLE GetStyle() const { return m_style; }
+    data_FONTWEIGHT GetWeight() const { return m_weight; }
+    bool GetUnderlined() const { return m_underlined; }
+    bool GetSupSubScript() const { return m_supSubScript; }
+    std::string GetFaceName() const { return m_faceName; }
+    int GetFamily() const { return m_family; }
+    int GetEncoding() const { return m_encoding; }
+    float GetWidthToHeightRatio() const { return m_widthToHeightRatio; }
+    SmuflTextFont GetSmuflFont() const { return m_smuflFont; }
 
     void SetPointSize(int pointSize) { m_pointSize = pointSize; }
+    void SetLetterSpacing(double letterSpacing) { m_letterSpacing = letterSpacing; }
     void SetStyle(data_FONTSTYLE style) { m_style = style; }
     void SetWeight(data_FONTWEIGHT weight) { m_weight = weight; }
     void SetUnderlined(bool underlined) { m_underlined = underlined; }
     void SetSupSubScript(bool supSubScript) { m_supSubScript = supSubScript; }
-    void SetFaceName(const char *faceName) { m_faceName = faceName; }
+    void SetFaceName(const std::string &faceName) { m_faceName = faceName; }
     void SetFamily(int family) { m_family = family; }
     void SetEncoding(int encoding) { m_encoding = encoding; }
     void SetWidthToHeightRatio(float ratio) { m_widthToHeightRatio = ratio; }
+    void SetSmuflFont(SmuflTextFont smuflFont) { m_smuflFont = smuflFont; }
+    void SetSmuflWithFallback(bool fallback) { m_smuflFont = (fallback) ? SMUFL_FONT_FALLBACK : SMUFL_FONT_SELECTED; }
 
 private:
     int m_pointSize;
+    int m_letterSpacing;
     int m_family;
     data_FONTSTYLE m_style;
     data_FONTWEIGHT m_weight;
@@ -147,6 +183,7 @@ private:
     std::string m_faceName;
     int m_encoding;
     float m_widthToHeightRatio;
+    SmuflTextFont m_smuflFont;
 };
 
 // ---------------------------------------------------------------------------
@@ -171,8 +208,8 @@ public:
     bool operator!=(const Point &p) const { return !(*this == p); }
 
     // arithmetic operations (component wise)
-    Point operator+(const Point &p) const { return Point(x + p.x, y + p.y); }
-    Point operator-(const Point &p) const { return Point(x - p.x, y - p.y); }
+    Point operator+(const Point &p) const { return { x + p.x, y + p.y }; }
+    Point operator-(const Point &p) const { return { x - p.x, y - p.y }; }
 
     Point &operator+=(const Point &p)
     {
@@ -187,20 +224,20 @@ public:
         return *this;
     }
 
-    Point operator-() const { return Point(-x, -y); }
+    Point operator-() const { return { -x, -y }; }
 
     Point min(const Point &p) const
     {
         int x = std::min(this->x, p.x);
         int y = std::min(this->y, p.y);
-        return Point(x, y);
+        return { x, y };
     }
 
     Point max(const Point &p) const
     {
         int x = std::max(this->x, p.x);
         int y = std::max(this->y, p.y);
-        return Point(x, y);
+        return { x, y };
     }
 };
 
@@ -223,22 +260,18 @@ public:
     BezierCurve() {}
     BezierCurve(const Point &p1, const Point &c1, const Point &c2, const Point &p2) : p1(p1), c1(c1), c2(c2), p2(p2) {}
 
-    // Helper to rotate all points within bezier curve around @rotationPoint by @angle
+    // Helper to rotate all points within bezier curve around \@rotationPoint by \@angle
     void Rotate(float angle, const Point &rotationPoint);
 
     /**
      * @name Getter/setter for control point offset (as well as method to calculate it from options)
      */
     ///@{
-    void CalculateControlPointOffset(Doc *doc, int staffSize);
-    void SetControlPointOffset(int controlPointOffset)
-    {
-        m_leftControlPointOffset = m_rightControlPointOffset = controlPointOffset;
-    };
-    void SetLeftControlPointOffset(int height) { m_leftControlPointOffset = height; }
-    void SetRightControlPointOffset(int height) { m_rightControlPointOffset = height; }
-    int GetLeftControlPointOffset() const { return m_leftControlPointOffset; }
-    int GetRightControlPointOffset() const { return m_rightControlPointOffset; }
+    void SetControlOffset(int offset) { m_leftControlOffset = m_rightControlOffset = offset; }
+    void SetLeftControlOffset(int offset) { m_leftControlOffset = offset; }
+    void SetRightControlOffset(int offset) { m_rightControlOffset = offset; }
+    int GetLeftControlOffset() const { return m_leftControlOffset; }
+    int GetRightControlOffset() const { return m_rightControlOffset; }
     ///@}
 
     /**
@@ -252,13 +285,45 @@ public:
     int GetRightControlHeight() const { return m_rightControlHeight; }
     ///@}
 
+    /**
+     * @name Getter/setter for the side of the control points (left and right)
+     */
+    ///@{
+    void SetControlSides(bool leftAbove, bool rightAbove);
+    bool IsLeftControlAbove() const { return m_leftControlAbove; }
+    bool IsRightControlAbove() const { return m_rightControlAbove; }
+    ///@}
+
+    /**
+     * @name Initialize control point height and offset from end point positions
+     */
+    ///@{
+    void CalcInitialControlPointParams();
+    void CalcInitialControlPointParams(const Doc *doc, float angle, int staffSize);
+    ///@}
+
+    /**
+     * Calculate control point offset and height from points or vice versa
+     */
+    ///@{
+    void UpdateControlPointParams();
+    void UpdateControlPoints();
+    ///@}
+
+    /**
+     * Estimate the curve parameter corresponding to the control points
+     * Based on the polyline P1-C1-C2-P2
+     */
+    std::pair<double, double> EstimateCurveParamForControlPoints() const;
+
 private:
     // Control point X-axis offset for both start/end points
-    // In future, when more complex shapes are required, this should probably be changed to left/right offsets
-    int m_leftControlPointOffset = 0;
-    int m_rightControlPointOffset = 0;
+    int m_leftControlOffset = 0;
+    int m_rightControlOffset = 0;
     int m_leftControlHeight = 0;
     int m_rightControlHeight = 0;
+    bool m_leftControlAbove = true;
+    bool m_rightControlAbove = true;
 
     // no copy ctor or assignment operator - the defaults are ok
 };

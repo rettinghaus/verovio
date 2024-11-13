@@ -9,15 +9,17 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 #include <fstream>
 #include <functional>
+#include <iterator>
 #include <sstream>
 
 //----------------------------------------------------------------------------
 
-#include "att.h"
+#include "attconverter.h"
 #include "vrv.h"
+#include "vrvdef.h"
 
 namespace vrv {
 
@@ -26,6 +28,12 @@ const std::map<int, std::string> Option::s_breaks = { { BREAKS_none, "none" }, {
 
 const std::map<int, std::string> Option::s_condense
     = { { CONDENSE_none, "none" }, { CONDENSE_auto, "auto" }, { CONDENSE_encoded, "encoded" } };
+
+const std::map<int, std::string> Option::s_elision = { { ELISION_regular, "regular" }, { ELISION_narrow, "narrow" },
+    { ELISION_wide, "wide" }, { ELISION_unicode, "unicode" } };
+
+const std::map<int, std::string> Option::s_fontFallback
+    = { { FONT_FALLBACK_Leipzig, "Leipzig" }, { FONT_FALLBACK_Bravura, "Bravura" } };
 
 const std::map<int, std::string> Option::s_footer
     = { { FOOTER_none, "none" }, { FOOTER_auto, "auto" }, { FOOTER_encoded, "encoded" }, { FOOTER_always, "always" } };
@@ -36,8 +44,14 @@ const std::map<int, std::string> Option::s_header
 const std::map<int, std::string> Option::s_multiRestStyle = { { MULTIRESTSTYLE_auto, "auto" },
     { MULTIRESTSTYLE_default, "default" }, { MULTIRESTSTYLE_block, "block" }, { MULTIRESTSTYLE_symbols, "symbols" } };
 
+const std::map<int, std::string> Option::s_pedalStyle = { { PEDALSTYLE_NONE, "auto" }, { PEDALSTYLE_line, "line" },
+    { PEDALSTYLE_pedstar, "pedstar" }, { PEDALSTYLE_altpedstar, "altpedstar" } };
+
 const std::map<int, std::string> Option::s_systemDivider = { { SYSTEMDIVIDER_none, "none" },
     { SYSTEMDIVIDER_auto, "auto" }, { SYSTEMDIVIDER_left, "left" }, { SYSTEMDIVIDER_left_right, "left-right" } };
+
+const std::map<int, std::string> Option::s_smuflTextFont
+    = { { SMUFLTEXTFONT_embedded, "embedded" }, { SMUFLTEXTFONT_linked, "linked" }, { SMUFLTEXTFONT_none, "none" } };
 
 //----------------------------------------------------------------------------
 // Option
@@ -97,13 +111,11 @@ jsonxx::Object Option::ToJson() const
     const OptionBool *optBool = dynamic_cast<const OptionBool *>(this);
 
     if (optBool) {
-        opt << "type"
-            << "bool";
+        opt << "type" << "bool";
         opt << "default" << optBool->GetDefault();
     }
     else if (optDbl) {
-        opt << "type"
-            << "double";
+        opt << "type" << "double";
         jsonxx::Value value(optDbl->GetDefault());
         value.precision_ = 2;
         opt << "default" << value;
@@ -115,20 +127,17 @@ jsonxx::Object Option::ToJson() const
         opt << "max" << value;
     }
     else if (optInt) {
-        opt << "type"
-            << "int";
+        opt << "type" << "int";
         opt << "default" << optInt->GetDefault();
         opt << "min" << optInt->GetMin();
         opt << "max" << optInt->GetMax();
     }
     else if (optString) {
-        opt << "type"
-            << "std::string";
+        opt << "type" << "std::string";
         opt << "default" << optString->GetDefault();
     }
     else if (optArray) {
-        opt << "type"
-            << "array";
+        opt << "type" << "array";
         std::vector<std::string> strValues = optArray->GetDefault();
         std::vector<std::string>::iterator strIter;
         jsonxx::Array values;
@@ -138,8 +147,7 @@ jsonxx::Object Option::ToJson() const
         opt << "default" << values;
     }
     else if (optIntMap) {
-        opt << "type"
-            << "std::string-list";
+        opt << "type" << "std::string-list";
         opt << "default" << optIntMap->GetDefaultStrValue();
         std::vector<std::string> strValues = optIntMap->GetStrValues(false);
         std::vector<std::string>::iterator strIter;
@@ -180,17 +188,17 @@ void OptionBool::Init(bool defaultValue)
 bool OptionBool::SetValue(const std::string &value)
 {
     bool b = (value == "true") ? true : false;
-    return SetValue(b);
+    return this->SetValue(b);
 }
 
 bool OptionBool::SetValueDbl(double value)
 {
-    return SetValue((bool)value);
+    return this->SetValue((bool)value);
 }
 
 bool OptionBool::SetValueBool(bool value)
 {
-    return SetValue(value);
+    return this->SetValue(value);
 }
 
 std::string OptionBool::GetStrValue() const
@@ -206,13 +214,16 @@ std::string OptionBool::GetDefaultStrValue() const
 void OptionBool::Reset()
 {
     m_value = m_defaultValue;
-    m_isSet = false;
+}
+
+bool OptionBool::IsSet() const
+{
+    return (m_value != m_defaultValue);
 }
 
 bool OptionBool::SetValue(bool value)
 {
     m_value = value;
-    m_isSet = true;
     return true;
 }
 
@@ -227,17 +238,27 @@ void OptionDbl::CopyTo(Option *option)
     *child = *this;
 }
 
-void OptionDbl::Init(double defaultValue, double minValue, double maxValue)
+void OptionDbl::Init(double defaultValue, double minValue, double maxValue, bool definitionFactor)
 {
     m_value = defaultValue;
     m_defaultValue = defaultValue;
     m_minValue = minValue;
     m_maxValue = maxValue;
+    m_definitionFactor = definitionFactor;
 }
 
 bool OptionDbl::SetValue(const std::string &value)
 {
-    return SetValue(atof(value.c_str()));
+    if (!IsValidDouble(value)) {
+        LogError("Unable to set parameter value %s for '%s'; conversion to double failed", value.c_str(),
+            this->GetKey().c_str());
+        return false;
+    }
+    // Convert string to double
+    double number = std::strtod(value.c_str(), NULL);
+
+    // Check bounds and set the value
+    return this->SetValue(number);
 }
 
 std::string OptionDbl::GetStrValue() const
@@ -252,25 +273,38 @@ std::string OptionDbl::GetDefaultStrValue() const
 
 bool OptionDbl::SetValueDbl(double value)
 {
-    return SetValue(value);
+    return this->SetValue(value);
+}
+
+double OptionDbl::GetValue() const
+{
+    return (m_definitionFactor) ? m_value * DEFINITION_FACTOR : m_value;
+}
+
+double OptionDbl::GetUnfactoredValue() const
+{
+    return m_value;
 }
 
 bool OptionDbl::SetValue(double value)
 {
     if ((value < m_minValue) || (value > m_maxValue)) {
         LogError("Parameter value %f for '%s' out of bounds; default is %f, minimum %f, and maximum %f", value,
-            GetKey().c_str(), m_defaultValue, m_minValue, m_maxValue);
+            this->GetKey().c_str(), m_defaultValue, m_minValue, m_maxValue);
         return false;
     }
     m_value = value;
-    m_isSet = true;
     return true;
 }
 
 void OptionDbl::Reset()
 {
     m_value = m_defaultValue;
-    m_isSet = false;
+}
+
+bool OptionDbl::IsSet() const
+{
+    return (m_value != m_defaultValue);
 }
 
 //----------------------------------------------------------------------------
@@ -295,12 +329,21 @@ void OptionInt::Init(int defaultValue, int minValue, int maxValue, bool definiti
 
 bool OptionInt::SetValueDbl(double value)
 {
-    return SetValue((int)value);
+    return this->SetValue((int)value);
 }
 
 bool OptionInt::SetValue(const std::string &value)
 {
-    return SetValue(atoi(value.c_str()));
+    if (!IsValidInteger(value)) {
+        LogError("Unable to set parameter value %s for '%s'; conversion to integer failed", value.c_str(),
+            this->GetKey().c_str());
+        return false;
+    }
+    // Convert string to int
+    int number = (int)std::strtol(value.c_str(), NULL, 10);
+
+    // Check bounds and set the value
+    return this->SetValue(number);
 }
 
 std::string OptionInt::GetStrValue() const
@@ -327,18 +370,21 @@ bool OptionInt::SetValue(int value)
 {
     if ((value < m_minValue) || (value > m_maxValue)) {
         LogError("Parameter value %d for '%s' out of bounds; default is %d, minimum %d, and maximum %d", value,
-            GetKey().c_str(), m_defaultValue, m_minValue, m_maxValue);
+            this->GetKey().c_str(), m_defaultValue, m_minValue, m_maxValue);
         return false;
     }
     m_value = value;
-    m_isSet = true;
     return true;
 }
 
 void OptionInt::Reset()
 {
     m_value = m_defaultValue;
-    m_isSet = false;
+}
+
+bool OptionInt::IsSet() const
+{
+    return (m_value != m_defaultValue);
 }
 
 //----------------------------------------------------------------------------
@@ -361,14 +407,17 @@ void OptionString::Init(const std::string &defaultValue)
 bool OptionString::SetValue(const std::string &value)
 {
     m_value = value;
-    m_isSet = true;
     return true;
 }
 
 void OptionString::Reset()
 {
     m_value = m_defaultValue;
-    m_isSet = false;
+}
+
+bool OptionString::IsSet() const
+{
+    return (m_value != m_defaultValue);
 }
 
 //----------------------------------------------------------------------------
@@ -391,10 +440,6 @@ void OptionArray::Init()
 bool OptionArray::SetValueArray(const std::vector<std::string> &values)
 {
     m_values = values;
-    m_isSet = true;
-    // m_values.erase(std::remove_if(m_values.begin(), m_values.end(),
-    //                                       [](const std::string &s) { return s.empty(); }),
-    //                        m_values.end());
     return true;
 }
 
@@ -403,41 +448,23 @@ bool OptionArray::SetValue(const std::string &value)
     // Passing a single value to an array option adds it to the values and to not replace them
     if (!value.empty()) {
         m_values.push_back(value);
-        m_isSet = true;
     }
     return true;
 }
 
 std::string OptionArray::GetStrValue() const
 {
-    std::stringstream ss;
-    int i;
-    for (i = 0; i < (int)m_values.size(); ++i) {
-        if (i != 0) {
-            ss << ", ";
-        }
-        ss << "\"" << m_values.at(i) << "\"";
-    }
-    return ss.str();
+    return this->GetStr(m_values);
 }
 
 std::string OptionArray::GetDefaultStrValue() const
 {
-    std::stringstream ss;
-    int i;
-    for (i = 0; i < (int)m_defaultValues.size(); ++i) {
-        if (i != 0) {
-            ss << ", ";
-        }
-        ss << "\"" << m_defaultValues.at(i) << "\"";
-    }
-    return ss.str();
+    return this->GetStr(m_defaultValues);
 }
 
 bool OptionArray::SetValue(std::vector<std::string> const &values)
 {
     m_values = values;
-    m_isSet = true;
     m_values.erase(std::remove_if(m_values.begin(), m_values.end(), [](const std::string &s) { return s.empty(); }),
         m_values.end());
     return true;
@@ -446,7 +473,25 @@ bool OptionArray::SetValue(std::vector<std::string> const &values)
 void OptionArray::Reset()
 {
     m_values.clear();
-    m_isSet = false;
+}
+
+bool OptionArray::IsSet() const
+{
+    return !m_values.empty();
+}
+
+std::string OptionArray::GetStr(const std::vector<std::string> &values) const
+{
+    std::stringstream ss;
+    int i = 0;
+    for (std::string const &value : values) {
+        if (i != 0) {
+            ss << ", ";
+        }
+        ss << "\"" << value << "\"";
+        ++i;
+    }
+    return ss.str();
 }
 
 //----------------------------------------------------------------------------
@@ -484,10 +529,9 @@ bool OptionIntMap::SetValue(const std::string &value)
     for (it = m_values->cbegin(); it != m_values->cend(); ++it)
         if (it->second == value) {
             m_value = it->first;
-            m_isSet = true;
             return true;
         }
-    LogError("Parameter '%s' not valid for '%s'", value.c_str(), GetKey().c_str());
+    LogError("Parameter '%s' not valid for '%s'", value.c_str(), this->GetKey().c_str());
     return false;
 }
 
@@ -513,7 +557,6 @@ bool OptionIntMap::SetValue(int value)
     assert(m_values->count(value));
 
     m_value = value;
-    m_isSet = true;
 
     return true;
 }
@@ -537,10 +580,9 @@ std::vector<std::string> OptionIntMap::GetStrValues(bool withoutDefault) const
 
 std::string OptionIntMap::GetStrValuesAsStr(bool withoutDefault) const
 {
-    std::vector<std::string> strValues = GetStrValues(withoutDefault);
+    std::vector<std::string> strValues = this->GetStrValues(withoutDefault);
     std::stringstream ss;
-    int i;
-    for (i = 0; i < (int)strValues.size(); ++i) {
+    for (int i = 0; i < (int)strValues.size(); ++i) {
         if (i != 0) {
             ss << ", ";
         }
@@ -552,7 +594,11 @@ std::string OptionIntMap::GetStrValuesAsStr(bool withoutDefault) const
 void OptionIntMap::Reset()
 {
     m_value = m_defaultValue;
-    m_isSet = false;
+}
+
+bool OptionIntMap::IsSet() const
+{
+    return (m_value != m_defaultValue);
 }
 
 //----------------------------------------------------------------------------
@@ -574,33 +620,36 @@ void OptionStaffrel::Init(data_STAFFREL defaultValue)
 
 bool OptionStaffrel::SetValue(const std::string &value)
 {
-    Att converter;
+    AttConverter converter;
     data_STAFFREL staffrel = converter.StrToStaffrel(value);
     if (staffrel == STAFFREL_NONE) {
         LogError("Parameter '%s' not valid", value.c_str());
         return false;
     }
     m_value = staffrel;
-    m_isSet = true;
     return true;
 }
 
 std::string OptionStaffrel::GetStrValue() const
 {
-    Att converter;
+    AttConverter converter;
     return converter.StaffrelToStr(m_value);
 }
 
 std::string OptionStaffrel::GetDefaultStrValue() const
 {
-    Att converter;
+    AttConverter converter;
     return converter.StaffrelToStr(m_defaultValue);
 }
 
 void OptionStaffrel::Reset()
 {
     m_value = m_defaultValue;
-    m_isSet = false;
+}
+
+bool OptionStaffrel::IsSet() const
+{
+    return (m_value != m_defaultValue);
 }
 
 //----------------------------------------------------------------------------
@@ -617,8 +666,7 @@ void OptionJson::CopyTo(Option *option)
 void OptionJson::Init(JsonSource source, const std::string &defaultValue)
 {
     m_source = source;
-    ReadJson(m_defaultValues, defaultValue);
-    m_isSet = false;
+    this->ReadJson(m_defaultValues, defaultValue);
 }
 
 JsonSource OptionJson::GetSource() const
@@ -633,11 +681,8 @@ jsonxx::Object OptionJson::GetValue(bool getDefault) const
 
 bool OptionJson::SetValue(const std::string &value)
 {
-    bool ok = ReadJson(m_values, value);
-    if (ok) {
-        m_isSet = true;
-    }
-    else {
+    bool ok = this->ReadJson(m_values, value);
+    if (!ok) {
         if (m_source == JsonSource::String) {
             LogError("Input json is not valid or contains errors");
         }
@@ -667,7 +712,11 @@ std::string OptionJson::GetDefaultStrValue() const
 void OptionJson::Reset()
 {
     m_values.reset();
-    m_isSet = false;
+}
+
+bool OptionJson::IsSet() const
+{
+    return (this->GetStrValue() != this->GetDefaultStrValue());
 }
 
 bool OptionJson::ReadJson(jsonxx::Object &output, const std::string &input) const
@@ -703,21 +752,33 @@ bool OptionJson::HasValue(const std::vector<std::string> &jsonNodePath) const
 
 int OptionJson::GetIntValue(const std::vector<std::string> &jsonNodePath, bool getDefault) const
 {
-    return static_cast<int>(GetDoubleValue(jsonNodePath, getDefault));
+    return static_cast<int>(this->GetDblValue(jsonNodePath, getDefault));
 }
 
-double OptionJson::GetDoubleValue(const std::vector<std::string> &jsonNodePath, bool getDefault) const
+double OptionJson::GetDblValue(const std::vector<std::string> &jsonNodePath, bool getDefault) const
 {
-    JsonPath path
-        = getDefault ? StringPath2NodePath(m_defaultValues, jsonNodePath) : StringPath2NodePath(m_values, jsonNodePath);
+    JsonPath path = StringPath2NodePath(getDefault ? m_defaultValues : m_values, jsonNodePath);
 
     if (path.size() != jsonNodePath.size() && !getDefault) {
         path = StringPath2NodePath(m_defaultValues, jsonNodePath);
     }
 
-    if (path.size() != jsonNodePath.size() || !path.back().get().is<jsonxx::Number>()) return 0;
+    if ((path.size() != jsonNodePath.size()) || !path.back().get().is<jsonxx::Number>()) return 0;
 
     return path.back().get().get<jsonxx::Number>();
+}
+
+std::string OptionJson::GetStrValue(const std::vector<std::string> &jsonNodePath, bool getDefault) const
+{
+    JsonPath path = StringPath2NodePath(getDefault ? m_defaultValues : m_values, jsonNodePath);
+
+    if ((path.size() != jsonNodePath.size()) && !getDefault) {
+        path = StringPath2NodePath(m_defaultValues, jsonNodePath);
+    }
+
+    if ((path.size() != jsonNodePath.size()) || !path.back().get().is<jsonxx::String>()) return "";
+
+    return path.back().get().get<jsonxx::String>();
 }
 
 bool OptionJson::UpdateNodeValue(const std::vector<std::string> &jsonNodePath, const std::string &value)
@@ -748,6 +809,21 @@ std::set<std::string> OptionJson::GetKeys() const
     return keys;
 }
 
+std::set<std::string> OptionJson::GetKeysByNode(const std::string &nodeName, std::list<std::string> &jsonNodePath) const
+{
+    std::set<std::string> keys;
+
+    // Try to find node by the name, otherwise use root node
+    const jsonxx::Object *node = FindNodeByName(m_values, nodeName, jsonNodePath);
+    if (!node) node = &m_values;
+
+    for (const auto &mapEntry : node->kv_map()) {
+        keys.insert(mapEntry.first);
+    }
+
+    return keys;
+}
+
 OptionJson::JsonPath OptionJson::StringPath2NodePath(
     const jsonxx::Object &obj, const std::vector<std::string> &jsonNodePath) const
 {
@@ -757,19 +833,19 @@ OptionJson::JsonPath OptionJson::StringPath2NodePath(
     }
     path.reserve(jsonNodePath.size());
     path.push_back(const_cast<jsonxx::Value &>(obj.get<jsonxx::Value>(jsonNodePath.front())));
-    for (auto iter = jsonNodePath.begin() + 1; iter != jsonNodePath.end(); ++iter) {
+    for (const std::string &jsonNode : jsonNodePath) {
         jsonxx::Value &val = path.back();
-        if (val.is<jsonxx::Object>() && val.get<jsonxx::Object>().has<jsonxx::Value>(*iter)) {
-            path.push_back(val.get<jsonxx::Object>().get<jsonxx::Value>(*iter));
+        if (val.is<jsonxx::Object>() && val.get<jsonxx::Object>().has<jsonxx::Value>(jsonNode)) {
+            path.push_back(val.get<jsonxx::Object>().get<jsonxx::Value>(jsonNode));
         }
         else if (val.is<jsonxx::Array>()) {
-            try {
-                const int index = std::stoi(*iter);
+            if (IsValidInteger(jsonNode)) {
+                const int index = (int)std::strtol(jsonNode.c_str(), NULL, 10);
                 if (!val.get<jsonxx::Array>().has<jsonxx::Value>(index)) break;
 
                 path.push_back(val.get<jsonxx::Array>().get<jsonxx::Value>(index));
             }
-            catch (const std::logic_error &) {
+            else {
                 // invalid index, leaving
                 break;
             }
@@ -777,6 +853,31 @@ OptionJson::JsonPath OptionJson::StringPath2NodePath(
     }
 
     return path;
+}
+
+const jsonxx::Object *OptionJson::FindNodeByName(
+    const jsonxx::Object &obj, const std::string &jsonNodeName, std::list<std::string> &jsonNodePath) const
+{
+    for (const auto &mapEntry : obj.kv_map()) {
+        // skip non-objects
+        if (!mapEntry.second->is<jsonxx::Object>()) continue;
+        // return current object if name matches
+        if (mapEntry.first == jsonNodeName) {
+            jsonNodePath.emplace_back(mapEntry.first);
+            return &mapEntry.second->get<jsonxx::Object>();
+        }
+        // otherwise recursively process current object
+        else {
+            const jsonxx::Object *result
+                = FindNodeByName(mapEntry.second->get<jsonxx::Object>(), jsonNodeName, jsonNodePath);
+            if (result) {
+                jsonNodePath.emplace_front(mapEntry.first);
+                return result;
+            }
+        }
+    }
+
+    return NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -791,6 +892,7 @@ Options::Options()
     // There are listed in Toolkit::GetAvailableOptions through Options::GetBaseOptGrp
 
     m_baseOptions.SetLabel("Base short options", "0-base");
+    m_baseOptions.SetCategory(OptionsCategory::Base);
 
     m_standardOutput.SetInfo(
         "Standard output", "Use \"-\" as input file or set the \"--stdin\" option for reading from the standard input");
@@ -800,7 +902,7 @@ Options::Options()
     m_baseOptions.AddOption(&m_standardOutput);
 
     m_help.SetInfo("Help", "Display this message");
-    m_help.Init(false);
+    m_help.Init("");
     m_help.SetKey("help");
     m_help.SetShortOption('h', true);
     m_baseOptions.AddOption(&m_help);
@@ -812,11 +914,19 @@ Options::Options()
     m_baseOptions.AddOption(&m_allPages);
 
     m_inputFrom.SetInfo("Input from",
-        "Select input format from: \"abc\", \"darms\", \"humdrum\", \"mei\", \"pae\", \"xml\" (musicxml)");
+        "Select input format from: \"abc\", \"cmme.xml\", \"darms\", \"esac\", \"humdrum\", \"mei\", \"pae\", "
+        "\"volpiano\", \"xml\" "
+        "(musicxml), \"musicxml-hum\" (musicxml via humdrum)");
     m_inputFrom.Init("mei");
     m_inputFrom.SetKey("inputFrom");
     m_inputFrom.SetShortOption('f', false);
     m_baseOptions.AddOption(&m_inputFrom);
+
+    m_logLevel.SetInfo("Log level", "Set the log level: \"off\", \"error\", \"warning\", \"info\", or \"debug\"");
+    m_logLevel.Init("warning");
+    m_logLevel.SetKey("logLevel");
+    m_logLevel.SetShortOption('l', true);
+    m_baseOptions.AddOption(&m_logLevel);
 
     m_outfile.SetInfo("Output file", "Output file name (use \"-\" as file name for standard output)");
     m_outfile.Init("svg");
@@ -831,18 +941,21 @@ Options::Options()
     m_baseOptions.AddOption(&m_page);
 
     m_resourcePath.SetInfo("Resource path", "Path to the directory with Verovio resources");
-    m_resourcePath.Init("/usr/local/share/verovio");
+    m_resourcePath.Init(VRV_RESOURCE_DIR);
     m_resourcePath.SetKey("resourcePath");
     m_resourcePath.SetShortOption('r', true);
     m_baseOptions.AddOption(&m_resourcePath);
 
-    m_scale.SetInfo("Scale percent", "Scale of the output in percent");
+    m_scale.SetInfo("Scale percent", "Scale of the output in percent (100 is normal size)");
     m_scale.Init(DEFAULT_SCALE, MIN_SCALE, MAX_SCALE);
     m_scale.SetKey("scale");
     m_scale.SetShortOption('s', false);
     m_baseOptions.AddOption(&m_scale);
 
-    m_outputTo.SetInfo("Output to", "Select output format to: \"mei\", \"pb-mei\", \"svg\", or \"midi\"");
+    m_outputTo.SetInfo("Output to",
+        "Select output format to: \"mei\", \"mei-pb\", \"mei-facs\", \"mei-basic\", \"svg\", \"midi\", \"timemap\", "
+        "\"expansionmap\", \"humdrum\" or "
+        "\"pae\"");
     m_outputTo.Init("svg");
     m_outputTo.SetKey("outputTo");
     m_outputTo.SetShortOption('t', true);
@@ -855,14 +968,15 @@ Options::Options()
     m_baseOptions.AddOption(&m_version);
 
     m_xmlIdSeed.SetInfo("XML IDs seed", "Seed the random number generator for XML IDs (default is random)");
-    m_xmlIdSeed.Init(0, 0, 0);
+    m_xmlIdSeed.Init(0, 0, -VRV_UNSET);
     m_xmlIdSeed.SetKey("xmlIdSeed");
     m_xmlIdSeed.SetShortOption('x', false);
     m_baseOptions.AddOption(&m_xmlIdSeed);
 
     /********* General *********/
 
-    m_general.SetLabel("Input and page layout options", "1-general");
+    m_general.SetLabel("Input and page configuration options", "1-general");
+    m_general.SetCategory(OptionsCategory::General);
     m_grps.push_back(&m_general);
 
     m_adjustPageHeight.SetInfo("Adjust page height", "Adjust the page height to the height of the content");
@@ -890,12 +1004,17 @@ Options::Options()
     m_condenseFirstPage.Init(false);
     this->Register(&m_condenseFirstPage, "condenseFirstPage", &m_general);
 
+    m_condenseNotLastSystem.SetInfo(
+        "Condense not last system", "When condensing a score never condense the last system");
+    m_condenseNotLastSystem.Init(false);
+    this->Register(&m_condenseNotLastSystem, "condenseNotLastSystem", &m_general);
+
     m_condenseTempoPages.SetInfo(
         "Condense tempo pages", "When condensing a score also condense pages with a tempo change");
     m_condenseTempoPages.Init(false);
     this->Register(&m_condenseTempoPages, "condenseTempoPages", &m_general);
 
-    m_evenNoteSpacing.SetInfo("Even note spacing", "Specify the linear spacing factor");
+    m_evenNoteSpacing.SetInfo("Even note spacing", "Align notes and rests without adding duration based space");
     m_evenNoteSpacing.Init(false);
     this->Register(&m_evenNoteSpacing, "evenNoteSpacing", &m_general);
 
@@ -903,29 +1022,29 @@ Options::Options()
     m_expand.Init("");
     this->Register(&m_expand, "expand", &m_general);
 
+    m_footer.SetInfo("Footer", "Control footer layout");
+    m_footer.Init(FOOTER_auto, &Option::s_footer);
+    this->Register(&m_footer, "footer", &m_general);
+
+    m_header.SetInfo("Header", "Control header layout");
+    m_header.Init(HEADER_auto, &Option::s_header);
+    this->Register(&m_header, "header", &m_general);
+
     m_humType.SetInfo("Humdrum type", "Include type attributes when importing from Humdrum");
     m_humType.Init(false);
     this->Register(&m_humType, "humType", &m_general);
+
+    m_incip.SetInfo("Incip", "Read <incip> elements as data input");
+    m_incip.Init(false);
+    this->Register(&m_incip, "incip", &m_general);
 
     m_justifyVertically.SetInfo("Justify vertically", "Justify spacing vertically to fill the page");
     m_justifyVertically.Init(false);
     this->Register(&m_justifyVertically, "justifyVertically", &m_general);
 
-    m_landscape.SetInfo("Landscape orientation", "The landscape paper orientation flag");
+    m_landscape.SetInfo("Landscape orientation", "Swap the values for page height and page width");
     m_landscape.Init(false);
     this->Register(&m_landscape, "landscape", &m_general);
-
-    m_ligatureAsBracket.SetInfo("Ligature as bracket", "Render ligatures as bracket instead of original notation");
-    m_ligatureAsBracket.Init(false);
-    this->Register(&m_ligatureAsBracket, "ligatureAsBracket", &m_general);
-
-    m_mensuralToMeasure.SetInfo("Mensural to measure", "Convert mensural sections to measure-based MEI");
-    m_mensuralToMeasure.Init(false);
-    this->Register(&m_mensuralToMeasure, "mensuralToMeasure", &m_general);
-
-    m_midiTempoAdjustment.SetInfo("MIDI tempo adjustment", "The MIDI tempo adjustment factor");
-    m_midiTempoAdjustment.Init(1.0, 0.2, 4.0);
-    this->Register(&m_midiTempoAdjustment, "midiTempoAdjustment", &m_generalLayout);
 
     m_minLastJustification.SetInfo("Minimum last-system-justification width",
         "The last system is only justified if the unjustified width is greater than this percent");
@@ -936,13 +1055,14 @@ Options::Options()
     m_mmOutput.Init(false);
     this->Register(&m_mmOutput, "mmOutput", &m_general);
 
-    m_footer.SetInfo("Footer", "Control footer layout");
-    m_footer.Init(FOOTER_auto, &Option::s_footer);
-    this->Register(&m_footer, "footer", &m_general);
+    m_moveScoreDefinitionToStaff.SetInfo("Move score definition to staff",
+        "Move score definition (clef, keySig, meterSig, etc.) from scoreDef to staffDef");
+    m_moveScoreDefinitionToStaff.Init(false);
+    this->Register(&m_moveScoreDefinitionToStaff, "moveScoreDefinitionToStaff", &m_general);
 
-    m_header.SetInfo("Header", "Control header layout");
-    m_header.Init(HEADER_auto, &Option::s_header);
-    this->Register(&m_header, "header", &m_general);
+    m_neumeAsNote.SetInfo("Neume as note", "Render neumes as note heads instead of original notation");
+    m_neumeAsNote.Init(false);
+    this->Register(&m_neumeAsNote, "neumeAsNote", &m_general);
 
     m_noJustification.SetInfo("No justification", "Do not justify the system");
     m_noJustification.Init(false);
@@ -991,8 +1111,12 @@ Options::Options()
     this->Register(&m_pageMarginTop, "pageMarginTop", &m_general);
 
     m_pageWidth.SetInfo("Page width", "The page width");
-    m_pageWidth.Init(2100, 100, 60000, true);
+    m_pageWidth.Init(2100, 100, 100000, true);
     this->Register(&m_pageWidth, "pageWidth", &m_general);
+
+    m_pedalStyle.SetInfo("Pedal style", "The global pedal style");
+    m_pedalStyle.Init(PEDALSTYLE_NONE, &Option::s_pedalStyle);
+    this->Register(&m_pedalStyle, "pedalStyle", &m_general);
 
     m_preserveAnalyticalMarkup.SetInfo("Preserve analytical markup", "Preserves the analytical markup in MEI");
     m_preserveAnalyticalMarkup.Init(false);
@@ -1002,9 +1126,26 @@ Options::Options()
     m_removeIds.Init(false);
     this->Register(&m_removeIds, "removeIds", &m_general);
 
+    m_scaleToPageSize.SetInfo(
+        "Scale to fit the page size", "Scale the content within the page instead of scaling the page itself");
+    m_scaleToPageSize.Init(false);
+    this->Register(&m_scaleToPageSize, "scaleToPageSize", &m_general);
+
+    m_setLocale.SetInfo("Set the global locale", "Changes the global locale to C (this is not thread-safe)");
+    m_setLocale.Init(false);
+    this->Register(&m_setLocale, "setLocale", &m_general);
+
+    m_showRuntime.SetInfo("Show runtime on CLI", "Display the total runtime on command-line");
+    m_showRuntime.Init(false);
+    this->Register(&m_showRuntime, "showRuntime", &m_general);
+
     m_shrinkToFit.SetInfo("Shrink content to fit page", "Scale down page content to fit the page height if needed");
     m_shrinkToFit.Init(false);
     this->Register(&m_shrinkToFit, "shrinkToFit", &m_general);
+
+    m_smuflTextFont.SetInfo("Smufl text font", "Specify if the smufl text font is embedded, linked, or ignored");
+    m_smuflTextFont.Init(SMUFLTEXTFONT_embedded, &Option::s_smuflTextFont);
+    this->Register(&m_smuflTextFont, "smuflTextFont", &m_general);
 
     m_staccatoCenter.SetInfo(
         "Center staccato", "Align staccato and staccatissimo articulations with center of the note");
@@ -1015,27 +1156,37 @@ Options::Options()
     m_svgBoundingBoxes.Init(false);
     this->Register(&m_svgBoundingBoxes, "svgBoundingBoxes", &m_general);
 
+    m_svgCss.SetInfo("SVG additional CSS", "CSS (as a string) to be added to the SVG output");
+    m_svgCss.Init("");
+    this->Register(&m_svgCss, "svgCss", &m_general);
+
     m_svgViewBox.SetInfo("Use viewbox on svg root", "Use viewBox on svg root element for easy scaling of document");
     m_svgViewBox.Init(false);
     this->Register(&m_svgViewBox, "svgViewBox", &m_general);
 
     m_svgHtml5.SetInfo("Output SVG for HTML5 embedding",
-        "Write data-id and data-class attributes for JS usage and id clash avoidance.");
+        "Write data-id and data-class attributes for JS usage and id clash avoidance");
     m_svgHtml5.Init(false);
     this->Register(&m_svgHtml5, "svgHtml5", &m_general);
 
     m_svgFormatRaw.SetInfo(
-        "Raw formatting for SVG output", "Writes SVG out with no line indenting or non-content newlines.");
+        "Raw formatting for SVG output", "Writes SVG out with no line indenting or non-content newlines");
     m_svgFormatRaw.Init(false);
     this->Register(&m_svgFormatRaw, "svgFormatRaw", &m_general);
 
     m_svgRemoveXlink.SetInfo("Remove xlink: from href attributes",
-        "Removes the xlink: prefix on href attributes for compatibility with some newer browsers.");
+        "Removes the xlink: prefix on href attributes for compatibility with some newer browsers");
     m_svgRemoveXlink.Init(false);
     this->Register(&m_svgRemoveXlink, "svgRemoveXlink", &m_general);
 
+    m_svgAdditionalAttribute.SetInfo("Add additional attribute in SVG",
+        "Add additional attribute for graphical elements in SVG as \"data-*\", for "
+        "example, \"note@pname\" would add a \"data-pname\" to all note elements");
+    m_svgAdditionalAttribute.Init();
+    this->Register(&m_svgAdditionalAttribute, "svgAdditionalAttribute", &m_general);
+
     m_unit.SetInfo("Unit", "The MEI unit (1⁄2 of the distance between the staff lines)");
-    m_unit.Init(9, 6, 20, true);
+    m_unit.Init(9.0, 4.5, 12.0, true);
     this->Register(&m_unit, "unit", &m_general);
 
     m_useBraceGlyph.SetInfo("Use Brace Glyph", "Use brace glyph from current font");
@@ -1055,9 +1206,15 @@ Options::Options()
     m_usePgHeaderForAll.Init(false);
     this->Register(&m_usePgHeaderForAll, "usePgHeaderForAll", &m_general);
 
+    m_xmlIdChecksum.SetInfo(
+        "XML IDs based on checksum", "Seed the generator for XML IDs using the checksum of the input data");
+    m_xmlIdChecksum.Init(false);
+    this->Register(&m_xmlIdChecksum, "xmlIdChecksum", &m_general);
+
     /********* General layout *********/
 
     m_generalLayout.SetLabel("General layout options", "2-generalLayout");
+    m_generalLayout.SetCategory(OptionsCategory::Layout);
     m_grps.push_back(&m_generalLayout);
 
     m_barLineSeparation.SetInfo(
@@ -1065,25 +1222,54 @@ Options::Options()
     m_barLineSeparation.Init(0.8, 0.5, 2.0);
     this->Register(&m_barLineSeparation, "barLineSeparation", &m_generalLayout);
 
-    m_barLineWidth.SetInfo("Barline width", "The barLine width");
+    m_barLineWidth.SetInfo("Barline width", "The barline width");
     m_barLineWidth.Init(0.30, 0.10, 0.80);
     this->Register(&m_barLineWidth, "barLineWidth", &m_generalLayout);
 
+    m_beamFrenchStyle.SetInfo(
+        "French style of beams", "For notes in beams, stems will stop at first outermost sub-beam without crossing it");
+    m_beamFrenchStyle.Init(false);
+    this->Register(&m_beamFrenchStyle, "beamFrenchStyle", &m_generalLayout);
+
     m_beamMaxSlope.SetInfo("Beam max slope", "The maximum beam slope");
-    m_beamMaxSlope.Init(10, 1, 20);
+    m_beamMaxSlope.Init(10, 0, 20);
     this->Register(&m_beamMaxSlope, "beamMaxSlope", &m_generalLayout);
 
-    m_beamMinSlope.SetInfo("Beam min slope", "The minimum beam slope");
-    m_beamMinSlope.Init(0, 0, 0);
-    this->Register(&m_beamMinSlope, "beamMinSlope", &m_generalLayout);
+    m_beamMixedPreserve.SetInfo("Preserve mixed beams", "Mixed beams will be drawn even if there is not enough space");
+    m_beamMixedPreserve.Init(false);
+    this->Register(&m_beamMixedPreserve, "beamMixedPreserve", &m_generalLayout);
+
+    m_beamMixedStemMin.SetInfo(
+        "Minimal stem length of mixed beams", "The minimal stem length in MEI units used to draw mixed beams");
+    m_beamMixedStemMin.Init(3.5, 1.0, 8.0);
+    this->Register(&m_beamMixedStemMin, "beamMixedStemMin", &m_generalLayout);
 
     m_bracketThickness.SetInfo("Bracket thickness", "The thickness of the system bracket");
     m_bracketThickness.Init(1.0, 0.5, 2.0);
     this->Register(&m_bracketThickness, "bracketThickness", &m_generalLayout);
 
+    m_breaksNoWidow.SetInfo(
+        "Breaks no widow", "Prevent single measures on the last page by fitting it into previous system");
+    m_breaksNoWidow.Init(false);
+    this->Register(&m_breaksNoWidow, "breaksNoWidow", &m_generalLayout);
+
+    // Optimized for five line staves
+    constexpr double dashedBarLineLengthDefault = 8.0 / 7.0;
+    m_dashedBarLineDashLength.SetInfo("Dashed barline dash length", "The dash length of dashed barlines");
+    m_dashedBarLineDashLength.Init(dashedBarLineLengthDefault, 0.1, 5.0);
+    this->Register(&m_dashedBarLineDashLength, "dashedBarLineDashLength", &m_generalLayout);
+
+    m_dashedBarLineGapLength.SetInfo("Dashed barline gap length", "The gap length of dashed barlines");
+    m_dashedBarLineGapLength.Init(dashedBarLineLengthDefault, 0.1, 5.0);
+    this->Register(&m_dashedBarLineGapLength, "dashedBarLineGapLength", &m_generalLayout);
+
     m_dynamDist.SetInfo("Dynam dist", "The default distance from the staff for dynamic marks");
     m_dynamDist.Init(1.0, 0.5, 16.0);
     this->Register(&m_dynamDist, "dynamDist", &m_generalLayout);
+
+    m_dynamSingleGlyphs.SetInfo("Dynam single glyphs", "Don't use SMuFL's predefined dynamics glyph combinations");
+    m_dynamSingleGlyphs.Init(false);
+    this->Register(&m_dynamSingleGlyphs, "dynamSingleGlyphs", &m_generalLayout);
 
     m_engravingDefaults.SetInfo("Engraving defaults", "Json describing defaults for engraving SMuFL elements");
     m_engravingDefaults.Init(JsonSource::String, "{}");
@@ -1094,18 +1280,30 @@ Options::Options()
     m_engravingDefaultsFile.Init(JsonSource::FilePath, "");
     this->Register(&m_engravingDefaultsFile, "engravingDefaultsFile", &m_generalLayout);
 
-    m_breaksNoWidow.SetInfo(
-        "Breaks no widow", "Prevent single measures on the last page by fitting it into previous system");
-    m_breaksNoWidow.Init(false);
-    this->Register(&m_breaksNoWidow, "breaksNoWidow", &m_generalLayout);
+    m_extenderLineMinSpace.SetInfo(
+        "Extender line minimum space", "Minimum space required for extender line to be drawn");
+    m_extenderLineMinSpace.Init(1.5, 1.5, 10.0);
+    this->Register(&m_extenderLineMinSpace, "extenderLineMinSpace", &m_generalLayout);
+
+    m_fingeringScale.SetInfo("Fingering scale", "The scale of fingering font compared to default font size");
+    m_fingeringScale.Init(0.75, 0.25, 1);
+    this->Register(&m_fingeringScale, "fingeringScale", &m_generalLayout);
 
     m_font.SetInfo("Font", "Set the music font");
     m_font.Init("Leipzig");
     this->Register(&m_font, "font", &m_generalLayout);
 
-    m_clefChangeFactor.SetInfo("Clef change size", "Set the ratio of normal clefs to changing clefs");
-    m_clefChangeFactor.Init(0.66, 0.25, 1.0);
-    this->Register(&m_clefChangeFactor, "clefChangeFactor", &m_generalLayout);
+    m_fontAddCustom.SetInfo("Add custom font", "Add a custom music font as zip file");
+    m_fontAddCustom.Init();
+    this->Register(&m_fontAddCustom, "fontAddCustom", &m_generalLayout);
+
+    m_fontFallback.SetInfo("Font fallback", "The music font fallback for missing glyphs");
+    m_fontFallback.Init(FONT_FALLBACK_Leipzig, &Option::s_fontFallback);
+    this->Register(&m_fontFallback, "fontFallback", &m_generalLayout);
+
+    m_fontLoadAll.SetInfo("Font init all", "Load all music fonts");
+    m_fontLoadAll.Init(false);
+    this->Register(&m_fontLoadAll, "fontLoadAll", &m_generalLayout);
 
     m_graceFactor.SetInfo("Grace factor", "The grace size ratio numerator");
     m_graceFactor.Init(0.75, 0.5, 1.0);
@@ -1126,6 +1324,11 @@ Options::Options()
     m_hairpinThickness.SetInfo("Hairpin thickness", "The thickness of the hairpin");
     m_hairpinThickness.Init(0.2, 0.1, 0.8);
     this->Register(&m_hairpinThickness, "hairpinThickness", &m_generalLayout);
+
+    m_handwrittenFont.SetInfo("Handwritten font", "Fonts that emulate hand writing and require special handling");
+    m_handwrittenFont.Init();
+    m_handwrittenFont.SetValue("Petaluma");
+    this->Register(&m_handwrittenFont, "handwrittenFont", &m_generalLayout);
 
     m_harmDist.SetInfo("Harm dist", "The default distance from the staff of harmonic indications");
     m_harmDist.Init(1.0, 0.5, 16.0);
@@ -1149,6 +1352,11 @@ Options::Options()
     m_justificationBraceGroup.Init(1., 0., 10.);
     this->Register(&m_justificationBraceGroup, "justificationBraceGroup", &m_generalLayout);
 
+    m_justificationMaxVertical.SetInfo("Maximum ratio of justifiable height for page",
+        "Maximum ratio of justifiable height to page height that can be used for the vertical justification");
+    m_justificationMaxVertical.Init(0.2, 0.0, 1.0);
+    this->Register(&m_justificationMaxVertical, "justificationMaxVertical", &m_generalLayout);
+
     m_ledgerLineThickness.SetInfo("Ledger line thickness", "The thickness of the ledger lines");
     m_ledgerLineThickness.Init(0.25, 0.10, 0.50);
     this->Register(&m_ledgerLineThickness, "ledgerLineThickness", &m_generalLayout);
@@ -1158,9 +1366,9 @@ Options::Options()
     m_ledgerLineExtension.Init(0.54, 0.20, 1.00);
     this->Register(&m_ledgerLineExtension, "ledgerLineExtension", &m_generalLayout);
 
-    m_lyricHyphenLength.SetInfo("Lyric hyphen length", "The lyric hyphen and dash length");
-    m_lyricHyphenLength.Init(1.20, 0.50, 3.00);
-    this->Register(&m_lyricHyphenLength, "lyricHyphenLength", &m_generalLayout);
+    m_lyricElision.SetInfo("Lyric elision", "The lyric elision width");
+    m_lyricElision.Init(ELISION_regular, &Option::s_elision);
+    this->Register(&m_lyricElision, "lyricElision", &m_generalLayout);
 
     m_lyricLineThickness.SetInfo("Lyric line thickness", "The lyric extender line thickness");
     m_lyricLineThickness.Init(0.25, 0.10, 0.50);
@@ -1179,7 +1387,7 @@ Options::Options()
     this->Register(&m_lyricTopMinMargin, "lyricTopMinMargin", &m_generalLayout);
 
     m_lyricWordSpace.SetInfo("Lyric word space", "The lyric word space length");
-    m_lyricWordSpace.Init(1.20, 0.50, 3.00);
+    m_lyricWordSpace.Init(1.20, 0.00, 10.00);
     this->Register(&m_lyricWordSpace, "lyricWordSpace", &m_generalLayout);
 
     m_lyricVerseCollapse.SetInfo("Lyric verse collapse", "Collapse empty verse lines in lyrics");
@@ -1188,7 +1396,7 @@ Options::Options()
 
     m_measureMinWidth.SetInfo("Measure min width", "The minimal measure width in MEI units");
     m_measureMinWidth.Init(15, 1, 30);
-    this->Register(&m_measureMinWidth, "minMeasureWidth", &m_generalLayout);
+    this->Register(&m_measureMinWidth, "measureMinWidth", &m_generalLayout);
 
     m_mnumInterval.SetInfo("Measure Number Interval", "How frequently to place measure numbers");
     m_mnumInterval.Init(0, 0, 64, false);
@@ -1198,6 +1406,10 @@ Options::Options()
     m_multiRestStyle.Init(MULTIRESTSTYLE_auto, &Option::s_multiRestStyle);
     this->Register(&m_multiRestStyle, "multiRestStyle", &m_generalLayout);
 
+    m_multiRestThickness.SetInfo("Multi rest thickness", "The thickness of the multi rest in MEI units");
+    m_multiRestThickness.Init(2.0, 0.50, 6.00);
+    this->Register(&m_multiRestThickness, "multiRestThickness", &m_generalLayout);
+
     m_octaveAlternativeSymbols.SetInfo("Alternative octave symbols", "Use alternative symbols for displaying octaves");
     m_octaveAlternativeSymbols.Init(false);
     this->Register(&m_octaveAlternativeSymbols, "octaveAlternativeSymbols", &m_generalLayout);
@@ -1206,51 +1418,52 @@ Options::Options()
     m_octaveLineThickness.Init(0.20, 0.10, 1.00);
     this->Register(&m_octaveLineThickness, "octaveLineThickness", &m_generalLayout);
 
+    m_octaveNoSpanningParentheses.SetInfo("No parentheses on spanning octaves",
+        "Do not enclose octaves that are spanning over systems with parentheses.");
+    m_octaveNoSpanningParentheses.Init(false);
+    this->Register(&m_octaveNoSpanningParentheses, "octaveNoSpanningParentheses", &m_generalLayout);
+
     m_pedalLineThickness.SetInfo("Pedal line thickness", "The thickness of the line used for piano pedaling");
     m_pedalLineThickness.Init(0.20, 0.10, 1.00);
     this->Register(&m_pedalLineThickness, "pedalLineThickness", &m_generalLayout);
 
     m_repeatBarLineDotSeparation.SetInfo("Repeat barline dot separation",
         "The default horizontal distance between the dots and the inner barline of a repeat barline");
-    m_repeatBarLineDotSeparation.Init(0.30, 0.10, 1.00);
+    m_repeatBarLineDotSeparation.Init(0.36, 0.10, 1.00);
     this->Register(&m_repeatBarLineDotSeparation, "repeatBarLineDotSeparation", &m_generalLayout);
 
     m_repeatEndingLineThickness.SetInfo("Repeat ending line thickness", "Repeat and ending line thickness");
     m_repeatEndingLineThickness.Init(0.15, 0.10, 2.0);
     this->Register(&m_repeatEndingLineThickness, "repeatEndingLineThickness", &m_generalLayout);
 
-    m_slurControlPoints.SetInfo(
-        "Slur control points", "Slur control points - higher value means more curved at the end");
-    m_slurControlPoints.Init(5, 1, 10);
-    this->Register(&m_slurControlPoints, "slurControlPoints", &m_generalLayout);
-
     m_slurCurveFactor.SetInfo("Slur curve factor", "Slur curve factor - high value means rounder slurs");
-    m_slurCurveFactor.Init(10, 1, 100);
+    m_slurCurveFactor.Init(1.0, 0.2, 5.0);
     this->Register(&m_slurCurveFactor, "slurCurveFactor", &m_generalLayout);
 
-    m_slurHeightFactor.SetInfo("Slur height factor", "Slur height factor -  high value means flatter slurs");
-    m_slurHeightFactor.Init(5, 1, 100);
-    this->Register(&m_slurHeightFactor, "slurHeightFactor", &m_generalLayout);
+    m_slurEndpointFlexibility.SetInfo(
+        "Slur endpoint flexibility", "Slur endpoint flexibility - allow more endpoint movement during adjustment");
+    m_slurEndpointFlexibility.Init(0.0, 0.0, 1.0);
+    this->Register(&m_slurEndpointFlexibility, "slurEndpointFlexibility", &m_generalLayout);
 
-    m_slurMinHeight.SetInfo("Slur min height", "The minimum slur height in MEI units");
-    m_slurMinHeight.Init(1.2, 0.3, 2.0);
-    this->Register(&m_slurMinHeight, "slurMinHeight", &m_generalLayout);
-
-    m_slurMaxHeight.SetInfo("Slur max height", "The maximum slur height in MEI units");
-    m_slurMaxHeight.Init(3.0, 2.0, 6.0);
-    this->Register(&m_slurMaxHeight, "slurMaxHeight", &m_generalLayout);
-
-    m_slurMaxSlope.SetInfo("Slur max slope", "The maximum slur slope in degrees");
-    m_slurMaxSlope.Init(20, 0, 60);
-    this->Register(&m_slurMaxSlope, "slurMaxSlope", &m_generalLayout);
-
-    m_slurEndpointThickness.SetInfo("Slur Endpoint thickness", "The Endpoint slur thickness in MEI units");
+    m_slurEndpointThickness.SetInfo("Slur endpoint thickness", "The endpoint slur thickness in MEI units");
     m_slurEndpointThickness.Init(0.1, 0.05, 0.25);
     this->Register(&m_slurEndpointThickness, "slurEndpointThickness", &m_generalLayout);
+
+    m_slurMargin.SetInfo("Slur margin", "Slur safety distance in MEI units to obstacles");
+    m_slurMargin.Init(1.0, 0.1, 4.0);
+    this->Register(&m_slurMargin, "slurMargin", &m_generalLayout);
+
+    m_slurMaxSlope.SetInfo("Slur max slope", "The maximum slur slope in degrees");
+    m_slurMaxSlope.Init(60, 30, 85);
+    this->Register(&m_slurMaxSlope, "slurMaxSlope", &m_generalLayout);
 
     m_slurMidpointThickness.SetInfo("Slur midpoint thickness", "The midpoint slur thickness in MEI units");
     m_slurMidpointThickness.Init(0.6, 0.2, 1.2);
     this->Register(&m_slurMidpointThickness, "slurMidpointThickness", &m_generalLayout);
+
+    m_slurSymmetry.SetInfo("Slur symmetry", "Slur symmetry - high value means more symmetric slurs");
+    m_slurSymmetry.Init(0.0, 0.0, 1.0);
+    this->Register(&m_slurSymmetry, "slurSymmetry", &m_generalLayout);
 
     m_spacingBraceGroup.SetInfo(
         "Spacing brace group", "Minimum space between staves inside a braced group in MEI units");
@@ -1279,10 +1492,10 @@ Options::Options()
     this->Register(&m_spacingStaff, "spacingStaff", &m_generalLayout);
 
     m_spacingSystem.SetInfo("Spacing system", "The system minimal spacing in MEI units");
-    m_spacingSystem.Init(12, 0, 48);
+    m_spacingSystem.Init(4, 0, 48);
     this->Register(&m_spacingSystem, "spacingSystem", &m_generalLayout);
 
-    m_staffLineWidth.SetInfo("Staff line width", "The staff line width in unit");
+    m_staffLineWidth.SetInfo("Staff line width", "The staff line width in MEI units");
     m_staffLineWidth.Init(0.15, 0.10, 0.30);
     this->Register(&m_staffLineWidth, "staffLineWidth", &m_generalLayout);
 
@@ -1298,7 +1511,7 @@ Options::Options()
     m_systemDivider.Init(SYSTEMDIVIDER_auto, &Option::s_systemDivider);
     this->Register(&m_systemDivider, "systemDivider", &m_generalLayout);
 
-    m_systemMaxPerPage.SetInfo("Max. System per Page", "Maximun number of systems per page");
+    m_systemMaxPerPage.SetInfo("Max. System per Page", "Maximum number of systems per page");
     m_systemMaxPerPage.Init(0, 0, 24);
     this->Register(&m_systemMaxPerPage, "systemMaxPerPage", &m_generalLayout);
 
@@ -1318,6 +1531,14 @@ Options::Options()
     m_tieMidpointThickness.Init(0.5, 0.2, 1.0);
     this->Register(&m_tieMidpointThickness, "tieMidpointThickness", &m_generalLayout);
 
+    m_tieMinLength.SetInfo("Tie minimum length", "The minimum length of tie in MEI units");
+    m_tieMinLength.Init(2.0, 0.0, 10.0);
+    this->Register(&m_tieMinLength, "tieMinLength", &m_generalLayout);
+
+    m_tupletAngledOnBeams.SetInfo("Tuplet angled on beams", "Tuplet brackets angled on beams only");
+    m_tupletAngledOnBeams.Init(false);
+    this->Register(&m_tupletAngledOnBeams, "tupletAngledOnBeams", &m_generalLayout);
+
     m_tupletBracketThickness.SetInfo("Tuplet bracket thickness", "The thickness of the tuplet bracket");
     m_tupletBracketThickness.Init(0.2, 0.1, 0.8);
     this->Register(&m_tupletBracketThickness, "tupletBracketThickness", &m_generalLayout);
@@ -1329,6 +1550,7 @@ Options::Options()
     /********* selectors *********/
 
     m_selectors.SetLabel("Element selectors and processing", "3-selectors");
+    m_selectors.SetCategory(OptionsCategory::Selectors);
     m_grps.push_back(&m_selectors);
 
     m_appXPathQuery.SetInfo("App xPath query",
@@ -1344,6 +1566,15 @@ Options::Options()
     m_choiceXPathQuery.Init();
     this->Register(&m_choiceXPathQuery, "choiceXPathQuery", &m_selectors);
 
+    m_loadSelectedMdivOnly.SetInfo(
+        "Load selected Mdiv only", "Load only the selected mdiv; the content of the other is skipped");
+    m_loadSelectedMdivOnly.Init(false);
+    this->Register(&m_loadSelectedMdivOnly, "loadSelectedMdivOnly", &m_selectors);
+
+    m_mdivAll.SetInfo("Mdiv all", "Load and render all <mdiv> elements in the MEI files");
+    m_mdivAll.Init(false);
+    this->Register(&m_mdivAll, "mdivAll", &m_selectors);
+
     m_mdivXPathQuery.SetInfo("Mdiv xPath query",
         "Set the xPath query for selecting the <mdiv> to be rendered; only one <mdiv> can be rendered");
     m_mdivXPathQuery.Init("");
@@ -1355,18 +1586,29 @@ Options::Options()
     m_substXPathQuery.Init();
     this->Register(&m_substXPathQuery, "substXPathQuery", &m_selectors);
 
-    m_transpose.SetInfo("Transpose the content", "SUMMARY");
+    m_transpose.SetInfo("Transpose the content", "Transpose the entire content");
     m_transpose.Init("");
     this->Register(&m_transpose, "transpose", &m_selectors);
+
+    m_transposeMdiv.SetInfo(
+        "Transpose individual mdivs", "Json mapping the mdiv ids to the corresponding transposition");
+    m_transposeMdiv.Init(JsonSource::String, "{}");
+    this->Register(&m_transposeMdiv, "transposeMdiv", &m_selectors);
 
     m_transposeSelectedOnly.SetInfo(
         "Transpose selected only", "Transpose only the selected content and ignore unselected editorial content");
     m_transposeSelectedOnly.Init(false);
     this->Register(&m_transposeSelectedOnly, "transposeSelectedOnly", &m_selectors);
 
+    m_transposeToSoundingPitch.SetInfo(
+        "Transpose to sounding pitch", "Transpose to sounding pitch by evaluating @trans.semi");
+    m_transposeToSoundingPitch.Init(false);
+    this->Register(&m_transposeToSoundingPitch, "transposeToSoundingPitch", &m_selectors);
+
     /********* The layout margins by element *********/
 
     m_elementMargins.SetLabel("Element margins", "4-elementMargins");
+    m_elementMargins.SetCategory(OptionsCategory::Margins);
     m_grps.push_back(&m_elementMargins);
 
     m_defaultBottomMargin.SetInfo("Default bottom margin", "The default bottom margin");
@@ -1395,8 +1637,12 @@ Options::Options()
     m_bottomMarginHarm.Init(1.0, 0.0, 10.0);
     this->Register(&m_bottomMarginHarm, "bottomMarginHarm", &m_elementMargins);
 
+    m_bottomMarginOctave.SetInfo("Bottom margin octave", "The margin for octave in MEI units");
+    m_bottomMarginOctave.Init(1.0, 0.0, 10.0);
+    this->Register(&m_bottomMarginOctave, "bottomMarginOctave", &m_elementMargins);
+
     m_bottomMarginPgHead.SetInfo("Bottom margin header", "The margin for header in MEI units");
-    m_bottomMarginPgHead.Init(8.0, 0.0, 24.0);
+    m_bottomMarginPgHead.Init(2.0, 0.0, 24.0);
     this->Register(&m_bottomMarginPgHead, "bottomMarginHeader", &m_elementMargins);
 
     /// custom left
@@ -1472,7 +1718,7 @@ Options::Options()
     /// custom right
 
     m_rightMarginAccid.SetInfo("Right margin accid", "The right margin for accid in MEI units");
-    m_rightMarginAccid.Init(0.0, 0.0, 2.0);
+    m_rightMarginAccid.Init(0.5, 0.0, 2.0);
     this->Register(&m_rightMarginAccid, "rightMarginAccid", &m_elementMargins);
 
     m_rightMarginBarLine.SetInfo("Right margin barLine", "The right margin for barLine in MEI units");
@@ -1549,6 +1795,48 @@ Options::Options()
     m_topMarginHarm.Init(1.0, 0.0, 10.0);
     this->Register(&m_topMarginHarm, "topMarginHarm", &m_elementMargins);
 
+    m_topMarginPgFooter.SetInfo("Top margin footer", "The margin for footer in MEI units");
+    m_topMarginPgFooter.Init(2.0, 0.0, 24.0);
+    this->Register(&m_topMarginPgFooter, "topMarginPgFooter", &m_elementMargins);
+
+    /********* MIDI *********/
+
+    m_midi.SetLabel("Midi options", "5-midi");
+    m_midi.SetCategory(OptionsCategory::Midi);
+    m_grps.push_back(&m_midi);
+
+    m_midiNoCue.SetInfo("MIDI playback of cue notes", "Skip cue notes in MIDI output");
+    m_midiNoCue.Init(false);
+    this->Register(&m_midiNoCue, "midiNoCue", &m_midi);
+
+    m_midiTempoAdjustment.SetInfo("MIDI tempo adjustment", "The MIDI tempo adjustment factor");
+    m_midiTempoAdjustment.Init(1.0, 0.2, 4.0);
+    this->Register(&m_midiTempoAdjustment, "midiTempoAdjustment", &m_midi);
+
+    /********* Mensural *********/
+
+    m_mensural.SetLabel("Mensural notation options", "6-mensural");
+    m_mensural.SetCategory(OptionsCategory::Mensural);
+    m_grps.push_back(&m_mensural);
+
+    m_ligatureAsBracket.SetInfo("Ligature as bracket", "Render ligatures as bracket instead of original notation");
+    m_ligatureAsBracket.Init(false);
+    this->Register(&m_ligatureAsBracket, "ligatureAsBracket", &m_mensural);
+
+    m_mensuralToMeasure.SetInfo("Mensural to measure", "Convert mensural sections to measure-based MEI");
+    m_mensuralToMeasure.Init(false);
+    this->Register(&m_mensuralToMeasure, "mensuralToMeasure", &m_mensural);
+
+    /********* Method JSON options to the command-line *********/
+
+    m_jsonCmdLineOptions.SetLabel("Method JSON options for the command-line", "7-methodJson");
+    m_jsonCmdLineOptions.SetCategory(OptionsCategory::Json);
+    m_grps.push_back(&m_jsonCmdLineOptions);
+
+    m_timemapOptions.SetInfo("Timemap options", "The JSON options to be passed when producing the timemap");
+    m_timemapOptions.Init("{}");
+    this->Register(&m_timemapOptions, "timemapOptions", &m_jsonCmdLineOptions);
+
     /********* Deprecated options *********/
 
     /*
@@ -1605,7 +1893,8 @@ void Options::Sync()
 
     // We track all unmatched keys to generate appropriate errors later on
     std::set<std::string> unmatchedKeys = m_engravingDefaults.GetKeys();
-    std::set<std::string> otherKeys = m_engravingDefaultsFile.GetKeys();
+    std::list<std::string> engravingDefaultsPath;
+    std::set<std::string> otherKeys = m_engravingDefaultsFile.GetKeysByNode("engravingDefaults", engravingDefaultsPath);
     std::set_union(unmatchedKeys.begin(), unmatchedKeys.end(), otherKeys.begin(), otherKeys.end(),
         std::inserter(unmatchedKeys, unmatchedKeys.end()));
 
@@ -1623,6 +1912,8 @@ void Options::Sync()
         { "thickBarlineThickness", &m_thickBarlineThickness }, //
         { "barlineSeparation", &m_barLineSeparation }, //
         { "repeatBarlineDotSeparation", &m_repeatBarLineDotSeparation }, //
+        { "dashedBarlineDashLength", &m_dashedBarLineDashLength }, //
+        { "dashedBarlineGapLength", &m_dashedBarLineGapLength }, //
         { "bracketThickness", &m_bracketThickness }, //
         { "subBracketThickness", &m_subBracketThickness }, //
         { "hairpinThickness", &m_hairpinThickness }, //
@@ -1631,20 +1922,24 @@ void Options::Sync()
         { "repeatEndingLineThickness", &m_repeatEndingLineThickness }, //
         { "lyricLineThickness", &m_lyricLineThickness }, //
         { "tupletBracketThickness", &m_tupletBracketThickness }, //
-        { "textEnclosureThickness", &m_textEnclosureThickness } //
+        { "textEnclosureThickness", &m_textEnclosureThickness }, //
+        { "hBarThickness", &m_multiRestThickness } //
     };
 
     for (const auto &pair : engravingDefaults) {
-        const std::vector<std::string> jsonNodePath = { pair.first };
+        std::vector<std::string> jsonNodePath = { engravingDefaultsPath.begin(), engravingDefaultsPath.end() };
+        jsonNodePath.emplace_back(pair.first);
+
         double jsonValue = 0.0;
         if (m_engravingDefaultsFile.HasValue(jsonNodePath)) {
-            jsonValue = m_engravingDefaultsFile.GetDoubleValue(jsonNodePath);
+            jsonValue = m_engravingDefaultsFile.GetDblValue(jsonNodePath);
         }
-        else if (m_engravingDefaults.HasValue(jsonNodePath)) {
-            jsonValue = m_engravingDefaults.GetDoubleValue(jsonNodePath);
+        else if (m_engravingDefaults.HasValue({ pair.first })) {
+            jsonValue = m_engravingDefaults.GetDblValue({ pair.first });
         }
-        else
+        else {
             continue;
+        }
 
         if (!pair.second->IsSet()) {
             pair.second->SetValueDbl(jsonValue * 2.0); // convert from staff spaces to MEI units
@@ -1678,7 +1973,7 @@ jsonxx::Object Options::GetBaseOptGrp()
     grpBase << "name" << m_baseOptions.GetLabel();
 
     const std::vector<Option *> *options = this->GetBaseOptions();
-    for (auto const &option : *options) {
+    for (Option *option : *options) {
         baseOpts << option->GetKey() << option->ToJson();
     }
 
@@ -1687,7 +1982,7 @@ jsonxx::Object Options::GetBaseOptGrp()
     return grpBase;
 }
 
-const std::vector<Option *> *Options::GetBaseOptions()
+const std::vector<Option *> *Options::GetBaseOptions() const
 {
     return m_baseOptions.GetOptions();
 }

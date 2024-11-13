@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -17,7 +17,6 @@
 #include "devicecontext.h"
 #include "doc.h"
 #include "elementpart.h"
-#include "note.h"
 #include "options.h"
 #include "smufl.h"
 #include "staff.h"
@@ -65,10 +64,10 @@ void View::DrawTuplet(DeviceContext *dc, LayerElement *element, Layer *layer, St
         tuplet->CalcDrawingBracketAndNumPos(m_doc->GetOptions()->m_tupletNumHead.GetValue());
     }
 
-    dc->StartGraphic(element, "", element->GetUuid());
+    dc->StartGraphic(element, "", element->GetID());
 
     // Draw the inner elements
-    DrawLayerChildren(dc, tuplet, layer, staff, measure);
+    this->DrawLayerChildren(dc, tuplet, layer, staff, measure);
 
     dc->EndGraphic(element, this);
 }
@@ -97,44 +96,54 @@ void View::DrawTupletBracket(DeviceContext *dc, LayerElement *element, Layer *la
         return;
     }
 
-    data_STAFFREL_basic position = tuplet->GetDrawingBracketPos();
+    dc->ResumeGraphic(tupletBracket, tupletBracket->GetID());
+
+    const int unit = m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
     const int lineWidth
         = m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * m_options->m_tupletBracketThickness.GetValue();
+    const int xLeft = tupletBracket->GetDrawingXLeft() + lineWidth / 2;
+    const int xRight = tupletBracket->GetDrawingXRight() - lineWidth / 2;
+    const int yLeft = tupletBracket->GetDrawingYLeft();
+    const int yRight = tupletBracket->GetDrawingYRight();
+    int bracketHeight = (tuplet->GetDrawingBracketPos() == STAFFREL_basic_above) ? -1 : 1;
 
-    dc->ResumeGraphic(tupletBracket, tupletBracket->GetUuid());
-
-    const int xLeft = tuplet->GetDrawingLeft()->GetDrawingX() + tupletBracket->GetDrawingXRelLeft();
-    const int xRight = tuplet->GetDrawingRight()->GetDrawingX() + tupletBracket->GetDrawingXRelRight();
-    const int yLeft = tupletBracket->GetDrawingYLeft() - lineWidth / 2;
-    const int yRight = tupletBracket->GetDrawingYRight() - lineWidth / 2;
-    int bracketHeight;
+    dc->SetPen(m_currentColor, lineWidth, AxSOLID, 0, 0, AxCAP_BUTT, AxJOIN_MITER);
 
     // Draw a bracket with a gap
     if (tupletBracket->GetAlignedNum() && tupletBracket->GetAlignedNum()->HasSelfBB()) {
-        const int xNumLeft
-            = tupletBracket->GetAlignedNum()->GetSelfLeft() - m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-        const int xNumRight
-            = tupletBracket->GetAlignedNum()->GetSelfRight() + m_doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
+        const int xNumLeft = tupletBracket->GetAlignedNum()->GetSelfLeft() - unit / 2;
+        const int xNumRight = tupletBracket->GetAlignedNum()->GetSelfRight() + unit / 2;
         const double slope = (double)(yRight - yLeft) / (double)(xRight - xLeft);
         const int yNumLeft = yLeft + slope * (xNumLeft - xLeft);
-        DrawObliquePolygon(dc, xLeft, yLeft, xNumLeft, yNumLeft, lineWidth);
         const int yNumRight = yRight - slope * (xRight - xNumRight);
-        DrawObliquePolygon(dc, xNumRight, yNumRight, xRight, yRight, lineWidth);
         bracketHeight
-            = abs(tupletBracket->GetAlignedNum()->GetSelfTop() - tupletBracket->GetAlignedNum()->GetSelfBottom()) / 2;
+            *= abs(tupletBracket->GetAlignedNum()->GetSelfTop() - tupletBracket->GetAlignedNum()->GetSelfBottom()) / 2;
+
+        Point bracketLeft[3];
+        bracketLeft[0] = { ToDeviceContextX(xLeft), ToDeviceContextY(yLeft + bracketHeight) };
+        bracketLeft[1] = { ToDeviceContextX(xLeft), ToDeviceContextY(yLeft) };
+        bracketLeft[2] = { ToDeviceContextX(xNumLeft), ToDeviceContextY(yNumLeft) };
+        Point bracketRight[3];
+        bracketRight[0] = { ToDeviceContextX(xRight), ToDeviceContextY(yRight + bracketHeight) };
+        bracketRight[1] = { ToDeviceContextX(xRight), ToDeviceContextY(yRight) };
+        bracketRight[2] = { ToDeviceContextX(xNumRight), ToDeviceContextY(yNumRight) };
+
+        dc->DrawPolyline(3, bracketLeft);
+        dc->DrawPolyline(3, bracketRight);
     }
     else {
-        DrawObliquePolygon(dc, xLeft, yLeft, xRight, yRight, lineWidth);
-        // HARDCODED
-        bracketHeight = m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 6 / 5;
+        bracketHeight *= unit + lineWidth;
+
+        Point bracket[4];
+        bracket[0] = { ToDeviceContextX(xLeft), ToDeviceContextY(yLeft + bracketHeight) };
+        bracket[1] = { ToDeviceContextX(xLeft), ToDeviceContextY(yLeft) };
+        bracket[2] = { ToDeviceContextX(xRight), ToDeviceContextY(yRight) };
+        bracket[3] = { ToDeviceContextX(xRight), ToDeviceContextY(yRight + bracketHeight) };
+
+        dc->DrawPolyline(4, bracket);
     }
 
-    if (position == STAFFREL_basic_above) {
-        bracketHeight *= -1;
-    }
-
-    DrawFilledRectangle(dc, xLeft, yLeft, xLeft + lineWidth, yLeft + bracketHeight);
-    DrawFilledRectangle(dc, xRight, yRight, xRight - lineWidth, yRight + bracketHeight);
+    dc->ResetPen();
 
     dc->EndResumedGraphic(tupletBracket, this);
 
@@ -166,10 +175,11 @@ void View::DrawTupletNum(DeviceContext *dc, LayerElement *element, Layer *layer,
     }
 
     TextExtend extend;
-    std::wstring notes;
+    std::u32string notes;
 
     const bool drawingCueSize = tuplet->GetDrawingCueSize();
-    dc->SetFont(m_doc->GetDrawingSmuflFont(staff->m_drawingStaffSize, drawingCueSize));
+    const int glyphSize = staff->GetDrawingStaffNotationSize();
+    dc->SetFont(m_doc->GetDrawingSmuflFont(glyphSize, drawingCueSize));
     notes = IntToTupletFigures((short int)tuplet->GetNum());
     if (tuplet->GetNumFormat() == tupletVis_NUMFORMAT_ratio) {
         notes.push_back(SMUFL_E88A_tupletColon);
@@ -183,11 +193,11 @@ void View::DrawTupletNum(DeviceContext *dc, LayerElement *element, Layer *layer,
 
     int y = tupletNum->GetDrawingYMid();
     // adjust the baseline (to be improved with slanted brackets
-    y -= m_doc->GetGlyphHeight(notes.back(), staff->m_drawingStaffSize, drawingCueSize) / 2;
+    y -= m_doc->GetGlyphHeight(notes.back(), glyphSize, drawingCueSize) / 2;
 
-    dc->ResumeGraphic(tupletNum, tupletNum->GetUuid());
+    dc->ResumeGraphic(tupletNum, tupletNum->GetID());
 
-    DrawSmuflString(dc, x, y, notes, HORIZONTALALIGNMENT_left, staff->m_drawingStaffSize, drawingCueSize);
+    this->DrawSmuflString(dc, x, y, notes, HORIZONTALALIGNMENT_left, glyphSize, drawingCueSize);
 
     dc->EndResumedGraphic(tupletNum, this);
 

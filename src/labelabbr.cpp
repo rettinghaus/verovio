@@ -9,11 +9,12 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "editorial.h"
+#include "functor.h"
 #include "text.h"
 #include "vrv.h"
 
@@ -25,9 +26,9 @@ namespace vrv {
 
 static const ClassRegistrar<LabelAbbr> s_factory("labelAbbr", LABELABBR);
 
-LabelAbbr::LabelAbbr() : Object("labelAbbr-"), TextListInterface()
+LabelAbbr::LabelAbbr() : Object(LABELABBR, "labelAbbr-"), TextListInterface()
 {
-    Reset();
+    this->Reset();
 }
 
 LabelAbbr::~LabelAbbr() {}
@@ -54,5 +55,25 @@ bool LabelAbbr::IsSupportedChild(Object *child)
 //----------------------------------------------------------------------------
 // Functor methods
 //----------------------------------------------------------------------------
+
+FunctorCode LabelAbbr::Accept(Functor &functor)
+{
+    return functor.VisitLabelAbbr(this);
+}
+
+FunctorCode LabelAbbr::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitLabelAbbr(this);
+}
+
+FunctorCode LabelAbbr::AcceptEnd(Functor &functor)
+{
+    return functor.VisitLabelAbbrEnd(this);
+}
+
+FunctorCode LabelAbbr::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitLabelAbbrEnd(this);
+}
 
 } // namespace vrv

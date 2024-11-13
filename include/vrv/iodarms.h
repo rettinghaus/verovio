@@ -11,7 +11,7 @@
 //----------------------------------------------------------------------------
 
 #include "attdef.h"
-#include "io.h"
+#include "iobase.h"
 
 namespace vrv {
 
@@ -40,7 +40,7 @@ public:
     DarmsInput(Doc *doc);
     virtual ~DarmsInput();
 
-    virtual bool Import(const std::string &data);
+    bool Import(const std::string &data) override;
 
 private:
     int do_Note(int pos, const char *data, bool rest);

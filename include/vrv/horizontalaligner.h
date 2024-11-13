@@ -9,7 +9,9 @@
 #define __VRV_HORIZONTAL_ALIGNER_H__
 
 #include "atts_shared.h"
+#include "fraction.h"
 #include "object.h"
+#include "vrv.h"
 
 namespace vrv {
 
@@ -41,10 +43,13 @@ enum AlignmentType {
     ALIGNMENT_KEYSIG,
     ALIGNMENT_MENSUR,
     ALIGNMENT_METERSIG,
+    ALIGNMENT_PROPORT,
     ALIGNMENT_DOT,
+    ALIGNMENT_CUSTOS,
     ALIGNMENT_ACCID,
     ALIGNMENT_GRACENOTE,
     ALIGNMENT_BARLINE,
+    ALIGNMENT_DIVLINE,
     ALIGNMENT_DEFAULT,
     // Non-justifiable
     ALIGNMENT_MEASURE_RIGHT_BARLINE,
@@ -73,10 +78,9 @@ public:
      */
     ///@{
     Alignment();
-    Alignment(double time, AlignmentType type = ALIGNMENT_DEFAULT);
+    Alignment(const Fraction &time, AlignmentType type = ALIGNMENT_DEFAULT);
     virtual ~Alignment();
-    virtual void Reset();
-    virtual ClassId GetClassId() const { return ALIGNMENT; }
+    void Reset() override;
     ///@}
 
     /**
@@ -87,7 +91,7 @@ public:
     /**
      * Override the method of adding AlignmentReference children
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * @name Set and get the xRel value of the alignment
@@ -101,8 +105,8 @@ public:
      * @name Set and get the time value of the alignment
      */
     ///@{
-    void SetTime(double time) { m_time = time; }
-    double GetTime() const { return m_time; }
+    void SetTime(const Fraction &time) { m_time = time; }
+    Fraction GetTime() const { return m_time; }
     ///@}
 
     /**
@@ -126,13 +130,18 @@ public:
     bool IsOfType(const std::vector<AlignmentType> &types) const;
 
     /**
-     * Retrive the minimum left and maximum right position for the objects in an alignment.
-     * Returns (-)VRV_UNSET in nothing for the staff specified.
-     * Uses Object::GetAlignmentLeftRight
+     * Retrieve the minimum left and maximum right position for the objects in an alignment.
+     * Returns (-)VRV_UNSET if there is nothing for the staff specified.
+     * Internally uses GetAlignmentLeftRightFunctor
      */
     void GetLeftRight(
-        const std::vector<int> &staffNs, int &minLeft, int &maxRight, const std::vector<ClassId> &m_excludes = {});
-    void GetLeftRight(int staffN, int &minLeft, int &maxRight, const std::vector<ClassId> &m_excludes = {});
+        const std::vector<int> &staffNs, int &minLeft, int &maxRight, const std::vector<ClassId> &excludes = {}) const;
+    void GetLeftRight(int staffN, int &minLeft, int &maxRight, const std::vector<ClassId> &excludes = {}) const;
+
+    /**
+     * Return all GraceAligners for the Alignment.
+     */
+    const MapOfIntGraceAligners &GetGraceAligners() { return m_graceAligners; }
 
     /**
      * Returns the GraceAligner for the Alignment.
@@ -148,24 +157,48 @@ public:
     /**
      * Returns true for Alignment for which we want to do bounding box alignment
      */
-    bool PerfomBoundingBoxAlignment() const;
+    bool PerformBoundingBoxAlignment() const;
 
     /**
      * Return the AlignmentReference holding the element.
      * If staffN is provided, uses the AlignmentReference->GetN() to accelerate the search.
      */
-    AlignmentReference *GetReferenceWithElement(LayerElement *element, int staffN = VRV_UNSET);
+    ///@{
+    AlignmentReference *GetReferenceWithElement(const LayerElement *element, int staffN = VRV_UNSET);
+    const AlignmentReference *GetReferenceWithElement(const LayerElement *element, int staffN = VRV_UNSET) const;
+    ///@}
 
     /**
      * Return pair of max and min Y value within alignment. Elements will be counted by alignment references.
      */
-    std::pair<int, int> GetAlignmentTopBottom();
+    std::pair<int, int> GetAlignmentTopBottom() const;
 
     /**
-     * Add an accidental to the accidSpace of the AlignmentReference holding it.
-     * The Alignment has to have a AlignmentReference holding it.
+     * Return true if there is vertical overlap with accidentals from another alignment for specific staffN
      */
-    void AddToAccidSpace(Accid *accid);
+    bool HasAccidVerticalOverlap(const Alignment *otherAlignment, int staffN) const;
+
+    /**
+     * Return true if the alignment contains at least one reference with staffN
+     */
+    bool HasAlignmentReference(int staffN) const;
+
+    /**
+     * Return true if the alignment contains only references to timestamp attributes.
+     */
+    bool HasTimestampOnly() const;
+
+    /**
+     * Debug message
+     */
+    std::string LogDebugTreeMsg() override
+    {
+        return StringFormat("%d %s", this->GetXRel(), this->GetTime().ToString().c_str());
+    }
+
+    //----------------//
+    // Static methods //
+    //----------------//
 
     /**
      * Compute "ideal" horizontal space to allow for a given time interval, ignoring the need
@@ -182,65 +215,22 @@ public:
      * flexible solution might be to get ideal spacing from a user-definable table, but using a
      * formula with parameters can come close and has other advantages.
      */
-    virtual int HorizontalSpaceForDuration(
-        double intervalTime, int maxActualDur, double spacingLinear, double spacingNonLinear);
-
-    /**
-     * Return true if the alignment contains at least one reference with staffN
-     */
-    bool HasAlignmentReference(int staffN);
-
-    /**
-     * Return true if the alignment contains only references to timestamp attributes.
-     */
-    bool HasTimestampOnly();
+    static int HorizontalSpaceForDuration(
+        const Fraction &intervalTime, data_DURATION maxActualDur, double spacingLinear, double spacingNonLinear);
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * Set the position of the Alignment.
-     * Looks at the time different with the previous Alignment.
-     */
-    virtual int SetAlignmentXPos(FunctorParams *functorParams);
-
-    /**
-     * Justify the X positions
-     * Special case of functor redirected from Measure.
-     */
-    virtual int JustifyX(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustArpeg
-     */
-    virtual int AdjustArpeg(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustGraceXPos
+     * Interface for class functor visitation
      */
     ///@{
-    virtual int AdjustGraceXPos(FunctorParams *functorParams);
-    virtual int AdjustGraceXPosEnd(FunctorParams *functorParams);
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
-
-    /**
-     * See Object::AdjustXPos
-     */
-    ///@{
-    virtual int AdjustXPos(FunctorParams *functorParams);
-    virtual int AdjustXPosEnd(FunctorParams *functorParams);
-    ///@}
-
-    /**
-     * See Object::AjustAccidX
-     */
-    virtual int AdjustAccidX(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustDotsEnd
-     */
-    virtual int AdjustDotsEnd(FunctorParams *);
 
 private:
     /**
@@ -254,16 +244,16 @@ public:
 private:
     /**
      * Stores the position relative to the measure.
-     * This is instanciated by the Object::SetAlignmentXPos functor.
+     * This is instanciated by the CalcAlignmentXPosFunctor.
      * It takes into account a non-linear according to the time interval with
      * the previous Alignement
      */
     int m_xRel;
     /**
      * Stores the time at which the alignment occur.
-     * It is set by Object::AlignHorizontally.
+     * It is set by the AlignHorizontallyFunctor.
      */
-    double m_time;
+    Fraction m_time;
     /**
      * Defines the type of alignment (see the AlignmentType enum).
      * We have different types because we want some events occuring at the same
@@ -299,29 +289,23 @@ public:
     AlignmentReference();
     AlignmentReference(int staffN);
     virtual ~AlignmentReference();
-    virtual void Reset();
-    virtual ClassId GetClassId() const { return ALIGNMENT_REFERENCE; }
+    void Reset() override;
     ///@}
 
     /**
-     * Override the method of adding AlignmentReference children
+     * Override the method of adding Alignment children
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Overwritten method for AlignmentReference children
      */
-    virtual void AddChild(Object *object);
+    void AddChild(Object *object) override;
 
     /**
-     * Add an accidental to the accidSpace of the AlignmentReference.
+     * Return true if one of objects overlaps with accidentals from current reference (i.e. if there are accidentals)
      */
-    void AddToAccidSpace(Accid *accid);
-
-    /**
-     * See Object::AjustAccidX
-     */
-    void AdjustAccidWithAccidSpace(Accid *accid, Doc *doc, int staffSize);
+    bool HasAccidVerticalOverlap(const ArrayOfConstObjects &objects) const;
 
     /**
      * Return true if the reference has elements from multiple layers.
@@ -331,43 +315,27 @@ public:
     /**
      * Return true if the reference has elements from cross-staff.
      */
-    bool HasCrossStaffElements();
+    bool HasCrossStaffElements() const;
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::AdjustLayers
+     * Interface for class functor visitation
      */
-    virtual int AdjustLayers(FunctorParams *functorParams);
-    virtual int AdjustLayersEnd(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustGraceXPos
-     */
-    virtual int AdjustGraceXPos(FunctorParams *functorParams);
-
-    /**
-     * See Object::AjustAccidX
-     */
-    virtual int AdjustAccidX(FunctorParams *functorParams);
-
-    /**
-     * See Object::UnscoreDefSetCurrent
-     */
-    virtual int ScoreDefUnsetCurrent(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //
 public:
     //
 private:
-    /**
-     * The accid space of the AlignmentReference.
-     */
-    std::vector<Accid *> m_accidSpace;
-
     /**
      *
      */
@@ -390,28 +358,41 @@ public:
      * Reset method resets all attribute classes
      */
     ///@(
-    HorizontalAligner();
+    HorizontalAligner(ClassId classId);
     virtual ~HorizontalAligner();
-    virtual void Reset();
+    void Reset() override;
     ///@}
 
     /**
      * Do not copy children for HorizontalAligner
      */
-    virtual bool CopyChildren() const { return false; }
+    bool CopyChildren() const override { return false; }
 
-    int GetAlignmentCount() const { return (int)GetChildren()->size(); }
+    int GetAlignmentCount() const { return this->GetChildCount(); }
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     /**
      * Search if an alignment of the type is already there at the time.
      * If not, return in idx the position where it needs to be inserted (-1 if it is the end)
      */
-    Alignment *SearchAlignmentAtTime(double time, AlignmentType type, int &idx);
+    ///@{
+    Alignment *SearchAlignmentAtTime(const Fraction &time, AlignmentType type, int &idx);
+    const Alignment *SearchAlignmentAtTime(const Fraction &time, AlignmentType type, int &idx) const;
+    ///@}
 
     /**
      * Add an alignment at the appropriate position (at the end if -1)
@@ -439,31 +420,35 @@ public:
      * @name Constructors, destructors, reset and class name methods
      * Reset method resets all attribute classes
      */
-    ///@(
+    ///@{
     MeasureAligner();
     virtual ~MeasureAligner();
-    virtual ClassId GetClassId() const { return MEASURE_ALIGNER; }
-    virtual void Reset();
+    void Reset() override;
     ///@}
+
+    /**
+     * Override the method of adding AlignmentReference children
+     */
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Retrieve the alignmnet of the type at that time.
      * The alignment object is added if not found.
      * The maximum time position is also adjusted accordingly for end barline positioning
      */
-    Alignment *GetAlignmentAtTime(double time, AlignmentType type);
+    Alignment *GetAlignmentAtTime(const Fraction &time, AlignmentType type);
 
     /**
      * Keep the maximum time of the measure.
      * This corresponds to the whole duration of the measure and
      * should be the same for all staves/layers.
      */
-    void SetMaxTime(double time);
+    void SetMaxTime(const Fraction &time);
 
     /**
      * Return the max time of the measure (i.e., the right measure alignment time)
      */
-    double GetMaxTime() const;
+    Fraction GetMaxTime() const;
 
     /**
      * @name Set and Get the non-justifiable margin (right and left scoreDefs)
@@ -477,30 +462,37 @@ public:
      * Setter takes a meter unit parameter.
      */
     ///@{
-    void SetInitialTstamp(int meterUnit);
-    double GetInitialTstampDur() const { return m_initialTstampDur; }
+    void SetInitialTstamp(data_DURATION meterUnit);
+    Fraction GetInitialTstampDur() const { return m_initialTstampDur; }
     ///@}
 
     /**
      * Get left Alignment for the measure and for the left BarLine.
      * For each MeasureAligner, we keep and Alignment for the left position.
-     * The Alignment time will be always -1.0 * DUR_MAX and will appear first in the list.
+     * The Alignment time will be always -1.0 and will appear first in the list.
      */
-    Alignment *GetLeftAlignment() const { return m_leftAlignment; }
-    Alignment *GetLeftBarLineAlignment() const { return m_leftBarLineAlignment; }
+    ///@{
+    Alignment *GetLeftAlignment() { return m_leftAlignment; }
+    const Alignment *GetLeftAlignment() const { return m_leftAlignment; }
+    Alignment *GetLeftBarLineAlignment() { return m_leftBarLineAlignment; }
+    const Alignment *GetLeftBarLineAlignment() const { return m_leftBarLineAlignment; }
+    ///@}
 
     /**
      * Get right Alignment for the measure.
      * For each MeasureAligner, we keep and Alignment for the right position.
      * The Alignment time will be increased whenever necessary when values are added.
      */
-    Alignment *GetRightAlignment() const { return m_rightAlignment; }
-    Alignment *GetRightBarLineAlignment() const { return m_rightBarLineAlignment; }
+    ///@{
+    Alignment *GetRightAlignment() { return m_rightAlignment; }
+    const Alignment *GetRightAlignment() const { return m_rightAlignment; }
+    Alignment *GetRightBarLineAlignment() { return m_rightBarLineAlignment; }
+    const Alignment *GetRightBarLineAlignment() const { return m_rightBarLineAlignment; }
+    ///@}
 
     /**
      * Adjust the spacing of the measure looking at each tuple of start / end alignment and a distance.
      * The distance is an expansion value (positive) of compression (negative).
-     * Called from Measure::AdjustSylSpacingEnd.
      */
     void AdjustProportionally(const ArrayOfAdjustmentTuples &adjustments);
 
@@ -514,24 +506,21 @@ public:
      * Adjust the spacing for the grace note group(s) of the alignment on staffN
      * The alignment need to be of ALIGNMENT_GRACENOTE type
      */
-    void AdjustGraceNoteSpacing(Doc *doc, Alignment *alignment, int staffN);
+    void AdjustGraceNoteSpacing(const Doc *doc, Alignment *alignment, int staffN);
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * Set the position of the Alignment.
-     * Looks at the time different with the previous Alignment.
-     * For each MeasureAlignment, we need to reset the previous time position.
+     * Interface for class functor visitation
      */
-    virtual int SetAlignmentXPos(FunctorParams *functorParams);
-
-    /**
-     * Justify the X positions
-     * Special case of functor redirected from Measure.
-     */
-    virtual int JustifyX(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //
@@ -559,7 +548,7 @@ private:
      * The time duration of the timestamp between 0.0 and 1.0.
      * This depends on the meter signature in the preceeding scoreDef
      */
-    double m_initialTstampDur;
+    Fraction m_initialTstampDur;
 };
 
 //----------------------------------------------------------------------------
@@ -579,15 +568,14 @@ public:
     ///@(
     GraceAligner();
     virtual ~GraceAligner();
-    virtual ClassId GetClassId() const { return GRACE_ALIGNER; }
-    virtual void Reset();
+    void Reset() override;
     ///@}
 
     /**
      * Retrieve the alignmnet of the type at that time.
      * The alignment object is added if not found.
      */
-    Alignment *GetAlignmentAtTime(double time, AlignmentType type);
+    Alignment *GetAlignmentAtTime(const Fraction &time, AlignmentType type);
 
     /**
      * Because the grace notes appear from left to right but need to be aligned
@@ -615,19 +603,29 @@ public:
      * Setting staffN as VRV_UNSET will look for and align all staves.
      */
     ///@{
-    int GetGraceGroupLeft(int staffN);
-    int GetGraceGroupRight(int staffN);
+    int GetGraceGroupLeft(int staffN) const;
+    int GetGraceGroupRight(int staffN) const;
     ///@{
 
     /**
      * Set an linear defaut position for each grace note
-     * This is called from the SetAlignmentXPos Functor.
+     * This is called from the CalcAlignmentXPosFunctor.
      */
-    void SetGraceAligmentXPos(Doc *doc);
+    void SetGraceAlignmentXPos(const Doc *doc);
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //
@@ -660,18 +658,36 @@ public:
     // constructors and destructors
     TimestampAligner();
     virtual ~TimestampAligner();
-    virtual ClassId GetClassId() const { return TIMESTAMP_ALIGNER; }
 
     /**
      * Reset the aligner (clear the content)
      */
-    virtual void Reset();
+    void Reset() override;
+
+    /**
+     * Override the method of adding TimestampAttr children
+     */
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Look for an existing TimestampAttr at a certain time.
      * Creates it if not found
      */
     TimestampAttr *GetTimestampAtTime(double time);
+
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //

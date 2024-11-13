@@ -31,29 +31,48 @@ public:
     ///@{
     Fing();
     virtual ~Fing();
-    virtual Object *Clone() const { return new Fing(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Fing"; }
-    virtual ClassId GetClassId() const { return FING; }
+    Object *Clone() const override { return new Fing(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Fing"; }
     ///@}
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual TextDirInterface *GetTextDirInterface() { return dynamic_cast<TextDirInterface *>(this); }
-    virtual TimePointInterface *GetTimePointInterface() { return dynamic_cast<TimePointInterface *>(this); }
+    TextDirInterface *GetTextDirInterface() override { return vrv_cast<TextDirInterface *>(this); }
+    const TextDirInterface *GetTextDirInterface() const override { return vrv_cast<const TextDirInterface *>(this); }
+    TimePointInterface *GetTimePointInterface() override { return vrv_cast<TimePointInterface *>(this); }
+    const TimePointInterface *GetTimePointInterface() const override
+    {
+        return vrv_cast<const TimePointInterface *>(this);
+    }
     ///@}
 
     /**
      * Add an element (text, rend) to a fing.
      * Only supported elements will be actually added to the child list.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
+
+    /**
+     * Check whether the current object must be positioned closer to the staff than the other
+     */
+    bool IsCloserToStaffThan(const FloatingObject *other, data_STAFFREL drawingPlace) const override;
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     //

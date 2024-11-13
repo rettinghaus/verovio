@@ -9,11 +9,12 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "editorial.h"
+#include "functor.h"
 #include "text.h"
 #include "vrv.h"
 
@@ -25,13 +26,36 @@ namespace vrv {
 
 static const ClassRegistrar<Lb> s_factory("lb", LB);
 
-Lb::Lb() : TextElement("lb-")
+Lb::Lb() : TextElement(LB, "lb-")
 {
-    Reset();
+    this->Reset();
 }
 
 Lb::~Lb() {}
 
-void Lb::Reset() {}
+void Lb::Reset()
+{
+    TextElement::Reset();
+}
+
+FunctorCode Lb::Accept(Functor &functor)
+{
+    return functor.VisitLb(this);
+}
+
+FunctorCode Lb::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitLb(this);
+}
+
+FunctorCode Lb::AcceptEnd(Functor &functor)
+{
+    return functor.VisitLbEnd(this);
+}
+
+FunctorCode Lb::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitLbEnd(this);
+}
 
 } // namespace vrv

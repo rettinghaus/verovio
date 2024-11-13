@@ -9,11 +9,12 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "editorial.h"
+#include "functor.h"
 #include "text.h"
 #include "verticalaligner.h"
 #include "vrv.h"
@@ -25,7 +26,7 @@ namespace vrv {
 //----------------------------------------------------------------------------
 
 MNum::MNum()
-    : ControlElement("mnum-")
+    : ControlElement(MNUM, "mnum-")
     , TextListInterface()
     , TextDirInterface()
     , TimePointInterface()
@@ -33,13 +34,13 @@ MNum::MNum()
     , AttLang()
     , AttTypography()
 {
-    RegisterInterface(TextDirInterface::GetAttClasses(), TextDirInterface::IsInterface());
-    RegisterInterface(TimePointInterface::GetAttClasses(), TimePointInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_LANG);
-    RegisterAttClass(ATT_TYPOGRAPHY);
+    this->RegisterInterface(TextDirInterface::GetAttClasses(), TextDirInterface::IsInterface());
+    this->RegisterInterface(TimePointInterface::GetAttClasses(), TimePointInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_LANG);
+    this->RegisterAttClass(ATT_TYPOGRAPHY);
 
-    Reset();
+    this->Reset();
 }
 
 MNum::~MNum() {}
@@ -49,9 +50,9 @@ void MNum::Reset()
     ControlElement::Reset();
     TextDirInterface::Reset();
     TimePointInterface::Reset();
-    ResetColor();
-    ResetLang();
-    ResetTypography();
+    this->ResetColor();
+    this->ResetLang();
+    this->ResetTypography();
 
     m_isGenerated = false;
 }
@@ -76,20 +77,24 @@ bool MNum::IsSupportedChild(Object *child)
 
 static const ClassRegistrar<MNum> s_factory("mNum", MNUM);
 
-int MNum::Save(FunctorParams *functorParams)
+FunctorCode MNum::Accept(Functor &functor)
 {
-    if (this->IsGenerated())
-        return FUNCTOR_SIBLINGS;
-    else
-        return Object::Save(functorParams);
+    return functor.VisitMNum(this);
 }
 
-int MNum::SaveEnd(FunctorParams *functorParams)
+FunctorCode MNum::Accept(ConstFunctor &functor) const
 {
-    if (this->IsGenerated())
-        return FUNCTOR_SIBLINGS;
-    else
-        return Object::SaveEnd(functorParams);
+    return functor.VisitMNum(this);
+}
+
+FunctorCode MNum::AcceptEnd(Functor &functor)
+{
+    return functor.VisitMNumEnd(this);
+}
+
+FunctorCode MNum::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitMNumEnd(this);
 }
 
 } // namespace vrv

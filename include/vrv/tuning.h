@@ -29,21 +29,45 @@ public:
     ///@{
     Tuning();
     virtual ~Tuning();
-    virtual Object *Clone() const { return new Tuning(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Tuning"; };
-    virtual ClassId GetClassId() const { return TUNING; };
+    Object *Clone() const override { return new Tuning(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Tuning"; }
     ///@}
 
     /**
      * Add an element to a element.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Return the line for a the tuning and a given course and a notation type
      */
-    int CalcPitchPos(int course, data_NOTATIONTYPE notationType, int lines);
+    int CalcPitchPos(int course, data_NOTATIONTYPE notationType, int lines) const;
+
+    /**
+     * Calculate the MIDI note number for course/fret
+     *
+     * @param[in] course The course number
+     * @param[in] fret The fret number
+     * @param[in] notationType The notationType used to default tuning if not otherwise specified
+     *
+     * @return MIDI note number
+     */
+    int CalcPitchNumber(int course, int fret, data_NOTATIONTYPE notationType) const;
+
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     //

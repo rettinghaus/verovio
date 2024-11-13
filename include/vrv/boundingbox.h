@@ -16,9 +16,11 @@ namespace vrv {
 
 #define BEZIER_APPROXIMATION 50.0
 
+class BeamDrawingInterface;
 class Doc;
 class FloatingCurvePositioner;
 class Glyph;
+class Resources;
 
 //----------------------------------------------------------------------------
 // BoundingBox
@@ -35,8 +37,8 @@ public:
      */
     ///@{
     BoundingBox();
-    virtual ~BoundingBox(){};
-    virtual ClassId GetClassId() const;
+    virtual ~BoundingBox() {}
+    virtual ClassId GetClassId() const = 0;
     bool Is(ClassId classId) const { return (this->GetClassId() == classId); }
     bool Is(const std::vector<ClassId> &classIds) const;
     ///@}
@@ -64,8 +66,8 @@ public:
      * Set and get the smuflGlyph / fontsize for a bounding box that is the one of a single SMuFL glyph.
      */
     ///@{
-    void SetBoundingBoxGlyph(wchar_t smuflGlyph, int fontSize);
-    wchar_t GetBoundingBoxGlyph() const { return m_smuflGlyph; }
+    void SetBoundingBoxGlyph(char32_t smuflGlyph, int fontSize);
+    char32_t GetBoundingBoxGlyph() const { return m_smuflGlyph; }
     int GetBoundingBoxGlyphFontSize() const { return m_smuflGlyphFontSize; }
     ///@}
 
@@ -144,11 +146,25 @@ public:
      * @name Return the overlap on the left / right / top / bottom looking at bounding box anchor points
      */
     ///@{
-    int HorizontalLeftOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int vMargin = 0) const;
-    int HorizontalRightOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int vMaring = 0) const;
-    int VerticalTopOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int hMargin = 0) const;
-    int VerticalBottomOverlap(const BoundingBox *other, Doc *doc, int margin = 0, int hMargin = 0) const;
+    int HorizontalLeftOverlap(const BoundingBox *other, const Doc *doc, int margin = 0, int vMargin = 0) const;
+    int HorizontalRightOverlap(const BoundingBox *other, const Doc *doc, int margin = 0, int vMargin = 0) const;
+    int VerticalTopOverlap(const BoundingBox *other, const Doc *doc, int margin = 0, int hMargin = 0) const;
+    int VerticalBottomOverlap(const BoundingBox *other, const Doc *doc, int margin = 0, int hMargin = 0) const;
     ////}
+
+    /**
+     * @name Return the left / right / top / bottom of the cut out rectangles (and use self bounding rect if there are
+     * none)
+     */
+    ///@{
+    int GetCutOutTop(const Resources &resources) const;
+    int GetCutOutBottom(const Resources &resources) const;
+    int GetCutOutLeft(const Resources &resources) const;
+    int GetCutOutRight(const Resources &resources) const;
+    // Restricted version which only considers the cutout rectangles from the top or bottom
+    int GetCutOutLeft(const Resources &resources, bool fromTop) const;
+    int GetCutOutRight(const Resources &resources, bool fromTop) const;
+    ///@}
 
     /**
      * Return true if the bounding box encloses the point.
@@ -156,39 +172,50 @@ public:
     bool Encloses(const Point point) const;
 
     /**
-     * Return true if the bounding box intersects with the curve represented by the FloatingPositioner.
+     * Return intersection between the bounding box and the curve represented by the FloatingPositioner.
      * The Object pointed by the FloatingPositioner is expected to be a SLUR or a TIE
      */
-    int Intersects(FloatingCurvePositioner *curve, Accessor type, int margin = 0) const;
+    int Intersects(const FloatingCurvePositioner *curve, Accessor type, int margin = 0) const;
+
+    /**
+     * Return intersection between the bounding box and the beam represented by the BeamDrawingInterface.
+     * A segment of the beam that matches horizontal position of the bounding box is taken to find whether there is
+     * intersection.
+     */
+    int Intersects(const BeamDrawingInterface *beamInterface, Accessor type, int margin = 0,
+        bool fromBeamContentSide = false) const;
 
     //----------------//
     // Static methods //
     //----------------//
 
-    /**
-     * Swap values.
-     * This is useful for example when switching to the device context world.
-     */
-    static void Swap(int &v1, int &v2);
-
-    /**
-     * Swap the points passed as reference.
-     * This is useful for example when calculating bezier positions.
-     */
-    static void SwapPoints(Point &p1, Point &p2);
-
     static std::pair<double, int> ApproximateBezierExtrema(
         const Point bezier[4], bool isMaxExtrema, int approximationSteps = BEZIER_APPROXIMATION);
 
     /**
+     * Calculate the euclidean distance between two points
+     */
+    static double CalcDistance(const Point &p1, const Point &p2);
+
+    /**
+     * @return true if the distance between the points does not exceed margin
+     */
+    static bool ArePointsClose(const Point &p1, const Point &p2, int margin);
+
+    /**
      * Calculate the slope represented by two points
      */
-    static double CalcSlope(Point const &p1, Point const &p2);
+    static double CalcSlope(const Point &p1, const Point &p2);
 
     /**
      * Calculate the position of a point after a rotation of alpha (in radian) around the center
      */
     static Point CalcPositionAfterRotation(Point point, float alpha, Point center);
+
+    /**
+     * Calculate the t parameter of a bezier at position x
+     */
+    static double CalcBezierParamAtPosition(const Point bezier[4], int x);
 
     /**
      * Calculate the y position of a bezier at position x
@@ -206,9 +233,9 @@ public:
     static Point CalcPointAtBezier(const Point bezier[4], double t);
 
     /**
-     * Calculate thickness coeficient to be applient for bezier curve to fit MEI units thickness
+     * Calculate thickness coefficient to be applient for bezier curve to fit MEI units thickness
      */
-    static double GetBezierThicknessCoeficient(const Point bezier[4], int currentThickness, double angle, int penWidth);
+    static double GetBezierThicknessCoefficient(const Point bezier[4], int currentThickness, int penWidth);
 
     /**
      * Calculate the point bezier point position for a t between 0.0 and 1.0
@@ -218,8 +245,7 @@ public:
     /**
      * Calculate the position of the bezier above and below for a thick bezier
      */
-    static void CalcThickBezier(
-        const Point bezier[4], int thickness, float angle, Point *topBezier, Point *bottomBezier);
+    static void CalcThickBezier(const Point bezier[4], int thickness, Point topBezier[4], Point bottomBezier[4]);
 
     /**
      * Approximate the bounding box of a bezier taking into accound the height and the width.
@@ -237,28 +263,37 @@ public:
     static int RectBottomOverlap(const Point rect1[2], const Point rect2[2], int margin, int hMargin);
     ///@}
 
+    /**
+     * Solve the cubic equation ax^3 + bx^2 + cx + d = 0
+     * Returns up to three real roots
+     */
+    static std::set<double> SolveCubicPolynomial(double a, double b, double c, double d);
+
 private:
     /**
-     * Get the rectangles covering the inside of a bounding box given two anchors (e.g., NW and NE, or NE and SE)
-     * Looks at the anchors for the smufl glpyh (if any) and return the number of rectangles needed to represent the
+     * Get the rectangles covering the inside of a bounding box given one or two anchors (e.g., NW and NE, or NE and SE)
+     * Looks at the anchors for the smufl glyph (if any) and return the number of rectangles needed to represent the
      * bounding box.
-     * Return 1 with no smufl glyph or no anchor, 2 with on anchor point, and 3 with 2 anchor points.
+     * Return 1 with no smufl glyph or no anchor, 2 with one anchor point, and 3 with 2 anchor points.
      */
-    int GetRectangles(
-        const SMuFLGlyphAnchor &anchor1, const SMuFLGlyphAnchor &anchor2, Point rect[3][2], Doc *doc) const;
+    ///@{
+    int GetRectangles(const SMuFLGlyphAnchor &anchor, Point rect[2][2], const Resources &resources) const;
+    int GetRectangles(const SMuFLGlyphAnchor &anchor1, const SMuFLGlyphAnchor &anchor2, Point rect[3][2],
+        const Resources &resources) const;
+    ///@}
 
     /**
      * Calculate the rectangles with 2 anchor points.
      * Return false (and one single rectangle) when anchor points are out of the boundaries.
      */
-    bool GetGlyph2PointRectangles(const SMuFLGlyphAnchor &anchor1, const SMuFLGlyphAnchor &anchor2, Glyph *glyph1,
-        Point rect[3][2], Doc *doc) const;
+    bool GetGlyph2PointRectangles(
+        const SMuFLGlyphAnchor &anchor1, const SMuFLGlyphAnchor &anchor2, const Glyph *glyph1, Point rect[3][2]) const;
 
     /**
      * Calculate the rectangles with 1 anchor point.
      * Return false (and one single rectangle) when anchor points are out of the boundaries.
      */
-    bool GetGlyph1PointRectangles(const SMuFLGlyphAnchor &anchor, Glyph *glyph, Point rect[2][2], Doc *doc) const;
+    bool GetGlyph1PointRectangles(const SMuFLGlyphAnchor &anchor, const Glyph *glyph, Point rect[2][2]) const;
 
 public:
     //
@@ -285,7 +320,7 @@ private:
      * The SMuFL glyph when anchor bounding box calculation is desired.
      * Currently only one glyph is supported. Eventually, we could have start / end glyph
      */
-    wchar_t m_smuflGlyph;
+    char32_t m_smuflGlyph;
 
     /**
      * The font size for the smufl glyph used for calculating the bounding box rectangles.
@@ -307,28 +342,28 @@ public:
      */
     ///@{
     SegmentedLine(int start, int end);
-    virtual ~SegmentedLine(){};
+    virtual ~SegmentedLine() {}
     ///@}
 
     /**
      * Check if the segmented line is empty
      */
-    bool IsEmpty() { return (m_segments.empty()); }
+    bool IsEmpty() const { return (m_segments.empty()); }
 
     /**
      * Check if the line is one single segment
      */
-    bool IsUnsegmented() { return (m_segments.size() == 1); }
+    bool IsUnsegmented() const { return (m_segments.size() == 1); }
 
     /**
      * The number of segments
      */
-    int GetSegmentCount() { return (int)m_segments.size(); }
+    int GetSegmentCount() const { return (int)m_segments.size(); }
 
     /**
      * Get the start and end of a segment
      */
-    void GetStartEnd(int &start, int &end, int idx);
+    std::pair<int, int> GetStartEnd(int idx) const;
 
     /**
      * Add a gap in the line
@@ -346,8 +381,14 @@ protected:
 private:
     /**
      * An vector of line segments
+     * They always have increasing order and orientation
      */
     ArrayOfIntPairs m_segments;
+
+    /**
+     * Flag indicating the orientation of the original line
+     */
+    bool m_increasing;
 };
 
 } // namespace vrv

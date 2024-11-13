@@ -9,9 +9,11 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
+
+#include "functor.h"
 
 namespace vrv {
 
@@ -21,11 +23,14 @@ namespace vrv {
 
 static const ClassRegistrar<Course> s_factory("course", COURSE);
 
-Course::Course() : Object("course-"), AttNNumberLike()
+Course::Course() : Object(COURSE, "course-"), AttAccidental(), AttNNumberLike(), AttOctave(), AttPitch()
 {
-    RegisterAttClass(ATT_NNUMBERLIKE);
+    this->RegisterAttClass(ATT_ACCIDENTAL);
+    this->RegisterAttClass(ATT_NNUMBERLIKE);
+    this->RegisterAttClass(ATT_OCTAVE);
+    this->RegisterAttClass(ATT_PITCH);
 
-    Reset();
+    this->Reset();
 }
 
 Course::~Course() {}
@@ -33,13 +38,40 @@ Course::~Course() {}
 void Course::Reset()
 {
     Object::Reset();
-    ResetNNumberLike();
+    this->ResetAccidental();
+    this->ResetNNumberLike();
+    this->ResetOctave();
+    this->ResetPitch();
 }
 
 bool Course::IsSupportedChild(Object *child)
 {
     // Nothing for now
     return false;
+}
+
+//----------------------------------------------------------------------------
+// Functor methods
+//----------------------------------------------------------------------------
+
+FunctorCode Course::Accept(Functor &functor)
+{
+    return functor.VisitCourse(this);
+}
+
+FunctorCode Course::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitCourse(this);
+}
+
+FunctorCode Course::AcceptEnd(Functor &functor)
+{
+    return functor.VisitCourseEnd(this);
+}
+
+FunctorCode Course::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitCourseEnd(this);
 }
 
 } // namespace vrv

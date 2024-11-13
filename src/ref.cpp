@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -23,9 +23,9 @@ namespace vrv {
 
 static const ClassRegistrar<Ref> s_factory("ref", REF);
 
-Ref::Ref() : EditorialElement("ref-")
+Ref::Ref() : EditorialElement(REF, "ref-")
 {
-    Reset();
+    this->Reset();
 }
 
 Ref::~Ref() {}

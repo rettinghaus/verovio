@@ -9,9 +9,11 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
+
+#include "functor.h"
 
 namespace vrv {
 
@@ -21,11 +23,11 @@ namespace vrv {
 
 static const ClassRegistrar<Expansion> s_factory("expansion", EXPANSION);
 
-Expansion::Expansion() : SystemElement("expansion-"), PlistInterface()
+Expansion::Expansion() : SystemElement(EXPANSION, "expansion-"), PlistInterface()
 {
-    RegisterInterface(PlistInterface::GetAttClasses(), PlistInterface::IsInterface());
+    this->RegisterInterface(PlistInterface::GetAttClasses(), PlistInterface::IsInterface());
 
-    Reset();
+    this->Reset();
 }
 
 Expansion::~Expansion() {}
@@ -39,5 +41,25 @@ void Expansion::Reset()
 //----------------------------------------------------------------------------
 // Expansion functor methods
 //----------------------------------------------------------------------------
+
+FunctorCode Expansion::Accept(Functor &functor)
+{
+    return functor.VisitExpansion(this);
+}
+
+FunctorCode Expansion::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitExpansion(this);
+}
+
+FunctorCode Expansion::AcceptEnd(Functor &functor)
+{
+    return functor.VisitExpansionEnd(this);
+}
+
+FunctorCode Expansion::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitExpansionEnd(this);
+}
 
 } // namespace vrv

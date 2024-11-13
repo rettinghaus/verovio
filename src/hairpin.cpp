@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@
 #include "devicecontext.h"
 #include "doc.h"
 #include "dynam.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "measure.h"
 #include "system.h"
 #include "verticalaligner.h"
@@ -32,7 +32,7 @@ namespace vrv {
 static const ClassRegistrar<Hairpin> s_factory("hairpin", HAIRPIN);
 
 Hairpin::Hairpin()
-    : ControlElement("hairpin-")
+    : ControlElement(HAIRPIN, "hairpin-")
     , TimeSpanningInterface()
     , AttColor()
     , AttHairpinLog()
@@ -40,14 +40,15 @@ Hairpin::Hairpin()
     , AttPlacementRelStaff()
     , AttVerticalGroup()
 {
-    RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_HAIRPINLOG);
-    RegisterAttClass(ATT_HAIRPINVIS);
-    RegisterAttClass(ATT_PLACEMENTRELSTAFF);
-    RegisterAttClass(ATT_VERTICALGROUP);
+    this->RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_HAIRPINLOG);
+    this->RegisterAttClass(ATT_HAIRPINVIS);
+    this->RegisterAttClass(ATT_LINERENDBASE);
+    this->RegisterAttClass(ATT_PLACEMENTRELSTAFF);
+    this->RegisterAttClass(ATT_VERTICALGROUP);
 
-    Reset();
+    this->Reset();
 }
 
 Hairpin::~Hairpin() {}
@@ -56,26 +57,32 @@ void Hairpin::Reset()
 {
     ControlElement::Reset();
     TimeSpanningInterface::Reset();
-    ResetColor();
-    ResetHairpinLog();
-    ResetHairpinVis();
-    ResetPlacementRelStaff();
-    ResetVerticalGroup();
+    this->ResetColor();
+    this->ResetHairpinLog();
+    this->ResetHairpinVis();
+    this->ResetLineRendBase();
+    this->ResetPlacementRelStaff();
+    this->ResetVerticalGroup();
 
     m_leftLink = NULL;
     m_rightLink = NULL;
     m_drawingLength = 0;
 }
 
-int Hairpin::CalcHeight(
-    Doc *doc, int staffSize, char spanningType, FloatingPositioner *leftPositioner, FloatingPositioner *rightPositioner)
+int Hairpin::CalcHeight(const Doc *doc, int staffSize, char spanningType, const FloatingPositioner *leftPositioner,
+    const FloatingPositioner *rightPositioner) const
 {
     assert(doc);
 
     int endY = doc->GetDrawingHairpinSize(staffSize, false);
 
     if (this->HasOpening()) {
-        endY = this->GetOpening() * doc->GetDrawingUnit(staffSize);
+        if (this->GetOpening().GetType() == MEASUREMENTTYPE_px) {
+            endY = this->GetOpening().GetPx();
+        }
+        else {
+            endY = this->GetOpening().GetVu() * doc->GetDrawingUnit(staffSize);
+        }
     }
 
     // Something is probably wrong before...
@@ -88,9 +95,9 @@ int Hairpin::CalcHeight(
 
     // Second of a <>
     if ((this->GetForm() == hairpinLog_FORM_dim) && m_leftLink && m_leftLink->Is(HAIRPIN)) {
-        // Do no adjust height when previous hairpin is not a full hairpin
+        // Don't adjust height when previous hairpin is not a full hairpin
         if (!leftPositioner || (leftPositioner->GetSpanningType() != SPANNING_START_END)) return endY;
-        Hairpin *left = vrv_cast<Hairpin *>(m_leftLink);
+        const Hairpin *left = vrv_cast<const Hairpin *>(m_leftLink);
         assert(left);
         // Take into account its length only if the left one is actually a <
         if (left->GetForm() == hairpinLog_FORM_cres) {
@@ -100,9 +107,9 @@ int Hairpin::CalcHeight(
 
     // First of a <>
     if ((this->GetForm() == hairpinLog_FORM_cres) && m_rightLink && m_rightLink->Is(HAIRPIN)) {
-        // Do no adjust height when next hairpin is not a full hairpin
+        // Don't adjust height when next hairpin is not a full hairpin
         if (!rightPositioner || (rightPositioner->GetSpanningType() != SPANNING_START_END)) return endY;
-        Hairpin *right = vrv_cast<Hairpin *>(m_rightLink);
+        const Hairpin *right = vrv_cast<const Hairpin *>(m_rightLink);
         assert(right);
         // Take into account its length only if the right one is actually a >
         if (right->GetForm() == hairpinLog_FORM_dim) {
@@ -131,6 +138,8 @@ int Hairpin::CalcHeight(
 void Hairpin::SetLeftLink(ControlElement *leftLink)
 {
     m_leftLink = leftLink;
+    if (!leftLink) return;
+
     if (this->GetDrawingGrpId() != 0) {
         // LogDebug("Grp id LF already set %d", this->GetDrawingGrpId());
         return;
@@ -146,6 +155,8 @@ void Hairpin::SetLeftLink(ControlElement *leftLink)
 void Hairpin::SetRightLink(ControlElement *rightLink)
 {
     m_rightLink = rightLink;
+    if (!rightLink) return;
+
     int grpId = this->GetDrawingGrpId();
     if (grpId == 0) {
         grpId = this->SetDrawingGrpObject(this);
@@ -158,17 +169,17 @@ void Hairpin::SetRightLink(ControlElement *rightLink)
     rightLink->SetDrawingGrpId(grpId);
 }
 
-std::pair<int, int> Hairpin::GetBarlineOverlapAdjustment(int doubleUnit, int leftX, int rightX, int spanningType)
+std::pair<int, int> Hairpin::GetBarlineOverlapAdjustment(int doubleUnit, int leftX, int rightX, int spanningType) const
 {
-    Measure *startMeasure = vrv_cast<Measure *>(GetStart()->GetFirstAncestor(MEASURE));
-    Measure *endMeasure = vrv_cast<Measure *>(GetEnd()->GetFirstAncestor(MEASURE));
+    const Measure *startMeasure = vrv_cast<const Measure *>(this->GetStart()->GetFirstAncestor(MEASURE));
+    const Measure *endMeasure = vrv_cast<const Measure *>(this->GetEnd()->GetFirstAncestor(MEASURE));
 
     if (!startMeasure || !endMeasure) return { 0, 0 };
 
     // Calculate adjustment that needs to be made for hairpin not to touch the left barline. We take doubleUnit for the
     // default margin to consider them overlapping, which is adjusted in case we have wider barline on the left
     int leftAdjustment = 0;
-    BarLine *leftBarline = startMeasure->GetLeftBarLine();
+    const BarLine *leftBarline = startMeasure->GetLeftBarLine();
     if (leftBarline && (spanningType == SPANNING_START_END || spanningType == SPANNING_START)) {
         int margin = doubleUnit;
         const int leftBarlineX = leftBarline->GetDrawingX();
@@ -182,16 +193,16 @@ std::pair<int, int> Hairpin::GetBarlineOverlapAdjustment(int doubleUnit, int lef
     // be selected - when processing start of the spanning hairpin, we should check for the last measure of the current
     // system, instead of the endMeasure
     int rightAdjustment = 0;
-    BarLine *rightBarline = NULL;
+    const BarLine *rightBarline = NULL;
     if (spanningType == SPANNING_START_END || spanningType == SPANNING_END) {
         rightBarline = endMeasure->GetRightBarLine();
     }
     else if (spanningType == SPANNING_START) {
-        System *startSystem = vrv_cast<System *>(GetStart()->GetFirstAncestor(SYSTEM));
+        const System *startSystem = vrv_cast<const System *>(this->GetStart()->GetFirstAncestor(SYSTEM));
         if (startSystem) {
             ClassIdComparison cmp(MEASURE);
-            Measure *measure
-                = vrv_cast<Measure *>(startSystem->FindDescendantByComparison(&cmp, UNLIMITED_DEPTH, BACKWARD));
+            const Measure *measure
+                = vrv_cast<const Measure *>(startSystem->FindDescendantByComparison(&cmp, UNLIMITED_DEPTH, BACKWARD));
             if (measure) rightBarline = measure->GetRightBarLine();
         }
     }
@@ -212,53 +223,24 @@ std::pair<int, int> Hairpin::GetBarlineOverlapAdjustment(int doubleUnit, int lef
 // Hairpin functor methods
 //----------------------------------------------------------------------------
 
-int Hairpin::PrepareFloatingGrps(FunctorParams *functorParams)
+FunctorCode Hairpin::Accept(Functor &functor)
 {
-    PrepareFloatingGrpsParams *params = vrv_params_cast<PrepareFloatingGrpsParams *>(functorParams);
-    assert(params);
-
-    if (this->HasVgrp()) {
-        this->SetDrawingGrpId(-this->GetVgrp());
-    }
-
-    // Only try to link them if start and end are resolved
-    if (!this->GetStart() || !this->GetEnd()) return FUNCTOR_CONTINUE;
-
-    for (auto &dynam : params->m_dynams) {
-        if ((dynam->GetStart() == this->GetStart()) && (dynam->GetStaff() == this->GetStaff())) {
-            if (!m_leftLink) this->SetLeftLink(dynam);
-        }
-        else if ((dynam->GetStart() == this->GetEnd()) && (dynam->GetStaff() == this->GetStaff())) {
-            if (!m_rightLink) this->SetRightLink(dynam);
-        }
-    }
-
-    for (auto &hairpin : params->m_hairpins) {
-        if ((hairpin->GetEnd() == this->GetStart()) && (hairpin->GetStaff() == this->GetStaff())) {
-            if (!m_leftLink) this->SetLeftLink(hairpin);
-            if (!hairpin->GetRightLink()) hairpin->SetRightLink(this);
-        }
-        if ((hairpin->GetStart() == this->GetEnd()) && (hairpin->GetStaff() == this->GetStaff())) {
-            if (!hairpin->GetLeftLink()) hairpin->SetLeftLink(this);
-            if (!m_rightLink) this->SetRightLink(hairpin);
-        }
-    }
-
-    params->m_hairpins.push_back(this);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitHairpin(this);
 }
 
-int Hairpin::ResetDrawing(FunctorParams *functorParams)
+FunctorCode Hairpin::Accept(ConstFunctor &functor) const
 {
-    // Call parent one too
-    ControlElement::ResetDrawing(functorParams);
+    return functor.VisitHairpin(this);
+}
 
-    m_leftLink = NULL;
-    m_rightLink = NULL;
-    m_drawingLength = 0;
+FunctorCode Hairpin::AcceptEnd(Functor &functor)
+{
+    return functor.VisitHairpinEnd(this);
+}
 
-    return FUNCTOR_CONTINUE;
+FunctorCode Hairpin::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitHairpinEnd(this);
 }
 
 } // namespace vrv

@@ -8,6 +8,7 @@
 #ifndef __VRV_METERSIG_H__
 #define __VRV_METERSIG_H__
 
+#include "atts_externalsymbols.h"
 #include "atts_shared.h"
 #include "atts_visual.h"
 #include "layerelement.h"
@@ -23,7 +24,14 @@ class ScoreDefInterface;
 /**
  * This class models the MEI <meterSig> element.
  */
-class MeterSig : public LayerElement, public AttMeterSigLog, public AttMeterSigVis {
+class MeterSig : public LayerElement,
+                 public AttColor,
+                 public AttEnclosingChars,
+                 public AttExtSymNames,
+                 public AttMeterSigLog,
+                 public AttMeterSigVis,
+                 public AttTypography,
+                 public AttVisibility {
 public:
     /**
      * @name Constructors, destructors, and other standard methods
@@ -32,35 +40,55 @@ public:
     ///@{
     MeterSig();
     virtual ~MeterSig();
-    virtual Object *Clone() const { return new MeterSig(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "MeterSig"; }
-    virtual ClassId GetClassId() const { return METERSIG; }
+    Object *Clone() const override { return new MeterSig(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "MeterSig"; }
     ///@}
 
     /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    bool HasToBeAligned() const override { return true; }
 
     /** Override the method since check is required */
-    virtual bool IsScoreDefElement() const { return (this->GetParent() && this->GetFirstAncestor(SCOREDEF)); }
+    bool IsScoreDefElement() const override { return (this->GetParent() && this->GetFirstAncestor(SCOREDEF)); }
 
     /** Evaluate additive meter counts */
     int GetTotalCount() const;
+
+    /** Return the implicit unit according to the sym (if any, return 0 otherwise) */
+    int GetSymImplicitUnit() const;
+
+    /**
+     * Return the unit (int) as data_DURATION (up to 32).
+     * Return DURATION_4 if no match.
+     */
+    data_DURATION GetUnitAsDur() const;
+
+    /** Retrieves the symbol glyph */
+    char32_t GetSymbolGlyph() const;
+
+    /** Retrieve parentheses from the enclose attribute */
+    std::pair<char32_t, char32_t> GetEnclosingGlyphs(bool smallGlpyh) const;
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::LayerCountInTimeSpan
+     * Interface for class functor visitation
      */
-    virtual int LayerCountInTimeSpan(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //
 public:
     //
 private:
+    //
 };
 
 } // namespace vrv

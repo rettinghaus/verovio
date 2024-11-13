@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -23,11 +23,11 @@ namespace vrv {
 
 static const ClassRegistrar<Lem> s_factory("lem", LEM);
 
-Lem::Lem() : EditorialElement("lem-"), AttSource()
+Lem::Lem() : EditorialElement(LEM, "lem-"), AttSource()
 {
-    RegisterAttClass(ATT_SOURCE);
+    this->RegisterAttClass(ATT_SOURCE);
 
-    Reset();
+    this->Reset();
 }
 
 Lem::~Lem() {}
@@ -35,7 +35,7 @@ Lem::~Lem() {}
 void Lem::Reset()
 {
     EditorialElement::Reset();
-    ResetSource();
+    this->ResetSource();
 }
 
 //----------------------------------------------------------------------------

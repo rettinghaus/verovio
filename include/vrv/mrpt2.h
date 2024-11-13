@@ -32,10 +32,19 @@ public:
     ///@{
     MRpt2();
     virtual ~MRpt2();
-    virtual Object *Clone() const { return new MRpt2(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "MRpt2"; }
-    virtual ClassId GetClassId() const { return MRPT2; }
+    Object *Clone() const override { return new MRpt2(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "MRpt2"; }
+    ///@}
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
 
 private:

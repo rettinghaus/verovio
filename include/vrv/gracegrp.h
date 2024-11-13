@@ -26,16 +26,29 @@ public:
     ///@{
     GraceGrp();
     virtual ~GraceGrp();
-    virtual Object *Clone() const { return new GraceGrp(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "GraceGrp"; };
-    virtual ClassId GetClassId() const { return GRACEGRP; };
+    Object *Clone() const override { return new GraceGrp(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "GraceGrp"; }
     ///@}
 
     /**
      * Add childElement to a element.
      */
-    virtual bool IsSupportedChild(Object *childElement);
+    bool IsSupportedChild(Object *object) override;
+
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     //

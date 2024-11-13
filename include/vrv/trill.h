@@ -27,7 +27,8 @@ class Trill : public ControlElement,
               public TimeSpanningInterface,
               public AttColor,
               public AttExtender,
-              public AttExtSym,
+              public AttExtSymAuth,
+              public AttExtSymNames,
               public AttLineRend,
               public AttNNumberLike,
               public AttOrnamentAccid,
@@ -40,28 +41,45 @@ public:
     ///@{
     Trill();
     virtual ~Trill();
-    virtual Object *Clone() const { return new Trill(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Trill"; }
-    virtual ClassId GetClassId() const { return TRILL; }
+    Object *Clone() const override { return new Trill(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Trill"; }
     ///@}
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual TimePointInterface *GetTimePointInterface() { return dynamic_cast<TimePointInterface *>(this); }
-    virtual TimeSpanningInterface *GetTimeSpanningInterface() { return dynamic_cast<TimeSpanningInterface *>(this); }
+    TimePointInterface *GetTimePointInterface() override { return vrv_cast<TimePointInterface *>(this); }
+    const TimePointInterface *GetTimePointInterface() const override
+    {
+        return vrv_cast<const TimePointInterface *>(this);
+    }
+    TimeSpanningInterface *GetTimeSpanningInterface() override { return vrv_cast<TimeSpanningInterface *>(this); }
+    const TimeSpanningInterface *GetTimeSpanningInterface() const override
+    {
+        return vrv_cast<const TimeSpanningInterface *>(this);
+    }
     ///@}
 
     /**
      * Get the SMuFL glyph for the trill based on glyph.num
      */
-    wchar_t GetTrillGlyph() const;
+    char32_t GetTrillGlyph() const;
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     //

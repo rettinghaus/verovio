@@ -8,12 +8,12 @@
 #include "space.h"
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 #include <math.h>
 
 //----------------------------------------------------------------------------
 
-#include "functorparams.h"
+#include "functor.h"
 #include "horizontalaligner.h"
 #include "vrv.h"
 
@@ -25,11 +25,11 @@ namespace vrv {
 
 static const ClassRegistrar<Space> s_factory("space", SPACE);
 
-Space::Space() : LayerElement("space-"), DurationInterface()
+Space::Space() : LayerElement(SPACE, "space-"), DurationInterface()
 {
-    RegisterInterface(DurationInterface::GetAttClasses(), DurationInterface::IsInterface());
+    this->RegisterInterface(DurationInterface::GetAttClasses(), DurationInterface::IsInterface());
 
-    Reset();
+    this->Reset();
 }
 
 Space::~Space() {}
@@ -43,5 +43,25 @@ void Space::Reset()
 //----------------------------------------------------------------------------
 // Functors methods
 //----------------------------------------------------------------------------
+
+FunctorCode Space::Accept(Functor &functor)
+{
+    return functor.VisitSpace(this);
+}
+
+FunctorCode Space::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitSpace(this);
+}
+
+FunctorCode Space::AcceptEnd(Functor &functor)
+{
+    return functor.VisitSpaceEnd(this);
+}
+
+FunctorCode Space::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitSpaceEnd(this);
+}
 
 } // namespace vrv

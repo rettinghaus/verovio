@@ -9,12 +9,13 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "editorial.h"
 #include "f.h"
+#include "functor.h"
 #include "vrv.h"
 
 namespace vrv {
@@ -25,10 +26,10 @@ namespace vrv {
 
 static const ClassRegistrar<Fb> s_factory("fb", FB);
 
-Fb::Fb() : Object("fb-")
+Fb::Fb() : Object(FB, "fb-")
 {
 
-    Reset();
+    this->Reset();
 }
 
 Fb::~Fb() {}
@@ -50,6 +51,26 @@ bool Fb::IsSupportedChild(Object *child)
         return false;
     }
     return true;
+}
+
+FunctorCode Fb::Accept(Functor &functor)
+{
+    return functor.VisitFb(this);
+}
+
+FunctorCode Fb::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitFb(this);
+}
+
+FunctorCode Fb::AcceptEnd(Functor &functor)
+{
+    return functor.VisitFbEnd(this);
+}
+
+FunctorCode Fb::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitFbEnd(this);
 }
 
 } // namespace vrv

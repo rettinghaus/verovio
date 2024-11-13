@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -18,7 +18,7 @@
 #include "doc.h"
 #include "editorial.h"
 #include "elementpart.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "glyph.h"
 #include "layer.h"
 #include "nc.h"
@@ -44,10 +44,10 @@ const std::map<std::string, NeumeGroup> Neume::s_neumes
 
 static const ClassRegistrar<Neume> s_factory("neume", NEUME);
 
-Neume::Neume() : LayerElement("neume-"), ObjectListInterface(), AttColor()
+Neume::Neume() : LayerElement(NEUME, "neume-"), ObjectListInterface(), AttColor()
 {
-    RegisterAttClass(ATT_COLOR);
-    Reset();
+    this->RegisterAttClass(ATT_COLOR);
+    this->Reset();
 }
 
 Neume::~Neume() {}
@@ -55,7 +55,7 @@ Neume::~Neume() {}
 void Neume::Reset()
 {
     LayerElement::Reset();
-    ResetColor();
+    this->ResetColor();
 }
 
 bool Neume::IsSupportedChild(Object *child)
@@ -69,16 +69,32 @@ bool Neume::IsSupportedChild(Object *child)
     return true;
 }
 
-int Neume::GetPosition(LayerElement *element)
+int Neume::GetPosition(const LayerElement *element) const
 {
-    this->GetList(this);
-    int position = this->GetListIndex(element);
-    return position;
+    this->GetList();
+    return this->GetListIndex(element);
 }
 
-bool Neume::IsLastInNeume(LayerElement *element)
+int Neume::GetLigatureCount(int position)
 {
-    int size = (int)this->GetList(this)->size();
+    int ligCount = 0;
+    this->GetList();
+    for (int pos = 0; pos <= position; pos++) {
+        Object *posObj = this->GetChild(pos);
+        if (posObj != NULL) {
+            Nc *posNc = dynamic_cast<Nc *>(posObj);
+            assert(posNc);
+            if (posNc->GetLigated() == BOOLEAN_true) { // first part of the ligature
+                ligCount += 1;
+            }
+        }
+    }
+    return ligCount;
+}
+
+bool Neume::IsLastInNeume(const LayerElement *element) const
+{
+    const int size = this->GetListSize();
     int position = this->GetPosition(element);
 
     // This method should be called only if the note is part of a neume
@@ -88,21 +104,19 @@ bool Neume::IsLastInNeume(LayerElement *element)
     return false;
 }
 
-NeumeGroup Neume::GetNeumeGroup()
+NeumeGroup Neume::GetNeumeGroup() const
 {
-    ListOfObjects children;
-    ClassIdComparison ac(NC);
-    this->FindAllDescendantByComparison(&children, &ac);
+    ListOfConstObjects children = this->FindAllDescendantsByType(NC);
 
     auto iter = children.begin();
-    Nc *previous = dynamic_cast<Nc *>(*iter);
+    const Nc *previous = dynamic_cast<const Nc *>(*iter);
     if (previous == NULL) return NEUME_ERROR;
     ++iter;
 
     std::string key = "";
 
     for (; iter != children.end(); ++iter) {
-        Nc *current = vrv_cast<Nc *>(*iter);
+        const Nc *current = vrv_cast<const Nc *>(*iter);
         assert(current);
 
         int pitchDifference = current->PitchDifferenceTo(previous);
@@ -118,7 +132,7 @@ NeumeGroup Neume::GetNeumeGroup()
         previous = current;
     }
 
-    if (s_neumes.count(key) > 0) {
+    if (s_neumes.contains(key)) {
         return s_neumes.at(key);
     }
     else {
@@ -126,23 +140,21 @@ NeumeGroup Neume::GetNeumeGroup()
     }
 }
 
-std::vector<int> Neume::GetPitchDifferences()
+std::vector<int> Neume::GetPitchDifferences() const
 {
     std::vector<int> pitchDifferences;
-    ListOfObjects ncChildren;
-    ClassIdComparison ac(NC);
-    this->FindAllDescendantByComparison(&ncChildren, &ac);
+    ListOfConstObjects ncChildren = this->FindAllDescendantsByType(NC);
 
     pitchDifferences.reserve(ncChildren.size() - 1);
 
     // Iterate through children and calculate pitch differences
     auto iter = ncChildren.begin();
-    Nc *previous = dynamic_cast<Nc *>(*iter);
+    const Nc *previous = dynamic_cast<const Nc *>(*iter);
     if (previous == NULL) return pitchDifferences;
     ++iter;
 
     for (; iter != ncChildren.end(); ++iter) {
-        Nc *current = vrv_cast<Nc *>(*iter);
+        const Nc *current = vrv_cast<const Nc *>(*iter);
         assert(current);
         pitchDifferences.push_back(current->PitchDifferenceTo(previous));
         previous = current;
@@ -152,9 +164,7 @@ std::vector<int> Neume::GetPitchDifferences()
 
 bool Neume::GenerateChildMelodic()
 {
-    ListOfObjects children;
-    ClassIdComparison ac(NC);
-    this->FindAllDescendantByComparison(&children, &ac);
+    ListOfObjects children = this->FindAllDescendantsByType(NC);
 
     // Get the first neume component of the neume
     auto iter = children.begin();
@@ -190,7 +200,7 @@ PitchInterface *Neume::GetHighestPitch()
 {
     ListOfObjects pitchChildren;
     InterfaceComparison ic(INTERFACE_PITCH);
-    this->FindAllDescendantByComparison(&pitchChildren, &ic);
+    this->FindAllDescendantsByComparison(&pitchChildren, &ic);
 
     auto it = pitchChildren.begin();
     PitchInterface *max = (*it)->GetPitchInterface();
@@ -209,7 +219,7 @@ PitchInterface *Neume::GetLowestPitch()
 {
     ListOfObjects pitchChildren;
     InterfaceComparison ic(INTERFACE_PITCH);
-    this->FindAllDescendantByComparison(&pitchChildren, &ic);
+    this->FindAllDescendantsByComparison(&pitchChildren, &ic);
 
     auto it = pitchChildren.begin();
     PitchInterface *min = (*it)->GetPitchInterface();
@@ -222,6 +232,26 @@ PitchInterface *Neume::GetLowestPitch()
         }
     }
     return min;
+}
+
+FunctorCode Neume::Accept(Functor &functor)
+{
+    return functor.VisitNeume(this);
+}
+
+FunctorCode Neume::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitNeume(this);
+}
+
+FunctorCode Neume::AcceptEnd(Functor &functor)
+{
+    return functor.VisitNeumeEnd(this);
+}
+
+FunctorCode Neume::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitNeumeEnd(this);
 }
 
 } // namespace vrv

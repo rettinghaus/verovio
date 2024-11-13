@@ -9,13 +9,13 @@
 
 //---------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //---------------------------------------------------------------------------
 
 #include "doc.h"
 #include "facsimile.h"
-#include "functorparams.h"
+#include "preparedatafunctor.h"
 #include "surface.h"
 #include "syllable.h"
 #include "view.h"
@@ -26,16 +26,18 @@ namespace vrv {
 
 FacsimileInterface::FacsimileInterface() : Interface(), AttFacsimile()
 {
-    RegisterInterfaceAttClass(ATT_FACSIMILE);
-    Reset();
+    this->RegisterInterfaceAttClass(ATT_FACSIMILE);
+    this->Reset();
 }
 
 FacsimileInterface::~FacsimileInterface() {}
 
 void FacsimileInterface::Reset()
 {
-    ResetFacsimile();
-    this->SetZone(NULL);
+    this->ResetFacsimile();
+
+    m_zone = NULL;
+    m_surface = NULL;
 }
 
 int FacsimileInterface::GetDrawingX() const
@@ -80,20 +82,15 @@ int FacsimileInterface::GetSurfaceY() const
     assert(m_zone);
     Surface *surface = vrv_cast<Surface *>(m_zone->GetFirstAncestor(SURFACE));
     assert(surface);
-    if (surface->HasLry()) {
-        return surface->GetLry();
-    }
-    else {
-        return surface->GetMaxY();
-    }
+    return surface->GetMaxY();
 }
 
-void FacsimileInterface::SetZone(Zone *zone)
+void FacsimileInterface::AttachZone(Zone *zone)
 {
     if (m_zone != NULL) {
         Object *parent = m_zone->GetParent();
         if (!parent->DeleteChild(m_zone)) {
-            printf("Failed to delete zone with ID %s\n", m_zone->GetUuid().c_str());
+            printf("Failed to delete zone with ID %s\n", m_zone->GetID().c_str());
         }
     }
     m_zone = zone;
@@ -101,8 +98,43 @@ void FacsimileInterface::SetZone(Zone *zone)
         this->SetFacs("");
     }
     else {
-        this->SetFacs("#" + m_zone->GetUuid());
+        this->SetFacs("#" + m_zone->GetID());
     }
+}
+
+//----------------------------------------------------------------------------
+// Interface pseudo functor (redirected)
+//----------------------------------------------------------------------------
+
+FunctorCode FacsimileInterface::InterfacePrepareFacsimile(PrepareFacsimileFunctor &functor, Object *object)
+{
+    assert(functor.GetFacsimile());
+    Facsimile *facsimile = functor.GetFacsimile();
+    std::string facsID = ExtractIDFragment(this->GetFacs());
+    Object *facsDescendant = facsimile->FindDescendantByID(facsID);
+    if (!facsDescendant) {
+        LogWarning("Could not find @facs '%s' in facsimile element", facsID.c_str());
+        return FUNCTOR_CONTINUE;
+    }
+
+    if (facsDescendant->Is(ZONE)) {
+        m_zone = vrv_cast<Zone *>(facsDescendant);
+        assert(m_zone);
+    }
+    else if (facsDescendant->Is(SURFACE)) {
+        m_surface = vrv_cast<Surface *>(facsDescendant);
+        assert(m_surface);
+    }
+
+    return FUNCTOR_CONTINUE;
+}
+
+FunctorCode FacsimileInterface::InterfaceResetData(ResetDataFunctor &functor, Object *object)
+{
+    m_zone = NULL;
+    m_surface = NULL;
+
+    return FUNCTOR_CONTINUE;
 }
 
 } // namespace vrv

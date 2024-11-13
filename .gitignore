@@ -43,8 +43,8 @@ bindings/python/__pycache__/*
 bindings/python/CMakeCache.txt
 bindings/python/CMakeFiles/
 build
-dist
 verovio.egg-info
+/dist
 
 # java build
 bindings/java/verovio_wrap.cxx
@@ -72,7 +72,6 @@ bindings/qt/build-android
 # Output files
 output.svg
 output.mei
-index.js
 emscripten/npm-dev/node_modules
 
 # VS Code files
@@ -94,5 +93,10 @@ Release/
 *.vcxproj*
 *.sln
 
-# Fonts
-fonts/tmp/
+# IntelliJ files
+.idea
+
+# Intermediate font files
+fonts/**/tmp
+libmei/tools/__pycache__
+doc/.venv

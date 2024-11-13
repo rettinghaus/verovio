@@ -8,7 +8,7 @@
 #ifndef __VRV_SURFACE_H__
 #define __VRV_SURFACE_H__
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ namespace vrv {
  * in MEI
  */
 
-class Surface : public Object, public AttTyped, public AttCoordinated {
+class Surface : public Object, public AttTyped, public AttCoordinated, public AttCoordinatedUl {
 public:
     /**
      * @name Constructors, destructors, reset, and class name methods
@@ -35,14 +35,14 @@ public:
     ///@{
     Surface();
     virtual ~Surface();
-    virtual Object *Clone() const { return new Surface(*this); }
-    virtual void Reset();
-    ClassId GetClassId() const { return SURFACE; }
+    Object *Clone() const override { return new Surface(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Surface"; }
     ///@}
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
-    int GetMaxX();
-    int GetMaxY();
+    int GetMaxX() const;
+    int GetMaxY() const;
 
 protected:
     //

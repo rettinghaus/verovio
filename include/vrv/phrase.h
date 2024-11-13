@@ -25,15 +25,24 @@ public:
     ///@{
     Phrase();
     virtual ~Phrase();
-    virtual Object *Clone() const { return new Phrase(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Phrase"; }
-    virtual ClassId GetClassId() const { return PHRASE; }
+    Object *Clone() const override { return new Phrase(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Phrase"; }
     ///@}
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //

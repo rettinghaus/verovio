@@ -8,7 +8,7 @@
 #ifndef __VRV_NEUME_H__
 #define __VRV_NEUME_H__
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -66,32 +66,42 @@ public:
     ///@{
     Neume();
     virtual ~Neume();
-    virtual void Reset();
-    virtual Object *Clone() const { return new Neume(*this); }
-    virtual std::string GetClassName() const { return "Neume"; }
-    virtual ClassId GetClassId() const { return NEUME; }
+    void Reset() override;
+    Object *Clone() const override { return new Neume(*this); }
+    std::string GetClassName() const override { return "Neume"; }
     ///@}
 
     /**
      * Add an element (a note or a rest) to a syllable.
      * Only syl or neume will be added.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
-    virtual int GetPosition(LayerElement *element);
-    virtual bool IsLastInNeume(LayerElement *element);
+    int GetLigatureCount(int position);
+    bool IsLastInNeume(const LayerElement *element) const;
 
     bool GenerateChildMelodic();
 
-    NeumeGroup GetNeumeGroup();
+    NeumeGroup GetNeumeGroup() const;
 
-    std::vector<int> GetPitchDifferences();
+    std::vector<int> GetPitchDifferences() const;
 
     PitchInterface *GetHighestPitch();
     PitchInterface *GetLowestPitch();
 
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
+
 private:
-    //
+    int GetPosition(const LayerElement *element) const;
+
 public:
     //----------------//
     // Static members //

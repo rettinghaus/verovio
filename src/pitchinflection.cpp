@@ -9,11 +9,11 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
-#include "functorparams.h"
+#include "functor.h"
 #include "vrv.h"
 
 namespace vrv {
@@ -24,11 +24,11 @@ namespace vrv {
 
 static const ClassRegistrar<PitchInflection> s_factory("pitchInflection", PITCHINFLECTION);
 
-PitchInflection::PitchInflection() : ControlElement("pinflexion-"), TimeSpanningInterface()
+PitchInflection::PitchInflection() : ControlElement(PITCHINFLECTION, "pinflexion-"), TimeSpanningInterface()
 {
-    RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
+    this->RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
 
-    Reset();
+    this->Reset();
 }
 
 PitchInflection::~PitchInflection() {}
@@ -42,5 +42,25 @@ void PitchInflection::Reset()
 //----------------------------------------------------------------------------
 // PitchInflection functor methods
 //----------------------------------------------------------------------------
+
+FunctorCode PitchInflection::Accept(Functor &functor)
+{
+    return functor.VisitPitchInflection(this);
+}
+
+FunctorCode PitchInflection::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitPitchInflection(this);
+}
+
+FunctorCode PitchInflection::AcceptEnd(Functor &functor)
+{
+    return functor.VisitPitchInflectionEnd(this);
+}
+
+FunctorCode PitchInflection::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitPitchInflectionEnd(this);
+}
 
 } // namespace vrv

@@ -9,14 +9,15 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
+#include "div.h"
 #include "doc.h"
 #include "editorial.h"
 #include "ending.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "measure.h"
 #include "page.h"
 #include "pages.h"
@@ -32,12 +33,12 @@ namespace vrv {
 
 static const ClassRegistrar<Section> s_factory("section", SECTION);
 
-Section::Section() : SystemElement("section-"), BoundaryStartInterface(), AttNNumberLike(), AttSectionVis()
+Section::Section() : SystemElement(SECTION, "section-"), SystemMilestoneInterface(), AttNNumberLike(), AttSectionVis()
 {
-    RegisterAttClass(ATT_NNUMBERLIKE);
-    RegisterAttClass(ATT_SECTIONVIS);
+    this->RegisterAttClass(ATT_NNUMBERLIKE);
+    this->RegisterAttClass(ATT_SECTIONVIS);
 
-    Reset();
+    this->Reset();
 }
 
 Section::~Section() {}
@@ -45,9 +46,9 @@ Section::~Section() {}
 void Section::Reset()
 {
     SystemElement::Reset();
-    BoundaryStartInterface::Reset();
-    ResetNNumberLike();
-    ResetSectionVis();
+    SystemMilestoneInterface::Reset();
+    this->ResetNNumberLike();
+    this->ResetSectionVis();
 }
 
 bool Section::IsSupportedChild(Object *child)
@@ -60,6 +61,9 @@ bool Section::IsSupportedChild(Object *child)
     }
     else if (child->IsSystemElement()) {
         assert(dynamic_cast<SystemElement *>(child));
+    }
+    else if (child->Is(DIV)) {
+        assert(dynamic_cast<Div *>(child));
     }
     else if (child->IsEditorialElement()) {
         assert(dynamic_cast<EditorialElement *>(child));
@@ -74,55 +78,24 @@ bool Section::IsSupportedChild(Object *child)
 // Section functor methods
 //----------------------------------------------------------------------------
 
-int Section::ConvertToPageBased(FunctorParams *functorParams)
+FunctorCode Section::Accept(Functor &functor)
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
-    assert(params);
-
-    this->MoveItselfTo(params->m_pageBasedSystem);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitSection(this);
 }
 
-int Section::ConvertToPageBasedEnd(FunctorParams *functorParams)
+FunctorCode Section::Accept(ConstFunctor &functor) const
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
-    assert(params);
-
-    ConvertToPageBasedBoundary(this, params->m_pageBasedSystem);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitSection(this);
 }
 
-int Section::ConvertToUnCastOffMensural(FunctorParams *functorParams)
+FunctorCode Section::AcceptEnd(Functor &functor)
 {
-    ConvertToUnCastOffMensuralParams *params = vrv_params_cast<ConvertToUnCastOffMensuralParams *>(functorParams);
-    assert(params);
-
-    params->m_contentMeasure = NULL;
-    params->m_contentLayer = NULL;
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitSectionEnd(this);
 }
 
-int Section::PrepareBoundaries(FunctorParams *functorParams)
+FunctorCode Section::AcceptEnd(ConstFunctor &functor) const
 {
-    if (this->IsBoundary()) {
-        this->BoundaryStartInterface::InterfacePrepareBoundaries(functorParams);
-    }
-
-    return FUNCTOR_CONTINUE;
-}
-
-int Section::ResetDrawing(FunctorParams *functorParams)
-{
-    FloatingObject::ResetDrawing(functorParams);
-
-    if (this->IsBoundary()) {
-        this->BoundaryStartInterface::InterfaceResetDrawing(functorParams);
-    }
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitSectionEnd(this);
 }
 
 } // namespace vrv

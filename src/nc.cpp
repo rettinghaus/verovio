@@ -9,13 +9,17 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "comparison.h"
 #include "doc.h"
 #include "elementpart.h"
+#include "functor.h"
+#include "liquescent.h"
+#include "oriscus.h"
+#include "quilisma.h"
 #include "staff.h"
 #include "vrv.h"
 
@@ -28,23 +32,25 @@ namespace vrv {
 static const ClassRegistrar<Nc> s_factory("nc", NC);
 
 Nc::Nc()
-    : LayerElement("nc-")
+    : LayerElement(NC, "nc-")
     , DurationInterface()
     , PitchInterface()
     , PositionInterface()
     , AttColor()
+    , AttCurvatureDirection()
     , AttIntervalMelodic()
     , AttNcForm()
 
 {
-    RegisterInterface(DurationInterface::GetAttClasses(), DurationInterface::IsInterface());
-    RegisterInterface(PitchInterface::GetAttClasses(), PitchInterface::IsInterface());
-    RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_INTERVALMELODIC);
-    RegisterAttClass(ATT_NCFORM);
+    this->RegisterInterface(DurationInterface::GetAttClasses(), DurationInterface::IsInterface());
+    this->RegisterInterface(PitchInterface::GetAttClasses(), PitchInterface::IsInterface());
+    this->RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_CURVATUREDIRECTION);
+    this->RegisterAttClass(ATT_INTERVALMELODIC);
+    this->RegisterAttClass(ATT_NCFORM);
 
-    Reset();
+    this->Reset();
 }
 
 Nc::~Nc() {}
@@ -55,9 +61,56 @@ void Nc::Reset()
     DurationInterface::Reset();
     PitchInterface::Reset();
     PositionInterface::Reset();
-    ResetColor();
-    ResetIntervalMelodic();
-    ResetNcForm();
+    this->ResetColor();
+    this->ResetCurvatureDirection();
+    this->ResetIntervalMelodic();
+    this->ResetNcForm();
+}
+
+int Nc::PitchOrLocDifferenceTo(const Nc *nc) const
+{
+    int difference = this->PitchDifferenceTo(nc);
+    if ((difference == 0) && this->HasLoc() && nc->HasLoc()) {
+        difference = this->GetLoc() - nc->GetLoc();
+    }
+    return difference;
+}
+
+FunctorCode Nc::Accept(Functor &functor)
+{
+    return functor.VisitNc(this);
+}
+
+FunctorCode Nc::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitNc(this);
+}
+
+FunctorCode Nc::AcceptEnd(Functor &functor)
+{
+    return functor.VisitNcEnd(this);
+}
+
+FunctorCode Nc::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitNcEnd(this);
+}
+
+bool Nc::IsSupportedChild(Object *child)
+{
+    if (child->Is(LIQUESCENT)) {
+        assert(dynamic_cast<Liquescent *>(child));
+    }
+    else if (child->Is(ORISCUS)) {
+        assert(dynamic_cast<Oriscus *>(child));
+    }
+    else if (child->Is(QUILISMA)) {
+        assert(dynamic_cast<Quilisma *>(child));
+    }
+    else {
+        return false;
+    }
+    return true;
 }
 
 } // namespace vrv

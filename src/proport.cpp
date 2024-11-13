@@ -7,6 +7,10 @@
 
 #include "proport.h"
 
+//----------------------------------------------------------------------------
+
+#include "functor.h"
+
 namespace vrv {
 
 //----------------------------------------------------------------------------
@@ -15,11 +19,11 @@ namespace vrv {
 
 static const ClassRegistrar<Proport> s_factory("proport", PROPORT);
 
-Proport::Proport() : LayerElement("prop-"), AttDurationRatio()
+Proport::Proport() : LayerElement(PROPORT, "prop-"), AttDurationRatio()
 {
-    RegisterAttClass(ATT_DURATIONRATIO);
+    this->RegisterAttClass(ATT_DURATIONRATIO);
 
-    Reset();
+    this->Reset();
 }
 
 Proport::~Proport() {}
@@ -27,7 +31,54 @@ Proport::~Proport() {}
 void Proport::Reset()
 {
     LayerElement::Reset();
-    ResetDurationRatio();
+    this->ResetDurationRatio();
+
+    m_cumulatedNum = VRV_UNSET;
+    m_cumulatedNumbase = VRV_UNSET;
+}
+
+int Proport::GetCumulatedNum() const
+{
+    return (m_cumulatedNum != VRV_UNSET) ? m_cumulatedNum : this->GetNum();
+}
+
+int Proport::GetCumulatedNumbase() const
+{
+    return (m_cumulatedNumbase != VRV_UNSET) ? m_cumulatedNumbase : this->GetNumbase();
+}
+
+void Proport::Cumulate(const Proport *proport)
+{
+    // Unset values are not cumulated
+    if (proport->HasNum() && this->HasNum()) {
+        m_cumulatedNum = this->GetNum() * proport->GetCumulatedNum();
+    }
+    if (proport->HasNumbase() && this->HasNumbase()) {
+        m_cumulatedNumbase = this->GetNumbase() * proport->GetCumulatedNumbase();
+    }
+    if ((m_cumulatedNum != VRV_UNSET) && (m_cumulatedNumbase != VRV_UNSET)) {
+        Fraction::Reduce(m_cumulatedNum, m_cumulatedNumbase);
+    }
+}
+
+FunctorCode Proport::Accept(Functor &functor)
+{
+    return functor.VisitProport(this);
+}
+
+FunctorCode Proport::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitProport(this);
+}
+
+FunctorCode Proport::AcceptEnd(Functor &functor)
+{
+    return functor.VisitProportEnd(this);
+}
+
+FunctorCode Proport::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitProportEnd(this);
 }
 
 } // namespace vrv

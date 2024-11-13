@@ -9,19 +9,20 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "artic.h"
 #include "controlelement.h"
 #include "fig.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "layer.h"
 #include "measure.h"
 #include "scoredef.h"
 #include "section.h"
 #include "staff.h"
+#include "symbol.h"
 #include "system.h"
 #include "text.h"
 #include "textelement.h"
@@ -33,29 +34,39 @@ namespace vrv {
 // EditorialElement
 //----------------------------------------------------------------------------
 
-EditorialElement::EditorialElement() : Object("ee-"), BoundaryStartInterface(), AttLabelled(), AttTyped()
+EditorialElement::EditorialElement()
+    : Object(EDITORIAL_ELEMENT, "ee-"), SystemMilestoneInterface(), AttLabelled(), AttTyped()
 {
-    RegisterAttClass(ATT_LABELLED);
-    RegisterAttClass(ATT_TYPED);
+    this->RegisterAttClass(ATT_LABELLED);
+    this->RegisterAttClass(ATT_TYPED);
 
-    Reset();
+    this->Reset();
 }
 
-EditorialElement::EditorialElement(const std::string &classid)
-    : Object(classid), BoundaryStartInterface(), AttLabelled(), AttTyped()
+EditorialElement::EditorialElement(ClassId classId)
+    : Object(classId, "ee-"), SystemMilestoneInterface(), AttLabelled(), AttTyped()
 {
-    RegisterAttClass(ATT_LABELLED);
-    RegisterAttClass(ATT_TYPED);
+    this->RegisterAttClass(ATT_LABELLED);
+    this->RegisterAttClass(ATT_TYPED);
 
-    Reset();
+    this->Reset();
+}
+
+EditorialElement::EditorialElement(ClassId classId, const std::string &classIdStr)
+    : Object(classId, classIdStr), SystemMilestoneInterface(), AttLabelled(), AttTyped()
+{
+    this->RegisterAttClass(ATT_LABELLED);
+    this->RegisterAttClass(ATT_TYPED);
+
+    this->Reset();
 }
 
 void EditorialElement::Reset()
 {
     Object::Reset();
-    BoundaryStartInterface::Reset();
-    ResetLabelled();
-    ResetTyped();
+    SystemMilestoneInterface::Reset();
+    this->ResetLabelled();
+    this->ResetTyped();
 
     m_visibility = Visible;
 }
@@ -97,6 +108,9 @@ bool EditorialElement::IsSupportedChild(Object *child)
     else if (child->Is(STAFFGRP)) {
         assert(dynamic_cast<Staff *>(child));
     }
+    else if (child->Is(SYMBOL)) {
+        assert(dynamic_cast<Symbol *>(child));
+    }
     else {
         return false;
     }
@@ -107,73 +121,24 @@ bool EditorialElement::IsSupportedChild(Object *child)
 // EditorialElement functor methods
 //----------------------------------------------------------------------------
 
-int EditorialElement::ConvertToPageBased(FunctorParams *functorParams)
+FunctorCode EditorialElement::Accept(Functor &functor)
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
-    assert(params);
-
-    this->MoveItselfTo(params->m_pageBasedSystem);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitEditorialElement(this);
 }
 
-int EditorialElement::ConvertToPageBasedEnd(FunctorParams *functorParams)
+FunctorCode EditorialElement::Accept(ConstFunctor &functor) const
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
-    assert(params);
-
-    if (m_visibility == Visible) ConvertToPageBasedBoundary(this, params->m_pageBasedSystem);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitEditorialElement(this);
 }
 
-int EditorialElement::PrepareBoundaries(FunctorParams *functorParams)
+FunctorCode EditorialElement::AcceptEnd(Functor &functor)
 {
-    if (this->IsBoundary()) {
-        this->BoundaryStartInterface::InterfacePrepareBoundaries(functorParams);
-    }
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitEditorialElementEnd(this);
 }
 
-int EditorialElement::ResetDrawing(FunctorParams *functorParams)
+FunctorCode EditorialElement::AcceptEnd(ConstFunctor &functor) const
 {
-    if (this->IsBoundary()) {
-        this->BoundaryStartInterface::InterfaceResetDrawing(functorParams);
-    }
-
-    return FUNCTOR_CONTINUE;
-}
-
-int EditorialElement::CastOffSystems(FunctorParams *functorParams)
-{
-    CastOffSystemsParams *params = vrv_params_cast<CastOffSystemsParams *>(functorParams);
-    assert(params);
-
-    // Since the functor returns FUNCTOR_SIBLINGS we should never go lower than the system children
-    assert(dynamic_cast<System *>(this->GetParent()));
-
-    // Special case where we use the Relinquish method.
-    // We want to move the measure to the currentSystem. However, we cannot use DetachChild
-    // from the content System because this screws up the iterator. Relinquish gives up
-    // the ownership of the Measure - the contentSystem will be deleted afterwards.
-    EditorialElement *editorialElement
-        = vrv_cast<EditorialElement *>(params->m_contentSystem->Relinquish(this->GetIdx()));
-    assert(editorialElement);
-    // move as pending since we want it at the beginning of the system in case of system break coming
-    params->m_pendingObjects.push_back(editorialElement);
-
-    return FUNCTOR_SIBLINGS;
-}
-
-int EditorialElement::CastOffEncoding(FunctorParams *functorParams)
-{
-    CastOffEncodingParams *params = vrv_params_cast<CastOffEncodingParams *>(functorParams);
-    assert(params);
-
-    MoveItselfTo(params->m_currentSystem);
-
-    return FUNCTOR_SIBLINGS;
+    return functor.VisitEditorialElementEnd(this);
 }
 
 } // namespace vrv

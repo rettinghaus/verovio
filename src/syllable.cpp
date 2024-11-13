@@ -11,11 +11,13 @@
 //----------------------------------------------------------------------------
 
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 //----------------------------------------------------------------------------
 
+#include "divline.h"
+#include "functor.h"
 #include "neume.h"
 #include "syl.h"
 #include "text.h"
@@ -29,17 +31,17 @@ namespace vrv {
 
 static const ClassRegistrar<Syllable> s_factory("syllable", SYLLABLE);
 
-Syllable::Syllable() : LayerElement("syllable-"), ObjectListInterface(), AttColor(), AttSlashCount()
+Syllable::Syllable() : LayerElement(SYLLABLE, "syllable-"), ObjectListInterface(), AttColor(), AttSlashCount()
 {
     Init();
 }
 
 void Syllable::Init()
 {
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_SLASHCOUNT);
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_SLASHCOUNT);
 
-    Reset();
+    this->Reset();
 }
 
 bool Syllable::IsSupportedChild(Object *child)
@@ -49,6 +51,15 @@ bool Syllable::IsSupportedChild(Object *child)
     }
     else if (child->Is(NEUME)) {
         assert(dynamic_cast<Neume *>(child));
+    }
+    else if (child->Is(DIVLINE)) {
+        assert(dynamic_cast<DivLine *>(child));
+    }
+    else if (child->Is(ACCID)) {
+        assert(dynamic_cast<Accid *>(child));
+    }
+    else if (child->Is(CLEF)) {
+        assert(dynamic_cast<Clef *>(child));
     }
     else {
         return false;
@@ -61,8 +72,8 @@ Syllable::~Syllable() {}
 void Syllable::Reset()
 {
     LayerElement::Reset();
-    ResetColor();
-    ResetSlashCount();
+    this->ResetColor();
+    this->ResetSlashCount();
 }
 
 bool Syllable::MarkupAddSyl()
@@ -81,6 +92,26 @@ bool Syllable::MarkupAddSyl()
         return true;
     }
     return false;
+}
+
+FunctorCode Syllable::Accept(Functor &functor)
+{
+    return functor.VisitSyllable(this);
+}
+
+FunctorCode Syllable::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitSyllable(this);
+}
+
+FunctorCode Syllable::AcceptEnd(Functor &functor)
+{
+    return functor.VisitSyllableEnd(this);
+}
+
+FunctorCode Syllable::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitSyllableEnd(this);
 }
 
 } // namespace vrv

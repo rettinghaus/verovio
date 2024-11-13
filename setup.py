@@ -30,23 +30,23 @@ class sdist(_sdist):
 
 
 def get_commit():
-    """Utility function to call tools/get_git_commit.sh on any platform."""
-    if os.path.exists("./tools"):
-        print("Running tools/get_git_commit.sh")
-        os.system("bash -c 'cd tools; ./get_git_commit.sh'")
+    """Call tools/get_git_commit.sh on any platform."""
+    if os.path.exists('./tools'):
+        print('running tools/get_git_commit.sh')
+        os.system('sh -c "cd tools; ./get_git_commit.sh"')
     else:
-        print("Can't change to tools directory")
+        print('tools directory is missing')
 
 
-def get_readme():
-    """Utility function to read the README file into the long_description."""
+def get_readme() -> str:
+    """Read the README file into the long_description."""
     with open('README.md', 'r') as fh:
         return fh.read()
 
 
-def get_version():
-    """Utility function to get the version from the header file and the git sha for dev versions."""
-    version = "0.0.0"
+def get_version() -> str:
+    """Get the version from the header file and the git sha for dev versions."""
+    version = '0.0.0'
     # If we have a PKG-INFO (e.g., in a sdist) use that
     if os.path.exists('PKG-INFO'):
         with open('PKG-INFO', 'r') as f:
@@ -54,10 +54,10 @@ def get_version():
         for line in lines:
             if line.startswith('Version:'):
                 return line[8:].strip()
-    with open("./include/vrv/vrvdef.h") as header_file:
+    with open('./include/vrv/vrvdef.h') as header_file:
         defines = {}
         for line in header_file:
-            if not line.startswith("#define"):
+            if not line.startswith('#define'):
                 continue
             definition = line.strip().split()
             if len(definition) < 3:
@@ -70,11 +70,11 @@ def get_version():
             (defines['VERSION_MAJOR'], defines['VERSION_MINOR'], defines['VERSION_REVISION']))
         if defines['VERSION_DEV'] == 'true':
             version += '.dev'
-    if version.endswith(".dev"):
+    if version.endswith('.dev'):
         init_sha = subprocess.getoutput(
-            "git log -n 1 --pretty=format:%H -- bindings/python/.pypi-version")
+            'git log -n 1 --pretty=format:%H -- bindings/python/.pypi-version')
         count = subprocess.getoutput(
-            "git rev-list --count HEAD \"^{}\"".format(init_sha))
+            'git rev-list --count HEAD "^{}"'.format(init_sha))
         version += count
     print(version)
     return version
@@ -83,15 +83,20 @@ def get_version():
 # extra compile arguments
 EXTRA_COMPILE_ARGS = ['-DPYTHON_BINDING']
 if platform.system() != 'Windows':
-    EXTRA_COMPILE_ARGS += ['-std=c++17',
-                           '-Wno-write-strings', '-Wno-overloaded-virtual']
+    EXTRA_COMPILE_ARGS += ['-std=c++20',
+                           '-Wno-write-strings', '-Wno-overloaded-virtual', '-g0']
 else:
-    EXTRA_COMPILE_ARGS += ['/std:c++17',
+    EXTRA_COMPILE_ARGS += ['/std:c++20',
                            '-DNO_PAE_SUPPORT']
 
 verovio_module = Extension('verovio._verovio',
-                           sources=glob('./src/*.cpp') + glob('./src/hum/*.cpp') +
+                           sources=
+                                glob('./src/*.cpp') +
+                                glob('./src/hum/*.cpp') +
+                                glob('./libmei/dist/*.cpp') +
+                                glob('./libmei/addons/*.cpp') +
                            [
+                               './src/crc/crc.cpp',
                                './src/json/jsonxx.cc',
                                './src/pugi/pugixml.cpp',
                                './src/midi/Binasc.cpp',
@@ -99,34 +104,19 @@ verovio_module = Extension('verovio._verovio',
                                './src/midi/MidiEventList.cpp',
                                './src/midi/MidiFile.cpp',
                                './src/midi/MidiMessage.cpp',
-                               './libmei/attconverter.cpp',
-                               './libmei/atts_analytical.cpp',
-                               './libmei/atts_cmn.cpp',
-                               './libmei/atts_cmnornaments.cpp',
-                               './libmei/atts_critapp.cpp',
-                               './libmei/atts_gestural.cpp',
-                               './libmei/atts_externalsymbols.cpp',
-                               './libmei/atts_facsimile.cpp',
-                               './libmei/atts_frettab.cpp',
-                               './libmei/atts_mei.cpp',
-                               './libmei/atts_mensural.cpp',
-                               './libmei/atts_midi.cpp',
-                               './libmei/atts_neumes.cpp',
-                               './libmei/atts_pagebased.cpp',
-                               './libmei/atts_shared.cpp',
-                               './libmei/atts_visual.cpp',
                                './bindings/python/verovio.i'],
-                           swig_opts=['-c++', '-outdir',
-                                      './bindings/python', '-py3'],
+                           swig_opts=['-c++', '-fastproxy', '-olddefs',
+                                      '-outdir', './bindings/python', '-doxygen'],
                            include_dirs=['./include/vrv',
+                                         './include/crc',
                                          './include/json',
                                          './include/midi',
                                          './include/hum',
                                          './include/pugi',
-                                         './include/utf8',
                                          './include/win32',
                                          './include/zip',
-                                         './libmei'],
+                                         './libmei/dist',
+                                         './libmei/addons'],
                            extra_compile_args=EXTRA_COMPILE_ARGS
                            )
 
@@ -158,7 +148,8 @@ setup(name='verovio',
       package_dir={'verovio': './bindings/python',
                    'verovio.data': './data'},
       package_data={
-          'verovio.data': [f for f in os.listdir('./data') if f.endswith(".xml")],
+          'verovio': ['py.typed'],
+          'verovio.data': [f for f in os.listdir('./data') if (f.endswith('.xml') or f.endswith(".css") or f.endswith(".svg"))],
           'verovio.data.Bravura': os.listdir('./data/Bravura'),
           'verovio.data.Gootville': os.listdir('./data/Gootville'),
           'verovio.data.Leipzig': os.listdir('./data/Leipzig'),
@@ -166,7 +157,7 @@ setup(name='verovio',
           'verovio.data.Petaluma': os.listdir('./data/Petaluma'),
           'verovio.data.text': os.listdir('./data/text'),
       },
-      python_requires='>=3.5',
+      python_requires='>=3.9',
       project_urls={
           'Bug Reports': 'https://github.com/rism-digital/verovio/issues',
           'Source': 'https://github.com/rism-digital/verovio',

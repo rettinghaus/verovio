@@ -8,7 +8,7 @@
 #ifndef __VRV_PLICA_H__
 #define __VRV_PLICA_H__
 
-#include "atts_mensural.h"
+#include "atts_visual.h"
 #include "layerelement.h"
 
 namespace vrv {
@@ -26,14 +26,23 @@ public:
     ///@{
     Plica();
     virtual ~Plica();
-    virtual Object *Clone() const { return new Plica(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Plica"; }
-    virtual ClassId GetClassId() const { return PLICA; }
+    Object *Clone() const override { return new Plica(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Plica"; }
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //

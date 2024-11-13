@@ -473,7 +473,7 @@ bool DarmsInput::Import(const std::string &data_str)
     score->AddChild(section);
 
     m_staff = new Staff(1);
-    m_measure = new Measure(true, 1);
+    m_measure = new Measure(MEASURED, 1);
     m_layer = new Layer();
     m_layer->SetN(1);
 
@@ -510,7 +510,7 @@ bool DarmsInput::Import(const std::string &data_str)
         }
         else {
             // if (!isspace(c))
-            // LogMessage("Other %c", c);
+            // LogInfo("Other %c", c);
         }
 
         pos++;
@@ -521,7 +521,7 @@ bool DarmsInput::Import(const std::string &data_str)
     StaffDef *staffDef = new StaffDef();
     staffDef->SetN(1);
     staffGrp->AddChild(staffDef);
-    m_doc->m_mdivScoreDef.AddChild(staffGrp);
+    m_doc->GetFirstScoreDef()->AddChild(staffGrp);
 
     m_doc->ConvertToPageBasedDoc();
 

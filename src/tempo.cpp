@@ -9,14 +9,13 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "comparison.h"
-#include "controlelement.h"
 #include "editorial.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "measure.h"
 #include "staff.h"
 #include "system.h"
@@ -32,15 +31,22 @@ namespace vrv {
 static const ClassRegistrar<Tempo> s_factory("tempo", TEMPO);
 
 Tempo::Tempo()
-    : ControlElement("tempo-"), TextDirInterface(), TimePointInterface(), AttLang(), AttMidiTempo(), AttMmTempo()
+    : ControlElement(TEMPO, "tempo-")
+    , TextDirInterface()
+    , TimeSpanningInterface()
+    , AttExtender()
+    , AttLang()
+    , AttMidiTempo()
+    , AttMmTempo()
 {
-    RegisterInterface(TextDirInterface::GetAttClasses(), TextDirInterface::IsInterface());
-    RegisterInterface(TimePointInterface::GetAttClasses(), TimePointInterface::IsInterface());
-    RegisterAttClass(ATT_LANG);
-    RegisterAttClass(ATT_MIDITEMPO);
-    RegisterAttClass(ATT_MMTEMPO);
+    this->RegisterInterface(TextDirInterface::GetAttClasses(), TextDirInterface::IsInterface());
+    this->RegisterInterface(TimeSpanningInterface::GetAttClasses(), TimeSpanningInterface::IsInterface());
+    this->RegisterAttClass(ATT_EXTENDER);
+    this->RegisterAttClass(ATT_LANG);
+    this->RegisterAttClass(ATT_MIDITEMPO);
+    this->RegisterAttClass(ATT_MMTEMPO);
 
-    Reset();
+    this->Reset();
 }
 
 Tempo::~Tempo() {}
@@ -49,15 +55,16 @@ void Tempo::Reset()
 {
     ControlElement::Reset();
     TextDirInterface::Reset();
-    TimePointInterface::Reset();
-    ResetLang();
-    ResetMidiTempo();
-    ResetMmTempo();
+    TimeSpanningInterface::Reset();
+    this->ResetExtender();
+    this->ResetLang();
+    this->ResetMidiTempo();
+    this->ResetMmTempo();
 }
 
 bool Tempo::IsSupportedChild(Object *child)
 {
-    if (child->Is({ REND, TEXT })) {
+    if (child->Is({ LB, REND, SYMBOL, TEXT })) {
         assert(dynamic_cast<TextElement *>(child));
     }
     else if (child->IsEditorialElement()) {
@@ -69,62 +76,56 @@ bool Tempo::IsSupportedChild(Object *child)
     return true;
 }
 
-int Tempo::GetDrawingXRelativeToStaff(int staffN)
+int Tempo::GetDrawingXRelativeToStaff(int staffN) const
 {
     int m_relativeX = 0;
     if (m_drawingXRels.find(staffN) != m_drawingXRels.end()) {
         m_relativeX = m_drawingXRels.at(staffN);
     }
 
-    return GetStart()->GetDrawingX() + m_relativeX;
+    return this->GetStart()->GetDrawingX() + m_relativeX;
 }
 
-int Tempo::AdjustTempo(FunctorParams *functorParams)
+FunctorCode Tempo::Accept(Functor &functor)
 {
-    AdjustTempoParams *params = vrv_params_cast<AdjustTempoParams *>(functorParams);
-    assert(params);
-
-    // Get all the positioners for this object - all of them (all staves) because we can have different staff sizes
-    ArrayOfFloatingPositioners positioners;
-    params->m_systemAligner->FindAllPositionerPointingTo(&positioners, this);
-
-    if (positioners.empty()) {
-        return FUNCTOR_SIBLINGS;
-    }
-
-    Measure *measure = vrv_cast<Measure *>(GetFirstAncestor(MEASURE));
-    MeasureAlignerTypeComparison alignmentComparison(ALIGNMENT_SCOREDEF_METERSIG);
-    Alignment *pos
-        = dynamic_cast<Alignment *>(measure->m_measureAligner.FindDescendantByComparison(&alignmentComparison, 1));
-
-    for (auto positioner : positioners) {
-        int left, right;
-        int start = GetStart()->GetDrawingX();
-        const int staffN = positioner->GetAlignment()->GetStaff()->GetN();
-        if (!HasStartid() && (GetTstamp() <= 1) && pos) {
-            left = measure->GetDrawingX() + pos->GetXRel();
-        }
-        else {
-            Alignment *align = GetStart()->GetAlignment();
-            align->GetLeftRight(staffN, left, right);
-        }
-
-        if (std::abs(left) != std::abs(VRV_UNSET)) {
-            m_drawingXRels[staffN] = left - start;
-        }
-    }
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitTempo(this);
 }
 
-int Tempo::ResetDrawing(FunctorParams *functorParams)
+FunctorCode Tempo::Accept(ConstFunctor &functor) const
 {
-    // Call parent one too
-    ControlElement::ResetDrawing(functorParams);
+    return functor.VisitTempo(this);
+}
 
-    m_drawingXRels.clear();
+FunctorCode Tempo::AcceptEnd(Functor &functor)
+{
+    return functor.VisitTempoEnd(this);
+}
 
-    return FUNCTOR_CONTINUE;
+FunctorCode Tempo::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitTempoEnd(this);
+}
+
+double Tempo::CalcTempo(const AttMmTempo *attMmTempo)
+{
+    double tempo = MIDI_TEMPO;
+
+    double mm = attMmTempo->GetMm();
+    double mmUnit = 4;
+
+    if (attMmTempo->HasMmUnit() && (attMmTempo->GetMmUnit() > DURATION_breve)) {
+        mmUnit = pow(2, (int)attMmTempo->GetMmUnit() - 2);
+    }
+    if (attMmTempo->HasMmDots()) {
+        double dotsUnit = 0.0;
+        for (int d = 0; d < attMmTempo->GetMmDots(); d++) {
+            dotsUnit += mmUnit / 4.0 / pow(2, d);
+        }
+        mmUnit -= dotsUnit;
+    }
+    if (mmUnit > 0) tempo = mm * 4.0 / mmUnit;
+
+    return tempo;
 }
 
 } // namespace vrv

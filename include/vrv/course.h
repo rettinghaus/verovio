@@ -20,7 +20,7 @@ namespace vrv {
 /**
  * This class models the MEI <course> element.
  */
-class Course : public Object, public AttNNumberLike {
+class Course : public Object, public AttAccidental, public AttNNumberLike, public AttOctave, public AttPitch {
 public:
     /**
      * @name Constructors, destructors, and other standard methods
@@ -29,16 +29,29 @@ public:
     ///@{
     Course();
     virtual ~Course();
-    virtual Object *Clone() const { return new Course(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Course"; };
-    virtual ClassId GetClassId() const { return COURSE; };
+    Object *Clone() const override { return new Course(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Course"; }
     ///@}
 
     /**
      * Add an element to a element.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
+
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 protected:
     //

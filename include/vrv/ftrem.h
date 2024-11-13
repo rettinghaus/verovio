@@ -31,41 +31,56 @@ public:
     ///@{
     FTrem();
     virtual ~FTrem();
-    virtual Object *Clone() const { return new FTrem(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "FTrem"; }
-    virtual ClassId GetClassId() const { return FTREM; }
+    Object *Clone() const override { return new FTrem(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "FTrem"; }
+    ///@}
+
+    /**
+     * @name Getter to interfaces
+     */
+    ///@{
+    BeamDrawingInterface *GetBeamDrawingInterface() override { return vrv_cast<BeamDrawingInterface *>(this); }
+    const BeamDrawingInterface *GetBeamDrawingInterface() const override
+    {
+        return vrv_cast<const BeamDrawingInterface *>(this);
+    }
     ///@}
 
     /**
      * Add an element (a note or a chord) to a fTrem.
      * Only Note or Chord elements will be actually added to the fTrem.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     /**
      *
      */
     const ArrayOfBeamElementCoords *GetElementCoords();
 
+    /**
+     * See DrawingInterface::GetAdditionalBeamCount
+     */
+    std::pair<int, int> GetAdditionalBeamCount() const override;
+
+    /**
+     * See DrawingInterface::GetFloatingBeamCount
+     */
+    std::pair<int, int> GetFloatingBeamCount() const override;
+
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::CalcStem
+     * Interface for class functor visitation
      */
-    virtual int CalcStem(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetDrawing
-     */
-    virtual int ResetDrawing(FunctorParams *functorParams);
-
-    /**
-     * See Object::GenerateMIDI
-     */
-    virtual int GenerateMIDI(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //
@@ -73,7 +88,7 @@ protected:
     /**
      * Filter the flat list and keep only Note or Chords elements.
      */
-    virtual void FilterList(ArrayOfObjects *childList);
+    void FilterList(ListOfConstObjects &childList) const override;
 
 public:
     /** */

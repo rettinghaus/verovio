@@ -9,11 +9,13 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "editorial.h"
+#include "functor.h"
+#include "measure.h"
 #include "text.h"
 #include "verticalaligner.h"
 #include "vrv.h"
@@ -26,15 +28,16 @@ namespace vrv {
 
 static const ClassRegistrar<Reh> s_factory("reh", REH);
 
-Reh::Reh() : ControlElement("reh-"), TextDirInterface(), TimePointInterface(), AttColor(), AttLang(), AttVerticalGroup()
+Reh::Reh()
+    : ControlElement(REH, "reh-"), TextDirInterface(), TimePointInterface(), AttColor(), AttLang(), AttVerticalGroup()
 {
-    RegisterInterface(TextDirInterface::GetAttClasses(), TextDirInterface::IsInterface());
-    RegisterInterface(TimePointInterface::GetAttClasses(), TimePointInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
-    RegisterAttClass(ATT_LANG);
-    RegisterAttClass(ATT_VERTICALGROUP);
+    this->RegisterInterface(TextDirInterface::GetAttClasses(), TextDirInterface::IsInterface());
+    this->RegisterInterface(TimePointInterface::GetAttClasses(), TimePointInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_LANG);
+    this->RegisterAttClass(ATT_VERTICALGROUP);
 
-    Reset();
+    this->Reset();
 }
 
 Reh::~Reh() {}
@@ -44,9 +47,9 @@ void Reh::Reset()
     ControlElement::Reset();
     TextDirInterface::Reset();
     TimePointInterface::Reset();
-    ResetColor();
-    ResetLang();
-    ResetVerticalGroup();
+    this->ResetColor();
+    this->ResetLang();
+    this->ResetVerticalGroup();
 }
 
 bool Reh::IsSupportedChild(Object *child)
@@ -61,6 +64,30 @@ bool Reh::IsSupportedChild(Object *child)
         return false;
     }
     return true;
+}
+
+//----------------------------------------------------------------------------
+// Reh functor methods
+//----------------------------------------------------------------------------
+
+FunctorCode Reh::Accept(Functor &functor)
+{
+    return functor.VisitReh(this);
+}
+
+FunctorCode Reh::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitReh(this);
+}
+
+FunctorCode Reh::AcceptEnd(Functor &functor)
+{
+    return functor.VisitRehEnd(this);
+}
+
+FunctorCode Reh::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitRehEnd(this);
 }
 
 } // namespace vrv

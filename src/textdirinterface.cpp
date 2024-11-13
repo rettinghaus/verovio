@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -24,26 +24,33 @@ namespace vrv {
 
 TextDirInterface::TextDirInterface() : Interface(), AttPlacementRelStaff()
 {
-    RegisterInterfaceAttClass(ATT_PLACEMENTRELSTAFF);
+    this->RegisterInterfaceAttClass(ATT_PLACEMENTRELSTAFF);
 
-    Reset();
+    this->Reset();
 }
 
 TextDirInterface::~TextDirInterface() {}
 
 void TextDirInterface::Reset()
 {
-    ResetPlacementRelStaff();
+    this->ResetPlacementRelStaff();
 }
 
-int TextDirInterface::GetNumberOfLines(Object *object)
+int TextDirInterface::GetNumberOfLines(const Object *object) const
 {
     assert(object);
 
-    ListOfObjects lbs;
-    ClassIdComparison matches(LB);
-    object->FindAllDescendantByComparison(&lbs, &matches);
-    return ((int)lbs.size() + 1);
+    return object->GetDescendantCount(LB) + 1;
+}
+
+bool TextDirInterface::AreChildrenAlignedTo(const Object *object, data_HORIZONTALALIGNMENT alignment) const
+{
+    ArrayOfConstObjects children = object->GetChildren();
+    bool hasHalign = std::any_of(children.begin(), children.end(), [&alignment](const Object *child) {
+        const AttHorizontalAlign *hAlign = dynamic_cast<const AttHorizontalAlign *>(child);
+        return (hAlign && (hAlign->GetHalign() == alignment));
+    });
+    return hasHalign;
 }
 
 } // namespace vrv

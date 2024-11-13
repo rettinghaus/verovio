@@ -12,6 +12,7 @@
 #include "expansionmap.h"
 #include "facsimile.h"
 #include "options.h"
+#include "resources.h"
 #include "scoredef.h"
 
 namespace smf {
@@ -20,7 +21,7 @@ class MidiFile;
 
 namespace vrv {
 
-class CastOffPagesParams;
+class DocSelection;
 class FontInfo;
 class Glyph;
 class Pages;
@@ -46,29 +47,39 @@ public:
     ///@{
     Doc();
     virtual ~Doc();
-    virtual ClassId GetClassId() const { return DOC; }
     ///@}
 
     /**
      * Add a page to the document
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Clear the content of the document.
      */
-    virtual void Reset();
+    void Reset() override;
 
     /**
-     * Refreshes the views from Doc.
+     * Clear the selection pages.
      */
-    virtual void Refresh();
+    void ClearSelectionPages();
 
     /**
      * Getter for the options
      */
-    Options *GetOptions() const { return m_options; }
-    void SetOptions(Options *options) { (*m_options) = *options; };
+    ///@{
+    Options *GetOptions() { return m_options; }
+    const Options *GetOptions() const { return m_options; }
+    void SetOptions(Options *options) { (*m_options) = *options; }
+    ///@}
+
+    /**
+     * Getter for the resources
+     */
+    ///@{
+    const Resources &GetResources() const { return m_resources; }
+    Resources &GetResourcesForModification() { return m_resources; }
+    ///@}
 
     /**
      * Generate a document scoreDef when none is provided.
@@ -79,12 +90,12 @@ public:
     /**
      * Generate a document pgFoot if none is provided
      */
-    bool GenerateFooter();
+    void GenerateFooter();
 
     /**
      * Generate a document pgHead from the MEI header if none is provided
      */
-    bool GenerateHeader();
+    void GenerateHeader();
 
     /**
      * Generate measure numbers from measure attributes
@@ -92,34 +103,69 @@ public:
     bool GenerateMeasureNumbers();
 
     /**
-     * Getter and setter for the DocType.
-     * The setter resets the document.
+     * Generate an MEI header
      */
+    void GenerateMEIHeader(bool meiBasic);
+
+    /**
+     * Getter and setter for the DocType.
+     */
+    ///@{
     DocType GetType() const { return m_type; }
     void SetType(DocType type);
+    bool IsFacs() const { return (m_type == Facs); }
+    bool IsRaw() const { return (m_type == Raw); }
+    bool IsRendering() const { return (m_type == Rendering); }
+    bool IsTranscription() const { return (m_type == Transcription); }
+    ///@}
 
     /**
      * Check if the document has a page with the specified value
      */
-    bool HasPage(int pageIdx);
-
-    /**
-     * Get the Score in the visible Mdiv.
-     * Will find it only when having read a score-based MEI file
-     */
-    Score *GetScore();
+    bool HasPage(int pageIdx) const;
 
     /**
      * Get the Pages in the visible Mdiv.
      * Will find it only when having read a pages-based MEI file,
      * or when a file was converted to page-based MEI.
      */
+    ///@{
     Pages *GetPages();
+    const Pages *GetPages() const;
+    ///@}
 
     /**
      * Get the total page count
      */
-    int GetPageCount();
+    int GetPageCount() const;
+
+    /**
+     * Get the first scoreDef
+     */
+    ///@{
+    ScoreDef *GetFirstScoreDef();
+    const ScoreDef *GetFirstScoreDef() const;
+    ///@}
+
+    /**
+     * Get all visible scores / the first visible score
+     * Lazily updates the visible scores, hence not const
+     */
+    ///@{
+    std::list<Score *> GetVisibleScores();
+    Score *GetFirstVisibleScore();
+    ///@}
+
+    /**
+     * Get the corresponding score for a node
+     */
+    ///@{
+    Score *GetCorrespondingScore(const Object *object);
+    const Score *GetCorrespondingScore(const Object *object) const;
+    // Generic version that does not necessarily rely on precalculated visible scores
+    Score *GetCorrespondingScore(const Object *object, const std::list<Score *> &scores);
+    const Score *GetCorrespondingScore(const Object *object, const std::list<Score *> &scores) const;
+    ///@}
 
     /**
      * Return true if the MIDI generation is already done
@@ -130,10 +176,13 @@ public:
      * @name Get the height or width for a glyph taking into account the staff and grace sizes
      */
     ///@{
-    int GetGlyphHeight(wchar_t code, int staffSize, bool graceSize) const;
-    int GetGlyphWidth(wchar_t code, int staffSize, bool graceSize) const;
-    int GetGlyphDescender(wchar_t code, int staffSize, bool graceSize) const;
-    int GetGlyphAdvX(wchar_t code, int staffSize, bool graceSize) const;
+    int GetGlyphHeight(char32_t code, int staffSize, bool graceSize) const;
+    int GetGlyphWidth(char32_t code, int staffSize, bool graceSize) const;
+    int GetGlyphLeft(char32_t code, int staffSize, bool graceSize) const;
+    int GetGlyphRight(char32_t code, int staffSize, bool graceSize) const;
+    int GetGlyphBottom(char32_t code, int staffSize, bool graceSize) const;
+    int GetGlyphTop(char32_t code, int staffSize, bool graceSize) const;
+    int GetGlyphAdvX(char32_t code, int staffSize, bool graceSize) const;
     int GetDrawingUnit(int staffSize) const;
     int GetDrawingDoubleUnit(int staffSize) const;
     int GetDrawingStaffSize(int staffSize) const;
@@ -160,12 +209,12 @@ public:
      * The staff size must already be taken into account in the FontInfo
      */
     ///@{
-    int GetTextGlyphHeight(wchar_t code, FontInfo *font, bool graceSize) const;
-    int GetTextGlyphWidth(wchar_t code, FontInfo *font, bool graceSize) const;
-    int GetTextGlyphAdvX(wchar_t code, FontInfo *font, bool graceSize) const;
-    int GetTextGlyphDescender(wchar_t code, FontInfo *font, bool graceSize) const;
-    int GetTextLineHeight(FontInfo *font, bool graceSize) const;
-    int GetTextXHeight(FontInfo *font, bool graceSize) const;
+    int GetTextGlyphHeight(char32_t code, const FontInfo *font, bool graceSize) const;
+    int GetTextGlyphWidth(char32_t code, const FontInfo *font, bool graceSize) const;
+    int GetTextGlyphAdvX(char32_t code, const FontInfo *font, bool graceSize) const;
+    int GetTextGlyphDescender(char32_t code, const FontInfo *font, bool graceSize) const;
+    int GetTextLineHeight(const FontInfo *font, bool graceSize) const;
+    int GetTextXHeight(const FontInfo *font, bool graceSize) const;
     ///@}
 
     /**
@@ -175,7 +224,14 @@ public:
     ///@{
     FontInfo *GetDrawingSmuflFont(int staffSize, bool graceSize);
     FontInfo *GetDrawingLyricFont(int staffSize);
+    FontInfo *GetFingeringFont(int staffSize);
     ///@}
+
+    /**
+     * Get the ratio between the lyric font size and the music font size.
+     * This is used when the music font is used within text.
+     */
+    double GetMusicToLyricFontSizeRatio() const;
 
     /**
      * @name Getters for the object margins (left and right).
@@ -183,7 +239,9 @@ public:
      */
     ///@{
     double GetLeftMargin(const ClassId classId) const;
+    double GetLeftMargin(const Object *object) const;
     double GetRightMargin(const ClassId classId) const;
+    double GetRightMargin(const Object *object) const;
     double GetLeftPosition() const;
     double GetBottomMargin(const ClassId classId) const;
     double GetTopMargin(const ClassId classId) const;
@@ -193,20 +251,20 @@ public:
      * Get the default distance from the staff for the object
      * The distance is given in x * MEI UNIT
      */
-    double GetStaffDistance(const ClassId classId, int staffIndex, data_STAFFREL staffPosition);
+    data_MEASUREMENTSIGNED GetStaffDistance(const Object *object, int staffIndex, data_STAFFREL staffPosition) const;
 
     /**
-     * Prepare the MIDI timemap for MIDI and timemap file export.
+     * Prepare the timemap for MIDI and timemap file export.
      * Run trough all the layers and fill the score-time and performance timing variables.
      */
-    void CalculateMidiTimemap();
+    void CalculateTimemap();
 
     /**
-     * Check to see if the MIDI timemap has already been calculated.  This needs to return
+     * Check to see if the timemap has already been calculated.  This needs to return
      * true before ExportMIDI() or ExportTimemap() can export anything (These two functions
-     * will automatically run CalculateMidiTimemap() if HasMidiTimemap() return false.
+     * will automatically run CalculateTimemap() if HasTimemap() return false.
      */
-    bool HasMidiTimemap();
+    bool HasTimemap() const;
 
     /**
      * Export the document to a MIDI file.
@@ -218,10 +276,17 @@ public:
      * Extract a timemap from the document to a JSON string.
      * Run trough all the layers and fill the timemap file content.
      */
-    bool ExportTimemap(std::string &output);
-    void PrepareJsonTimemap(std::string &output, std::map<double, double> &realTimeToScoreTime,
-        std::map<double, std::vector<std::string>> &realTimeToOnElements,
-        std::map<double, std::vector<std::string>> &realTimeToOffElements, std::map<double, double> &realTimeToTempo);
+    bool ExportTimemap(std::string &output, bool includeRests, bool includeMeasures, bool useFractions);
+
+    /**
+     *  Extract expansionMap from the document to JSON string.
+     */
+    bool ExportExpansionMap(std::string &output);
+
+    /**
+     * Extract music features to JSON string.
+     */
+    bool ExportFeatures(std::string &output, const std::string &options);
 
     /**
      * Set the initial scoreDef of each page.
@@ -230,11 +295,6 @@ public:
      * This will be done only if m_currentScoreDefDone is false or force is true.
      */
     void ScoreDefSetCurrentDoc(bool force = false);
-
-    /**
-     * Check whether we need to optimize score based on the condense option
-     */
-    bool ScoreDefNeedsOptimization();
 
     /**
      * Optimize the scoreDef once the document is cast-off.
@@ -247,11 +307,11 @@ public:
     void ScoreDefSetGrpSymDoc();
 
     /**
-     * Prepare the document for drawing.
-     * This sets drawing pointers and value and needs to be done after loading and any editing.
+     * Prepare the document data.
+     * This sets pointers and value and needs to be done after loading and any editing.
      * For example, it sets the approriate values for the lyrics connectors
      */
-    void PrepareDrawing();
+    void PrepareData();
 
     /**
      * Casts off the entire document.
@@ -280,19 +340,10 @@ public:
     void CastOffDocBase(bool useSb, bool usePb, bool smart = false);
 
     /**
-     * Casts off the running elements (headers and footer)
-     * Called from Doc::CastOffDoc
-     * The doc needs to be empty, the methods adds two empty pages to calculate the
-     * size of the header and footer of the page one and two.
-     * Calcultated sizes are set in the CastOffPagesParams object.
-     */
-    void CastOffRunningElements(CastOffPagesParams *params);
-
-    /**
      * Undo the cast off of the entire document.
      * The document will then contain one single page with one single system.
      */
-    void UnCastOffDoc();
+    void UnCastOffDoc(bool resetCache = true);
 
     /**
      * Cast off of the entire document according to the encoded data (pb and sb).
@@ -302,7 +353,7 @@ public:
 
     /**
      * Convert the doc from score-based to page-based MEI.
-     * Containers will be converted to boundaryStart / boundaryEnd.
+     * Containers will be converted to systemMilestone / systemMilestoneEnd.
      * Does not perform any check if the data needs or can be converted.
      */
     void ConvertToPageBasedDoc();
@@ -310,13 +361,9 @@ public:
     /**
      * Convert mensural MEI into cast-off (measure) segments looking at the barLine objects.
      * Segment positions occur where a barLine is set on all staves.
+     * castOff parameters indicates if we perform cast off (true) or un-cast off
      */
-    void ConvertToCastOffMensuralDoc();
-
-    /**
-     * Reverse of ConvertToCastOffMensuralDoc()
-     */
-    void ConvertToUnCastOffMensuralDoc();
+    void ConvertToCastOffMensuralDoc(bool castOff);
 
     /**
      * Convert analytical encoding (@fermata, @tie) to correpsonding elements
@@ -324,6 +371,18 @@ public:
      * Permanent conversion discard analytical markup and elements will be preserved in the MEI output.
      */
     void ConvertMarkupDoc(bool permanent = true);
+
+    /**
+     * Sync the coordinate provided trought <facsimile> to m_drawingFacsX/Y.
+     * Call the SyncToFacsimile functor.
+     */
+    void SyncFromFacsimileDoc();
+
+    /**
+     * Sync the coordinate provided in rendering to a <facsimile>.
+     * The document must have encoded layout and the option --break encoded must have enabled.
+     */
+    void SyncToFacsimileDoc();
 
     /**
      * Transpose the content of the doc.
@@ -336,11 +395,6 @@ public:
     void ExpandExpansions();
 
     /**
-     * To be implemented.
-     */
-    void RefreshViews(){};
-
-    /**
      * Set drawing values (page size, etc) when drawing a page.
      * By default, the page size of the document is taken.
      * If a page is given, the size of the page is taken.
@@ -348,19 +402,27 @@ public:
     Page *SetDrawingPage(int pageIdx);
 
     /**
+     * Update the drawing page sizes when a page is set as drawing page.
+     */
+    void UpdatePageDrawingSizes();
+
+    /**
      * Reset drawing page to NULL.
      * This might be necessary if we have replaced a page in the document.
      * We need to call this because otherwise looking at the page idx will fail.
      * See Doc::LayOut for an example.
      */
-    void ResetDrawingPage() { m_drawingPage = NULL; }
+    void ResetDataPage() { m_drawingPage = NULL; }
 
     /**
      * Getter to the drawPage. Normally, getting the page should
      * be done with Doc::SetDrawingPage. This is only a method for
-     * asserting that currently have the right page.
+     * asserting that we currently have the right page.
      */
-    Page *GetDrawingPage() const { return m_drawingPage; }
+    ///@{
+    Page *GetDrawingPage() { return m_drawingPage; }
+    const Page *GetDrawingPage() const { return m_drawingPage; }
+    ///@}
 
     /**
      * Return the width adjusted to the content of the current drawing page.
@@ -390,12 +452,42 @@ public:
     ///@}
 
     /**
+     * @name Setter for and getter for neume-line flag
+     */
+    ///@{
+    void SetNeumeLines(bool isNeumeLines) { m_isNeumeLines = isNeumeLines; }
+    bool IsNeumeLines() const { return m_isNeumeLines; }
+    ///@}
+
+    /**
      * @name Setter and getter for facsimile
      */
     ///@{
     void SetFacsimile(Facsimile *facsimile) { m_facsimile = facsimile; }
     Facsimile *GetFacsimile() { return m_facsimile; }
+    const Facsimile *GetFacsimile() const { return m_facsimile; }
     bool HasFacsimile() const { return m_facsimile != NULL; }
+    ///@}
+
+    /**
+     * Return true if the document has been cast off already.
+     */
+    bool IsCastOff() const { return m_isCastOff; }
+
+    /**
+     * @name Methods for managing a selection.
+     */
+    ///@{
+    void InitSelectionDoc(DocSelection &selection, bool resetCache);
+    void ResetSelectionDoc(bool resetCache);
+    bool HasSelection() const;
+    /**
+     * Temporarily deactivate and reactivate selection.
+     * Used for example to get the complete MEI data.
+     * No check and cast-off performed.
+     */
+    void DeactiveateSelection();
+    void ReactivateSelection(bool resetAligners);
     ///@}
 
     //----------//
@@ -403,14 +495,14 @@ public:
     //----------//
 
     /**
-     * See Object::PrepareLyricsEnd
+     * Interface for class functor visitation
      */
-    virtual int PrepareLyricsEnd(FunctorParams *functorParams);
-
-    /**
-     * See Object::PrepareTimestampsEnd
-     */
-    virtual int PrepareTimestampsEnd(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     /**
@@ -418,27 +510,41 @@ private:
      */
     int CalcMusicFontSize();
 
+    /**
+     * Generate the measure indices
+     */
+    void PrepareMeasureIndices();
+
+    /**
+     * Determine all visible scores
+     */
+    void CollectVisibleScores();
+
 public:
+    Page *m_selectionPreceding;
+    Page *m_selectionFollowing;
+    std::string m_selectionStart;
+    std::string m_selectionEnd;
+
     /**
      * A copy of the header tree stored as pugi::xml_document
      */
     pugi::xml_document m_header;
 
     /**
-     * A copy of the header tree stored as pugi::xml_document
+     * A copy of the front tree stored as pugi::xml_document
      */
     pugi::xml_document m_front;
 
     /**
-     * A copy of the header tree stored as pugi::xml_document
+     * A copy of the back tree stored as pugi::xml_document
      */
     pugi::xml_document m_back;
 
     /**
-     * Holds the top scoreDef.
-     * In a standard MEI file, this is the <scoreDef> encoded before the first <section>.
+     * The music@decls value
      */
-    ScoreDef m_mdivScoreDef;
+    std::string m_musicDecls;
 
     /** The current page height */
     int m_drawingPageHeight;
@@ -456,8 +562,6 @@ public:
     int m_drawingPageMarginRight;
     /** The current page top margin */
     int m_drawingPageMarginTop;
-    /** the current beam minimal slope */
-    float m_drawingBeamMinSlope;
     /** the current beam maximal slope */
     float m_drawingBeamMaxSlope;
 
@@ -484,6 +588,22 @@ private:
      */
     Options *m_options;
 
+    /**
+     * The resources (glyph table).
+     */
+    Resources m_resources;
+
+    /**
+     * The list of all visible scores
+     * Used in Doc::GetCorrespondingScore to quickly determine the score for an object
+     */
+    std::list<Score *> m_visibleScores;
+
+    /**
+     * A flag indicating if the document has been cast off or not.
+     */
+    bool m_isCastOff;
+
     /*
      * The following values are set in the Doc::SetDrawingPage.
      * They are all current values to be used when drawing a page in a View and
@@ -506,30 +626,34 @@ private:
     int m_drawingSmuflFontSize;
     /** Lyric font size  */
     int m_drawingLyricFontSize;
+    /** Fingering font size*/
+    int m_fingeringFontSize;
     /** Current music font */
     FontInfo m_drawingSmuflFont;
     /** Current lyric font */
     FontInfo m_drawingLyricFont;
+    /** Current fingering font */
+    FontInfo m_fingeringFont;
 
     /**
      * A flag to indicate whether the currentScoreDef has been set or not.
-     * If yes, ScoreDefSetCurrent will not parse the document (again) unless
+     * If yes, ScoreDefSetCurrentDoc will not parse the document (again) unless
      * the force parameter is set.
      */
     bool m_currentScoreDefDone;
 
     /**
-     * A flag to indicate if the drawing preparation has been done. If yes,
-     * drawing preparation will be reset before being done again.
+     * A flag to indicate if the data preparation has been done. If yes,
+     * data preparation will be reset before being done again.
      */
-    bool m_drawingPreparationDone;
+    bool m_dataPreparationDone;
 
     /**
-     * A flag to indicate that the MIDI timemap has been calculated.  The
+     * A flag to indicate that the timemap has been calculated.  The
      * timemap needs to be prepared before MIDI files or timemap JSON files
      * are generated. Value is 0.0 when no timemap has been generated.
      */
-    double m_MIDITimemapTempo;
+    double m_timemapTempo;
 
     /**
      * A flag to indicate whereas the document contains analytical markup to be converted.
@@ -543,6 +667,12 @@ private:
      * Mensural only music will be converted to cast-off segments by Doc::ConvertToCastOffMensuralDoc
      */
     bool m_isMensuralMusicOnly;
+
+    /**
+     * A flag to indicate that the document contains neume lines.
+     * This is a special document type where neume lines are encoded with <section type="neon-neume-line">
+     */
+    bool m_isNeumeLines;
 
     /** Page width (MEI scoredef@page.width) - currently not saved */
     int m_pageWidth;
@@ -558,7 +688,7 @@ private:
     int m_pageMarginTop;
 
     /** Facsimile information */
-    Facsimile *m_facsimile = NULL;
+    Facsimile *m_facsimile;
 };
 
 } // namespace vrv

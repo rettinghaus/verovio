@@ -25,9 +25,8 @@ public:
     ///@{
     TimestampAttr();
     virtual ~TimestampAttr();
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "TimestampAttr"; }
-    virtual ClassId GetClassId() const { return TIMESTAMP_ATTR; }
+    void Reset() override;
+    std::string GetClassName() const override { return "TimestampAttr"; }
     ///@}
 
     /**
@@ -40,13 +39,23 @@ public:
     ///@}
 
     /**
-     * Returns the duration (in double) for the Timestamp.
+     * Returns the duration (in Fraction) for the Timestamp.
      */
-    double GetTimestampAttrAlignmentDuration(int meterUnit) const;
+    Fraction GetTimestampAttrAlignmentDuration(data_DURATION meterUnit) const;
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //

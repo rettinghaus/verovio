@@ -9,9 +9,15 @@
 #define __VRV_BARLINE_H__
 
 #include "atts_shared.h"
+#include "atts_visual.h"
 #include "layerelement.h"
 
 namespace vrv {
+
+class StaffDef;
+class StaffGrp;
+
+enum class BarLinePosition { None, Left, Right };
 
 //----------------------------------------------------------------------------
 // BarLine
@@ -22,6 +28,7 @@ namespace vrv {
  */
 class BarLine : public LayerElement,
                 public AttBarLineLog,
+                public AttBarLineVis,
                 public AttColor,
                 public AttNNumberLike,
                 public AttVisibility {
@@ -32,15 +39,15 @@ public:
      */
     ///@{
     BarLine();
+    BarLine(ClassId classId);
     virtual ~BarLine();
-    virtual Object *Clone() const { return new BarLine(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "BarLine"; }
-    virtual ClassId GetClassId() const { return BARLINE; }
+    Object *Clone() const override { return new BarLine(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "BarLine"; }
     ///@}
 
     /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    bool HasToBeAligned() const override { return true; }
 
     /**
      * Use to set the alignment for the Measure BarLine members.
@@ -53,58 +60,50 @@ public:
      */
     bool HasRepetitionDots() const;
 
+    /**
+     * @name Get and set the position
+     */
+    ///@{
+    BarLinePosition GetPosition() const { return m_position; }
+    void SetPosition(BarLinePosition position) { m_position = position; }
+    ///@}
+
+    /**
+     * Check if the barline is drawn through
+     */
+    bool IsDrawnThrough(const StaffGrp *staffGrp) const;
+
+    /**
+     * @name Collect AttBarring attributes
+     * @return First entry is true if the attribute was found, second entry contains the value
+     */
+    ///@{
+    std::pair<bool, double> GetLengthFromContext(const StaffDef *staffDef) const;
+    std::pair<bool, data_BARMETHOD> GetMethodFromContext(const StaffDef *staffDef) const;
+    std::pair<bool, int> GetPlaceFromContext(const StaffDef *staffDef) const;
+    ///@}
+
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::ConvertToCastOffMensural
-     */
-    virtual int ConvertToCastOffMensural(FunctorParams *params);
-
-private:
-    //
-public:
-    //
-private:
-};
-
-//----------------------------------------------------------------------------
-// BarLineAttr
-//----------------------------------------------------------------------------
-
-/**
- * This class models the barLine related attributes of a MEI measure.
- */
-class BarLineAttr : public BarLine {
-public:
-    /**
-     * @name Constructors, destructors, and other standard methods
-     * No Reset() method is required.
+     * Interface for class functor visitation
      */
     ///@{
-    BarLineAttr();
-    virtual ~BarLineAttr();
-    virtual Object *Clone() const { return new BarLineAttr(*this); }
-    virtual std::string GetClassName() const { return "BarLineAttr"; }
-    virtual ClassId GetClassId() const
-    {
-        if (m_noAttr) return BARLINE;
-        return m_isLeft ? BARLINE_ATTR_LEFT : BARLINE_ATTR_RIGHT;
-    }
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
-
-    void SetLeft() { m_isLeft = true; }
-    void SetNoAttr() { m_noAttr = true; }
 
 private:
     //
 public:
     //
 private:
-    /** A flag for left barlines (right if false) */
-    bool m_isLeft;
-    bool m_noAttr;
+    /** The barline position (left/right) */
+    BarLinePosition m_position;
 };
 
 } // namespace vrv

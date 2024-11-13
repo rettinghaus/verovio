@@ -9,11 +9,13 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "doc.h"
+#include "functor.h"
+#include "smufl.h"
 
 namespace vrv {
 
@@ -23,13 +25,21 @@ namespace vrv {
 
 static const ClassRegistrar<Custos> s_factory("custos", CUSTOS);
 
-Custos::Custos() : LayerElement("custos-"), PitchInterface(), PositionInterface(), AttColor()
+Custos::Custos()
+    : LayerElement(CUSTOS, "custos-")
+    , PitchInterface()
+    , PositionInterface()
+    , AttColor()
+    , AttExtSymAuth()
+    , AttExtSymNames()
 {
-    RegisterInterface(PitchInterface::GetAttClasses(), PitchInterface::IsInterface());
-    RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
-    RegisterAttClass(ATT_COLOR);
+    this->RegisterInterface(PitchInterface::GetAttClasses(), PitchInterface::IsInterface());
+    this->RegisterInterface(PositionInterface::GetAttClasses(), PositionInterface::IsInterface());
+    this->RegisterAttClass(ATT_COLOR);
+    this->RegisterAttClass(ATT_EXTSYMAUTH);
+    this->RegisterAttClass(ATT_EXTSYMNAMES);
 
-    Reset();
+    this->Reset();
 }
 
 Custos::~Custos() {}
@@ -39,7 +49,9 @@ void Custos::Reset()
     LayerElement::Reset();
     PitchInterface::Reset();
     PositionInterface::Reset();
-    ResetColor();
+    this->ResetColor();
+    this->ResetExtSymAuth();
+    this->ResetExtSymNames();
 }
 
 bool Custos::IsSupportedChild(Object *child)
@@ -53,25 +65,54 @@ bool Custos::IsSupportedChild(Object *child)
     return true;
 }
 
+char32_t Custos::GetCustosGlyph(const data_NOTATIONTYPE notationtype) const
+{
+    const Resources *resources = this->GetDocResources();
+    if (!resources) return 0;
+
+    // If there is glyph.num, prioritize it
+    if (this->HasGlyphNum()) {
+        char32_t code = this->GetGlyphNum();
+        if (NULL != resources->GetGlyph(code)) return code;
+    }
+    // If there is glyph.name (second priority)
+    else if (this->HasGlyphName()) {
+        char32_t code = resources->GetGlyphCode(this->GetGlyphName());
+        if (NULL != resources->GetGlyph(code)) return code;
+    }
+
+    switch (notationtype) {
+        case NOTATIONTYPE_neume:
+            return SMUFL_EA06_chantCustosStemUpPosMiddle; // chantCustosStemUpPosMiddle
+            break;
+        default:
+            return SMUFL_EA02_mensuralCustosUp; // mensuralCustosUp
+            break;
+    }
+}
+
 //----------------------------------------------------------------------------
 // Functors methods
 //----------------------------------------------------------------------------
 
-int Custos::ResetDrawing(FunctorParams *functorParams)
+FunctorCode Custos::Accept(Functor &functor)
 {
-    // Call parent one too
-    LayerElement::ResetDrawing(functorParams);
-    PositionInterface::InterfaceResetDrawing(functorParams, this);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitCustos(this);
 }
 
-int Custos::ResetHorizontalAlignment(FunctorParams *functorParams)
+FunctorCode Custos::Accept(ConstFunctor &functor) const
 {
-    LayerElement::ResetHorizontalAlignment(functorParams);
-    PositionInterface::InterfaceResetHorizontalAlignment(functorParams, this);
+    return functor.VisitCustos(this);
+}
 
-    return FUNCTOR_CONTINUE;
+FunctorCode Custos::AcceptEnd(Functor &functor)
+{
+    return functor.VisitCustosEnd(this);
+}
+
+FunctorCode Custos::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitCustosEnd(this);
 }
 
 } // namespace vrv

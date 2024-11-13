@@ -28,17 +28,27 @@ public:
     ///@{
     Lv();
     virtual ~Lv();
-    virtual Object *Clone() const { return new Lv(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Lv"; }
-    virtual ClassId GetClassId() const { return LV; }
+    Object *Clone() const override { return new Lv(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Lv"; }
     ///@}
 
-    virtual bool CalculatePosition(Doc *doc, Staff *staff, int x1, int x2, int spanningType, Point bezier[4]);
+    bool CalculatePosition(
+        const Doc *doc, const Staff *staff, int x1, int x2, int spanningType, Point bezier[4]) override;
 
     //----------//
     // Functors //
     //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //

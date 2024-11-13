@@ -9,14 +9,14 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "clef.h"
 #include "comparison.h"
 #include "editorial.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "grpsym.h"
 #include "keysig.h"
 #include "label.h"
@@ -25,14 +25,20 @@
 #include "metersig.h"
 #include "metersiggrp.h"
 #include "pgfoot.h"
-#include "pgfoot2.h"
 #include "pghead.h"
-#include "pghead2.h"
 #include "section.h"
+#include "setscoredeffunctor.h"
 #include "staffdef.h"
 #include "staffgrp.h"
+#include "symboltable.h"
 #include "system.h"
+#include "tempo.h"
 #include "vrv.h"
+
+//----------------------------------------------------------------------------
+
+#include "MidiEvent.h"
+#include "MidiFile.h"
 
 namespace vrv {
 
@@ -40,12 +46,29 @@ namespace vrv {
 // ScoreDefElement
 //----------------------------------------------------------------------------
 
-ScoreDefElement::ScoreDefElement(const std::string &classid) : Object(classid), ScoreDefInterface(), AttTyped()
+ScoreDefElement::ScoreDefElement() : Object(SCOREDEF_ELEMENT, "scoredefelement-"), ScoreDefInterface(), AttTyped()
 {
-    RegisterInterface(ScoreDefInterface::GetAttClasses(), ScoreDefInterface::IsInterface());
-    RegisterAttClass(ATT_TYPED);
+    this->RegisterInterface(ScoreDefInterface::GetAttClasses(), ScoreDefInterface::IsInterface());
+    this->RegisterAttClass(ATT_TYPED);
 
-    Reset();
+    this->Reset();
+}
+
+ScoreDefElement::ScoreDefElement(ClassId classId) : Object(classId, "scoredefelement-"), ScoreDefInterface(), AttTyped()
+{
+    this->RegisterInterface(ScoreDefInterface::GetAttClasses(), ScoreDefInterface::IsInterface());
+    this->RegisterAttClass(ATT_TYPED);
+
+    this->Reset();
+}
+
+ScoreDefElement::ScoreDefElement(ClassId classId, const std::string &classIdStr)
+    : Object(classId, classIdStr), ScoreDefInterface(), AttTyped()
+{
+    this->RegisterInterface(ScoreDefInterface::GetAttClasses(), ScoreDefInterface::IsInterface());
+    this->RegisterAttClass(ATT_TYPED);
+
+    this->Reset();
 }
 
 ScoreDefElement::~ScoreDefElement() {}
@@ -54,43 +77,48 @@ void ScoreDefElement::Reset()
 {
     Object::Reset();
     ScoreDefInterface::Reset();
-    ResetTyped();
+    this->ResetTyped();
 }
 
-bool ScoreDefElement::HasClefInfo(int depth)
+bool ScoreDefElement::HasClefInfo(int depth) const
 {
     return (this->FindDescendantByType(CLEF, depth));
 }
 
-bool ScoreDefElement::HasKeySigInfo(int depth)
+bool ScoreDefElement::HasKeySigInfo(int depth) const
 {
     return (this->FindDescendantByType(KEYSIG, depth));
 }
 
-bool ScoreDefElement::HasMensurInfo(int depth)
+bool ScoreDefElement::HasMensurInfo(int depth) const
 {
     return (this->FindDescendantByType(MENSUR, depth));
 }
 
-bool ScoreDefElement::HasMeterSigInfo(int depth)
+bool ScoreDefElement::HasMeterSigInfo(int depth) const
 {
     return (this->FindDescendantByType(METERSIG, depth));
 }
 
-bool ScoreDefElement::HasMeterSigGrpInfo(int depth)
+bool ScoreDefElement::HasMeterSigGrpInfo(int depth) const
 {
     return (this->FindDescendantByType(METERSIGGRP, depth));
 }
 
 Clef *ScoreDefElement::GetClef()
 {
+    return const_cast<Clef *>(std::as_const(*this).GetClef());
+}
+
+const Clef *ScoreDefElement::GetClef() const
+{
     // Always check if HasClefInfo() is true before asking for it
-    Clef *clef = vrv_cast<Clef *>(this->FindDescendantByType(CLEF, 1));
+    const Clef *clef = vrv_cast<const Clef *>(this->FindDescendantByType(CLEF, 1));
     assert(clef);
     return clef;
 }
 
-Clef *ScoreDefElement::GetClefCopy()
+Clef *ScoreDefElement::GetClefCopy() const
 {
     // Always check if HasClefInfo() is true before asking for a clone
     Clef *clone = dynamic_cast<Clef *>(this->GetClef()->Clone());
@@ -101,13 +129,18 @@ Clef *ScoreDefElement::GetClefCopy()
 
 KeySig *ScoreDefElement::GetKeySig()
 {
+    return const_cast<KeySig *>(std::as_const(*this).GetKeySig());
+}
+
+const KeySig *ScoreDefElement::GetKeySig() const
+{
     // Always check if HasKeySigInfo() is true before asking for it
-    KeySig *keySig = vrv_cast<KeySig *>(this->FindDescendantByType(KEYSIG, 1));
+    const KeySig *keySig = vrv_cast<const KeySig *>(this->FindDescendantByType(KEYSIG, 1));
     assert(keySig);
     return keySig;
 }
 
-KeySig *ScoreDefElement::GetKeySigCopy()
+KeySig *ScoreDefElement::GetKeySigCopy() const
 {
     // Always check if HasKeySigInfo() is true before asking for a clone
     KeySig *clone = dynamic_cast<KeySig *>(this->GetKeySig()->Clone());
@@ -118,13 +151,18 @@ KeySig *ScoreDefElement::GetKeySigCopy()
 
 Mensur *ScoreDefElement::GetMensur()
 {
+    return const_cast<Mensur *>(std::as_const(*this).GetMensur());
+}
+
+const Mensur *ScoreDefElement::GetMensur() const
+{
     // Always check if HasMensurInfo() is true before asking for it
-    Mensur *mensur = vrv_cast<Mensur *>(this->FindDescendantByType(MENSUR, 1));
+    const Mensur *mensur = vrv_cast<const Mensur *>(this->FindDescendantByType(MENSUR, 1));
     assert(mensur);
     return mensur;
 }
 
-Mensur *ScoreDefElement::GetMensurCopy()
+Mensur *ScoreDefElement::GetMensurCopy() const
 {
     // Always check if HasMensurInfo() is true before asking for a clone
     Mensur *clone = dynamic_cast<Mensur *>(this->GetMensur()->Clone());
@@ -135,13 +173,18 @@ Mensur *ScoreDefElement::GetMensurCopy()
 
 MeterSig *ScoreDefElement::GetMeterSig()
 {
+    return const_cast<MeterSig *>(std::as_const(*this).GetMeterSig());
+}
+
+const MeterSig *ScoreDefElement::GetMeterSig() const
+{
     // Always check if HasMeterSigInfo() is true before asking for it
-    MeterSig *meterSig = vrv_cast<MeterSig *>(this->FindDescendantByType(METERSIG, 1));
+    const MeterSig *meterSig = vrv_cast<const MeterSig *>(this->FindDescendantByType(METERSIG, 1));
     assert(meterSig);
     return meterSig;
 }
 
-MeterSig *ScoreDefElement::GetMeterSigCopy()
+MeterSig *ScoreDefElement::GetMeterSigCopy() const
 {
     // Always check if HasMeterSigInfo() is true before asking for a clone
     MeterSig *clone = dynamic_cast<MeterSig *>(this->GetMeterSig()->Clone());
@@ -152,13 +195,18 @@ MeterSig *ScoreDefElement::GetMeterSigCopy()
 
 MeterSigGrp *ScoreDefElement::GetMeterSigGrp()
 {
+    return const_cast<MeterSigGrp *>(std::as_const(*this).GetMeterSigGrp());
+}
+
+const MeterSigGrp *ScoreDefElement::GetMeterSigGrp() const
+{
     // Always check if HasMeterSigGrpInfo() is true before asking for it
-    MeterSigGrp *meterSigGrp = vrv_cast<MeterSigGrp *>(this->FindDescendantByType(METERSIGGRP, 1));
+    const MeterSigGrp *meterSigGrp = vrv_cast<const MeterSigGrp *>(this->FindDescendantByType(METERSIGGRP, 1));
     assert(meterSigGrp);
     return meterSigGrp;
 }
 
-MeterSigGrp *ScoreDefElement::GetMeterSigGrpCopy()
+MeterSigGrp *ScoreDefElement::GetMeterSigGrpCopy() const
 {
     // Always check if HasMeterSigGrpInfo() is true before asking for a clone
     MeterSigGrp *clone = dynamic_cast<MeterSigGrp *>(this->GetMeterSigGrp()->Clone());
@@ -174,19 +222,21 @@ MeterSigGrp *ScoreDefElement::GetMeterSigGrpCopy()
 static const ClassRegistrar<ScoreDef> s_factory("scoreDef", SCOREDEF);
 
 ScoreDef::ScoreDef()
-    : ScoreDefElement("scoredef-")
+    : ScoreDefElement(SCOREDEF, "scoredef-")
     , ObjectListInterface()
     , AttDistances()
     , AttEndings()
     , AttOptimization()
     , AttTimeBase()
+    , AttTuning()
 {
-    RegisterAttClass(ATT_DISTANCES);
-    RegisterAttClass(ATT_ENDINGS);
-    RegisterAttClass(ATT_OPTIMIZATION);
-    RegisterAttClass(ATT_TIMEBASE);
+    this->RegisterAttClass(ATT_DISTANCES);
+    this->RegisterAttClass(ATT_ENDINGS);
+    this->RegisterAttClass(ATT_OPTIMIZATION);
+    this->RegisterAttClass(ATT_TIMEBASE);
+    this->RegisterAttClass(ATT_TUNING);
 
-    Reset();
+    this->Reset();
 }
 
 ScoreDef::~ScoreDef() {}
@@ -194,9 +244,11 @@ ScoreDef::~ScoreDef() {}
 void ScoreDef::Reset()
 {
     ScoreDefElement::Reset();
-    ResetDistances();
-    ResetEndings();
-    ResetOptimization();
+    this->ResetDistances();
+    this->ResetEndings();
+    this->ResetOptimization();
+    this->ResetTimeBase();
+    this->ResetTuning();
 
     m_drawLabels = false;
     m_drawingWidth = 0;
@@ -206,6 +258,7 @@ void ScoreDef::Reset()
 
 bool ScoreDef::IsSupportedChild(Object *child)
 {
+    // Clef is actually not allowed as child of scoreDef in MEI
     if (child->Is(CLEF)) {
         assert(dynamic_cast<Clef *>(child));
     }
@@ -218,6 +271,7 @@ bool ScoreDef::IsSupportedChild(Object *child)
     else if (child->Is(STAFFGRP)) {
         assert(dynamic_cast<StaffGrp *>(child));
     }
+    // Mensur is actually not allowed as child of scoreDef in MEI
     else if (child->Is(MENSUR)) {
         assert(dynamic_cast<Mensur *>(child));
     }
@@ -227,11 +281,11 @@ bool ScoreDef::IsSupportedChild(Object *child)
     else if (child->Is(METERSIGGRP)) {
         assert(dynamic_cast<MeterSigGrp *>(child));
     }
-    else if (child->IsEditorialElement()) {
-        assert(dynamic_cast<EditorialElement *>(child));
-    }
     else if (child->IsRunningElement()) {
         assert(dynamic_cast<RunningElement *>(child));
+    }
+    else if (child->Is(SYMBOLTABLE)) {
+        assert(dynamic_cast<SymbolTable *>(child));
     }
     else {
         return false;
@@ -239,7 +293,15 @@ bool ScoreDef::IsSupportedChild(Object *child)
     return true;
 }
 
-void ScoreDef::ReplaceDrawingValues(ScoreDef *newScoreDef)
+int ScoreDef::GetInsertOrderFor(ClassId classId) const
+{
+
+    static const std::vector s_order(
+        { SYMBOLTABLE, CLEF, KEYSIG, METERSIGGRP, METERSIG, MENSUR, PGHEAD, PGFOOT, STAFFGRP, GRPSYM });
+    return this->GetInsertOrderForIn(classId, s_order);
+}
+
+void ScoreDef::ReplaceDrawingValues(const ScoreDef *newScoreDef)
 {
     assert(newScoreDef);
 
@@ -247,11 +309,11 @@ void ScoreDef::ReplaceDrawingValues(ScoreDef *newScoreDef)
     m_setAsDrawing = true;
 
     int redrawFlags = 0;
-    Clef const *clef = NULL;
-    KeySig const *keySig = NULL;
+    const Clef *clef = NULL;
+    const KeySig *keySig = NULL;
     Mensur *mensur = NULL;
     MeterSig *meterSig = NULL;
-    MeterSigGrp *meterSigGrp = NULL;
+    const MeterSigGrp *meterSigGrp = NULL;
 
     if (newScoreDef->HasClefInfo()) {
         redrawFlags |= StaffDefRedrawFlags::REDRAW_CLEF;
@@ -276,10 +338,8 @@ void ScoreDef::ReplaceDrawingValues(ScoreDef *newScoreDef)
         meterSig = newScoreDef->GetMeterSigCopy();
     }
 
-    ReplaceDrawingValuesInStaffDefParams replaceDrawingValuesInStaffDefParams(
-        clef, keySig, mensur, meterSig, meterSigGrp);
-    Functor replaceDrawingValuesInScoreDef(&Object::ReplaceDrawingValuesInStaffDef);
-    this->Process(&replaceDrawingValuesInScoreDef, &replaceDrawingValuesInStaffDefParams);
+    ReplaceDrawingValuesInStaffDefFunctor replaceDrawingValuesInStaffDef(clef, keySig, mensur, meterSig, meterSigGrp);
+    this->Process(replaceDrawingValuesInStaffDef);
 
     if (mensur) delete mensur;
     if (meterSig) delete meterSig;
@@ -287,7 +347,7 @@ void ScoreDef::ReplaceDrawingValues(ScoreDef *newScoreDef)
     this->SetRedrawFlags(redrawFlags);
 }
 
-void ScoreDef::ReplaceDrawingValues(StaffDef *newStaffDef)
+void ScoreDef::ReplaceDrawingValues(const StaffDef *newStaffDef)
 {
     assert(newStaffDef);
 
@@ -298,12 +358,12 @@ void ScoreDef::ReplaceDrawingValues(StaffDef *newStaffDef)
     if (staffDef) {
         if (newStaffDef->HasClefInfo()) {
             staffDef->SetDrawClef(true);
-            Clef const *clef = newStaffDef->GetClef();
+            const Clef *clef = newStaffDef->GetClef();
             staffDef->SetCurrentClef(clef);
         }
         if (newStaffDef->HasKeySigInfo()) {
             staffDef->SetDrawKeySig(true);
-            KeySig const *keySig = newStaffDef->GetKeySig();
+            const KeySig *keySig = newStaffDef->GetKeySig();
             staffDef->SetCurrentKeySig(keySig);
         }
         if (newStaffDef->HasMensurInfo()) {
@@ -321,27 +381,47 @@ void ScoreDef::ReplaceDrawingValues(StaffDef *newStaffDef)
             staffDef->SetDrawMensur(false);
             MeterSigGrp *meterSigGrp = newStaffDef->GetMeterSigGrpCopy();
             MeterSig *meterSig = meterSigGrp->GetSimplifiedMeterSig();
+            staffDef->SetCurrentMeterSigGrp(meterSigGrp);
             delete meterSigGrp;
             staffDef->SetCurrentMeterSig(meterSig);
             delete meterSig;
         }
         else if (newStaffDef->HasMeterSigInfo()) {
-            staffDef->SetDrawMeterSig(true);
-            // Never draw a meterSig AND a mensur
-            staffDef->SetDrawMensur(false);
             MeterSig *meterSig = newStaffDef->GetMeterSigCopy();
-            staffDef->SetCurrentMeterSig(meterSig);
+            if (newStaffDef->HasMensurInfo()) {
+                // If there is a mensur and the meterSig
+                // is invisible, then print mensur instead
+                if (meterSig->GetVisible() == BOOLEAN_false) {
+                    staffDef->SetDrawMeterSig(false);
+                    staffDef->SetDrawMensur(true);
+                    Mensur *mensur = newStaffDef->GetMensurCopy();
+                    staffDef->SetCurrentMensur(mensur);
+                    // Invisible meterSig is still needed for mRest:
+                    staffDef->SetCurrentMeterSig(meterSig);
+                    delete mensur;
+                }
+                else {
+                    staffDef->SetDrawMeterSig(true);
+                    staffDef->SetDrawMensur(false);
+                    staffDef->SetCurrentMeterSig(meterSig);
+                }
+            }
+            else {
+                staffDef->SetDrawMeterSig(true);
+                staffDef->SetDrawMensur(false);
+                staffDef->SetCurrentMeterSig(meterSig);
+            }
             delete meterSig;
         }
         // copy other attributes if present
         if (newStaffDef->HasLabel()) staffDef->SetLabel(newStaffDef->GetLabel());
     }
     else {
-        LogWarning("StaffDef with xml:id '%s' could not be found", newStaffDef->GetUuid().c_str());
+        LogWarning("StaffDef with xml:id '%s' could not be found", newStaffDef->GetID().c_str());
     }
 }
 
-void ScoreDef::ReplaceDrawingLabels(StaffGrp *newStaffGrp)
+void ScoreDef::ReplaceDrawingLabels(const StaffGrp *newStaffGrp)
 {
     assert(newStaffGrp);
 
@@ -378,14 +458,14 @@ void ScoreDef::ReplaceDrawingLabels(StaffGrp *newStaffGrp)
     }
 }
 
-void ScoreDef::FilterList(ArrayOfObjects *childList)
+void ScoreDef::FilterList(ListOfConstObjects &childList) const
 {
     // We want to keep only staffDef
-    ArrayOfObjects::iterator iter = childList->begin();
+    ListOfConstObjects::iterator iter = childList.begin();
 
-    while (iter != childList->end()) {
+    while (iter != childList.end()) {
         if (!(*iter)->Is(STAFFDEF)) {
-            iter = childList->erase(iter);
+            iter = childList.erase(iter);
         }
         else {
             ++iter;
@@ -393,16 +473,49 @@ void ScoreDef::FilterList(ArrayOfObjects *childList)
     }
 }
 
-StaffDef *ScoreDef::GetStaffDef(int n)
+void ScoreDef::ResetFromDrawingValues()
 {
-    this->ResetList(this);
-    const ArrayOfObjects *childList = this->GetList(this);
-    ArrayOfObjects::const_iterator iter;
+    const ListOfObjects &childList = this->GetList();
 
     StaffDef *staffDef = NULL;
-    for (iter = childList->begin(); iter != childList->end(); ++iter) {
-        if (!(*iter)->Is(STAFFDEF)) continue;
-        staffDef = vrv_cast<StaffDef *>(*iter);
+    for (Object *object : childList) {
+        if (!object->Is(STAFFDEF)) continue;
+        staffDef = vrv_cast<StaffDef *>(object);
+        assert(staffDef);
+
+        Clef *clef = vrv_cast<Clef *>(staffDef->FindDescendantByType(CLEF));
+        if (clef) *clef = *staffDef->GetCurrentClef();
+
+        KeySig *keySig = vrv_cast<KeySig *>(staffDef->FindDescendantByType(KEYSIG));
+        if (keySig) *keySig = *staffDef->GetCurrentKeySig();
+
+        Mensur *mensur = vrv_cast<Mensur *>(staffDef->FindDescendantByType(MENSUR));
+        if (mensur) *mensur = *staffDef->GetCurrentMensur();
+
+        MeterSigGrp *meterSigGrp = vrv_cast<MeterSigGrp *>(staffDef->FindDescendantByType(METERSIGGRP));
+        MeterSig *meterSig = vrv_cast<MeterSig *>(staffDef->FindDescendantByType(METERSIG));
+        if (meterSigGrp) {
+            *meterSigGrp = *staffDef->GetCurrentMeterSigGrp();
+        }
+        else if (meterSig) {
+            *meterSig = *staffDef->GetCurrentMeterSig();
+        }
+    }
+}
+
+StaffDef *ScoreDef::GetStaffDef(int n)
+{
+    return const_cast<StaffDef *>(std::as_const(*this).GetStaffDef(n));
+}
+
+const StaffDef *ScoreDef::GetStaffDef(int n) const
+{
+    const ListOfConstObjects &childList = this->GetList();
+
+    const StaffDef *staffDef = NULL;
+    for (const Object *child : childList) {
+        if (!child->Is(STAFFDEF)) continue;
+        staffDef = vrv_cast<const StaffDef *>(child);
         assert(staffDef);
         if (staffDef->GetN() == n) {
             return staffDef;
@@ -414,32 +527,33 @@ StaffDef *ScoreDef::GetStaffDef(int n)
 
 StaffGrp *ScoreDef::GetStaffGrp(const std::string &n)
 {
+    return const_cast<StaffGrp *>(std::as_const(*this).GetStaffGrp(n));
+}
+
+const StaffGrp *ScoreDef::GetStaffGrp(const std::string &n) const
+{
     // First get all the staffGrps
-    ClassIdComparison matchType(STAFFGRP);
-    ListOfObjects staffGrps;
-    this->FindAllDescendantByComparison(&staffGrps, &matchType);
+    ListOfConstObjects staffGrps = this->FindAllDescendantsByType(STAFFGRP);
 
     // Then the @n of each first staffDef
-    for (auto &item : staffGrps) {
-        StaffGrp *staffGrp = vrv_cast<StaffGrp *>(item);
+    for (const Object *object : staffGrps) {
+        const StaffGrp *staffGrp = vrv_cast<const StaffGrp *>(object);
         assert(staffGrp);
         if (staffGrp->GetN() == n) return staffGrp;
     }
     return NULL;
 }
 
-std::vector<int> ScoreDef::GetStaffNs()
+std::vector<int> ScoreDef::GetStaffNs() const
 {
-    this->ResetList(this);
-    const ArrayOfObjects *childList = this->GetList(this);
-    ArrayOfObjects::const_iterator iter;
+    const ListOfConstObjects &childList = this->GetList();
 
     std::vector<int> ns;
-    StaffDef *staffDef = NULL;
-    for (iter = childList->begin(); iter != childList->end(); ++iter) {
+    const StaffDef *staffDef = NULL;
+    for (const Object *child : childList) {
         // It should be staffDef only, but double check.
-        if (!(*iter)->Is(STAFFDEF)) continue;
-        staffDef = vrv_cast<StaffDef *>(*iter);
+        if (!child->Is(STAFFDEF)) continue;
+        staffDef = vrv_cast<const StaffDef *>(child);
         assert(staffDef);
         ns.push_back(staffDef->GetN());
     }
@@ -449,10 +563,8 @@ std::vector<int> ScoreDef::GetStaffNs()
 void ScoreDef::SetRedrawFlags(int redrawFlags)
 {
     m_setAsDrawing = true;
-    SetStaffDefRedrawFlagsParams setStaffDefRedrawFlagsParams;
-    setStaffDefRedrawFlagsParams.m_redrawFlags = redrawFlags;
-    Functor setStaffDefDraw(&Object::SetStaffDefRedrawFlags);
-    this->Process(&setStaffDefDraw, &setStaffDefRedrawFlagsParams);
+    SetStaffDefRedrawFlagsFunctor setStaffDefRedrawFlags(redrawFlags);
+    this->Process(setStaffDefRedrawFlags);
 }
 
 void ScoreDef::SetDrawingWidth(int drawingWidth)
@@ -467,128 +579,102 @@ void ScoreDef::SetDrawingLabelsWidth(int width)
     }
 }
 
-PgFoot *ScoreDef::GetPgFoot()
+PgFoot *ScoreDef::GetPgFoot(data_PGFUNC func)
 {
-    return dynamic_cast<PgFoot *>(this->FindDescendantByType(PGFOOT));
+    AttFormeworkComparison comparison(PGFOOT, func);
+    return vrv_cast<PgFoot *>(this->FindDescendantByComparison(&comparison));
 }
 
-PgFoot2 *ScoreDef::GetPgFoot2()
+const PgFoot *ScoreDef::GetPgFoot(data_PGFUNC func) const
 {
-    return dynamic_cast<PgFoot2 *>(this->FindDescendantByType(PGFOOT2));
+    AttFormeworkComparison comparison(PGFOOT, func);
+    return vrv_cast<const PgFoot *>(this->FindDescendantByComparison(&comparison));
 }
 
-PgHead *ScoreDef::GetPgHead()
+PgHead *ScoreDef::GetPgHead(data_PGFUNC func)
 {
-    return dynamic_cast<PgHead *>(this->FindDescendantByType(PGHEAD));
+    AttFormeworkComparison comparison(PGHEAD, func);
+    return vrv_cast<PgHead *>(this->FindDescendantByComparison(&comparison));
 }
 
-PgHead2 *ScoreDef::GetPgHead2()
+const PgHead *ScoreDef::GetPgHead(data_PGFUNC func) const
 {
-    return dynamic_cast<PgHead2 *>(this->FindDescendantByType(PGHEAD2));
+    AttFormeworkComparison comparison(PGHEAD, func);
+    return vrv_cast<const PgHead *>(this->FindDescendantByComparison(&comparison));
 }
 
-int ScoreDef::GetMaxStaffSize()
+int ScoreDef::GetMaxStaffSize() const
 {
-    StaffGrp *staffGrp = dynamic_cast<StaffGrp *>(this->FindDescendantByType(STAFFGRP));
+    const StaffGrp *staffGrp = vrv_cast<const StaffGrp *>(this->FindDescendantByType(STAFFGRP));
     return (staffGrp) ? staffGrp->GetMaxStaffSize() : 100;
 }
 
-bool ScoreDef::IsSectionRestart()
+bool ScoreDef::IsSectionRestart() const
 {
     if (!this->GetParent()) return false;
     // In page-based structure, Section is a sibling to scoreDef
     // This has limitations: will not work with editorial markup, additional nested sections, and
     // if the section milestone is in the previous system.
-    Section *section = dynamic_cast<Section *>(this->GetParent()->GetPrevious(this, SECTION));
+    const Section *section = vrv_cast<const Section *>(this->GetParent()->GetPrevious(this, SECTION));
     return (section && (section->GetRestart() == BOOLEAN_true));
+}
+
+bool ScoreDef::HasSystemStartLine() const
+{
+    const StaffGrp *staffGrp = vrv_cast<const StaffGrp *>(this->FindDescendantByType(STAFFGRP));
+    if (staffGrp) {
+        auto [firstDef, lastDef] = staffGrp->GetFirstLastStaffDef();
+        ListOfConstObjects allDefs = staffGrp->FindAllDescendantsByType(STAFFDEF);
+        if ((firstDef && lastDef && allDefs.size() > 1) || staffGrp->GetFirst(GRPSYM)) {
+            return (this->GetSystemLeftline() != BOOLEAN_false);
+        }
+        return (this->GetSystemLeftline() == BOOLEAN_true);
+    }
+    return false;
 }
 
 //----------------------------------------------------------------------------
 // Functors methods
 //----------------------------------------------------------------------------
 
-int ScoreDef::ResetHorizontalAlignment(FunctorParams *functorParams)
+FunctorCode ScoreDefElement::Accept(Functor &functor)
 {
-    m_drawingLabelsWidth = 0;
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitScoreDefElement(this);
 }
 
-int ScoreDef::ConvertToPageBased(FunctorParams *functorParams)
+FunctorCode ScoreDefElement::Accept(ConstFunctor &functor) const
 {
-    ConvertToPageBasedParams *params = vrv_params_cast<ConvertToPageBasedParams *>(functorParams);
-    assert(params);
-
-    // Move itself to the pageBasedSystem - do not process children
-    this->MoveItselfTo(params->m_pageBasedSystem);
-
-    return FUNCTOR_SIBLINGS;
+    return functor.VisitScoreDefElement(this);
 }
 
-int ScoreDef::ConvertToCastOffMensural(FunctorParams *functorParams)
+FunctorCode ScoreDefElement::AcceptEnd(Functor &functor)
 {
-    ConvertToCastOffMensuralParams *params = vrv_params_cast<ConvertToCastOffMensuralParams *>(functorParams);
-    assert(params);
-
-    assert(params->m_targetSystem);
-    this->MoveItselfTo(params->m_targetSystem);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitScoreDefElementEnd(this);
 }
 
-int ScoreDef::CastOffSystems(FunctorParams *functorParams)
+FunctorCode ScoreDefElement::AcceptEnd(ConstFunctor &functor) const
 {
-    CastOffSystemsParams *params = vrv_params_cast<CastOffSystemsParams *>(functorParams);
-    assert(params);
-
-    // Since the functor returns FUNCTOR_SIBLINGS we should never go lower than the system children
-    assert(dynamic_cast<System *>(this->GetParent()));
-
-    // Special case where we use the Relinquish method.
-    // We want to move the measure to the currentSystem. However, we cannot use DetachChild
-    // from the content System because this screws up the iterator. Relinquish gives up
-    // the ownership of the Measure - the contentSystem will be deleted afterwards.
-    ScoreDef *scoreDef = dynamic_cast<ScoreDef *>(params->m_contentSystem->Relinquish(this->GetIdx()));
-    // move as pending since we want it at the beginning of the system in case of system break coming
-    params->m_pendingObjects.push_back(scoreDef);
-    // This is not perfect since now the scoreDefWith is the one of the intermediate scoreDefs (and not
-    // the initial one - for this to be corrected, we would need two parameters, one for the current initial
-    // scoreDef and one for the current that will be the initial one at the next system
-    // Also, the abbr label (width) changes would not be taken into account
-    params->m_currentScoreDefWidth = this->GetDrawingWidth() + params->m_contentSystem->GetDrawingAbbrLabelsWidth();
-
-    return FUNCTOR_SIBLINGS;
+    return functor.VisitScoreDefElementEnd(this);
 }
 
-int ScoreDef::CastOffEncoding(FunctorParams *functorParams)
+FunctorCode ScoreDef::Accept(Functor &functor)
 {
-    CastOffEncodingParams *params = vrv_params_cast<CastOffEncodingParams *>(functorParams);
-    assert(params);
-
-    MoveItselfTo(params->m_currentSystem);
-
-    return FUNCTOR_SIBLINGS;
+    return functor.VisitScoreDef(this);
 }
 
-int ScoreDef::AlignMeasures(FunctorParams *functorParams)
+FunctorCode ScoreDef::Accept(ConstFunctor &functor) const
 {
-    AlignMeasuresParams *params = vrv_params_cast<AlignMeasuresParams *>(functorParams);
-    assert(params);
-
-    // SetDrawingXRel(m_systemLeftMar + this->GetDrawingWidth());
-    params->m_shift += m_drawingLabelsWidth;
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitScoreDef(this);
 }
 
-int ScoreDef::JustifyX(FunctorParams *functorParams)
+FunctorCode ScoreDef::AcceptEnd(Functor &functor)
 {
-    JustifyXParams *params = vrv_params_cast<JustifyXParams *>(functorParams);
-    assert(params);
+    return functor.VisitScoreDefEnd(this);
+}
 
-    params->m_measureXRel += m_drawingLabelsWidth;
-
-    return FUNCTOR_SIBLINGS;
+FunctorCode ScoreDef::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitScoreDefEnd(this);
 }
 
 } // namespace vrv

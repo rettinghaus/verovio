@@ -10,7 +10,7 @@
 
 #include "atts_cmn.h"
 #include "atts_shared.h"
-#include "beam.h"
+#include "atts_visual.h"
 #include "layerelement.h"
 
 namespace vrv {
@@ -22,7 +22,7 @@ namespace vrv {
 /**
  * This class models the MEI <beatRpt> element.
  */
-class BeatRpt : public LayerElement, public AttColor, public AttBeatRptVis {
+class BeatRpt : public LayerElement, public AttColor, public AttBeatRptLog, public AttBeatRptVis {
 public:
     /**
      * @name Constructors, destructors, reset and class name methods
@@ -31,37 +31,39 @@ public:
     ///@{
     BeatRpt();
     virtual ~BeatRpt();
-    virtual Object *Clone() const { return new BeatRpt(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "BeatRpt"; }
-    virtual ClassId GetClassId() const { return BEATRPT; }
+    Object *Clone() const override { return new BeatRpt(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "BeatRpt"; }
     ///@}
 
     /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    bool HasToBeAligned() const override { return true; }
 
     /**
-     * Returns the duration (in double) for the BeatRpt.
+     * Returns the duration (in Fraction) for the BeatRpt.
      */
 
-    double GetBeatRptAlignmentDuration(int meterUnit) const;
+    Fraction GetBeatRptAlignmentDuration(data_DURATION meterUnit) const;
 
     /**
      * MIDI timing information
      */
     ///@{
-    void SetScoreTimeOnset(double scoreTime);
-    double GetScoreTimeOnset() const;
+    void SetScoreTimeOnset(Fraction scoreTime);
+    Fraction GetScoreTimeOnset() const;
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * @name See Object::GenerateMIDI
+     * Interface for class functor visitation
      */
     ///@{
-    virtual int GenerateMIDI(FunctorParams *functorParams);
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
 
 private:
@@ -73,7 +75,7 @@ private:
      * The score-time onset of the note in the measure (duration from the start of measure in
      * quarter notes).
      */
-    double m_scoreTimeOnset;
+    Fraction m_scoreTimeOnset;
 };
 
 } // namespace vrv

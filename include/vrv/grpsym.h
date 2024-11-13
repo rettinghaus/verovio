@@ -36,10 +36,9 @@ public:
     ///@{
     GrpSym();
     virtual ~GrpSym();
-    virtual Object *Clone() const { return new GrpSym(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "GrpSym"; }
-    virtual ClassId GetClassId() const { return GRPSYM; }
+    Object *Clone() const override { return new GrpSym(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "GrpSym"; }
     ///@}
 
     /**
@@ -47,17 +46,19 @@ public:
      */
     ///@{
     void SetStartDef(StaffDef *start);
-    StaffDef *GetStartDef() const { return m_startDef; };
+    StaffDef *GetStartDef() { return m_startDef; }
+    const StaffDef *GetStartDef() const { return m_startDef; }
     void SetEndDef(StaffDef *end);
-    StaffDef *GetEndDef() const { return m_endDef; };
+    StaffDef *GetEndDef() { return m_endDef; }
+    const StaffDef *GetEndDef() const { return m_endDef; }
     ///@}
 
     /**
      * @name Get the X and Y drawing position
      */
     ///@{
-    virtual int GetDrawingX() const;
-    virtual int GetDrawingY() const;
+    int GetDrawingX() const override;
+    int GetDrawingY() const override;
     ///@}
 
     //----------//
@@ -65,9 +66,14 @@ public:
     //----------//
 
     /**
-     * See Object::ScoreDefSetGrpSym
+     * Interface for class functor visitation
      */
-    virtual int ScoreDefSetGrpSym(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     //

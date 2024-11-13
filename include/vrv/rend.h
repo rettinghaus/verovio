@@ -9,6 +9,7 @@
 #define __VRV_REND_H__
 
 #include "areaposinterface.h"
+#include "atts_externalsymbols.h"
 #include "atts_shared.h"
 #include "textelement.h"
 
@@ -24,7 +25,9 @@ namespace vrv {
 class Rend : public TextElement,
              public AreaPosInterface,
              public AttColor,
+             public AttExtSymAuth,
              public AttLang,
+             public AttNNumberLike,
              public AttTextRendition,
              public AttTypography,
              public AttWhitespace {
@@ -36,34 +39,45 @@ public:
     ///@{
     Rend();
     virtual ~Rend();
-    virtual Object *Clone() const { return new Rend(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Rend"; }
-    virtual ClassId GetClassId() const { return REND; }
+    Object *Clone() const override { return new Rend(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Rend"; }
     ///@}
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual AreaPosInterface *GetAreaPosInterface() { return dynamic_cast<AreaPosInterface *>(this); }
+    AreaPosInterface *GetAreaPosInterface() override { return dynamic_cast<AreaPosInterface *>(this); }
+    const AreaPosInterface *GetAreaPosInterface() const override
+    {
+        return dynamic_cast<const AreaPosInterface *>(this);
+    }
     ///@}
 
     /**
      * Add an element (text, rend. etc.) to a rend.
      * Only supported elements will be actually added to the child list.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
+
+    /**
+     * Check if rend has an enclosing.
+     */
+    bool HasEnclosure() const;
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::AlignVertically
+     * Interface for class functor visitation
      */
     ///@{
-    virtual int AlignVertically(FunctorParams *functorParams);
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
     ///@}
 
 private:

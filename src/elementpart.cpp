@@ -9,13 +9,14 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
+#include "btrem.h"
 #include "chord.h"
 #include "doc.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "layer.h"
 #include "note.h"
 #include "smufl.h"
@@ -29,11 +30,11 @@ namespace vrv {
 // Dots
 //----------------------------------------------------------------------------
 
-Dots::Dots() : LayerElement("dots-"), AttAugmentDots()
+Dots::Dots() : LayerElement(DOTS, "dots-"), AttAugmentDots()
 {
-    RegisterAttClass(ATT_AUGMENTDOTS);
+    this->RegisterAttClass(ATT_AUGMENTDOTS);
 
-    Reset();
+    this->Reset();
 }
 
 Dots::~Dots() {}
@@ -41,14 +42,14 @@ Dots::~Dots() {}
 void Dots::Reset()
 {
     LayerElement::Reset();
-    ResetAugmentDots();
+    this->ResetAugmentDots();
 
     m_isAdjusted = false;
     m_flagShift = 0;
     m_dotLocsByStaff.clear();
 }
 
-std::set<int> Dots::GetDotLocsForStaff(Staff *staff) const
+std::set<int> Dots::GetDotLocsForStaff(const Staff *staff) const
 {
     if (m_dotLocsByStaff.find(staff) != m_dotLocsByStaff.end()) {
         return m_dotLocsByStaff.at(staff);
@@ -56,7 +57,7 @@ std::set<int> Dots::GetDotLocsForStaff(Staff *staff) const
     return {};
 }
 
-std::set<int> &Dots::ModifyDotLocsForStaff(Staff *staff)
+std::set<int> &Dots::ModifyDotLocsForStaff(const Staff *staff)
 {
     return m_dotLocsByStaff[staff];
 }
@@ -65,10 +66,10 @@ std::set<int> &Dots::ModifyDotLocsForStaff(Staff *staff)
 // Flag
 //----------------------------------------------------------------------------
 
-Flag::Flag() : LayerElement("flag-")
+Flag::Flag() : LayerElement(FLAG, "flag-")
 {
 
-    Reset();
+    this->Reset();
 }
 
 Flag::~Flag() {}
@@ -80,7 +81,7 @@ void Flag::Reset()
     m_drawingNbFlags = 0;
 }
 
-wchar_t Flag::GetFlagGlyph(data_STEMDIRECTION stemDir) const
+char32_t Flag::GetFlagGlyph(data_STEMDIRECTION stemDir) const
 {
     if (stemDir == STEMDIRECTION_up) {
         switch (m_drawingNbFlags) {
@@ -110,30 +111,29 @@ wchar_t Flag::GetFlagGlyph(data_STEMDIRECTION stemDir) const
     }
 }
 
-Point Flag::GetStemUpSE(Doc *doc, int staffSize, bool graceSize, wchar_t &code) const
+Point Flag::GetStemUpSE(const Doc *doc, int staffSize, bool graceSize) const
 {
-    code = this->GetFlagGlyph(STEMDIRECTION_up);
+    const char32_t code = this->GetFlagGlyph(STEMDIRECTION_up);
 
-    int h = doc->GetGlyphHeight(code, staffSize, graceSize);
-    return Point(0, h + doc->GetGlyphDescender(code, staffSize, graceSize));
+    return Point(0, doc->GetGlyphTop(code, staffSize, graceSize));
 }
 
-Point Flag::GetStemDownNW(Doc *doc, int staffSize, bool graceSize, wchar_t &code) const
+Point Flag::GetStemDownNW(const Doc *doc, int staffSize, bool graceSize) const
 {
-    code = this->GetFlagGlyph(STEMDIRECTION_down);
+    const char32_t code = this->GetFlagGlyph(STEMDIRECTION_down);
 
-    return Point(0, doc->GetGlyphDescender(code, staffSize, graceSize));
+    return Point(0, doc->GetGlyphBottom(code, staffSize, graceSize));
 }
 
 //----------------------------------------------------------------------------
 // TupletBracket
 //----------------------------------------------------------------------------
 
-TupletBracket::TupletBracket() : LayerElement("bracket-"), AttTupletVis()
+TupletBracket::TupletBracket() : LayerElement(TUPLET_BRACKET, "bracket-"), AttTupletVis()
 {
-    RegisterAttClass(ATT_TUPLETVIS);
+    this->RegisterAttClass(ATT_TUPLETVIS);
 
-    Reset();
+    this->Reset();
 }
 
 TupletBracket::~TupletBracket() {}
@@ -141,60 +141,64 @@ TupletBracket::~TupletBracket() {}
 void TupletBracket::Reset()
 {
     LayerElement::Reset();
-    ResetTupletVis();
+    this->ResetTupletVis();
 
     m_drawingXRelLeft = 0;
     m_drawingXRelRight = 0;
+    m_drawingYRelLeft = 0;
+    m_drawingYRelRight = 0;
     m_alignedNum = NULL;
 }
 
-int TupletBracket::GetDrawingXLeft()
+int TupletBracket::GetDrawingXLeft() const
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    const Tuplet *tuplet = vrv_cast<const Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingLeft());
 
     return tuplet->GetDrawingLeft()->GetDrawingX() + m_drawingXRelLeft;
 }
 
-int TupletBracket::GetDrawingXRight()
+int TupletBracket::GetDrawingXRight() const
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    const Tuplet *tuplet = vrv_cast<const Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingRight());
 
     return tuplet->GetDrawingRight()->GetDrawingX() + m_drawingXRelRight;
 }
 
-int TupletBracket::GetDrawingYLeft()
+int TupletBracket::GetDrawingYLeft() const
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    const Tuplet *tuplet = vrv_cast<const Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingLeft());
 
-    Beam *beam = tuplet->GetBracketAlignedBeam();
+    const Beam *beam = tuplet->GetBracketAlignedBeam();
     if (beam) {
         // Calculate the y point aligning with the beam
         int xLeft = tuplet->GetDrawingLeft()->GetDrawingX() + m_drawingXRelLeft;
-        return beam->m_beamSegment.m_startingY
-            + beam->m_beamSegment.m_beamSlope * (xLeft - beam->m_beamSegment.m_startingX) + this->GetDrawingYRel();
+        return beam->m_beamSegment.GetStartingY()
+            + beam->m_beamSegment.m_beamSlope * (xLeft - beam->m_beamSegment.GetStartingX()) + this->GetDrawingYRel()
+            + m_drawingYRelLeft;
     }
     else {
-        return this->GetDrawingY();
+        return this->GetDrawingY() + m_drawingYRelLeft;
     }
 }
 
-int TupletBracket::GetDrawingYRight()
+int TupletBracket::GetDrawingYRight() const
 {
-    Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+    const Tuplet *tuplet = vrv_cast<const Tuplet *>(this->GetFirstAncestor(TUPLET));
     assert(tuplet && tuplet->GetDrawingRight());
 
-    Beam *beam = tuplet->GetBracketAlignedBeam();
+    const Beam *beam = tuplet->GetBracketAlignedBeam();
     if (beam) {
         // Calculate the y point aligning with the beam
         int xRight = tuplet->GetDrawingRight()->GetDrawingX() + m_drawingXRelRight;
-        return beam->m_beamSegment.m_startingY
-            + beam->m_beamSegment.m_beamSlope * (xRight - beam->m_beamSegment.m_startingX) + this->GetDrawingYRel();
+        return beam->m_beamSegment.GetStartingY()
+            + beam->m_beamSegment.m_beamSlope * (xRight - beam->m_beamSegment.GetStartingX()) + this->GetDrawingYRel()
+            + m_drawingYRelRight;
     }
     else {
-        return this->GetDrawingY();
+        return this->GetDrawingY() + m_drawingYRelRight;
     }
 }
 
@@ -202,12 +206,12 @@ int TupletBracket::GetDrawingYRight()
 // TupletNum
 //----------------------------------------------------------------------------
 
-TupletNum::TupletNum() : LayerElement("num-"), AttNumberPlacement(), AttTupletVis()
+TupletNum::TupletNum() : LayerElement(TUPLET_NUM, "num-"), AttNumberPlacement(), AttTupletVis()
 {
-    RegisterAttClass(ATT_NUMBERPLACEMENT);
-    RegisterAttClass(ATT_TUPLETVIS);
+    this->RegisterAttClass(ATT_NUMBERPLACEMENT);
+    this->RegisterAttClass(ATT_TUPLETVIS);
 
-    Reset();
+    this->Reset();
 }
 
 TupletNum::~TupletNum() {}
@@ -215,13 +219,13 @@ TupletNum::~TupletNum() {}
 void TupletNum::Reset()
 {
     LayerElement::Reset();
-    ResetNumberPlacement();
-    ResetTupletVis();
+    this->ResetNumberPlacement();
+    this->ResetTupletVis();
 
     m_alignedBracket = NULL;
 }
 
-int TupletNum::GetDrawingYMid()
+int TupletNum::GetDrawingYMid() const
 {
     if (m_alignedBracket) {
         int yLeft = m_alignedBracket->GetDrawingYLeft();
@@ -233,7 +237,7 @@ int TupletNum::GetDrawingYMid()
     }
 }
 
-int TupletNum::GetDrawingXMid(Doc *doc)
+int TupletNum::GetDrawingXMid(const Doc *doc) const
 {
     if (m_alignedBracket) {
         int xLeft = m_alignedBracket->GetDrawingXLeft();
@@ -241,7 +245,7 @@ int TupletNum::GetDrawingXMid(Doc *doc)
         return xLeft + ((xRight - xLeft) / 2);
     }
     else {
-        Tuplet *tuplet = vrv_cast<Tuplet *>(this->GetFirstAncestor(TUPLET));
+        const Tuplet *tuplet = vrv_cast<const Tuplet *>(this->GetFirstAncestor(TUPLET));
         assert(tuplet && tuplet->GetDrawingLeft() && tuplet->GetDrawingRight());
         int xLeft = tuplet->GetDrawingLeft()->GetDrawingX();
         int xRight = tuplet->GetDrawingRight()->GetDrawingX();
@@ -249,7 +253,7 @@ int TupletNum::GetDrawingXMid(Doc *doc)
             xRight += (tuplet->GetDrawingRight()->GetDrawingRadius(doc) * 2);
         }
         if (tuplet->GetNumAlignedBeam()) {
-            Beam *beam = tuplet->GetNumAlignedBeam();
+            const Beam *beam = tuplet->GetNumAlignedBeam();
             switch (beam->m_drawingPlace) {
                 case BEAMPLACE_above: xLeft += (tuplet->GetDrawingLeft()->GetDrawingRadius(doc)); break;
                 case BEAMPLACE_below: xRight -= (tuplet->GetDrawingRight()->GetDrawingRadius(doc)); break;
@@ -268,356 +272,87 @@ void TupletNum::SetAlignedBracket(TupletBracket *alignedBracket)
 }
 
 //----------------------------------------------------------------------------
-// Stem
-//----------------------------------------------------------------------------
-
-Stem::Stem() : LayerElement("stem-"), AttGraced(), AttStems(), AttStemsCmn()
-{
-    RegisterAttClass(ATT_GRACED);
-    RegisterAttClass(ATT_STEMS);
-    RegisterAttClass(ATT_STEMSCMN);
-
-    Reset();
-}
-
-Stem::~Stem() {}
-
-void Stem::Reset()
-{
-    LayerElement::Reset();
-    ResetGraced();
-    ResetStems();
-    ResetStemsCmn();
-
-    m_drawingStemDir = STEMDIRECTION_NONE;
-    m_drawingStemLen = 0;
-    m_isVirtual = false;
-}
-
-bool Stem::IsSupportedChild(Object *child)
-{
-    if (child->Is(FLAG)) {
-        assert(dynamic_cast<Flag *>(child));
-    }
-    else {
-        return false;
-    }
-    return true;
-}
-
-int Stem::CompareToElementPosition(Doc *doc, LayerElement *otherElement, int margin)
-{
-    Staff *staff = vrv_cast<Staff *>(GetFirstAncestor(STAFF));
-    assert(staff);
-
-    // check if there is an overlap on the left or on the right and displace stem's parent correspondingly
-    const int right = HorizontalLeftOverlap(otherElement, doc, margin, 0);
-    const int left = HorizontalRightOverlap(otherElement, doc, margin, 0);
-    if (!right || !left) return 0;
-
-    int horizontalMargin = 2 * doc->GetDrawingStemWidth(staff->m_drawingStaffSize);
-    Flag *currentFlag = NULL;
-    currentFlag = vrv_cast<Flag *>(FindDescendantByType(FLAG, 1));
-    if (currentFlag && currentFlag->m_drawingNbFlags) {
-        wchar_t flagGlyph = currentFlag->GetFlagGlyph(STEMDIRECTION_down);
-        const int flagWidth = doc->GetGlyphWidth(flagGlyph, staff->m_drawingStaffSize, GetDrawingCueSize());
-        horizontalMargin += flagWidth;
-    }
-
-    if (right < left) {
-        return right + horizontalMargin;
-    }
-    else {
-        return (-horizontalMargin - left);
-    }
-}
-
-void Stem::AdjustFlagPlacement(Doc *doc, Flag *flag, int staffSize, int verticalCenter, int duration)
-{
-    LayerElement *parent = vrv_cast<LayerElement *>(GetParent());
-    if (!parent) return;
-
-    const data_STEMDIRECTION stemDirection = GetDrawingStemDir();
-    // For overlapping purposes we don't care for flags shorter than 16th since they grow in opposite direction
-    wchar_t flagGlyph = SMUFL_E242_flag16thUp;
-    if (duration < DURATION_16) flagGlyph = flag->GetFlagGlyph(stemDirection);
-    const int glyphHeight = doc->GetGlyphHeight(flagGlyph, staffSize, GetDrawingCueSize());
-    const int relevantGlyphHeight = (stemDirection == STEMDIRECTION_up) ? glyphHeight / 2 : glyphHeight;
-
-    // Make sure that flags don't overlap with notehead. Upward flags cannot overlap with noteheads so check
-    // only downward ones
-    const int adjustmentStep = doc->GetDrawingUnit(staffSize);
-    if (stemDirection == STEMDIRECTION_down) {
-        const int noteheadMargin = GetDrawingStemLen() - (glyphHeight + parent->GetDrawingRadius(doc));
-        if ((duration > DURATION_16) && (noteheadMargin < 0)) {
-            int offset = 0;
-            if (noteheadMargin % adjustmentStep < -adjustmentStep / 3 * 2) offset = adjustmentStep / 2;
-            const int heightToAdjust = (noteheadMargin / adjustmentStep) * adjustmentStep - offset;
-            SetDrawingStemLen(GetDrawingStemLen() - heightToAdjust);
-            flag->SetDrawingYRel(-GetDrawingStemLen());
-        }
-    }
-
-    Note *note = NULL;
-    if (parent->Is(NOTE)) {
-        note = vrv_cast<Note *>(parent);
-    }
-    else if (parent->Is(CHORD)) {
-        note = vrv_cast<Chord *>(parent)->GetTopNote();
-    }
-    int ledgerAbove = 0;
-    int ledgerBelow = 0;
-    if (!note || !note->HasLedgerLines(ledgerAbove, ledgerBelow)) return;
-    if (((stemDirection == STEMDIRECTION_up) && !ledgerBelow)
-        || ((stemDirection == STEMDIRECTION_down) && !ledgerAbove))
-        return;
-
-    // Make sure that flags don't overlap with first (top or bottom) ledger line (effectively avoiding all ledgers)
-    const int directionBias = (stemDirection == STEMDIRECTION_down) ? -1 : 1;
-    const int position = GetDrawingY() - GetDrawingStemLen() - directionBias * relevantGlyphHeight;
-    const int ledgerPosition = verticalCenter - 6 * directionBias * adjustmentStep;
-    const int displacementMargin = (position - ledgerPosition) * directionBias;
-
-    if (displacementMargin < 0) {
-        int offset = 0;
-        if ((stemDirection == STEMDIRECTION_down) && (displacementMargin % adjustmentStep > -adjustmentStep / 3)) {
-            offset = adjustmentStep / 2;
-        }
-        const int heightToAdjust = (displacementMargin / adjustmentStep - 1) * adjustmentStep * directionBias - offset;
-        SetDrawingStemLen(GetDrawingStemLen() + heightToAdjust);
-        flag->SetDrawingYRel(-GetDrawingStemLen());
-    }
-}
-
-//----------------------------------------------------------------------------
 // Functors methods
 //----------------------------------------------------------------------------
 
-int Dots::ResetDrawing(FunctorParams *functorParams)
+FunctorCode Dots::Accept(Functor &functor)
 {
-    // Call parent one too
-    LayerElement::ResetDrawing(functorParams);
-
-    m_dotLocsByStaff.clear();
-    m_isAdjusted = false;
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitDots(this);
 }
 
-int Dots::ResetHorizontalAlignment(FunctorParams *functorParams)
+FunctorCode Dots::Accept(ConstFunctor &functor) const
 {
-    LayerElement::ResetHorizontalAlignment(functorParams);
-
-    m_dotLocsByStaff.clear();
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitDots(this);
 }
 
-int Flag::ResetDrawing(FunctorParams *functorParams)
+FunctorCode Dots::AcceptEnd(Functor &functor)
 {
-    // Call parent one too
-    LayerElement::ResetDrawing(functorParams);
-
-    m_drawingNbFlags = 0;
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitDotsEnd(this);
 }
 
-int TupletBracket::ResetHorizontalAlignment(FunctorParams *functorParams)
+FunctorCode Dots::AcceptEnd(ConstFunctor &functor) const
 {
-    // Call parent one too
-    LayerElement::ResetHorizontalAlignment(functorParams);
-
-    m_drawingXRelLeft = 0;
-    m_drawingXRelRight = 0;
-    m_alignedNum = NULL;
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitDotsEnd(this);
 }
 
-int TupletBracket::ResetVerticalAlignment(FunctorParams *functorParams)
+FunctorCode Flag::Accept(Functor &functor)
 {
-    // Call parent one too
-    LayerElement::ResetVerticalAlignment(functorParams);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitFlag(this);
 }
 
-int TupletNum::ResetHorizontalAlignment(FunctorParams *functorParams)
+FunctorCode Flag::Accept(ConstFunctor &functor) const
 {
-    // Call parent one too
-    LayerElement::ResetHorizontalAlignment(functorParams);
-
-    m_alignedBracket = NULL;
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitFlag(this);
 }
 
-int TupletNum::ResetVerticalAlignment(FunctorParams *functorParams)
+FunctorCode Flag::AcceptEnd(Functor &functor)
 {
-    // Call parent one too
-    LayerElement::ResetVerticalAlignment(functorParams);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitFlagEnd(this);
 }
 
-int Stem::CalcStem(FunctorParams *functorParams)
+FunctorCode Flag::AcceptEnd(ConstFunctor &functor) const
 {
-    CalcStemParams *params = vrv_params_cast<CalcStemParams *>(functorParams);
-    assert(params);
-
-    assert(params->m_staff);
-    assert(params->m_layer);
-    assert(params->m_interface);
-
-    int staffSize = params->m_staff->m_drawingStaffSize;
-    int stemShift = params->m_doc->GetDrawingStemWidth(staffSize) / 2;
-    bool drawingCueSize = this->GetDrawingCueSize();
-
-    // For notes longer than half notes the stem is always 0
-    if (params->m_dur < DUR_2) {
-        this->SetDrawingXRel(0);
-        this->SetDrawingYRel(0);
-        this->SetDrawingStemLen(0);
-        return FUNCTOR_CONTINUE;
-    }
-
-    /************ Set the position, the length and adjust to the note head ************/
-
-    int baseStem = 0;
-    // Use the given one if any
-    if (this->HasStemLen()) {
-        baseStem = this->GetStemLen() * -params->m_doc->GetDrawingUnit(staffSize);
-    }
-    else {
-        int thirdUnit = params->m_doc->GetDrawingUnit(staffSize) / 3;
-        const data_STEMDIRECTION stemDir = params->m_interface->GetDrawingStemDir();
-        baseStem = -(params->m_interface->CalcStemLenInThirdUnits(params->m_staff, stemDir) * thirdUnit);
-        if (drawingCueSize) baseStem = params->m_doc->GetCueSize(baseStem);
-    }
-    // Even if a stem length is given we add the length of the chord content (however only if not 0)
-    // Also, the given stem length is understood as being measured from the center of the note.
-    // This means that it will be adjusted according to the note head (see below
-    if (!this->HasStemLen() || (this->GetStemLen() != 0)) {
-        Point p;
-        if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
-            if (this->GetStemPos() == STEMPOSITION_left) {
-                p = params->m_interface->GetStemDownNW(params->m_doc, staffSize, drawingCueSize);
-                p.x += stemShift;
-            }
-            else {
-                p = params->m_interface->GetStemUpSE(params->m_doc, staffSize, drawingCueSize);
-                p.x -= stemShift;
-            }
-            this->SetDrawingStemLen(baseStem + params->m_chordStemLength + p.y);
-        }
-        else {
-            if (this->GetStemPos() == STEMPOSITION_right) {
-                p = params->m_interface->GetStemUpSE(params->m_doc, staffSize, drawingCueSize);
-                p.x -= stemShift;
-            }
-            else {
-                p = params->m_interface->GetStemDownNW(params->m_doc, staffSize, drawingCueSize);
-                p.x += stemShift;
-            }
-            this->SetDrawingStemLen(-(baseStem + params->m_chordStemLength - p.y));
-        }
-        this->SetDrawingYRel(this->GetDrawingYRel() + p.y);
-        this->SetDrawingXRel(p.x);
-    }
-
-    /************ Set flag and slashes (if necessary) and adjust the length ************/
-
-    int slashFactor = (this->GetStemMod() < 8) ? this->GetStemMod() - 1 : 0;
-
-    Flag *flag = NULL;
-    if (params->m_dur > DUR_4) {
-        flag = vrv_cast<Flag *>(this->GetFirst(FLAG));
-        assert(flag);
-        flag->m_drawingNbFlags = params->m_dur - DUR_4;
-        if (!this->HasStemLen() && !this->IsGraceNote() && this->HasStemMod()) {
-            slashFactor += (params->m_dur > DUR_8) ? 2 : 1;
-        }
-    }
-
-    // Adjust basic stem length to number of slashes
-    if (slashFactor && !this->HasStemLen()) {
-        const int tremStep = (params->m_doc->GetDrawingBeamWidth(staffSize, drawingCueSize)
-            + params->m_doc->GetDrawingBeamWhiteWidth(staffSize, drawingCueSize));
-        while (abs(baseStem) < slashFactor * tremStep + params->m_doc->GetDrawingUnit(staffSize) * 3) {
-            if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
-                this->SetDrawingStemLen(this->GetDrawingStemLen() - tremStep);
-            }
-            else {
-                this->SetDrawingStemLen(this->GetDrawingStemLen() + tremStep);
-            }
-            --slashFactor;
-        }
-    }
-
-    // SMUFL flags cover some additional stem length from the 32th only
-    if (flag) {
-        flag->SetDrawingYRel(-this->GetDrawingStemLen());
-    }
-
-    // Do not adjust the length if given in the encoding - however, the stem will be extend with the SMuFL
-    // extension from 32th - this can be improved
-    if (this->HasStemLen()) {
-        if ((this->GetStemLen() == 0) && flag) flag->m_drawingNbFlags = 0;
-        return FUNCTOR_CONTINUE;
-    }
-    if ((this->GetStemVisible() == BOOLEAN_false) && flag) {
-        flag->m_drawingNbFlags = 0;
-        return FUNCTOR_CONTINUE;
-    }
-
-    int flagHeight = 0;
-
-    // SMUFL flags cover some additional stem length from the 32th only
-    if (params->m_dur > DUR_16) {
-        assert(flag);
-        Point stemEnd;
-        wchar_t flagCode = 0;
-        if (this->GetDrawingStemDir() == STEMDIRECTION_up) {
-            stemEnd = flag->GetStemUpSE(params->m_doc, staffSize, drawingCueSize, flagCode);
-        }
-        else {
-            stemEnd = flag->GetStemDownNW(params->m_doc, staffSize, drawingCueSize, flagCode);
-        }
-        // Trick for shortening the stem with DUR_8
-        flagHeight = stemEnd.y;
-    }
-
-    int endY = this->GetDrawingY() - this->GetDrawingStemLen() + flagHeight;
-    bool adjust = false;
-    if ((this->GetDrawingStemDir() == STEMDIRECTION_up) && (endY < params->m_verticalCenter)) {
-        adjust = true;
-    }
-    else if ((this->GetDrawingStemDir() == STEMDIRECTION_down) && (endY > params->m_verticalCenter)) {
-        adjust = true;
-    }
-
-    // Do not adjust the length of grace notes - this is debatable and should probably become as styling option
-    // However we still want flags from grace notes not to overlap with ledger lines
-    if (adjust && !params->m_isGraceNote) {
-        this->SetDrawingStemLen(this->GetDrawingStemLen() + (endY - params->m_verticalCenter));
-        if (flag) flag->SetDrawingYRel(-this->GetDrawingStemLen());
-    }
-
-    if (flag) AdjustFlagPlacement(params->m_doc, flag, staffSize, params->m_verticalCenter, params->m_dur);
-
-    return FUNCTOR_CONTINUE;
+    return functor.VisitFlagEnd(this);
 }
 
-int Stem::ResetDrawing(FunctorParams *functorParams)
+FunctorCode TupletBracket::Accept(Functor &functor)
 {
-    // Call parent one too
-    LayerElement::ResetDrawing(functorParams);
+    return functor.VisitTupletBracket(this);
+}
 
-    m_drawingStemDir = STEMDIRECTION_NONE;
-    m_drawingStemLen = 0;
+FunctorCode TupletBracket::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitTupletBracket(this);
+}
 
-    return FUNCTOR_CONTINUE;
+FunctorCode TupletBracket::AcceptEnd(Functor &functor)
+{
+    return functor.VisitTupletBracketEnd(this);
+}
+
+FunctorCode TupletBracket::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitTupletBracketEnd(this);
+}
+
+FunctorCode TupletNum::Accept(Functor &functor)
+{
+    return functor.VisitTupletNum(this);
+}
+
+FunctorCode TupletNum::Accept(ConstFunctor &functor) const
+{
+    return functor.VisitTupletNum(this);
+}
+
+FunctorCode TupletNum::AcceptEnd(Functor &functor)
+{
+    return functor.VisitTupletNumEnd(this);
+}
+
+FunctorCode TupletNum::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitTupletNumEnd(this);
 }
 
 } // namespace vrv

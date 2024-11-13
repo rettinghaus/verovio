@@ -9,9 +9,9 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
+#include <cstdlib>
 #include <math.h>
-#include <stdlib.h>
 
 //----------------------------------------------------------------------------
 
@@ -31,63 +31,76 @@ DurationInterface::DurationInterface()
     : Interface()
     , AttAugmentDots()
     , AttBeamSecondary()
-    , AttDurationGestural()
-    , AttDurationLogical()
+    , AttDurationGes()
+    , AttDurationLog()
     , AttDurationQuality()
     , AttDurationRatio()
     , AttFermataPresent()
     , AttStaffIdent()
 {
-    RegisterInterfaceAttClass(ATT_AUGMENTDOTS);
-    RegisterInterfaceAttClass(ATT_BEAMSECONDARY);
-    RegisterInterfaceAttClass(ATT_DURATIONGESTURAL);
-    RegisterInterfaceAttClass(ATT_DURATIONLOGICAL);
-    RegisterInterfaceAttClass(ATT_DURATIONQUALITY);
-    RegisterInterfaceAttClass(ATT_DURATIONRATIO);
-    RegisterInterfaceAttClass(ATT_FERMATAPRESENT);
-    RegisterInterfaceAttClass(ATT_STAFFIDENT);
+    this->RegisterInterfaceAttClass(ATT_AUGMENTDOTS);
+    this->RegisterInterfaceAttClass(ATT_BEAMSECONDARY);
+    this->RegisterInterfaceAttClass(ATT_DURATIONGES);
+    this->RegisterInterfaceAttClass(ATT_DURATIONLOG);
+    this->RegisterInterfaceAttClass(ATT_DURATIONQUALITY);
+    this->RegisterInterfaceAttClass(ATT_DURATIONRATIO);
+    this->RegisterInterfaceAttClass(ATT_FERMATAPRESENT);
+    this->RegisterInterfaceAttClass(ATT_STAFFIDENT);
 
-    Reset();
+    this->Reset();
 }
 
 DurationInterface::~DurationInterface() {}
 
 void DurationInterface::Reset()
 {
-    ResetAugmentDots();
-    ResetBeamSecondary();
-    ResetDurationGestural();
-    ResetDurationLogical();
-    ResetDurationQuality();
-    ResetDurationRatio();
-    ResetFermataPresent();
-    ResetStaffIdent();
+    this->ResetAugmentDots();
+    this->ResetBeamSecondary();
+    this->ResetDurationGes();
+    this->ResetDurationLog();
+    this->ResetDurationQuality();
+    this->ResetDurationRatio();
+    this->ResetFermataPresent();
+    this->ResetStaffIdent();
+
+    m_durDefault = DURATION_NONE;
+
+    m_scoreTimeOnset = 0;
+    m_scoreTimeOffset = 0;
+    m_realTimeOnsetMilliseconds = 0;
+    m_realTimeOffsetMilliseconds = 0;
+    m_scoreTimeTiedDuration = 0;
 }
 
-double DurationInterface::GetInterfaceAlignmentDuration(int num, int numBase)
+Fraction DurationInterface::GetInterfaceAlignmentDuration(int num, int numBase) const
 {
-    int noteDur = this->GetDurGes() != DURATION_NONE ? this->GetActualDurGes() : this->GetActualDur();
+    data_DURATION noteDur = (this->GetDurGes() != DURATION_NONE) ? this->GetActualDurGes() : this->GetActualDur();
+    if (noteDur == DURATION_NONE) noteDur = DURATION_4;
 
     if (this->HasNum()) num *= this->GetNum();
     if (this->HasNumbase()) numBase *= this->GetNumbase();
 
-    double duration = DUR_MAX / pow(2.0, (double)(noteDur - 2.0)) * numBase / num;
+    Fraction duration(noteDur);
+    duration = duration * numBase / num;
 
     int noteDots = (this->HasDotsGes()) ? this->GetDotsGes() : this->GetDots();
-    if (noteDots != -1) {
-        duration = 2 * duration - (duration / pow(2, noteDots));
+    if (noteDots != VRV_UNSET) {
+        Fraction durationReduction(duration.GetNumerator(), duration.GetDenominator() * pow(2, noteDots));
+        duration = duration * 2 - durationReduction;
     }
-    // LogDebug("Duration %d; Dot %d; Alignment %f", noteDur, GetDots(), duration);
+    // LogDebug("Duration %d; Dot %d; Alignment %f", noteDur, this->GetDots(), duration);
     return duration;
 }
 
-double DurationInterface::GetInterfaceAlignmentMensuralDuration(int num, int numBase, Mensur *currentMensur)
+Fraction DurationInterface::GetInterfaceAlignmentMensuralDuration(
+    int num, int numBase, const Mensur *currentMensur) const
 {
-    int noteDur = this->GetDurGes() != DURATION_NONE ? this->GetActualDurGes() : this->GetActualDur();
+    data_DURATION noteDur = this->GetDurGes() != DURATION_NONE ? this->GetActualDurGes() : this->GetActualDur();
+    if (noteDur == DURATION_NONE) noteDur = DURATION_4;
 
     if (!currentMensur) {
         LogWarning("No current mensur for calculating duration");
-        return DUR_MENSURAL_REF;
+        return Fraction(1, 1);
     }
 
     if (this->HasNum() || this->HasNumbase()) {
@@ -123,84 +136,92 @@ double DurationInterface::GetInterfaceAlignmentMensuralDuration(int num, int num
     } // Any other case (minor, perfecta in tempus perfectum, and imperfecta in tempus imperfectum) follows the
       // mensuration and has no @num and @numbase attributes
 
-    if (currentMensur->HasNum()) num *= currentMensur->GetNum();
-    if (currentMensur->HasNumbase()) numBase *= currentMensur->GetNumbase();
-
-    double ratio = 0.0;
-    double duration = (double)DUR_MENSURAL_REF;
+    int ratio = 0;
+    Fraction duration(DURATION_breve);
     switch (noteDur) {
-        case DUR_MX:
-            duration *= (double)abs(currentMensur->GetModusminor()) * (double)abs(currentMensur->GetModusmaior());
+        case DURATION_maxima:
+            duration = duration * abs(currentMensur->GetModusminor()) * abs(currentMensur->GetModusmaior());
             break;
-        case DUR_LG: duration *= (double)abs(currentMensur->GetModusminor()); break;
-        case DUR_BR: break;
-        case DUR_1: duration /= (double)abs(currentMensur->GetTempus()); break;
+        case DURATION_long: duration = duration * abs(currentMensur->GetModusminor()); break;
+        case DURATION_breve: break;
+        case DURATION_1: duration = duration / abs(currentMensur->GetTempus()); break;
         default:
-            ratio = pow(2.0, (double)(noteDur - DUR_2));
-            duration /= (double)abs(currentMensur->GetTempus()) * (double)abs(currentMensur->GetProlatio()) * ratio;
+            ratio = pow(2.0, (double)(noteDur - DURATION_2));
+            assert(ratio);
+            duration = duration / abs(currentMensur->GetTempus()) / abs(currentMensur->GetProlatio()) / ratio;
             break;
     }
-    duration *= (double)numBase / (double)num;
-    // LogDebug("Duration %d; %d/%d; Alignment %f; Ratio %f", noteDur, num, numbase, duration, ratio);
-    duration = durRound(duration);
+    duration = duration * numBase / num;
+
     return duration;
 }
 
-bool DurationInterface::IsFirstInBeam(LayerElement *noteOrRest)
+bool DurationInterface::IsFirstInBeam(const LayerElement *noteOrRest) const
 {
-    Beam *beam = dynamic_cast<Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
+    const Beam *beam = vrv_cast<const Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
     if (!beam) {
         return false;
     }
-    const ArrayOfObjects *notesOrRests = beam->GetList(beam);
-    ArrayOfObjects::const_iterator iter = notesOrRests->begin();
-    if (*iter == noteOrRest) {
-        return true;
-    }
-    return false;
+    return (noteOrRest == beam->GetListFront());
 }
 
-bool DurationInterface::IsLastInBeam(LayerElement *noteOrRest)
+bool DurationInterface::IsLastInBeam(const LayerElement *noteOrRest) const
 {
-    Beam *beam = dynamic_cast<Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
+    const Beam *beam = vrv_cast<const Beam *>(noteOrRest->GetFirstAncestor(BEAM, MAX_BEAM_DEPTH));
     if (!beam) {
         return false;
     }
-    const ArrayOfObjects *notesOrRests = beam->GetList(beam);
-    ArrayOfObjects::const_reverse_iterator iter = notesOrRests->rbegin();
-    if (*iter == noteOrRest) {
-        return true;
+    return (noteOrRest == beam->GetListBack());
+}
+
+data_DURATION DurationInterface::GetActualDur() const
+{
+    const data_DURATION dur = this->HasDur() ? this->GetDur() : this->GetDurDefault();
+    return this->CalcActualDur(dur);
+}
+
+data_DURATION DurationInterface::GetActualDurGes() const
+{
+    const data_DURATION dur = this->HasDurGes() ? this->GetDurGes() : DURATION_NONE;
+    return this->CalcActualDur(dur);
+}
+
+data_DURATION DurationInterface::CalcActualDur(data_DURATION dur) const
+{
+    // No mapping needed for values below, including maxima and NONE
+    if (dur < DURATION_longa) return dur;
+    // Mensural durations (except maxima)
+    switch (dur) {
+        case DURATION_longa: return DURATION_long;
+        case DURATION_brevis: return DURATION_breve;
+        case DURATION_semibrevis: return DURATION_1;
+        case DURATION_minima: return DURATION_2;
+        case DURATION_semiminima: return DURATION_4;
+        case DURATION_fusa: return DURATION_8;
+        case DURATION_semifusa: return DURATION_16;
+        default: return DURATION_NONE;
     }
-    return false;
 }
 
-int DurationInterface::GetActualDur() const
-{
-    // maxima (-1) is a mensural only value
-    if (this->GetDur() == DURATION_maxima) return DUR_MX;
-    return (this->GetDur() & DUR_MENSURAL_MASK);
-}
-
-int DurationInterface::GetActualDurGes() const
-{
-    // maxima (-1) is a mensural only value
-    if (this->GetDurGes() == DURATION_maxima) return DUR_MX;
-    return (this->GetDurGes() & DUR_MENSURAL_MASK);
-}
-
-int DurationInterface::GetNoteOrChordDur(LayerElement *element)
+data_DURATION DurationInterface::GetNoteOrChordDur(const LayerElement *element) const
 {
     if (element->Is(CHORD)) {
-        return this->GetActualDur();
+        data_DURATION duration = this->GetActualDur();
+        if (duration != DURATION_NONE) return duration;
+
+        const Chord *chord = vrv_cast<const Chord *>(element);
+        for (const Note *note : { chord->GetTopNote(), chord->GetBottomNote() }) {
+            duration = note->GetActualDur();
+            if (duration != DURATION_NONE) {
+                return duration;
+            }
+        }
     }
     else if (element->Is(NOTE)) {
-        Note *note = vrv_cast<Note *>(element);
+        const Note *note = vrv_cast<const Note *>(element);
         assert(note);
-        Chord *chord = note->IsChordTone();
-        if (chord && !this->HasDur())
-            return chord->GetActualDur();
-        else
-            return this->GetActualDur();
+        const Chord *chord = note->IsChordTone();
+        return (chord && !this->HasDur()) ? chord->GetActualDur() : this->GetActualDur();
     }
     return this->GetActualDur();
 }
@@ -209,10 +230,10 @@ bool DurationInterface::IsMensuralDur() const
 {
     // maxima (-1) is a mensural only value
     if (this->GetDur() == DURATION_maxima) return true;
-    return (this->GetDur() > DUR_MENSURAL_MASK);
+    return (this->GetDur() >= DURATION_longa);
 }
 
-bool DurationInterface::HasIdenticalDurationInterface(DurationInterface *otherDurationInterface)
+bool DurationInterface::HasIdenticalDurationInterface(const DurationInterface *otherDurationInterface) const
 {
     // This should never happen because it is fully implemented
     LogError("DurationInterface::HasIdenticalDurationInterface missing");
@@ -224,5 +245,66 @@ bool DurationInterface::HasIdenticalDurationInterface(DurationInterface *otherDu
     }
     */
 }
+
+void DurationInterface::SetScoreTimeOnset(Fraction scoreTime)
+{
+    m_scoreTimeOnset = scoreTime;
+}
+
+void DurationInterface::SetRealTimeOnsetSeconds(double timeInSeconds)
+{
+    // m_realTimeOnsetMilliseconds = int(timeInSeconds * 1000.0 + 0.5);
+    m_realTimeOnsetMilliseconds = timeInSeconds * 1000.0;
+}
+
+void DurationInterface::SetScoreTimeOffset(Fraction scoreTime)
+{
+    m_scoreTimeOffset = scoreTime;
+}
+
+void DurationInterface::SetRealTimeOffsetSeconds(double timeInSeconds)
+{
+    // m_realTimeOffsetMilliseconds = int(timeInSeconds * 1000.0 + 0.5);
+    m_realTimeOffsetMilliseconds = timeInSeconds * 1000.0;
+}
+
+void DurationInterface::SetScoreTimeTiedDuration(Fraction scoreTime)
+{
+    m_scoreTimeTiedDuration = scoreTime;
+}
+
+Fraction DurationInterface::GetScoreTimeOnset() const
+{
+    return m_scoreTimeOnset;
+}
+
+double DurationInterface::GetRealTimeOnsetMilliseconds() const
+{
+    return m_realTimeOnsetMilliseconds;
+}
+
+Fraction DurationInterface::GetScoreTimeOffset() const
+{
+    return m_scoreTimeOffset;
+}
+
+double DurationInterface::GetRealTimeOffsetMilliseconds() const
+{
+    return m_realTimeOffsetMilliseconds;
+}
+
+Fraction DurationInterface::GetScoreTimeTiedDuration() const
+{
+    return m_scoreTimeTiedDuration;
+}
+
+Fraction DurationInterface::GetScoreTimeDuration() const
+{
+    return this->GetScoreTimeOffset() - this->GetScoreTimeOnset();
+}
+
+//----------------------------------------------------------------------------
+// Interface pseudo functor (redirected)
+//----------------------------------------------------------------------------
 
 } // namespace vrv

@@ -9,13 +9,13 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
 #include "doc.h"
 #include "editorial.h"
-#include "functorparams.h"
+#include "functor.h"
 #include "measure.h"
 #include "page.h"
 #include "system.h"
@@ -29,11 +29,12 @@ namespace vrv {
 
 static const ClassRegistrar<Sb> s_factory("sb", SB);
 
-Sb::Sb() : SystemElement("sb-"), AttNNumberLike()
+Sb::Sb() : SystemElement(SB, "sb-"), FacsimileInterface(), AttNNumberLike()
 {
-    RegisterAttClass(ATT_NNUMBERLIKE);
+    this->RegisterAttClass(ATT_NNUMBERLIKE);
+    this->RegisterInterface(FacsimileInterface::GetAttClasses(), FacsimileInterface::IsInterface());
 
-    Reset();
+    this->Reset();
 }
 
 Sb::~Sb() {}
@@ -41,49 +42,32 @@ Sb::~Sb() {}
 void Sb::Reset()
 {
     SystemElement::Reset();
-    ResetNNumberLike();
+    FacsimileInterface::Reset();
+    this->ResetNNumberLike();
 }
 
 //----------------------------------------------------------------------------
 // Sb functor methods
 //----------------------------------------------------------------------------
 
-int Sb::CastOffEncoding(FunctorParams *functorParams)
+FunctorCode Sb::Accept(Functor &functor)
 {
-    CastOffEncodingParams *params = vrv_params_cast<CastOffEncodingParams *>(functorParams);
-    assert(params);
-
-    params->m_currentSystem = new System();
-    params->m_currentPage->AddChild(params->m_currentSystem);
-
-    MoveItselfTo(params->m_currentSystem);
-
-    return FUNCTOR_SIBLINGS;
+    return functor.VisitSb(this);
 }
 
-int Sb::CastOffSystems(FunctorParams *functorParams)
+FunctorCode Sb::Accept(ConstFunctor &functor) const
 {
-    CastOffSystemsParams *params = vrv_params_cast<CastOffSystemsParams *>(functorParams);
-    assert(params);
-    if (params->m_smart) {
-        // Get the last measure of the currentSystem
-        Measure *measure
-            = dynamic_cast<Measure *>(params->m_currentSystem->GetChild(params->m_currentSystem->GetChildCount() - 1));
-        if (measure != NULL) {
-            int measureRightX = measure->GetDrawingX() + measure->GetWidth() - params->m_shift;
-            // LogDebug("ratio: %f\n", (float)measureRightX / (float)params->m_systemWidth);
-            double smartSbThresh = params->m_doc->GetOptions()->m_breaksSmartSb.GetValue();
-            if (measureRightX > params->m_systemWidth * smartSbThresh) {
-                // Use this system break.
-                params->m_currentSystem = new System();
-                params->m_page->AddChild(params->m_currentSystem);
-                params->m_shift += measureRightX;
-            }
-        }
-    }
-    // Keep the <sb> in the internal MEI, even if we're not using it to break the system.
-    MoveItselfTo(params->m_currentSystem);
-    return FUNCTOR_SIBLINGS;
+    return functor.VisitSb(this);
+}
+
+FunctorCode Sb::AcceptEnd(Functor &functor)
+{
+    return functor.VisitSbEnd(this);
+}
+
+FunctorCode Sb::AcceptEnd(ConstFunctor &functor) const
+{
+    return functor.VisitSbEnd(this);
 }
 
 } // namespace vrv

@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 
 //----------------------------------------------------------------------------
 
@@ -23,11 +23,11 @@ namespace vrv {
 
 static const ClassRegistrar<Abbr> s_factory("abbr", ABBR);
 
-Abbr::Abbr() : EditorialElement("abbr-"), AttSource()
+Abbr::Abbr() : EditorialElement(ABBR, "abbr-"), AttSource()
 {
-    RegisterAttClass(ATT_SOURCE);
+    this->RegisterAttClass(ATT_SOURCE);
 
-    Reset();
+    this->Reset();
 }
 
 Abbr::~Abbr() {}
@@ -35,7 +35,7 @@ Abbr::~Abbr() {}
 void Abbr::Reset()
 {
     EditorialElement::Reset();
-    ResetSource();
+    this->ResetSource();
 }
 
 //----------------------------------------------------------------------------

@@ -12,7 +12,6 @@
 
 namespace vrv {
 
-class AdjustFloatingPositionerGrpsParams;
 class AttSpacing;
 class FloatingObject;
 class ScoreDef;
@@ -39,23 +38,30 @@ public:
     // constructors and destructors
     SystemAligner();
     virtual ~SystemAligner();
-    virtual ClassId GetClassId() const { return SYSTEM_ALIGNER; }
+
+    /**
+     * Override the method of adding AlignmentReference children
+     */
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Do not copy children for HorizontalAligner
      */
-    virtual bool CopyChildren() const { return false; }
+    bool CopyChildren() const override { return false; }
 
     /**
      * Reset the aligner (clear the content) and creates the end (bottom) alignement
      */
-    virtual void Reset();
+    void Reset() override;
 
     /**
      * Get bottom StaffAlignment for the system.
      * For each SystemAligner, we keep a StaffAlignment for the bottom position.
      */
-    StaffAlignment *GetBottomAlignment() const { return m_bottomAlignment; }
+    ///@{
+    StaffAlignment *GetBottomAlignment() { return m_bottomAlignment; }
+    const StaffAlignment *GetBottomAlignment() const { return m_bottomAlignment; }
+    ///@}
 
     /**
      * Get the StaffAlignment at index idx.
@@ -64,13 +70,23 @@ public:
      * If a staff is passed, it will be used for initializing m_staffN and m_staffSize of the aligner.
      * (no const since the bottom alignment is temporarily removed)
      */
-    StaffAlignment *GetStaffAlignment(int idx, Staff *staff, Doc *doc);
+    StaffAlignment *GetStaffAlignment(int idx, Staff *staff, const Doc *doc);
+
+    /**
+     * Reorder the staff alignment as given in the staffNs.
+     * Reordering will fail if the number of staffAlignment does not correspond, or
+     * if some staffAlignment pointers are missing for a corresponding staffN
+     */
+    void ReorderBy(const std::vector<int> &staffNs);
 
     /**
      * Get the StaffAlignment for the staffN.
      * Return NULL if not found.
      */
-    StaffAlignment *GetStaffAlignmentForStaffN(int staffN) const;
+    ///@{
+    StaffAlignment *GetStaffAlignmentForStaffN(int staffN);
+    const StaffAlignment *GetStaffAlignmentForStaffN(int staffN) const;
+    ///@}
 
     /**
      * Get pointer to the parent system.
@@ -81,18 +97,18 @@ public:
     /**
      * Find all the positioners pointing to an object;
      */
-    void FindAllPositionerPointingTo(ArrayOfFloatingPositioners *positioners, FloatingObject *object);
+    void FindAllPositionerPointingTo(ArrayOfFloatingPositioners *positioners, const FloatingObject *object);
 
     /**
      * Find all the intersection points with a vertical line (top to bottom)
      */
     void FindAllIntersectionPoints(
-        SegmentedLine &line, BoundingBox &boundingBox, const std::vector<ClassId> &classIds, int margin);
+        SegmentedLine &line, const BoundingBox &boundingBox, const std::vector<ClassId> &classIds, int margin) const;
     /**
      * Get System Overflows
      */
-    int GetOverflowAbove(const Doc *doc) const;
-    int GetOverflowBelow(const Doc *doc) const;
+    int GetOverflowAbove(const Doc *doc, bool scoreDefClef = false) const;
+    int GetOverflowBelow(const Doc *doc, bool scoreDefClef = false) const;
 
     /**
      * Get justification sum
@@ -102,18 +118,32 @@ public:
     /**
      * Calculates and sets spacing for specified ScoreDef
      */
-    void SetSpacing(ScoreDef *scoreDef);
+    void SetSpacing(const ScoreDef *scoreDef);
+
+    //----------//
+    // Functors //
+    //----------//
+
+    /**
+     * Interface for class functor visitation
+     */
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     /**
      * Return above spacing type for passed staff.
      * Calculates spacings if required.
      */
-    SpacingType GetAboveSpacingType(Staff *staff);
+    SpacingType GetAboveSpacingType(const Staff *staff);
     /**
      * Calculates above spacing type for staffDef
      */
-    SpacingType CalculateSpacingAbove(StaffDef *staffDef) const;
+    SpacingType CalculateSpacingAbove(const StaffDef *staffDef) const;
 
 public:
     //
@@ -148,7 +178,6 @@ public:
     ///@{
     StaffAlignment();
     virtual ~StaffAlignment();
-    virtual ClassId GetClassId() const { return STAFF_ALIGNMENT; }
     ///@}
 
     /**
@@ -160,7 +189,7 @@ public:
     /**
      * @name Methods for managing verse count with / without the collapse option
      * When setting a value of 0, then 1 is assumed. This occurs
-     * Typically with one single verse and no @n in <verse>
+     * Typically with one single verse and no \@n in <verse>
      * Without the collapse option, the count is the greatest @n
      * With the collapse option, the count is number of verses.
      * The position is calculated from the bottom.
@@ -177,10 +206,18 @@ public:
     void SetCurrentFloatingPositioner(FloatingObject *object, Object *objectX, Object *objectY, char spanningType);
 
     /**
+     * Retrieve all FloatingPositioner.
+     */
+    const ArrayOfFloatingPositioners &GetFloatingPositioners() { return m_floatingPositioners; }
+
+    /**
      * Look for the first FloatingPositioner corresponding to the FloatingObject of the ClassId.
      * Return NULL if not found and does not create anything.
      */
+    ///@{
     FloatingPositioner *FindFirstFloatingPositioner(ClassId classId);
+    const FloatingPositioner *FindFirstFloatingPositioner(ClassId classId) const;
+    ///@}
 
     /**
      * Find all FloatingPositioner corresponding to a FloatingObject with given ClassId.
@@ -191,23 +228,29 @@ public:
      * Look for the FloatingPositioner corresponding to the FloatingObject.
      * Return NULL if not found and does not create anything.
      */
-    FloatingPositioner *GetCorrespFloatingPositioner(FloatingObject *object);
+    ///@{
+    FloatingPositioner *GetCorrespFloatingPositioner(const FloatingObject *object);
+    const FloatingPositioner *GetCorrespFloatingPositioner(const FloatingObject *object) const;
+    ///@}
 
     /**
      * @name Setter and getter of the staff from which the alignment is created alignment.
-     * Used for accessing the staff @n, the size, etc.
+     * Used for accessing the staff \@n, the size, etc.
      */
     ///@{
-    Staff *GetStaff() const { return m_staff; }
-    void SetStaff(Staff *staff, Doc *doc, SystemAligner::SpacingType spacingType);
+    Staff *GetStaff() { return m_staff; }
+    const Staff *GetStaff() const { return m_staff; }
+    void SetStaff(Staff *staff, const Doc *doc, SystemAligner::SpacingType spacingType);
     ///@}
 
     /**
      * @name Setter and getter of the system pointer to which the Alignment is belong to.
      */
     ///@{
-    System *GetParentSystem() const { return m_system; }
+    System *GetParentSystem() { return m_system; }
+    const System *GetParentSystem() const { return m_system; }
     void SetParentSystem(System *system);
+    ///@}
 
     /**
      * Returns the staff size (100 if no staff object is refered to)
@@ -220,21 +263,22 @@ public:
     const AttSpacing *GetAttSpacing() const;
 
     /**
-     * @name Calculates the overlow (above or below for the bounding box.
+     * @name Calculates the overflow (above or below) for the bounding box.
      * Looks if the bounding box is a FloatingPositioner or not, in which case it we take into account its m_drawingYRel
      * value.
      */
     ///@{
-    int CalcOverflowAbove(BoundingBox *box);
-    int CalcOverflowBelow(BoundingBox *box);
+    int CalcOverflowAbove(const BoundingBox *box) const;
+    int CalcOverflowBelow(const BoundingBox *box) const;
     ///@}
 
     /**
-     * @name Set of functions for spacing calculations
+     * @name Getter for spacing
      */
     ///@{
     int GetMinimumSpacing(const Doc *doc) const;
     int CalcMinimumRequiredSpacing(const Doc *doc) const;
+    SystemAligner::SpacingType GetSpacingType() const { return m_spacingType; }
     ///@}
 
     /**
@@ -247,7 +291,17 @@ public:
     int GetOverflowBelow() const { return m_overflowBelow; }
     void SetOverlap(int overlap);
     int GetOverlap() const { return m_overlap; }
+    void SetRequestedSpaceAbove(int space);
+    int GetRequestedSpaceAbove() const { return m_requestedSpaceAbove; }
+    void SetRequestedSpaceBelow(int space);
+    int GetRequestedSpaceBelow() const { return m_requestedSpaceBelow; }
+    void SetRequestedSpacing(int spacing) { m_requestedSpacing = spacing; }
+    int GetRequestedSpacing() const { return m_requestedSpacing; }
     int GetStaffHeight() const { return m_staffHeight; }
+    void SetScoreDefClefOverflowAbove(int overflowAbove) { m_scoreDefClefOverflowAbove = overflowAbove; }
+    int GetScoreDefClefOverflowAbove() const { return m_scoreDefClefOverflowAbove; }
+    void SetScoreDefClefOverflowBelow(int overflowBelow) { m_scoreDefClefOverflowBelow = overflowBelow; }
+    int GetScoreDefClefOverflowBelow() const { return m_scoreDefClefOverflowBelow; }
     ///@}
 
     /**
@@ -258,11 +312,17 @@ public:
     ///@}
 
     /**
-     * @name Adds a bounding box to the array of overflowing objects above or below
+     * @name Modify/Get the array of overflowing objects above or below
      */
     ///@{
     void AddBBoxAbove(BoundingBox *box) { m_overflowAboveBBoxes.push_back(box); }
     void AddBBoxBelow(BoundingBox *box) { m_overflowBelowBBoxes.push_back(box); }
+    void ClearBBoxesAbove() { m_overflowAboveBBoxes.clear(); }
+    void ClearBBoxesBelow() { m_overflowBelowBBoxes.clear(); }
+    ArrayOfBoundingBoxes &GetBBoxesAboveForModification() { return m_overflowAboveBBoxes; }
+    ArrayOfBoundingBoxes &GetBBoxesBelowForModification() { return m_overflowBelowBBoxes; }
+    const ArrayOfBoundingBoxes &GetBBoxesAbove() { return m_overflowAboveBBoxes; }
+    const ArrayOfBoundingBoxes &GetBBoxesBelow() { return m_overflowBelowBBoxes; }
     ///@}
 
     /**
@@ -271,63 +331,45 @@ public:
     void ClearPositioners();
 
     /**
+     * Sort the FloatingPositioner objects.
+     */
+    void SortPositioners();
+
+    /**
      * Find all the intersection points with a vertical line (top to bottom)
      */
     void FindAllIntersectionPoints(
-        SegmentedLine &line, BoundingBox &boundingBox, const std::vector<ClassId> &classIds, int margin);
+        SegmentedLine &line, const BoundingBox &boundingBox, const std::vector<ClassId> &classIds, int margin) const;
 
-    void ReAdjustFloatingPositionersGrps(AdjustFloatingPositionerGrpsParams *params,
-        const ArrayOfFloatingPositioners &positioners, ArrayOfIntPairs &grpIdYRel);
+    /**
+     * Find overflow for the alignments taking bracket group elements into account
+     */
+    void AdjustBracketGroupSpacing(const Doc *doc, const StaffAlignment *previous, int spacing);
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::AlignVertically
+     * Interface for class functor visitation
      */
-    virtual int AlignVerticallyEnd(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustYPos
-     */
-    virtual int AdjustYPos(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustStaffOverlap
-     */
-    virtual int AdjustStaffOverlap(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustFloatingPositioners
-     */
-    virtual int AdjustFloatingPositioners(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustFloatingPositionersBetween
-     */
-    virtual int AdjustFloatingPositionersBetween(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustFloatingPositionerGrps
-     */
-    virtual int AdjustFloatingPositionerGrps(FunctorParams *functorParams);
-
-    /**
-     * See Object::AdjustSlurs
-     */
-    virtual int AdjustSlurs(FunctorParams *functorParams);
-
-    /**
-     * See Object::JustifyY
-     */
-    virtual int JustifyY(FunctorParams *functorParams);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
     /**
      * Returns minimus preset spacing
      */
     int GetMinimumStaffSpacing(const Doc *doc, const AttSpacing *attSpacing) const;
+
+    /**
+     * Return whether current staff alignment is at the start/end of a bracket group
+     */
+    bool IsInBracketGroup(bool isFirst) const;
 
 public:
     //
@@ -341,6 +383,10 @@ private:
      * The list of FloatingPositioner for the staff.
      */
     ArrayOfFloatingPositioners m_floatingPositioners;
+    /**
+     * Flag indicating whether the list of FloatingPositioner is sorted
+     */
+    bool m_floatingPositionersSorted;
     /**
      * Stores a pointer to the staff from which the aligner was created.
      * This is necessary since we don't always have all the staves.
@@ -361,20 +407,25 @@ private:
     std::set<int> m_verseNs;
 
     /**
-     * @name values for storing the overlow and overlap
+     * @name values for storing the overflow and overlap
      */
     ///@{
     int m_overflowAbove;
     int m_overflowBelow;
     int m_overlap;
+    int m_requestedSpaceAbove;
+    int m_requestedSpaceBelow;
+    int m_requestedSpacing;
     int m_staffHeight;
+    int m_scoreDefClefOverflowAbove;
+    int m_scoreDefClefOverflowBelow;
     ///@}
 
     /**
-     * The list of overflowing bounding boxes (e.g, LayerElement or FloatingPositioner)
+     * The list of overflowing bounding boxes (e.g., LayerElement or FloatingPositioner)
      */
-    std::vector<BoundingBox *> m_overflowAboveBBoxes;
-    std::vector<BoundingBox *> m_overflowBelowBBoxes;
+    ArrayOfBoundingBoxes m_overflowAboveBBoxes;
+    ArrayOfBoundingBoxes m_overflowBelowBBoxes;
 };
 
 } // namespace vrv

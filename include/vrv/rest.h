@@ -38,7 +38,8 @@ class Rest : public LayerElement,
              public PositionInterface,
              public AttColor,
              public AttCue,
-             public AttExtSym,
+             public AttExtSymAuth,
+             public AttExtSymNames,
              public AttRestVisMensural {
 public:
     /**
@@ -48,116 +49,108 @@ public:
     ///@{
     Rest();
     virtual ~Rest();
-    virtual Object *Clone() const { return new Rest(*this); }
-    virtual void Reset();
-    virtual std::string GetClassName() const { return "Rest"; }
-    virtual ClassId GetClassId() const { return REST; }
+    Object *Clone() const override { return new Rest(*this); }
+    void Reset() override;
+    std::string GetClassName() const override { return "Rest"; }
     ///@}
 
     /**
      * Add an element to a rest.
      * Only Dots elements will be actually added to the rest.
      */
-    virtual bool IsSupportedChild(Object *object);
+    bool IsSupportedChild(Object *object) override;
 
     /**
      * Overwritten method for rest
      */
-    virtual void AddChild(Object *object);
+    void AddChild(Object *object) override;
 
     /**
      * @name Getter to interfaces
      */
     ///@{
-    virtual PositionInterface *GetPositionInterface() { return dynamic_cast<PositionInterface *>(this); }
-    virtual DurationInterface *GetDurationInterface() { return dynamic_cast<DurationInterface *>(this); }
+    PositionInterface *GetPositionInterface() override { return vrv_cast<PositionInterface *>(this); }
+    const PositionInterface *GetPositionInterface() const override { return vrv_cast<const PositionInterface *>(this); }
+    DurationInterface *GetDurationInterface() override { return vrv_cast<DurationInterface *>(this); }
+    const DurationInterface *GetDurationInterface() const override { return vrv_cast<const DurationInterface *>(this); }
     ///@}
 
     /** Override the method since alignment is required */
-    virtual bool HasToBeAligned() const { return true; }
+    bool HasToBeAligned() const override { return true; }
 
     /**
      * Get the SMuFL glyph or a rest considering its actual duration.
-     * This is valid only for CMN and for duration shorter than half notes.
+     * This is valid only for CMN.
      */
-    wchar_t GetRestGlyph() const;
+    ///@{
+    char32_t GetRestGlyph() const;
+    char32_t GetRestGlyph(const data_DURATION duration) const;
+    ///@}
+
+    /**
+     * Get the vertical location for the rests that are located on other layers
+     */
+    int GetOptimalLayerLocation(const Staff *staff, const Layer *layer, int defaultLocation) const;
+
+    /**
+     * Update the rest location based on the input TransPitch
+     */
+    void UpdateFromTransLoc(const TransPitch &tp);
 
     //----------//
     // Functors //
     //----------//
 
     /**
-     * See Object::AdjustBeams
+     * Interface for class functor visitation
      */
-    virtual int AdjustBeams(FunctorParams *functorParams);
-
-    /**
-     * See Object::ConvertMarkupAnalytical
-     */
-    virtual int ConvertMarkupAnalytical(FunctorParams *functorParams);
-
-    /**
-     * See Object::CalcDots
-     */
-    virtual int CalcDots(FunctorParams *functorParams);
-
-    /**
-     * See Object::PrepareLayerElementParts
-     */
-    virtual int PrepareLayerElementParts(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetDrawing
-     */
-    virtual int ResetDrawing(FunctorParams *functorParams);
-
-    /**
-     * See Object::ResetHorizontalAlignment
-     */
-    virtual int ResetHorizontalAlignment(FunctorParams *functorParams);
-
-    /**
-     * See Object::Transpose
-     */
-    virtual int Transpose(FunctorParams *);
-
-    /**
-     * Get the vertical location for the rests that are located on other layers
-     */
-    int GetOptimalLayerLocation(Staff *staff, Layer *layer, int defaultLocation);
+    ///@{
+    FunctorCode Accept(Functor &functor) override;
+    FunctorCode Accept(ConstFunctor &functor) const override;
+    FunctorCode AcceptEnd(Functor &functor) override;
+    FunctorCode AcceptEnd(ConstFunctor &functor) const override;
+    ///@}
 
 private:
-    /**
-     * Helper function to update rest oloc/ploc based on the input TransPitch
-     */
-    void UpdateFromTransLoc(const TransPitch &tp);
-
     /**
      * Get the rest vertical location relative to location of elements placed on other layers
      */
     std::pair<int, RestAccidental> GetLocationRelativeToOtherLayers(
-        const ListOfObjects &layersList, Layer *currentLayer, bool isTopLayer);
+        const Layer *currentLayer, bool isTopLayer, bool &restOverlap) const;
 
     /**
      * Get the rest vertical location relative to location of elements placed on current layers
      */
-    int GetLocationRelativeToCurrentLayer(Staff *currentStaff, Layer *currentLayer, bool isTopLayer);
+    int GetLocationRelativeToCurrentLayer(const Staff *currentStaff, const Layer *currentLayer, bool isTopLayer) const;
 
     /**
      * Get location of first/last element of the corresponding layer
      */
-    int GetFirstRelativeElementLocation(Staff *currentStaff, Layer *currentLayer, bool isPrevious, bool isTopLayer);
+    int GetFirstRelativeElementLocation(
+        const Staff *currentStaff, const Layer *currentLayer, bool isPrevious, bool isTopLayer) const;
+
+    /**
+     * For two layers, top layer shouldn't go below center and lower layer shouldn't go above it. Enforce this by
+     * adding margin that will adjust rest position
+     */
+    int GetMarginLayerLocation(bool isTopLayer, bool restOverlap) const;
 
     /**
      * Get location of the object on the layer if it's note, chord or ftrem
      */
-    std::pair<int, RestAccidental> GetElementLocation(Object *object, Layer *layer, bool isTopLayer) const;
+    std::pair<int, RestAccidental> GetElementLocation(const Object *object, const Layer *layer, bool isTopLayer) const;
 
     /**
      * Get correct offset for the rest from the options based on layer and location
      */
     int GetRestOffsetFromOptions(
         RestLayer layer, const std::pair<int, RestAccidental> &location, bool isTopLayer) const;
+
+    /**
+     * Find whether there is correct number of rests for automatic placement and determine position of the rest
+     * (top/bottom) if there is.
+     */
+    bool DetermineRestPosition(const Staff *staff, const Layer *layer, bool &isTopLayer) const;
 
 public:
     //

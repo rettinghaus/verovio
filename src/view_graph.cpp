@@ -9,24 +9,27 @@
 
 //----------------------------------------------------------------------------
 
-#include <assert.h>
+#include <cassert>
 #include <sstream>
 
 //----------------------------------------------------------------------------
 
 #include "devicecontext.h"
 #include "doc.h"
+#include "graphic.h"
 #include "options.h"
+#include "svg.h"
+#include "symboldef.h"
 #include "vrv.h"
 
 namespace vrv {
 
-void View::DrawVerticalLine(DeviceContext *dc, int y1, int y2, int x1, int width, int dashLength)
+void View::DrawVerticalLine(DeviceContext *dc, int y1, int y2, int x1, int width, int dashLength, int gapLength)
 {
     assert(dc);
 
-    dc->SetPen(m_currentColour, std::max(1, ToDeviceContextX(width)), AxSOLID, dashLength);
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetPen(m_currentColor, std::max(1, ToDeviceContextX(width)), AxSOLID, dashLength, gapLength);
+    dc->SetBrush(m_currentColor, AxSOLID);
 
     dc->DrawLine(ToDeviceContextX(x1), ToDeviceContextY(y1), ToDeviceContextX(x1), ToDeviceContextY(y2));
 
@@ -35,12 +38,12 @@ void View::DrawVerticalLine(DeviceContext *dc, int y1, int y2, int x1, int width
     return;
 }
 
-void View::DrawHorizontalLine(DeviceContext *dc, int x1, int x2, int y1, int width, int dashLength)
+void View::DrawHorizontalLine(DeviceContext *dc, int x1, int x2, int y1, int width, int dashLength, int gapLength)
 {
     assert(dc);
 
-    dc->SetPen(m_currentColour, std::max(1, ToDeviceContextX(width)), AxSOLID, dashLength);
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetPen(m_currentColor, std::max(1, ToDeviceContextX(width)), AxSOLID, dashLength, gapLength);
+    dc->SetBrush(m_currentColor, AxSOLID);
 
     dc->DrawLine(ToDeviceContextX(x1), ToDeviceContextY(y1), ToDeviceContextX(x2), ToDeviceContextY(y1));
 
@@ -49,12 +52,12 @@ void View::DrawHorizontalLine(DeviceContext *dc, int x1, int x2, int y1, int wid
     return;
 }
 
-void View::DrawRoundedLine(DeviceContext *dc, int x1, int y1, int x2, int y2, int width)
+void View::DrawObliqueLine(DeviceContext *dc, int x1, int x2, int y1, int y2, int width, int dashLength, int gapLength)
 {
     assert(dc);
 
-    dc->SetPen(m_currentColour, std::max(1, ToDeviceContextX(width)), AxSOLID, 0, 1);
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetPen(m_currentColor, std::max(1, ToDeviceContextX(width)), AxSOLID, dashLength, gapLength);
+    dc->SetBrush(m_currentColor, AxSOLID);
 
     dc->DrawLine(ToDeviceContextX(x1), ToDeviceContextY(y1), ToDeviceContextX(x2), ToDeviceContextY(y2));
 
@@ -63,22 +66,42 @@ void View::DrawRoundedLine(DeviceContext *dc, int x1, int y1, int x2, int y2, in
     return;
 }
 
-void View::DrawVerticalSegmentedLine(DeviceContext *dc, int x1, SegmentedLine &line, int width, int dashLength)
+void View::DrawVerticalSegmentedLine(
+    DeviceContext *dc, int x1, SegmentedLine &line, int width, int dashLength, int gapLength)
 {
-    int i, start, end;
-    for (i = 0; i < line.GetSegmentCount(); i++) {
-        line.GetStartEnd(start, end, i);
-        DrawVerticalLine(dc, start, end, x1, width, dashLength);
+    int start, end;
+    for (int i = 0; i < line.GetSegmentCount(); ++i) {
+        std::tie(start, end) = line.GetStartEnd(i);
+        this->DrawVerticalLine(dc, start, end, x1, width, dashLength, gapLength);
     }
 }
 
-void View::DrawHorizontalSegmentedLine(DeviceContext *dc, int y1, SegmentedLine &line, int width, int dashLength)
+void View::DrawHorizontalSegmentedLine(
+    DeviceContext *dc, int y1, SegmentedLine &line, int width, int dashLength, int gapLength)
 {
-    int i, start, end;
-    for (i = 0; i < line.GetSegmentCount(); i++) {
-        line.GetStartEnd(start, end, i);
-        DrawHorizontalLine(dc, start, end, y1, width, dashLength);
+    int start, end;
+    for (int i = 0; i < line.GetSegmentCount(); ++i) {
+        std::tie(start, end) = line.GetStartEnd(i);
+        this->DrawHorizontalLine(dc, start, end, y1, width, dashLength, gapLength);
     }
+}
+
+void View::DrawNotFilledEllipse(DeviceContext *dc, int x1, int y1, int x2, int y2, int lineThickness)
+{
+    assert(dc); // DC cannot be NULL
+
+    std::swap(y1, y2);
+
+    dc->SetPen(m_currentColor, lineThickness, AxSOLID);
+    dc->SetBrush(m_currentColor, AxTRANSPARENT);
+
+    int width = x2 - x1;
+    int height = y1 - y2;
+
+    dc->DrawEllipse(ToDeviceContextX(x1), ToDeviceContextY(y1), width, height);
+
+    dc->ResetPen();
+    dc->ResetBrush();
 }
 
 /*
@@ -89,9 +112,9 @@ void View::DrawPartFilledRectangle(DeviceContext *dc, int x1, int y1, int x2, in
 {
     assert(dc); // DC cannot be NULL
 
-    BoundingBox::Swap(y1, y2);
+    std::swap(y1, y2);
 
-    // dc->SetPen(m_currentColour, 0, AxSOLID );
+    // dc->SetPen(m_currentColor, 0, AxSOLID );
     // dc->SetBrush(AxWHITE, AxTRANSPARENT);
     dc->SetPen(AxBLUE, 0, AxSOLID);
     dc->SetBrush(AxRED, AxTRANSPARENT);
@@ -104,15 +127,15 @@ void View::DrawPartFilledRectangle(DeviceContext *dc, int x1, int y1, int x2, in
     return;
 }
 
-void View::DrawNotFilledRectangle(DeviceContext *dc, int x1, int y1, int x2, int y2, int lineThinkness, int radius = 0)
+void View::DrawNotFilledRectangle(DeviceContext *dc, int x1, int y1, int x2, int y2, int lineThickness, int radius = 0)
 {
     assert(dc); // DC cannot be NULL
 
-    BoundingBox::Swap(y1, y2);
+    std::swap(y1, y2);
 
-    const int penWidth = lineThinkness;
-    dc->SetPen(m_currentColour, penWidth, AxSOLID);
-    dc->SetBrush(m_currentColour, AxTRANSPARENT);
+    const int penWidth = lineThickness;
+    dc->SetPen(m_currentColor, penWidth, AxSOLID);
+    dc->SetBrush(m_currentColor, AxTRANSPARENT);
 
     dc->DrawRoundedRectangle(
         ToDeviceContextX(x1), ToDeviceContextY(y1), ToDeviceContextX(x2 - x1), ToDeviceContextX(y1 - y2), radius);
@@ -137,10 +160,10 @@ void View::DrawFilledRoundedRectangle(DeviceContext *dc, int x1, int y1, int x2,
 {
     assert(dc);
 
-    BoundingBox::Swap(y1, y2);
+    std::swap(y1, y2);
 
-    dc->SetPen(m_currentColour, 0, AxSOLID);
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetPen(m_currentColor, 0, AxSOLID);
+    dc->SetBrush(m_currentColor, AxSOLID);
 
     dc->DrawRoundedRectangle(
         ToDeviceContextX(x1), ToDeviceContextY(y1), ToDeviceContextX(x2 - x1), ToDeviceContextX(y1 - y2), radius);
@@ -157,8 +180,8 @@ void View::DrawObliquePolygon(DeviceContext *dc, int x1, int y1, int x2, int y2,
 {
     Point p[4];
 
-    dc->SetPen(m_currentColour, 0, AxSOLID);
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetPen(m_currentColor, 0, AxSOLID);
+    dc->SetBrush(m_currentColor, AxSOLID);
 
     height = ToDeviceContextX(height);
     p[0].x = ToDeviceContextX(x1);
@@ -182,11 +205,13 @@ void View::DrawDiamond(DeviceContext *dc, int x1, int y1, int height, int width,
 {
     Point p[4];
 
-    dc->SetPen(m_currentColour, linewidth, AxSOLID);
-    if (fill)
-        dc->SetBrush(m_currentColour, AxSOLID);
-    else
-        dc->SetBrush(m_currentColour, AxTRANSPARENT);
+    dc->SetPen(m_currentColor, linewidth, AxSOLID);
+    if (fill) {
+        dc->SetBrush(m_currentColor, AxSOLID);
+    }
+    else {
+        dc->SetBrush(m_currentColor, AxTRANSPARENT);
+    }
 
     int dHeight = ToDeviceContextX(height);
     int dWidth = ToDeviceContextX(width);
@@ -205,12 +230,13 @@ void View::DrawDiamond(DeviceContext *dc, int x1, int y1, int height, int width,
     dc->ResetBrush();
 }
 
-void View::DrawDot(DeviceContext *dc, int x, int y, int staffSize)
+void View::DrawDot(DeviceContext *dc, int x, int y, int staffSize, bool dimin)
 {
-    const int r = std::max(ToDeviceContextX(m_doc->GetDrawingDoubleUnit(staffSize) / 5), 2);
+    int r = std::max(ToDeviceContextX(m_doc->GetDrawingDoubleUnit(staffSize) / 5), 2);
+    if (dimin) r *= m_doc->GetOptions()->m_graceFactor.GetValue();
 
-    dc->SetPen(m_currentColour, 0, AxSOLID);
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetPen(m_currentColor, 0, AxSOLID);
+    dc->SetBrush(m_currentColor, AxSOLID);
 
     dc->DrawCircle(ToDeviceContextX(x), ToDeviceContextY(y), r);
 
@@ -218,16 +244,82 @@ void View::DrawDot(DeviceContext *dc, int x, int y, int staffSize)
     dc->ResetBrush();
 }
 
-void View::DrawSmuflCode(DeviceContext *dc, int x, int y, wchar_t code, int staffSize, bool dimin, bool setBBGlyph)
+void View::DrawVerticalDots(DeviceContext *dc, int x, const SegmentedLine &line, int barlineWidth, int interval)
+{
+    if (line.GetSegmentCount() > 1) return;
+
+    const auto [top, bottom] = line.GetStartEnd(0);
+    const int radius = std::max(barlineWidth, 2);
+    int drawingPosition = top - interval / 2;
+
+    dc->SetPen(m_currentColor, 0, AxSOLID);
+    dc->SetBrush(m_currentColor, AxSOLID);
+
+    while (drawingPosition > bottom) {
+        dc->DrawCircle(ToDeviceContextX(x), ToDeviceContextY(drawingPosition), radius);
+        drawingPosition -= interval;
+    }
+
+    dc->ResetPen();
+    dc->ResetBrush();
+}
+
+void View::DrawSquareBracket(DeviceContext *dc, bool leftBracket, int x, int y, int height, int width,
+    int horizontalThickness, int verticalThickness)
+{
+    assert(dc);
+
+    const int sign = leftBracket ? 1 : -1;
+
+    this->DrawFilledRectangle(dc, x, y - horizontalThickness / 2, x + sign * verticalThickness,
+        y + height + horizontalThickness / 2); // vertical
+    this->DrawFilledRectangle(
+        dc, x, y - horizontalThickness / 2, x + sign * width, y + horizontalThickness / 2); // horizontal bottom
+    this->DrawFilledRectangle(dc, x, y + height - horizontalThickness / 2, x + sign * width,
+        y + height + horizontalThickness / 2); // horizontal top
+}
+
+void View::DrawEnclosingBrackets(DeviceContext *dc, int x, int y, int height, int width, int offset, int bracketWidth,
+    int horizontalThickness, int verticalThickness)
+{
+    assert(dc);
+
+    this->DrawSquareBracket(
+        dc, true, x - offset, y - offset, height + 2 * offset, bracketWidth, horizontalThickness, verticalThickness);
+    this->DrawSquareBracket(dc, false, x + width + offset, y - offset, height + 2 * offset, bracketWidth,
+        horizontalThickness, verticalThickness);
+}
+
+/*
+void View::DrawSmuflCodeWithCustomFont(DeviceContext *dc, const std::string &customFont, int x, int y, char32_t code,
+    int staffSize, bool dimin, bool setBBGlyph)
+{
+    if (customFont.empty()) {
+        this->DrawSmuflCode(dc, x, y, code, staffSize, dimin, setBBGlyph);
+        return;
+    }
+
+    Resources &resources = m_doc->GetResourcesForModification();
+    const std::string prevFont = resources.GetCurrentFont();
+
+    resources.SetCurrentFont(customFont);
+
+    DrawSmuflCode(dc, x, y, code, staffSize, dimin, setBBGlyph);
+
+    resources.SetCurrentFont(prevFont);
+}
+*/
+
+void View::DrawSmuflCode(DeviceContext *dc, int x, int y, char32_t code, int staffSize, bool dimin, bool setBBGlyph)
 {
     assert(dc);
 
     if (code == 0) return;
 
-    std::wstring str;
+    std::u32string str;
     str.push_back(code);
 
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetBrush(m_currentColor, AxSOLID);
     dc->SetFont(m_doc->GetDrawingSmuflFont(staffSize, dimin));
 
     dc->DrawMusicText(str, ToDeviceContextX(x), ToDeviceContextY(y), setBBGlyph);
@@ -239,7 +331,7 @@ void View::DrawSmuflCode(DeviceContext *dc, int x, int y, wchar_t code, int staf
 }
 
 void View::DrawSmuflLine(
-    DeviceContext *dc, Point orig, int length, int staffSize, bool dimin, wchar_t fill, wchar_t start, wchar_t end)
+    DeviceContext *dc, Point orig, int length, int staffSize, bool dimin, char32_t fill, char32_t start, char32_t end)
 {
     assert(dc);
 
@@ -254,10 +346,10 @@ void View::DrawSmuflLine(
     // We add half a fill length for an average shorter / longer line result
     const int count = (length + fillWidth / 2 - startWidth - endWidth) / fillWidth;
 
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetBrush(m_currentColor, AxSOLID);
     dc->SetFont(m_doc->GetDrawingSmuflFont(staffSize, dimin));
 
-    std::wstring str;
+    std::u32string str;
 
     if (start != 0) {
         str.push_back(start);
@@ -277,14 +369,14 @@ void View::DrawSmuflLine(
     dc->ResetBrush();
 }
 
-void View::DrawSmuflString(DeviceContext *dc, int x, int y, std::wstring s, data_HORIZONTALALIGNMENT alignment,
+void View::DrawSmuflString(DeviceContext *dc, int x, int y, std::u32string s, data_HORIZONTALALIGNMENT alignment,
     int staffSize, bool dimin, bool setBBGlyph)
 {
     assert(dc);
 
     int xDC = ToDeviceContextX(x);
 
-    dc->SetBrush(m_currentColour, AxSOLID);
+    dc->SetBrush(m_currentColor, AxSOLID);
     dc->SetFont(m_doc->GetDrawingSmuflFont(staffSize, dimin));
 
     if (alignment == HORIZONTALALIGNMENT_center) {
@@ -305,13 +397,13 @@ void View::DrawSmuflString(DeviceContext *dc, int x, int y, std::wstring s, data
 }
 
 void View::DrawThickBezierCurve(
-    DeviceContext *dc, Point bezier[4], int thickness, int staffSize, int penWidth, float angle, int penStyle)
+    DeviceContext *dc, Point bezier[4], int thickness, int staffSize, int penWidth, int penStyle)
 {
     assert(dc);
 
     Point bez1[4], bez2[4]; // filled array with control points and end point
 
-    BoundingBox::CalcThickBezier(bezier, thickness, angle, bez1, bez2);
+    BoundingBox::CalcThickBezier(bezier, thickness, bez1, bez2);
 
     bez1[0] = ToDeviceContext(bez1[0]);
     bez1[1] = ToDeviceContext(bez1[1]);
@@ -326,15 +418,53 @@ void View::DrawThickBezierCurve(
     // Actually draw it
     if (penStyle == AxSOLID) {
         // Solid Thick Bezier Curves are made of two beziers, filled in.
-        dc->SetPen(m_currentColour, std::max(1, m_doc->GetDrawingStemWidth(staffSize) / 2), penStyle);
+        dc->SetPen(m_currentColor, std::max(1, m_doc->GetDrawingStemWidth(staffSize) / 2), penStyle);
         dc->DrawCubicBezierPathFilled(bez1, bez2);
     }
     else {
         // Dashed or Dotted Thick Bezier Curves have a uniform line width.
-        dc->SetPen(m_currentColour, thickness, penStyle);
+        dc->SetPen(m_currentColor, thickness, penStyle);
         dc->DrawCubicBezierPath(bez1);
     }
     dc->ResetPen();
+}
+
+void View::DrawSymbolDef(DeviceContext *dc, Object *parent, SymbolDef *symbolDef, int x, int y, int staffSize,
+    bool dimin, data_HORIZONTALALIGNMENT alignment)
+{
+    assert(dc);
+    assert(symbolDef);
+
+    TextDrawingParams params;
+    params.m_x = x;
+    params.m_y = y;
+
+    // Because image y coordinates are inverted we need to adjust the y position
+    params.m_y += symbolDef->GetSymbolHeight(m_doc, staffSize, dimin);
+
+    if (alignment != HORIZONTALALIGNMENT_left) {
+        const int width = symbolDef->GetSymbolWidth(m_doc, staffSize, dimin);
+        params.m_x -= (alignment == HORIZONTALALIGNMENT_center) ? (width / 2) : width;
+    }
+
+    // Because thg Svg is a child of symbolDef we need to temporarily change the parent for the bounding boxes
+    // to be properly propagated in the device context
+    symbolDef->SetTemporaryParent(parent);
+
+    for (Object *current : symbolDef->GetChildren()) {
+        if (current->Is(GRAPHIC)) {
+            Graphic *graphic = vrv_cast<Graphic *>(current);
+            assert(graphic);
+            this->DrawGraphic(dc, graphic, params, staffSize, dimin);
+        }
+        if (current->Is(SVG)) {
+            Svg *svg = vrv_cast<Svg *>(current);
+            assert(svg);
+            this->DrawSvg(dc, svg, params, staffSize, dimin);
+        }
+    }
+
+    symbolDef->ResetTemporaryParent();
 }
 
 } // namespace vrv
