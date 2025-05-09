@@ -192,6 +192,9 @@ jobs:
             echo CXX=$(xcrun --find clang++) >> $GITHUB_ENV
           fi
 
+      - name: Register gcc problem matcher
+        run: echo "::add-matcher::.github/problem_matchers/gcc.json"
+
       - name: Check settings and dry-run make
         working-directory: ${{ github.workspace }}/tools
         run: |
