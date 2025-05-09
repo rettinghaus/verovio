@@ -202,13 +202,12 @@ jobs:
           echo "CXX: ${CXX}"
 
           cmake --version
-          cmake -E env CXXFLAGS="-Wall"
           cmake -S ../cmake -B debug -DCMAKE_BUILD_TYPE=Debug
 
       - name: Run make
         working-directory: ${{ github.workspace }}/tools
         run: |
-          cmake ../cmake
+          cmake ../cmake -DCMAKE_CXX_FLAGS="-Wall"
           make -j8
 
   #####################################
