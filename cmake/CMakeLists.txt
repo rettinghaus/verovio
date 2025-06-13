@@ -110,6 +110,8 @@ else()
     add_definitions(-Wunused-function)
     add_definitions(-Wunused-value)
     add_definitions(-Wunused-variable)
+    add_definitions(-Wsign-compare)
+    add_definitions(-Wextra)
 
 endif()
 
