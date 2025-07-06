@@ -1,0 +1,56 @@
+[build-system]
+requires = [
+    "scikit-build-core>=0.11",
+    "setuptools>=61.0",
+    "wheel",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "verovio"
+version = "5.7.0"
+description = "A library and toolkit for engraving MEI music notation into SVG"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "LGPLv3"}
+authors = [
+    {name = "Verovio contributors"}
+]
+classifiers = [
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: C++",
+    "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://www.verovio.org"
+Bug_Reports = "https://github.com/rism-digital/verovio/issues"
+Source = "https://github.com/rism-digital/verovio"
+
+[tool.setuptools]
+packages = [
+    "verovio",
+    "verovio.data",
+    "verovio.data.Bravura",
+    "verovio.data.Gootville",
+    "verovio.data.Leipzig",
+    "verovio.data.Leland",
+    "verovio.data.Petaluma",
+    "verovio.data.text"
+]
+package-dir = { verovio = "bindings/python", "verovio.data" = "data" }
+
+[tool.setuptools.package-data]
+verovio = ["py.typed"]
+"verovio.data" = ["*.xml", "*.css", "*.svg"]
+"verovio.data.Bravura" = ["*"]
+"verovio.data.Gootville" = ["*"]
+"verovio.data.Leipzig" = ["*"]
+"verovio.data.Leland" = ["*"]
+"verovio.data.Petaluma" = ["*"]
+"verovio.data.text" = ["*"]
+
+[tool.scikit-build]
+cmake.source-dir = "cmake"
+build-dir = "build"
