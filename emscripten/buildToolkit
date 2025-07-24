@@ -32,6 +32,8 @@ Options:
 -v N    Version number (e.g., 1.0.0); no number by default
 -w      Webassembly version
 -x      Font exclusion list (case-sensitive)
+-A		Disable ABC importer
+-D      Disable DARMS importer
 -H      Disable Humdrum importer
 -M      Clean existing makefile
 -m      Modularize emscripten build
