@@ -181,7 +181,7 @@ public:
     /**
      * Return the drawing staff size for staff notation, including for tablature staves
      */
-    int GetDrawingStaffNotationSize() const;
+    virtual int GetDrawingStaffNotationSize() const;
 
     /**
      * Check if the staff is currently visible.

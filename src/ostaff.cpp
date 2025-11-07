@@ -54,4 +54,9 @@ void OStaff::Reset()
     Staff::Reset();
 }
 
+int OStaff::GetDrawingStaffNotationSize() const
+{
+    return Staff::GetDrawingStaffNotationSize() / OSTAFF_SIZE_RATIO;
+}
+
 } // namespace vrv

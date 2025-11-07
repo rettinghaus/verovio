@@ -206,8 +206,6 @@ void Staff::AdjustDrawingStaffSize()
 
 int Staff::GetDrawingStaffNotationSize() const
 {
-    if (this->Is(OSTAFF)) return m_drawingStaffSize / OSTAFF_SIZE_RATIO;
-
     if (this->IsTabLuteGerman()) return m_drawingStaffSize / GERMAN_TAB_STAFF_RATIO;
 
     return (this->IsTablature()) ? m_drawingStaffSize / TABLATURE_STAFF_RATIO : m_drawingStaffSize;
