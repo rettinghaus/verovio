@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"u4fybjl"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"u4fybjl"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

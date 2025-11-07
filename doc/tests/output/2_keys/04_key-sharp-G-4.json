@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"l38cfm7"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"l38cfm7"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

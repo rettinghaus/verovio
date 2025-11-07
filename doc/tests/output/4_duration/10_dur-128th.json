@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"uy5jy8h"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"uy5jy8h"
+		],
+		"qstamp": 0.03125,
+		"tstamp": 16
+	},
+	{
+		"qstamp": 0.0625,
+		"tstamp": 31
+	}
+]

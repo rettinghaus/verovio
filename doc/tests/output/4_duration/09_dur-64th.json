@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"s1pksy2"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"s1pksy2"
+		],
+		"qstamp": 0.0625,
+		"tstamp": 31
+	},
+	{
+		"qstamp": 0.125,
+		"tstamp": 63
+	}
+]

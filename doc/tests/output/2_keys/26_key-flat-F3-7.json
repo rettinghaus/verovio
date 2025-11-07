@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"vuwj95e"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"vuwj95e"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

@@ -1,0 +1,74 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" width="840px" height="84px" version="1.1" overflow="visible" id="xdn39hc">
+   <ns0:desc>Engraved by Verovio 5.6.0-85e7620</ns0:desc>
+   <ns0:defs>
+      <ns0:g id="E062-xdn39hc">
+         <ns0:path transform="scale(1,-1)" d="M582 -120c0 32 26 58 58 58s58 -26 58 -58s-26 -58 -58 -58s-58 26 -58 58zM582 120c0 32 26 58 58 58s58 -26 58 -58s-26 -58 -58 -58s-58 26 -58 58zM158 96c51 0 73 -14 88 -49l16 -39c0 -17 -2 -30 -7 -40c-3 -11 -10 -21 -19 -31c-17 -18 -49 -43 -84 -43 c-55 0 -77 13 -112 44c-24 21 -35 55 -35 100c0 46 14 81 32 112c30 52 71 79 137 93l36 6l26 2c154 0 235 -68 274 -182c11 -32 18 -68 18 -107c0 -103 -26 -182 -68 -250c-89 -145 -234 -230 -412 -288l-30 -5c-9 0 -14 3 -14 8c3 10 5 11 10 16c35 15 70 30 96 44l78 43 c96 57 162 136 197 258c9 33 17 60 22 100c3 22 5 35 6 39c-7 69 -16 115 -23 140s-4 22 -16 40c-8 12 -19 23 -31 34c-24 21 -62 44 -118 44c-48 0 -84 -8 -113 -28c-28 -19 -42 -44 -42 -73v-16c2 -5 3 -9 4 -11c24 22 52 39 84 39z" />
+      </ns0:g>
+      <ns0:g id="E262-xdn39hc">
+         <ns0:path transform="scale(1,-1)" d="M136 186v169h17v-164l44 14v-91l-44 -14v-165l44 12v-91l-44 -13v-155h-17v150l-76 -22v-155h-17v149l-43 -13v90l43 14v167l-43 -14v92l43 13v169h17v-163zM60 73v-167l76 22v168z" />
+      </ns0:g>
+      <ns0:g id="E0A4-xdn39hc">
+         <ns0:path transform="scale(1,-1)" d="M0 -39c0 68 73 172 200 172c66 0 114 -37 114 -95c0 -84 -106 -171 -218 -171c-64 0 -96 30 -96 94z" />
+      </ns0:g>
+   </ns0:defs>
+   <ns0:style type="text/css">#xdn39hc g.page-margin {font-family:Times,serif;}#xdn39hc g.ending, #xdn39hc g.fing, #xdn39hc g.reh, #xdn39hc g.tempo {font-weight:bold;}#xdn39hc g.dir, #xdn39hc g.dynam, #xdn39hc g.mNum {font-style:italic;}#xdn39hc g.label {font-weight:normal;}#xdn39hc path {stroke:currentColor}</ns0:style>
+   <ns0:svg class="definition-scale" color="black" viewBox="0 0 21000 2080">
+      <ns0:g class="page-margin" transform="translate(500, 500)">
+         <ns0:g id="k5a5wvx" class="mdiv pageMilestone" />
+         <ns0:g id="l1s1ilk2" class="score pageMilestone" />
+         <ns0:g id="u6ecqzn" class="system">
+            <ns0:g id="n1fu64wf" class="section systemMilestone" />
+            <ns0:g id="yb28nzn" class="measure">
+               <ns0:g id="y127tkiv" class="staff">
+                  <ns0:path d="M0 180 L2938 180" stroke-width="13" />
+                  <ns0:path d="M0 360 L2938 360" stroke-width="13" />
+                  <ns0:path d="M0 540 L2938 540" stroke-width="13" />
+                  <ns0:path d="M0 720 L2938 720" stroke-width="13" />
+                  <ns0:path d="M0 900 L2938 900" stroke-width="13" />
+                  <ns0:g id="a631mx1" class="clef">
+                     <ns0:use ns1:href="#E062-xdn39hc" transform="translate(88, 360) scale(0.72, 0.72)" />
+                  </ns0:g>
+                  <ns0:g id="bge24dz" class="keySig">
+                     <ns0:g id="c1349wb5" class="keyAccid">
+                        <ns0:use ns1:href="#E262-xdn39hc" transform="translate(769, 360) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="d5czve8" class="keyAccid">
+                        <ns0:use ns1:href="#E262-xdn39hc" transform="translate(947, 630) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="ey3zeoa" class="keyAccid">
+                        <ns0:use ns1:href="#E262-xdn39hc" transform="translate(1125, 270) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="f1uji91b" class="keyAccid">
+                        <ns0:use ns1:href="#E262-xdn39hc" transform="translate(1303, 540) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="g1by0nm9" class="keyAccid">
+                        <ns0:use ns1:href="#E262-xdn39hc" transform="translate(1481, 810) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="hjdx3qt" class="keyAccid">
+                        <ns0:use ns1:href="#E262-xdn39hc" transform="translate(1659, 450) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="i8oxu1n" class="keyAccid">
+                        <ns0:use ns1:href="#E262-xdn39hc" transform="translate(1837, 720) scale(0.72, 0.72)" />
+                     </ns0:g>
+                  </ns0:g>
+                  <ns0:g id="zbww5ei" class="layer">
+                     <ns0:g id="hpjlwe4" class="note">
+                        <ns0:g class="notehead">
+                           <ns0:use ns1:href="#E0A4-xdn39hc" transform="translate(2248, 270) scale(0.72, 0.72)" />
+                        </ns0:g>
+                        <ns0:g id="rl1ousx" class="stem">
+                           <ns0:path d="M2257 298 L2257 900" stroke-width="18" />
+                        </ns0:g>
+                        <ns0:g id="i5v1as3" class="accid" />
+                     </ns0:g>
+                  </ns0:g>
+               </ns0:g>
+               <ns0:g id="g1ud09v7" class="barLine" />
+            </ns0:g>
+            <ns0:g id="hn4v852" class="systemMilestoneEnd n1fu64wf" />
+         </ns0:g>
+         <ns0:g id="iav2l9" class="pageMilestoneEnd l1s1ilk2" />
+         <ns0:g id="jz9xvs5" class="pageMilestoneEnd k5a5wvx" />
+      </ns0:g>
+   </ns0:svg>
+</ns0:svg>

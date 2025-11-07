@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"nrqzqkn"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"nrqzqkn"
+		],
+		"qstamp": 0.5,
+		"tstamp": 250
+	},
+	{
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

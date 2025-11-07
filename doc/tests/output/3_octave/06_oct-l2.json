@@ -1,0 +1,77 @@
+[
+	{
+		"on": [
+			"nxjrfal"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"nxjrfal"
+		],
+		"on": [
+			"o1ex0683"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	},
+	{
+		"off": [
+			"o1ex0683"
+		],
+		"on": [
+			"p12za0k6"
+		],
+		"qstamp": 2,
+		"tstamp": 1000
+	},
+	{
+		"off": [
+			"p12za0k6"
+		],
+		"on": [
+			"q1gtdgh3"
+		],
+		"qstamp": 3,
+		"tstamp": 1500
+	},
+	{
+		"off": [
+			"q1gtdgh3"
+		],
+		"on": [
+			"rlucdrz"
+		],
+		"qstamp": 4,
+		"tstamp": 2000
+	},
+	{
+		"off": [
+			"rlucdrz"
+		],
+		"on": [
+			"s104bfqk"
+		],
+		"qstamp": 5,
+		"tstamp": 2500
+	},
+	{
+		"off": [
+			"s104bfqk"
+		],
+		"on": [
+			"t1r2rtme"
+		],
+		"qstamp": 6,
+		"tstamp": 3000
+	},
+	{
+		"off": [
+			"t1r2rtme"
+		],
+		"qstamp": 7,
+		"tstamp": 3500
+	}
+]

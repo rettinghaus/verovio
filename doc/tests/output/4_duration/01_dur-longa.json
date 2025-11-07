@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"hrovwec"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"hrovwec"
+		],
+		"qstamp": 16,
+		"tstamp": 8000
+	},
+	{
+		"qstamp": 32,
+		"tstamp": 16000
+	}
+]

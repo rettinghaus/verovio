@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"h1d6fo2s"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"h1d6fo2s"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"hpjlwe4"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"hpjlwe4"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

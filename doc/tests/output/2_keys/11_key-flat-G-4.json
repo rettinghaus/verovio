@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"k1f62mgx"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"k1f62mgx"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

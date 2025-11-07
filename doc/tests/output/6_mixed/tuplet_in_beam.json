@@ -1,0 +1,217 @@
+[
+	{
+		"on": [
+			"x6jpdaj"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"x6jpdaj"
+		],
+		"on": [
+			"y7746c4"
+		],
+		"qstamp": 2,
+		"tstamp": 1000
+	},
+	{
+		"off": [
+			"y7746c4"
+		],
+		"on": [
+			"z3cekrt"
+		],
+		"qstamp": 2.5,
+		"tstamp": 1250
+	},
+	{
+		"off": [
+			"z3cekrt"
+		],
+		"on": [
+			"aut2kqe"
+		],
+		"qstamp": 3,
+		"tstamp": 1500
+	},
+	{
+		"off": [
+			"aut2kqe"
+		],
+		"on": [
+			"b1m8nx50"
+		],
+		"qstamp": 3.5,
+		"tstamp": 1750
+	},
+	{
+		"off": [
+			"b1m8nx50"
+		],
+		"on": [
+			"c1xzkucp"
+		],
+		"qstamp": 4,
+		"tstamp": 2000
+	},
+	{
+		"off": [
+			"c1xzkucp"
+		],
+		"on": [
+			"d1wh0m44"
+		],
+		"qstamp": 4.5,
+		"tstamp": 2250
+	},
+	{
+		"off": [
+			"d1wh0m44"
+		],
+		"on": [
+			"e1avsr1o"
+		],
+		"qstamp": 4.666666666666666963,
+		"tstamp": 2333
+	},
+	{
+		"off": [
+			"e1avsr1o"
+		],
+		"on": [
+			"fm17apq"
+		],
+		"qstamp": 4.833333333333333037,
+		"tstamp": 2417
+	},
+	{
+		"off": [
+			"fm17apq"
+		],
+		"on": [
+			"gsqlf1e"
+		],
+		"qstamp": 5,
+		"tstamp": 2500
+	},
+	{
+		"off": [
+			"gsqlf1e"
+		],
+		"on": [
+			"hzk3vu0"
+		],
+		"qstamp": 5.5,
+		"tstamp": 2750
+	},
+	{
+		"off": [
+			"hzk3vu0"
+		],
+		"on": [
+			"ikzdvpo"
+		],
+		"qstamp": 6,
+		"tstamp": 3000
+	},
+	{
+		"off": [
+			"ikzdvpo"
+		],
+		"on": [
+			"jjjobc8"
+		],
+		"qstamp": 7.5,
+		"tstamp": 3750
+	},
+	{
+		"off": [
+			"jjjobc8"
+		],
+		"on": [
+			"k17ig8hr"
+		],
+		"qstamp": 8,
+		"tstamp": 4000
+	},
+	{
+		"off": [
+			"k17ig8hr"
+		],
+		"on": [
+			"lifdul3"
+		],
+		"qstamp": 8.5,
+		"tstamp": 4250
+	},
+	{
+		"off": [
+			"lifdul3"
+		],
+		"on": [
+			"my34c6g"
+		],
+		"qstamp": 8.666666666666666075,
+		"tstamp": 4333
+	},
+	{
+		"off": [
+			"my34c6g"
+		],
+		"on": [
+			"nsaq19p"
+		],
+		"qstamp": 8.833333333333333925,
+		"tstamp": 4417
+	},
+	{
+		"off": [
+			"nsaq19p"
+		],
+		"on": [
+			"oukceam"
+		],
+		"qstamp": 9,
+		"tstamp": 4500
+	},
+	{
+		"off": [
+			"oukceam"
+		],
+		"on": [
+			"pfsloq"
+		],
+		"qstamp": 9.5,
+		"tstamp": 4750
+	},
+	{
+		"off": [
+			"pfsloq"
+		],
+		"on": [
+			"qhr8s37"
+		],
+		"qstamp": 10,
+		"tstamp": 5000
+	},
+	{
+		"off": [
+			"qhr8s37"
+		],
+		"on": [
+			"rukxreu"
+		],
+		"qstamp": 11.5,
+		"tstamp": 5750
+	},
+	{
+		"off": [
+			"rukxreu"
+		],
+		"qstamp": 12,
+		"tstamp": 6000
+	}
+]

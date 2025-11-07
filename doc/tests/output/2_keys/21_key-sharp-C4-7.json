@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"o1yntlxx"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"o1yntlxx"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

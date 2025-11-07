@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"g1kskb08"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"g1kskb08"
+		],
+		"qstamp": 2,
+		"tstamp": 1000
+	},
+	{
+		"qstamp": 4,
+		"tstamp": 2000
+	}
+]

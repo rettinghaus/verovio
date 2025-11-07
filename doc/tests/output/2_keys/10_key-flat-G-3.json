@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"u1j38zyw"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"u1j38zyw"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

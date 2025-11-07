@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"c13m0dr5"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"c13m0dr5"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

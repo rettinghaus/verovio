@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"f1ac939o"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"f1ac939o"
+		],
+		"qstamp": 1.5,
+		"tstamp": 750
+	},
+	{
+		"qstamp": 3,
+		"tstamp": 1500
+	}
+]

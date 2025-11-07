@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"i1d6flaq"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"i1d6flaq"
+		],
+		"qstamp": 4,
+		"tstamp": 2000
+	},
+	{
+		"qstamp": 8,
+		"tstamp": 4000
+	}
+]

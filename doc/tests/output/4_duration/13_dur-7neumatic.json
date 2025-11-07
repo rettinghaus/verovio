@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"l18uiw2b"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"l18uiw2b"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

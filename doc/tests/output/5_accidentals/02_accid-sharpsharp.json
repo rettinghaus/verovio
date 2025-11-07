@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"yxw423m"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"yxw423m"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

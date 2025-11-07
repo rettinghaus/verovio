@@ -1,0 +1,74 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" width="840px" height="86px" version="1.1" overflow="visible" id="l11w5bfh">
+   <ns0:desc>Engraved by Verovio 5.6.0-85e7620</ns0:desc>
+   <ns0:defs>
+      <ns0:g id="E05C-l11w5bfh">
+         <ns0:path transform="scale(1,-1)" d="M175 502h43v-456c10 5 18 12 37 29c16 19 22 27 27 38s8 24 14 49c3 22 5 43 5 62c7 -34 31 -54 73 -60c73 18 99 61 100 165c0 46 -10 78 -31 100c-18 23 -41 35 -69 35c-40 0 -65 -32 -66 -84c6 12 11 16 39 24c5 0 2 1 16 -4l17 -10l10 -14l7 -18 c-4 -32 -23 -48 -56 -48c-51 0 -77 33 -77 98c10 35 16 47 30 61c9 9 15 14 23 17c3 3 22 9 27 11l34 3l35 2c123 0 192 -64 192 -178l1 -33c0 -52 -20 -97 -60 -134c-18 -15 -42 -28 -74 -39c-30 -9 -63 -13 -101 -13l-93 -88v-34l93 -88c38 0 71 -4 101 -13 c32 -11 56 -24 74 -39c40 -37 60 -82 60 -134l-3 -33c0 -115 -68 -178 -190 -178l-35 2l-34 3c-5 2 -24 8 -27 11c-26 11 -40 32 -53 78c0 65 26 98 77 98c33 0 52 -16 56 -48l-7 -18l-10 -14l-17 -10c-14 -5 -11 -4 -16 -4c-28 8 -33 12 -39 24c1 -52 26 -84 66 -84 c28 0 51 12 69 35c21 22 31 54 31 100c-1 104 -27 147 -100 165c-42 -6 -66 -26 -73 -60c0 19 -2 40 -5 62c-6 25 -9 38 -14 49s-11 19 -27 38c-19 17 -27 24 -37 29v-456h-43v1004zM0 502h118v-1004h-118v1004z" />
+      </ns0:g>
+      <ns0:g id="E262-l11w5bfh">
+         <ns0:path transform="scale(1,-1)" d="M136 186v169h17v-164l44 14v-91l-44 -14v-165l44 12v-91l-44 -13v-155h-17v150l-76 -22v-155h-17v149l-43 -13v90l43 14v167l-43 -14v92l43 13v169h17v-163zM60 73v-167l76 22v168z" />
+      </ns0:g>
+      <ns0:g id="E0A4-l11w5bfh">
+         <ns0:path transform="scale(1,-1)" d="M0 -39c0 68 73 172 200 172c66 0 114 -37 114 -95c0 -84 -106 -171 -218 -171c-64 0 -96 30 -96 94z" />
+      </ns0:g>
+   </ns0:defs>
+   <ns0:style type="text/css">#l11w5bfh g.page-margin {font-family:Times,serif;}#l11w5bfh g.ending, #l11w5bfh g.fing, #l11w5bfh g.reh, #l11w5bfh g.tempo {font-weight:bold;}#l11w5bfh g.dir, #l11w5bfh g.dynam, #l11w5bfh g.mNum {font-style:italic;}#l11w5bfh g.label {font-weight:normal;}#l11w5bfh path {stroke:currentColor}</ns0:style>
+   <ns0:svg class="definition-scale" color="black" viewBox="0 0 21000 2150">
+      <ns0:g class="page-margin" transform="translate(500, 500)">
+         <ns0:g id="yf1l3ob" class="mdiv pageMilestone" />
+         <ns0:g id="z1yelgjz" class="score pageMilestone" />
+         <ns0:g id="i1vwntha" class="system">
+            <ns0:g id="bytp6rw" class="section systemMilestone" />
+            <ns0:g id="m1agl35o" class="measure">
+               <ns0:g id="m1qawby5" class="staff">
+                  <ns0:path d="M0 255 L2875 255" stroke-width="13" />
+                  <ns0:path d="M0 435 L2875 435" stroke-width="13" />
+                  <ns0:path d="M0 615 L2875 615" stroke-width="13" />
+                  <ns0:path d="M0 795 L2875 795" stroke-width="13" />
+                  <ns0:path d="M0 975 L2875 975" stroke-width="13" />
+                  <ns0:g id="o1lwmu0z" class="clef">
+                     <ns0:use ns1:href="#E05C-l11w5bfh" transform="translate(90, 615) scale(0.72, 0.72)" />
+                  </ns0:g>
+                  <ns0:g id="pjssrn6" class="keySig">
+                     <ns0:g id="q1e6dq03" class="keyAccid">
+                        <ns0:use ns1:href="#E262-l11w5bfh" transform="translate(706, 345) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="r1ned1zj" class="keyAccid">
+                        <ns0:use ns1:href="#E262-l11w5bfh" transform="translate(884, 615) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="sb4x7w0" class="keyAccid">
+                        <ns0:use ns1:href="#E262-l11w5bfh" transform="translate(1062, 255) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="t1w23tz8" class="keyAccid">
+                        <ns0:use ns1:href="#E262-l11w5bfh" transform="translate(1240, 525) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="u1hkqzrx" class="keyAccid">
+                        <ns0:use ns1:href="#E262-l11w5bfh" transform="translate(1418, 795) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="v6rd3n3" class="keyAccid">
+                        <ns0:use ns1:href="#E262-l11w5bfh" transform="translate(1596, 435) scale(0.72, 0.72)" />
+                     </ns0:g>
+                     <ns0:g id="w73n0vn" class="keyAccid">
+                        <ns0:use ns1:href="#E262-l11w5bfh" transform="translate(1774, 705) scale(0.72, 0.72)" />
+                     </ns0:g>
+                  </ns0:g>
+                  <ns0:g id="n10k3013" class="layer">
+                     <ns0:g id="v1tuf5zg" class="note">
+                        <ns0:g class="notehead">
+                           <ns0:use ns1:href="#E0A4-l11w5bfh" transform="translate(2185, 255) scale(0.72, 0.72)" />
+                        </ns0:g>
+                        <ns0:g id="f4wsr6h" class="stem">
+                           <ns0:path d="M2194 283 L2194 885" stroke-width="18" />
+                        </ns0:g>
+                        <ns0:g id="w1huu25i" class="accid" />
+                     </ns0:g>
+                  </ns0:g>
+               </ns0:g>
+               <ns0:g id="u1brty74" class="barLine" />
+            </ns0:g>
+            <ns0:g id="v1l4i1ty" class="systemMilestoneEnd bytp6rw" />
+         </ns0:g>
+         <ns0:g id="we6doqr" class="pageMilestoneEnd z1yelgjz" />
+         <ns0:g id="xzzspmo" class="pageMilestoneEnd yf1l3ob" />
+      </ns0:g>
+   </ns0:svg>
+</ns0:svg>

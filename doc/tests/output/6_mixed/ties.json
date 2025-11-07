@@ -1,0 +1,211 @@
+[
+	{
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"on": [
+			"i9cpqfl"
+		],
+		"qstamp": 0.5,
+		"tstamp": 250
+	},
+	{
+		"off": [
+			"i9cpqfl"
+		],
+		"on": [
+			"j1ci50n"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	},
+	{
+		"off": [
+			"j1ci50n"
+		],
+		"on": [
+			"k11d2y4j"
+		],
+		"qstamp": 1.5,
+		"tstamp": 750
+	},
+	{
+		"off": [
+			"k11d2y4j"
+		],
+		"on": [
+			"l1ojhd1o"
+		],
+		"qstamp": 2,
+		"tstamp": 1000
+	},
+	{
+		"off": [
+			"l1ojhd1o"
+		],
+		"on": [
+			"mpv064h"
+		],
+		"qstamp": 2.5,
+		"tstamp": 1250
+	},
+	{
+		"off": [
+			"mpv064h"
+		],
+		"on": [
+			"npisgkg"
+		],
+		"qstamp": 3,
+		"tstamp": 1500
+	},
+	{
+		"off": [
+			"npisgkg"
+		],
+		"on": [
+			"ox4zewq"
+		],
+		"qstamp": 3.5,
+		"tstamp": 1750
+	},
+	{
+		"off": [
+			"ox4zewq"
+		],
+		"on": [
+			"pdzkzfq"
+		],
+		"qstamp": 4,
+		"tstamp": 2000
+	},
+	{
+		"off": [
+			"pdzkzfq"
+		],
+		"on": [
+			"qgq0vni"
+		],
+		"qstamp": 4.5,
+		"tstamp": 2250
+	},
+	{
+		"off": [
+			"qgq0vni"
+		],
+		"on": [
+			"rkzjfp6"
+		],
+		"qstamp": 5,
+		"tstamp": 2500
+	},
+	{
+		"off": [
+			"rkzjfp6"
+		],
+		"on": [
+			"s1xxhnna"
+		],
+		"qstamp": 5.5,
+		"tstamp": 2750
+	},
+	{
+		"off": [
+			"s1xxhnna"
+		],
+		"on": [
+			"t1gbjfhz"
+		],
+		"qstamp": 6,
+		"tstamp": 3000
+	},
+	{
+		"off": [
+			"t1gbjfhz"
+		],
+		"on": [
+			"uhjs6lf"
+		],
+		"qstamp": 6.5,
+		"tstamp": 3250
+	},
+	{
+		"off": [
+			"uhjs6lf"
+		],
+		"on": [
+			"v1n3hqa1"
+		],
+		"qstamp": 7,
+		"tstamp": 3500
+	},
+	{
+		"off": [
+			"v1n3hqa1"
+		],
+		"on": [
+			"w89dl1q"
+		],
+		"qstamp": 7.5,
+		"tstamp": 3750
+	},
+	{
+		"off": [
+			"w89dl1q"
+		],
+		"on": [
+			"x893h6z"
+		],
+		"qstamp": 8,
+		"tstamp": 4000
+	},
+	{
+		"off": [
+			"x893h6z"
+		],
+		"on": [
+			"y156z59"
+		],
+		"qstamp": 8.5,
+		"tstamp": 4250
+	},
+	{
+		"off": [
+			"y156z59"
+		],
+		"on": [
+			"zd1plak"
+		],
+		"qstamp": 9,
+		"tstamp": 4500
+	},
+	{
+		"off": [
+			"zd1plak"
+		],
+		"on": [
+			"a16v9sjh"
+		],
+		"qstamp": 9.5,
+		"tstamp": 4750
+	},
+	{
+		"off": [
+			"a16v9sjh"
+		],
+		"on": [
+			"bljplj"
+		],
+		"qstamp": 10,
+		"tstamp": 5000
+	},
+	{
+		"off": [
+			"bljplj"
+		],
+		"qstamp": 10.5,
+		"tstamp": 5250
+	}
+]

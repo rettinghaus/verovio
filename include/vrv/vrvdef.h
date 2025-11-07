@@ -724,6 +724,8 @@ enum FocusStatusType { FOCUS_UNSET = 0, FOCUS_SET, FOCUS_USED };
 #define SUPER_SCRIPT_POSITION -0.20 // lowered down from the midline
 #define SUB_SCRIPT_POSITION -0.17 // lowered down from the baseline
 
+#define OSTAFF_SIZE_RATIO 2.0
+
 //----------------------------------------------------------------------------
 // Neume notation note size to staff size ratio defines
 //----------------------------------------------------------------------------

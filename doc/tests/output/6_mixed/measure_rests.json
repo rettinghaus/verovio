@@ -1,0 +1,189 @@
+[
+	{
+		"qstamp": 0,
+		"tstamp": 0
+	},
+	{
+		"qstamp": 100,
+		"tempo": 120,
+		"tstamp": 50000
+	},
+	{
+		"qstamp": 102,
+		"tstamp": 51000
+	},
+	{
+		"on": [
+			"u1rfgwov"
+		],
+		"qstamp": 103.5,
+		"tstamp": 51750
+	},
+	{
+		"off": [
+			"u1rfgwov"
+		],
+		"on": [
+			"v17y62dk"
+		],
+		"qstamp": 104,
+		"tstamp": 52000
+	},
+	{
+		"off": [
+			"v17y62dk"
+		],
+		"on": [
+			"w16l08g3"
+		],
+		"qstamp": 104.25,
+		"tstamp": 52125
+	},
+	{
+		"off": [
+			"w16l08g3"
+		],
+		"on": [
+			"x1u8rh5u"
+		],
+		"qstamp": 104.5,
+		"tstamp": 52250
+	},
+	{
+		"off": [
+			"x1u8rh5u"
+		],
+		"on": [
+			"y1fuixz2"
+		],
+		"qstamp": 104.75,
+		"tstamp": 52375
+	},
+	{
+		"off": [
+			"y1fuixz2"
+		],
+		"on": [
+			"z1ojc4m5"
+		],
+		"qstamp": 105,
+		"tstamp": 52500
+	},
+	{
+		"off": [
+			"z1ojc4m5"
+		],
+		"on": [
+			"afsr6hw"
+		],
+		"qstamp": 105.5,
+		"tstamp": 52750
+	},
+	{
+		"off": [
+			"afsr6hw"
+		],
+		"on": [
+			"b1n60bfg"
+		],
+		"qstamp": 106,
+		"tstamp": 53000
+	},
+	{
+		"off": [
+			"b1n60bfg"
+		],
+		"on": [
+			"c941tna"
+		],
+		"qstamp": 106.5,
+		"tstamp": 53250
+	},
+	{
+		"off": [
+			"c941tna"
+		],
+		"on": [
+			"drp6n68"
+		],
+		"qstamp": 107.5,
+		"tstamp": 53750
+	},
+	{
+		"off": [
+			"drp6n68"
+		],
+		"on": [
+			"edh96p6"
+		],
+		"qstamp": 107.75,
+		"tstamp": 53875
+	},
+	{
+		"off": [
+			"edh96p6"
+		],
+		"on": [
+			"f1llns8q"
+		],
+		"qstamp": 108,
+		"tstamp": 54000
+	},
+	{
+		"off": [
+			"f1llns8q"
+		],
+		"on": [
+			"g1987f4d"
+		],
+		"qstamp": 108.25,
+		"tstamp": 54125
+	},
+	{
+		"off": [
+			"g1987f4d"
+		],
+		"on": [
+			"h59fm6k"
+		],
+		"qstamp": 108.5,
+		"tstamp": 54250
+	},
+	{
+		"off": [
+			"h59fm6k"
+		],
+		"on": [
+			"iuraz8m"
+		],
+		"qstamp": 108.75,
+		"tstamp": 54375
+	},
+	{
+		"off": [
+			"iuraz8m"
+		],
+		"on": [
+			"jqtwll3"
+		],
+		"qstamp": 109,
+		"tstamp": 54500
+	},
+	{
+		"off": [
+			"jqtwll3"
+		],
+		"on": [
+			"k1pd0xno"
+		],
+		"qstamp": 109.5,
+		"tstamp": 54750
+	},
+	{
+		"off": [
+			"k1pd0xno"
+		],
+		"qstamp": 110,
+		"tstamp": 55000
+	}
+]

@@ -1,0 +1,21 @@
+[
+	{
+		"on": [
+			"xvwzahp"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"xvwzahp"
+		],
+		"qstamp": 0.25,
+		"tstamp": 125
+	},
+	{
+		"qstamp": 0.5,
+		"tstamp": 250
+	}
+]

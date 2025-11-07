@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"om711yp"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"om711yp"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

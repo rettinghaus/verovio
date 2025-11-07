@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"heqxtjy"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"heqxtjy"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

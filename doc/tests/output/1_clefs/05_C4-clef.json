@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"c10ckijl"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"c10ckijl"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"laiysa8"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"laiysa8"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

@@ -1,0 +1,17 @@
+[
+	{
+		"on": [
+			"v1tuf5zg"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"v1tuf5zg"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	}
+]

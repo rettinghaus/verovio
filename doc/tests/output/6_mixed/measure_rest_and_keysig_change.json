@@ -1,0 +1,193 @@
+[
+	{
+		"qstamp": 0,
+		"tstamp": 0
+	},
+	{
+		"qstamp": 37.5,
+		"tstamp": 18750
+	},
+	{
+		"qstamp": 45,
+		"tempo": 120,
+		"tstamp": 22500
+	},
+	{
+		"qstamp": 47,
+		"tstamp": 23500
+	},
+	{
+		"on": [
+			"f1ayblwn"
+		],
+		"qstamp": 48.5,
+		"tstamp": 24250
+	},
+	{
+		"off": [
+			"f1ayblwn"
+		],
+		"on": [
+			"ga3i818"
+		],
+		"qstamp": 49,
+		"tstamp": 24500
+	},
+	{
+		"off": [
+			"ga3i818"
+		],
+		"on": [
+			"h1hp082s"
+		],
+		"qstamp": 49.25,
+		"tstamp": 24625
+	},
+	{
+		"off": [
+			"h1hp082s"
+		],
+		"on": [
+			"i1jfgaua"
+		],
+		"qstamp": 49.5,
+		"tstamp": 24750
+	},
+	{
+		"off": [
+			"i1jfgaua"
+		],
+		"on": [
+			"j1c61id8"
+		],
+		"qstamp": 49.75,
+		"tstamp": 24875
+	},
+	{
+		"off": [
+			"j1c61id8"
+		],
+		"on": [
+			"ken08rk"
+		],
+		"qstamp": 50,
+		"tstamp": 25000
+	},
+	{
+		"off": [
+			"ken08rk"
+		],
+		"on": [
+			"lg2kcq3"
+		],
+		"qstamp": 50.5,
+		"tstamp": 25250
+	},
+	{
+		"off": [
+			"lg2kcq3"
+		],
+		"on": [
+			"mgkdz8r"
+		],
+		"qstamp": 51,
+		"tstamp": 25500
+	},
+	{
+		"off": [
+			"mgkdz8r"
+		],
+		"on": [
+			"nbqv43s"
+		],
+		"qstamp": 51.5,
+		"tstamp": 25750
+	},
+	{
+		"off": [
+			"nbqv43s"
+		],
+		"on": [
+			"o4ulcp"
+		],
+		"qstamp": 52.5,
+		"tstamp": 26250
+	},
+	{
+		"off": [
+			"o4ulcp"
+		],
+		"on": [
+			"p1eq9m9u"
+		],
+		"qstamp": 52.75,
+		"tstamp": 26375
+	},
+	{
+		"off": [
+			"p1eq9m9u"
+		],
+		"on": [
+			"qb7ynux"
+		],
+		"qstamp": 53,
+		"tstamp": 26500
+	},
+	{
+		"off": [
+			"qb7ynux"
+		],
+		"on": [
+			"rzkanz"
+		],
+		"qstamp": 53.25,
+		"tstamp": 26625
+	},
+	{
+		"off": [
+			"rzkanz"
+		],
+		"on": [
+			"s2px6rm"
+		],
+		"qstamp": 53.5,
+		"tstamp": 26750
+	},
+	{
+		"off": [
+			"s2px6rm"
+		],
+		"on": [
+			"tr96h11"
+		],
+		"qstamp": 53.75,
+		"tstamp": 26875
+	},
+	{
+		"off": [
+			"tr96h11"
+		],
+		"on": [
+			"u1hw4qg8"
+		],
+		"qstamp": 54,
+		"tstamp": 27000
+	},
+	{
+		"off": [
+			"u1hw4qg8"
+		],
+		"on": [
+			"v1judzb"
+		],
+		"qstamp": 54.5,
+		"tstamp": 27250
+	},
+	{
+		"off": [
+			"v1judzb"
+		],
+		"qstamp": 55,
+		"tstamp": 27500
+	}
+]

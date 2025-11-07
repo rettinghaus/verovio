@@ -1,0 +1,187 @@
+[
+	{
+		"on": [
+			"amaq9pw"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"amaq9pw"
+		],
+		"on": [
+			"bk6pzjd"
+		],
+		"qstamp": 0.3333333333333333148,
+		"tstamp": 167
+	},
+	{
+		"off": [
+			"bk6pzjd"
+		],
+		"on": [
+			"cxip6nk"
+		],
+		"qstamp": 0.6666666666666666297,
+		"tstamp": 333
+	},
+	{
+		"off": [
+			"cxip6nk"
+		],
+		"on": [
+			"d1r8y8z9"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	},
+	{
+		"off": [
+			"d1r8y8z9"
+		],
+		"on": [
+			"evg7t74"
+		],
+		"qstamp": 1.333333333333333259,
+		"tstamp": 667
+	},
+	{
+		"off": [
+			"evg7t74"
+		],
+		"on": [
+			"f1mlz4id"
+		],
+		"qstamp": 1.666666666666666741,
+		"tstamp": 833
+	},
+	{
+		"off": [
+			"f1mlz4id"
+		],
+		"on": [
+			"g13g7ws0"
+		],
+		"qstamp": 2,
+		"tstamp": 1000
+	},
+	{
+		"off": [
+			"g13g7ws0"
+		],
+		"on": [
+			"h13468vl"
+		],
+		"qstamp": 2.333333333333333481,
+		"tstamp": 1167
+	},
+	{
+		"off": [
+			"h13468vl"
+		],
+		"on": [
+			"iq4zomm"
+		],
+		"qstamp": 2.666666666666666519,
+		"tstamp": 1333
+	},
+	{
+		"off": [
+			"iq4zomm"
+		],
+		"on": [
+			"j1ycs9gn"
+		],
+		"qstamp": 3,
+		"tstamp": 1500
+	},
+	{
+		"off": [
+			"j1ycs9gn"
+		],
+		"on": [
+			"ky6vuq9"
+		],
+		"qstamp": 3.333333333333333481,
+		"tstamp": 1667
+	},
+	{
+		"off": [
+			"ky6vuq9"
+		],
+		"on": [
+			"l10z1h8k"
+		],
+		"qstamp": 3.666666666666666519,
+		"tstamp": 1833
+	},
+	{
+		"off": [
+			"l10z1h8k"
+		],
+		"on": [
+			"msqny2v"
+		],
+		"qstamp": 4,
+		"tstamp": 2000
+	},
+	{
+		"off": [
+			"msqny2v"
+		],
+		"on": [
+			"n1o09pi9"
+		],
+		"qstamp": 4.333333333333333037,
+		"tstamp": 2167
+	},
+	{
+		"off": [
+			"n1o09pi9"
+		],
+		"on": [
+			"onh5iaf"
+		],
+		"qstamp": 4.666666666666666963,
+		"tstamp": 2333
+	},
+	{
+		"off": [
+			"onh5iaf"
+		],
+		"on": [
+			"p17bx8ck"
+		],
+		"qstamp": 5,
+		"tstamp": 2500
+	},
+	{
+		"off": [
+			"p17bx8ck"
+		],
+		"on": [
+			"qdm6yco"
+		],
+		"qstamp": 5.333333333333333037,
+		"tstamp": 2667
+	},
+	{
+		"off": [
+			"qdm6yco"
+		],
+		"on": [
+			"r1mtip5z"
+		],
+		"qstamp": 5.666666666666666963,
+		"tstamp": 2833
+	},
+	{
+		"off": [
+			"r1mtip5z"
+		],
+		"qstamp": 6,
+		"tstamp": 3000
+	}
+]
