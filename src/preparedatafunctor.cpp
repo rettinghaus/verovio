@@ -45,6 +45,7 @@
 #include "tuplet.h"
 #include "turn.h"
 #include "verse.h"
+#include "ossia.h"
 #include "vrv.h"
 
 //----------------------------------------------------------------------------
@@ -1545,6 +1546,12 @@ FunctorCode PrepareMilestonesFunctor::VisitEnding(Ending *ending)
 
 FunctorCode PrepareMilestonesFunctor::VisitMeasure(Measure *measure)
 {
+    for (auto const &child : measure->GetChildren()) {
+        if (child->Is(OSSIA)) {
+            vrv_cast<Ossia *>(child)->Layout();
+        }
+    }
+
     std::vector<SystemMilestoneInterface *>::iterator iter;
     for (iter = m_startMilestones.begin(); iter != m_startMilestones.end(); ++iter) {
         (*iter)->SetMeasure(measure);

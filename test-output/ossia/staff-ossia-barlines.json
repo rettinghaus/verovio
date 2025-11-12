@@ -1,0 +1,47 @@
+[
+	{
+		"on": [
+			"l14iin4t"
+		],
+		"qstamp": 0,
+		"tempo": 120,
+		"tstamp": 0
+	},
+	{
+		"off": [
+			"l14iin4t"
+		],
+		"on": [
+			"x13ic7p8"
+		],
+		"qstamp": 1,
+		"tstamp": 500
+	},
+	{
+		"off": [
+			"x13ic7p8"
+		],
+		"on": [
+			"j5u2k3w"
+		],
+		"qstamp": 2,
+		"tstamp": 1000
+	},
+	{
+		"off": [
+			"j5u2k3w"
+		],
+		"on": [
+			"v1am0d7a"
+		],
+		"qstamp": 3,
+		"tstamp": 1500
+	},
+	{
+		"off": [
+			"v1am0d7a"
+		],
+		"qstamp": 4,
+		"tstamp": 2000
+	}
+]

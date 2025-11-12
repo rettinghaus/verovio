@@ -11,6 +11,7 @@
 #include "atts_shared.h"
 #include "facsimileinterface.h"
 #include "object.h"
+#include "barline.h"
 
 namespace vrv {
 
@@ -225,6 +226,14 @@ public:
     ///@}
 
     /**
+     * @name Set and get the drawing barlines.
+     */
+    ///@{
+    void SetDrawingLeftBarLine(data_BARRENDITION barLine) { m_leftBarLine.SetForm(barLine); }
+    void SetDrawingRightBarLine(data_BARRENDITION barLine) { m_rightBarLine.SetForm(barLine); }
+    ///@}
+
+    /**
      * Return the ledger line arrays
      */
     ///@{
@@ -338,6 +347,15 @@ private:
      * Used only with facsimile rendering
      */
     double m_drawingRotation;
+
+protected:
+    /**
+     * @name The measure barlines (left and right) used when drawing
+     */
+    ///@{
+    BarLine m_leftBarLine;
+    BarLine m_rightBarLine;
+    ///@}
 };
 
 } // namespace vrv

@@ -90,36 +90,29 @@ StaffAlignment *SystemAligner::GetStaffAlignment(int idx, Staff *staff, const Do
     return alignment;
 }
 
-void SystemAligner::ReorderBy(const std::vector<int> &staffNs)
+void SystemAligner::ReorderBy()
 {
-    std::vector<int> order = staffNs;
-    // First check that staffNs are unique
-    std::sort(order.begin(), order.end());
-    order.erase(std::unique(order.begin(), order.end()), order.end());
-    // If not, we should return because the re-ordering below will corrupt the data
-    // Returning will keep the order as it is
-    if (order.size() != staffNs.size()) return;
+    auto comparator = [](Object *a, Object *b) {
+        StaffAlignment *alignmentA = vrv_cast<StaffAlignment *>(a);
+        assert(alignmentA);
+        StaffAlignment *alignmentB = vrv_cast<StaffAlignment *>(b);
+        assert(alignmentB);
 
-    ArrayOfObjects &children = this->GetChildrenForModification();
+        // GetStaff can return a null pointer for the bottom alignment
+        if (!alignmentA->GetStaff()) return false;
+        if (!alignmentB->GetStaff()) return true;
 
-    // Since we have a bottom alignment, the number is +1
-    // The children list can be smaller with optimized systems
-    if (children.size() > staffNs.size() + 1) return;
+        if (alignmentA->GetStaff()->GetN() < alignmentB->GetStaff()->GetN()) return true;
+        if (alignmentA->GetStaff()->GetN() > alignmentB->GetStaff()->GetN()) return false;
 
-    ListOfObjects orderedAlignments;
-    for (auto staffN : staffNs) {
-        StaffAlignment *alignment = this->GetStaffAlignmentForStaffN(staffN);
-        // This happens with condensed systems where some alignment for staffN are not there
-        if (!alignment) continue;
-        orderedAlignments.push_back(alignment);
-    }
-    int i = 0;
-    // Since the number of staffAlignment is the same and they are unique, we can
-    // blindly replace them in the StaffAligner children
-    for (auto alignment : orderedAlignments) {
-        children.at(i) = alignment;
-        ++i;
-    }
+        // check for ossia
+        if (alignmentA->GetStaff()->Is(OSTAFF)) return true;
+        if (alignmentB->GetStaff()->Is(OSTAFF)) return false;
+
+        return false;
+    };
+
+    std::sort(this->GetChildrenForModification().begin(), this->GetChildrenForModification().end(), comparator);
 }
 
 StaffAlignment *SystemAligner::GetStaffAlignmentForStaffN(int staffN)

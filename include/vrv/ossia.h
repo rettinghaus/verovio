@@ -57,6 +57,11 @@ public:
      */
     void AddChildBack(Object *object);
 
+    /**
+     * Layout the ossia
+     */
+    void Layout();
+
 public:
 protected:
 private:

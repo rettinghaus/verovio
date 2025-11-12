@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "ossia.h"
+#include "measure.h"
 
 //----------------------------------------------------------------------------
 
@@ -98,6 +99,39 @@ void Ossia::AddChildBack(Object *child)
         }
     }
     Modify();
+}
+
+void Ossia::Layout()
+{
+    // Nothing to do
+    if (this->GetChildCount() == 0) {
+        return;
+    }
+
+    // This is the parent measure
+    Measure *measure = vrv_cast<Measure *>(this->GetParent());
+    if (!measure) {
+        return;
+    }
+
+    for (auto child : this->GetChildren()) {
+        if (!child->Is(OSTAFF)) {
+            continue;
+        }
+        OStaff *oStaff = vrv_cast<OStaff *>(child);
+        // Find the corresponding staff
+        for (auto measureChild : measure->GetChildren()) {
+            if (!measureChild->Is(STAFF)) {
+                continue;
+            }
+            Staff *staff = vrv_cast<Staff *>(measureChild);
+            if (staff->GetN() == oStaff->GetN()) {
+                oStaff->SetDrawingLeftBarLine(measure->GetDrawingLeftBarLine());
+                oStaff->SetDrawingRightBarLine(measure->GetDrawingRightBarLine());
+                break;
+            }
+        }
+    }
 }
 
 bool Ossia::AddChildAdditionalCheck(Object *child)
