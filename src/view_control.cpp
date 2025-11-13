@@ -2628,6 +2628,11 @@ void View::DrawRepeatMark(DeviceContext *dc, RepeatMark *repeatMark, Measure *me
             this->DrawSmuflString(dc, x, y, str, alignment, staffSize);
         }
 
+        if (enclosingBack) {
+            const int xCorrEncl = trillWidth / 2 + m_doc->GetDrawingUnit(staffSize) / 4;
+            this->DrawSmuflCode(dc, x + xCorrEncl, y, enclosingBack, staffSize, false);
+        }
+
         dc->ResetFont();
     }
 
@@ -2723,6 +2728,8 @@ void View::DrawTrill(DeviceContext *dc, Trill *trill, Measure *measure, System *
 
     // for a start always put trill up
     int code = trill->GetTrillGlyph();
+    char32_t enclosingFront, enclosingBack;
+    std::tie(enclosingFront, enclosingBack) = trill->GetEnclosingGlyphs();
     std::u32string str;
 
     if (trill->GetLstartsym() != LINESTARTENDSYMBOL_none) {
@@ -2743,6 +2750,12 @@ void View::DrawTrill(DeviceContext *dc, Trill *trill, Measure *measure, System *
                                            : m_doc->GetGlyphWidth(code, staffSize, false);
 
         dc->SetFont(m_doc->GetDrawingSmuflFont(staffSize, false));
+
+        if (enclosingFront) {
+            const int xCorrEncl =
+                trillWidth / 2 + m_doc->GetGlyphWidth(enclosingFront, staffSize, false) + m_doc->GetDrawingUnit(staffSize) / 4;
+            this->DrawSmuflCode(dc, x - xCorrEncl, y, enclosingFront, staffSize, false);
+        }
 
         // Upper and lower accidentals are currently exclusive, but sould both be allowed at the same time.
         if (trill->HasAccidlower()) {
