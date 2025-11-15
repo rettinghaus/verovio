@@ -90,36 +90,47 @@ StaffAlignment *SystemAligner::GetStaffAlignment(int idx, Staff *staff, const Do
     return alignment;
 }
 
-void SystemAligner::ReorderBy(const std::vector<int> &staffNs)
+void SystemAligner::ReorderBy()
 {
-    std::vector<int> order = staffNs;
-    // First check that staffNs are unique
-    std::sort(order.begin(), order.end());
-    order.erase(std::unique(order.begin(), order.end()), order.end());
-    // If not, we should return because the re-ordering below will corrupt the data
-    // Returning will keep the order as it is
-    if (order.size() != staffNs.size()) return;
-
     ArrayOfObjects &children = this->GetChildrenForModification();
 
-    // Since we have a bottom alignment, the number is +1
-    // The children list can be smaller with optimized systems
-    if (children.size() > staffNs.size() + 1) return;
+    // The last one is always the bottomAlignment
+    assert(m_bottomAlignment);
+    // remove it temporarily
+    Object *bottomAlignment = children.back();
+    children.pop_back();
 
-    ListOfObjects orderedAlignments;
-    for (auto staffN : staffNs) {
-        StaffAlignment *alignment = this->GetStaffAlignmentForStaffN(staffN);
-        // This happens with condensed systems where some alignment for staffN are not there
-        if (!alignment) continue;
-        orderedAlignments.push_back(alignment);
-    }
-    int i = 0;
-    // Since the number of staffAlignment is the same and they are unique, we can
-    // blindly replace them in the StaffAligner children
-    for (auto alignment : orderedAlignments) {
-        children.at(i) = alignment;
-        ++i;
-    }
+    std::stable_sort(
+        children.begin(), children.end(), [](const Object *a, const Object *b) {
+            const StaffAlignment *sa_a = vrv_cast<const StaffAlignment *>(a);
+            const StaffAlignment *sa_b = vrv_cast<const StaffAlignment *>(b);
+            const Staff *staff_a = sa_a->GetStaff();
+            const Staff *staff_b = sa_b->GetStaff();
+
+            if (!staff_a || !staff_b) {
+                return false; // should not happen if not bottom alignment
+            }
+
+            if (staff_a->GetN() < staff_b->GetN()) {
+                return true;
+            }
+            if (staff_a->GetN() > staff_b->GetN()) {
+                return false;
+            }
+
+            // n is equal, oStaff should come first
+            if (staff_a->Is(OSTAFF) && !staff_b->Is(OSTAFF)) {
+                return true;
+            }
+            if (!staff_a->Is(OSTAFF) && staff_b->Is(OSTAFF)) {
+                return false;
+            }
+
+            return false; // equal
+        });
+
+    // put back the bottomAlignment
+    children.push_back(bottomAlignment);
 }
 
 StaffAlignment *SystemAligner::GetStaffAlignmentForStaffN(int staffN)

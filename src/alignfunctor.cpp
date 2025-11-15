@@ -636,7 +636,10 @@ FunctorCode AlignVerticallyFunctor::VisitStaff(Staff *staff)
     m_staffN = staff->GetN();
 
     // this gets (or creates) the staff alignment
-    StaffAlignment *alignment = m_systemAligner->GetStaffAlignment(m_staffIdx, staff, m_doc);
+    StaffAlignment *alignment = m_systemAligner->GetStaffAlignmentForStaffN(m_staffN);
+    if (!alignment) {
+        alignment = m_systemAligner->GetStaffAlignment(m_staffIdx, staff, m_doc);
+    }
     assert(alignment);
     staff->SetAlignment(alignment);
 
@@ -712,7 +715,7 @@ FunctorCode AlignVerticallyFunctor::VisitSystemEnd(System *system)
     // StaffAlignment are added following the staff element in the measures
     // We can now reorder them according to the scoreDef order
     if (system->GetDrawingScoreDef()) {
-        system->m_systemAligner.ReorderBy(system->GetDrawingScoreDef()->GetStaffNs());
+        system->m_systemAligner.ReorderBy();
     }
 
     system->m_systemAligner.Process(*this);

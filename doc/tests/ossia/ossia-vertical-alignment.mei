@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://music-encoding.org/schema/5.1/mei-CMN.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://music-encoding.org/schema/5.1/mei-CMN.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1">
+ <meiHead>
+ <fileDesc>
+ <titleStmt>
+ <title>Die Wetterfahne</title>
+ <composer>Franz Schubert</composer>
+ <editor>Walther Dürr</editor>
+ </titleStmt>
+ <pubStmt>
+ <publisher>Bärenreiter</publisher>
+ <date>1979</date>
+ </pubStmt>
+ </fileDesc>
+ </meiHead>
+ <music>
+ <body>
+ <mdiv>
+ <score>
+ <scoreDef>
+ <staffGrp>
+ <staffDef n="1" lines="5" clef.shape="G" clef.line="2"/>
+ <staffDef n="2" lines="5" clef.shape="F" clef.line="4"/>
+ </staffGrp>
+ </scoreDef>
+ <section>
+ <measure n="14">
+ <staff n="1">
+ <layer n="1">
+ <beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl con="u" wordpos="s">hätt</syl>
+ </verse>
+ </note>
+ <note pname="c" oct="5" dur="8"/>
+ </beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl wordpos="s">es</syl>
+ </verse>
+ </note>
+ <note grace="unknown" pname="a" oct="4" dur="16"/>
+ <note pname="g" dur="8" oct="4">
+ <verse>
+ <syl con="d" wordpos="i">e</syl>
+ </verse>
+ </note>
+ <note pname="g" dur="8" oct="4" dots="1">
+ <verse>
+ <syl wordpos="t">her</syl>
+ </verse>
+ </note>
+ <note pname="g" oct="4" dur="16">
+ <verse>
+ <syl con="d" wordpos="i">be</syl>
+ </verse>
+ </note>
+ </layer>
+ </staff>
+ </measure>
+ <measure n="15">
+ <ossia>
+ <oStaff n="1">
+ <layer n="1">
+ <space dur="4" dots="1" cutout="cutout"/>
+ <barLine visible="false" type="cutout"/>
+ <note pname="a" dur="8" oct="4"><accid accid="f" enclose="brack"/></note>
+ <note pname="g" dur="8" oct="4" dots="1"/>
+ <note pname="g" oct="4" dur="16"/>
+ </layer>
+ </oStaff>
+ <staff n="1">
+ <layer n="1">
+ <beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl con="u" wordpos="s">hätt</syl>
+ </verse>
+ </note>
+ <note pname="c" oct="5" dur="8"/>
+ </beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl wordpos="s">es</syl>
+ </verse>
+ </note>
+ <note grace="unknown" pname="a" oct="4" dur="16"/>
+ <note pname="g" dur="8" oct="4">
+ <verse>
+ <syl con="d" wordpos="i">e</syl>
+ </verse>
+ </note>
+ <note pname="g" dur="8" oct="4" dots="1">
+ <verse>
+ <syl wordpos="t">her</syl>
+ </verse>
+ </note>
+ <note pname="g" oct="4" dur="16">
+ <verse>
+ <syl con="d" wordpos="i">be</syl>
+ </verse>
+ </note>
+ </layer>
+ </staff>
+ </ossia>
+ </measure>
+ <measure n="16">
+ <ossia>
+ <oStaff n="1">
+ <layer n="1">
+ <space dur="4" dots="1" cutout="cutout"/>
+ <note pname="a" dur="8" oct="4">
+ <accid accid="f" />
+ </note>
+ <note pname="g" dur="8" oct="4"/>
+ <space dur="8" cutout="cutout"/>
+ </layer>
+ </oStaff>
+ <staff n="1">
+ <layer n="1">
+ <beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl con="d" wordpos="m">mer</syl>
+ </verse>
+ </note>
+ <note pname="c" oct="5" dur="8"/>
+ </beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl wordpos="t">ken</syl>
+ </verse>
+ </note>
+ <note grace="unknown" pname="a" oct="4" dur="16"/>
+ <note pname="g" dur="8" oct="4">
+ <verse>
+ <syl con="d" wordpos="i">soll</syl>
+ </verse>
+ </note>
+ <note pname="g" dur="8" oct="4">
+ <verse>
+ <syl wordpos="t">len</syl>
+ </verse>
+ </note>
+ <rest dur="16"/>
+ <note pname="g" oct="4" dots="1" dur="16">
+ <verse>
+ <syl wordpos="s">des</syl>
+ </verse>
+ </note>
+ </layer>
+ </staff>
+ </ossia>
+ </measure>
+ <measure n="17">
+ <staff n="1">
+ <layer n="1">
+ <beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl con="u" wordpos="s">hätt</syl>
+ </verse>
+ </note>
+ <note pname="c" oct="5" dur="8"/>
+ </beam>
+ <note pname="f" oct="4" accid="s" dur="8">
+ <verse>
+ <syl wordpos="s">es</syl>
+ </verse>
+ </note>
+ <note grace="unknown" pname="a" oct="4" dur="16"/>
+ <note pname="g" dur="8" oct="4">
+ <verse>
+ <syl con="d" wordpos="i">e</syl>
+ </verse>
+ </note>
+ <note pname="g" dur="8" oct="4" dots="1">
+ <verse>
+ <syl wordpos="t">her</syl>
+ </verse>
+ </note>
+ <note pname="g" oct="4" dur="16">
+ <verse>
+ <syl con="d" wordpos="i">be</syl>
+ </verse>
+ </note>
+ </layer>
+ </staff>
+ </measure>
+ </section>
+ </score>
+ </mdiv>
+ </body>
+ </music>
+</mei>

@@ -77,7 +77,7 @@ public:
      * Reordering will fail if the number of staffAlignment does not correspond, or
      * if some staffAlignment pointers are missing for a corresponding staffN
      */
-    void ReorderBy(const std::vector<int> &staffNs);
+    void ReorderBy();
 
     /**
      * Get the StaffAlignment for the staffN.
