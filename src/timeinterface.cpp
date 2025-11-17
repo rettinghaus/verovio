@@ -18,7 +18,9 @@
 #include "layerelement.h"
 #include "measure.h"
 #include "preparedatafunctor.h"
+#include "note.h"
 #include "staff.h"
+#include "syl.h"
 #include "system.h"
 #include "verticalaligner.h"
 #include "vrv.h"
@@ -127,6 +129,17 @@ std::vector<const Staff *> TimePointInterface::GetTstampStaves(const Measure *me
 
     std::vector<const Staff *> staves;
     std::vector<int> staffList;
+
+    const Syl *syl = vrv_cast<const Syl *>(object);
+    if (syl) {
+        if (syl->GetStart() && (syl->GetStart()->Is(NOTE))) {
+            const Staff *staff = syl->GetStart()->GetAncestorStaff();
+            if (staff) {
+                staves.push_back(staff);
+                return staves;
+            }
+        }
+    }
 
     // For <f> within <harm> without @staff we try to get the @staff from the <harm> ancestor
     if (object->Is(FIGURE) && !this->HasStaff()) {
