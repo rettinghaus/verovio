@@ -312,6 +312,10 @@ void View::DrawTimeSpanningElement(DeviceContext *dc, Object *element, System *s
     bool isFirst = true;
     for (Staff *staff : staffList) {
 
+        if (element->Is(SYL) && staff->Is(OSTAFF)) {
+            continue;
+        }
+
         // TimeSpanning elements are not necessary floating elements (e.g., syl) - we have a bounding box only for them
         if (element->IsControlElement()) {
             if (element->Is({ PHRASE, SLUR })) {
@@ -1372,6 +1376,36 @@ void View::DrawSylConnector(
     // Invalid bounding boxes might occur for empty syllables without text child
     if (!syl->HasContentHorizontalBB()) return;
     if (syl->m_nextWordSyl && !syl->m_nextWordSyl->HasContentHorizontalBB()) return;
+
+    // Special handling for connectors across ossia measures
+    LayerElement *start = syl->GetStart();
+    LayerElement *end = syl->GetEnd();
+    Measure *startMeasure = vrv_cast<Measure *>(start->GetFirstAncestor(MEASURE));
+    Measure *endMeasure = vrv_cast<Measure *>(end->GetFirstAncestor(MEASURE));
+
+    if (spanningType == SPANNING_START_END && startMeasure != endMeasure
+        && (startMeasure->GetFirstAncestor(OSSIA) || endMeasure->GetFirstAncestor(OSSIA))) {
+        Syl sylConnector;
+        if (graphic) {
+            dc->ResumeGraphic(graphic, graphic->GetID());
+        }
+        else {
+            dc->StartGraphic(&sylConnector, "", syl->GetID(), SPANNING);
+        }
+        dc->DeactivateGraphic();
+
+        int line1_x1 = syl->GetContentRight();
+        int line1_x2 = startMeasure->GetDrawingX() + startMeasure->GetRightBarLineXRel();
+        this->DrawSylConnectorLines(dc, line1_x1, line1_x2, y, syl, staff);
+
+        int line2_x1 = endMeasure->GetDrawingX();
+        int line2_x2 = syl->m_nextWordSyl ? syl->m_nextWordSyl->GetContentLeft() : endMeasure->GetDrawingX();
+        this->DrawSylConnectorLines(dc, line2_x1, line2_x2, y, syl, staff);
+
+        dc->ReactivateGraphic();
+        dc->EndGraphic(&sylConnector, this);
+        return;
+    }
 
     // The both correspond to the current system, which means no system break in-between (simple case)
     if (spanningType == SPANNING_START_END) {
