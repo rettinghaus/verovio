@@ -2431,7 +2431,9 @@ void View::DrawMordent(DeviceContext *dc, Mordent *mordent, Measure *measure, Sy
                 accidX += mordentWidth / 2;
                 accidY -= (m_doc->GetGlyphTop(accid, staffSize / 2, true) + m_doc->GetDrawingUnit(staffSize * 2 / 3));
             }
+            dc->StartCustomGraphic("accid lower");
             this->DrawSmuflString(dc, accidX, accidY, accidStr, HORIZONTALALIGNMENT_center, staffSize / 2, false);
+            dc->EndCustomGraphic();
         }
         else if (mordent->HasAccidupper()) {
             char32_t accid = Accid::GetAccidGlyph(mordent->GetAccidupper());
@@ -2471,7 +2473,9 @@ void View::DrawMordent(DeviceContext *dc, Mordent *mordent, Measure *measure, Sy
                 accidY += (mordentHeight - m_doc->GetGlyphBottom(accid, staffSize / 2, true)
                     + m_doc->GetDrawingUnit(staffSize * 2 / 3));
             }
+            dc->StartCustomGraphic("accid upper");
             this->DrawSmuflString(dc, accidX, accidY, accidStr, HORIZONTALALIGNMENT_center, staffSize / 2, false);
+            dc->EndCustomGraphic();
         }
 
         if (symbolDef) {
@@ -2841,15 +2845,17 @@ void View::DrawTrill(DeviceContext *dc, Trill *trill, Measure *measure, System *
             this->DrawSmuflCode(dc, x - xCorrEncl, y + trillHeight / 2, enclosingFront, staffSize, false);
         }
 
-        // Upper and lower accidentals are currently exclusive, but sould both be allowed at the same time.
+        // Upper and lower accidentals are currently exclusive, but should both be allowed at the same time.
         if (trill->HasAccidlower()) {
             int accidXShift = (alignment == HORIZONTALALIGNMENT_center) ? 0 : trillWidth / 2;
             char32_t accid = Accid::GetAccidGlyph(trill->GetAccidlower());
             std::u32string accidStr;
             accidStr.push_back(accid);
             int accidY = y - m_doc->GetGlyphTop(accid, staffSize / 2, true) - m_doc->GetDrawingUnit(staffSize * 2 / 3);
+            dc->StartCustomGraphic("accid lower");
             this->DrawSmuflString(
                 dc, x + accidXShift, accidY, accidStr, HORIZONTALALIGNMENT_center, staffSize / 2, false);
+            dc->EndCustomGraphic();
         }
         else if (trill->HasAccidupper()) {
             int accidXShift = (alignment == HORIZONTALALIGNMENT_center) ? 0 : trillWidth / 2;
@@ -2858,8 +2864,10 @@ void View::DrawTrill(DeviceContext *dc, Trill *trill, Measure *measure, System *
             accidStr.push_back(accid);
             int accidY = y + trillHeight - m_doc->GetGlyphBottom(accid, staffSize / 2, true)
                 + m_doc->GetDrawingUnit(staffSize * 2 / 3);
+            dc->StartCustomGraphic("accid upper");
             this->DrawSmuflString(
                 dc, x + accidXShift, accidY, accidStr, HORIZONTALALIGNMENT_center, staffSize / 2, false);
+            dc->EndCustomGraphic();
         }
 
         if (symbolDef) {
@@ -2946,8 +2954,10 @@ void View::DrawTurn(DeviceContext *dc, Turn *turn, Measure *measure, System *sys
             std::u32string accidStr;
             accidStr.push_back(accid);
             int accidY = y - m_doc->GetGlyphTop(accid, staffSize / 2, true) - m_doc->GetDrawingUnit(staffSize * 2 / 3);
+            dc->StartCustomGraphic("accid lower");
             this->DrawSmuflString(
                 dc, x + accidXShift, accidY, accidStr, HORIZONTALALIGNMENT_center, staffSize / 2, false);
+            dc->EndCustomGraphic();
         }
         if (turn->HasAccidupper()) {
             int accidXShift = (alignment == HORIZONTALALIGNMENT_center) ? 0 : turnWidth / 2;
@@ -2957,8 +2967,10 @@ void View::DrawTurn(DeviceContext *dc, Turn *turn, Measure *measure, System *sys
             accidStr.push_back(accid);
             int accidY = y + turnHeight - m_doc->GetGlyphBottom(accid, staffSize / 2, true)
                 + m_doc->GetDrawingUnit(staffSize * 2 / 3);
+            dc->StartCustomGraphic("accid upper");
             this->DrawSmuflString(
                 dc, x + accidXShift, accidY, accidStr, HORIZONTALALIGNMENT_center, staffSize / 2, false);
+            dc->EndCustomGraphic();
         }
 
         if (symbolDef) {
