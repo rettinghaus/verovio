@@ -488,7 +488,7 @@ void View::DrawDotInLigature(DeviceContext *dc, LayerElement *element, Layer *la
     }
 
     int y = note->GetDrawingY();
-    int x = note->GetDrawingX();
+    int x = note->GetDrawingX() - m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
     if (isVerticalDot) {
         x += note->GetDrawingRadius(m_doc, true);
         y += m_doc->GetDrawingUnit(staff->m_drawingStaffSize);

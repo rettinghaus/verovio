@@ -637,7 +637,7 @@ void View::DrawChordCluster(DeviceContext *dc, Chord *chord, Layer *layer, Staff
     }
 
     // Draw dots and stem
-    const int dotsX = x + width + unit;
+    const int dotsX = x + width;
     this->DrawDotsPart(dc, dotsX, topNote->GetDrawingY(), chord->GetDots(), staff, false);
     if ((y1 - y2) > 5 * unit) DrawDotsPart(dc, dotsX, bottomNote->GetDrawingY(), chord->GetDots(), staff, false);
 
@@ -802,15 +802,14 @@ void View::DrawDot(DeviceContext *dc, LayerElement *element, Layer *layer, Staff
         if (m_doc->GetType() != Transcription) {
             // Use the note to which the points to for position if no next element or for augmentation dots
             if (dot->m_drawingPreviousElement && (!dot->m_drawingNextElement || dot->GetForm() == dotLog_FORM_aug)) {
-                x += m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 7 / 2;
+                x += m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 5 / 2;
                 y = dot->m_drawingPreviousElement->GetDrawingY();
                 this->DrawDotsPart(dc, x, y, 1, staff);
             }
             else if (dot->m_drawingPreviousElement && dot->m_drawingNextElement) {
                 // Do not take into account the spacing since it is place in-between
                 dc->DeactivateGraphicX();
-                x += ((dot->m_drawingNextElement->GetDrawingX() - dot->m_drawingPreviousElement->GetDrawingX()) / 2);
-                x += dot->m_drawingPreviousElement->GetDrawingRadius(m_doc);
+                x += (dot->m_drawingNextElement->GetDrawingX() - dot->m_drawingPreviousElement->GetDrawingX()) / 2;
                 y = dot->m_drawingPreviousElement->GetDrawingY();
                 this->DrawDotsPart(dc, x, y, 1, staff);
                 dc->ReactivateGraphic();
@@ -839,12 +838,11 @@ void View::DrawDots(DeviceContext *dc, LayerElement *element, Layer *layer, Staf
 
     for (const auto &mapEntry : dots->GetMapOfDotLocs()) {
         const Staff *dotStaff = (mapEntry.first) ? mapEntry.first : staff;
-        int y = dotStaff->GetDrawingY()
+        const int y = dotStaff->GetDrawingY()
             - m_doc->GetDrawingDoubleUnit(staff->m_drawingStaffSize) * (dotStaff->m_drawingLines - 1);
-        int x = dots->GetDrawingX() + m_doc->GetDrawingUnit(staff->m_drawingStaffSize);
         for (int loc : mapEntry.second) {
-            this->DrawDotsPart(dc, x, y + loc * m_doc->GetDrawingUnit(staff->m_drawingStaffSize), dots->GetDots(),
-                dotStaff, element->GetDrawingCueSize());
+            this->DrawDotsPart(dc, dots->GetDrawingX(), y + loc * m_doc->GetDrawingUnit(staff->m_drawingStaffSize),
+                dots->GetDots(), dotStaff, element->GetDrawingCueSize());
         }
     }
 
@@ -1964,16 +1962,16 @@ void View::DrawDotsPart(DeviceContext *dc, int x, int y, unsigned char dots, con
     if (staff->IsOnStaffLine(y, m_doc)) {
         y += unit;
     }
-    const double distance = dimin ? m_doc->GetOptions()->m_graceFactor.GetValue() : 1.0;
+    const int spacing = dimin ? m_doc->GetOptions()->m_graceFactor.GetValue() * unit * 3 / 2 : unit * 3 / 2;
+    x -= spacing / 3;
     for (int i = 0; i < dots; ++i) {
+        x += spacing;
         if (staff->IsMensural()) {
             this->DrawDiamond(dc, x - unit / 2, y, unit, unit, true, 0);
         }
         else {
             this->DrawDot(dc, x, y, staff->m_drawingStaffSize, dimin);
         }
-        // HARDCODED
-        x += m_doc->GetDrawingUnit(staff->m_drawingStaffSize) * 1.5 * distance;
     }
 }
 
