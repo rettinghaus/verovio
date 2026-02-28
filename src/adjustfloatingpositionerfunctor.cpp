@@ -223,6 +223,15 @@ FunctorCode AdjustFloatingPositionersFunctor::VisitSystem(System *system)
     m_classId = FERMATA;
     system->m_systemAligner.Process(*this);
 
+    m_classId = HARM;
+    system->m_systemAligner.Process(*this);
+
+    adjustFloatingPositionerGrps.SetClassIDs({ HARM });
+    adjustFloatingPositionerGrps.SetPlace(STAFFREL_above);
+    system->m_systemAligner.Process(adjustFloatingPositionerGrps);
+    adjustFloatingPositionerGrps.SetPlace(STAFFREL_below);
+    system->m_systemAligner.Process(adjustFloatingPositionerGrps);
+
     m_classId = DIR;
     system->m_systemAligner.Process(*this);
 
@@ -245,15 +254,6 @@ FunctorCode AdjustFloatingPositionersFunctor::VisitSystem(System *system)
     system->m_systemAligner.Process(*this);
 
     adjustFloatingPositionerGrps.SetClassIDs({ PEDAL });
-    adjustFloatingPositionerGrps.SetPlace(STAFFREL_above);
-    system->m_systemAligner.Process(adjustFloatingPositionerGrps);
-    adjustFloatingPositionerGrps.SetPlace(STAFFREL_below);
-    system->m_systemAligner.Process(adjustFloatingPositionerGrps);
-
-    m_classId = HARM;
-    system->m_systemAligner.Process(*this);
-
-    adjustFloatingPositionerGrps.SetClassIDs({ HARM });
     adjustFloatingPositionerGrps.SetPlace(STAFFREL_above);
     system->m_systemAligner.Process(adjustFloatingPositionerGrps);
     adjustFloatingPositionerGrps.SetPlace(STAFFREL_below);
