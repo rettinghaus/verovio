@@ -8,6 +8,7 @@
 #ifndef __LIBMEI_ATT_H__
 #define __LIBMEI_ATT_H__
 
+#include <map>
 #include <string>
 
 //----------------------------------------------------------------------------
@@ -180,6 +181,37 @@ public:
     std::string PlacementToStr(data_PLACEMENT data) const;
     data_PLACEMENT StrToPlacement(const std::string &value, bool logWarning = true) const;
     ///@}
+
+    /** @name Virtual methods for caching original values */
+    ///@{
+    virtual bool HasCacheValue(const std::string &attr) const { return false; }
+    virtual std::string GetCacheValue(const std::string &attr) const { return ""; }
+    virtual void SetCacheValue(const std::string &attr, const std::string &value) {}
+    ///@}
+};
+
+//----------------------------------------------------------------------------
+// AttCache
+//----------------------------------------------------------------------------
+
+/**
+ * This is a base class for attribute classes that need to cache the original value.
+ */
+class AttCache : public Att {
+protected:
+    AttCache() : Att() {}
+    ~AttCache() = default;
+
+public:
+    bool HasCacheValue(const std::string &attr) const override { return (m_cache.count(attr) != 0); }
+    std::string GetCacheValue(const std::string &attr) const override
+    {
+        return (m_cache.count(attr) != 0) ? m_cache.at(attr) : "";
+    }
+    void SetCacheValue(const std::string &attr, const std::string &value) override { m_cache[attr] = value; }
+
+private:
+    std::map<std::string, std::string> m_cache;
 };
 
 } // namespace vrv

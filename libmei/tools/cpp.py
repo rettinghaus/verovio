@@ -64,7 +64,7 @@ ATTCLASS_H = """
 // Att{attGroupNameUpper}
 //----------------------------------------------------------------------------
 
-class Att{attGroupNameUpper} : public Att {{
+class Att{attGroupNameUpper} : public {attBaseClass} {{
 protected:
     Att{attGroupNameUpper}();
     ~Att{attGroupNameUpper}() = default;
@@ -139,7 +139,7 @@ ATTCLASS_CPP = """
 // Att{attGroupNameUpper}
 //----------------------------------------------------------------------------
 
-Att{attGroupNameUpper}::Att{attGroupNameUpper}() : Att()
+Att{attGroupNameUpper}::Att{attGroupNameUpper}() : {attBaseClass}()
 {{
     this->Reset{attGroupNameUpper}();
 }}
@@ -169,12 +169,12 @@ bool Att{attGroupNameUpper}::Write{attGroupNameUpper}(pugi::xml_node element)
 ATTCLASS_MEMBERS_DEFAULT_CPP = """m_{attNameLowerJoined} = {attDefault};"""
 
 ATTCLASS_READ_CPP = """if (element.attribute("{attNameLower}")) {{
-        this->Set{attNameUpper}({converterRead}(element.attribute("{attNameLower}").value()));
+        {cacheRead}this->Set{attNameUpper}({converterRead}(element.attribute("{attNameLower}").value()));
         if (removeAttr) element.remove_attribute("{attNameLower}");
         hasAttribute = true;
     }}"""
 
-ATTCLASS_WRITE_CPP = """if (this->Has{attNameUpper}()) {{
+ATTCLASS_WRITE_CPP = """{cacheWrite}if (this->Has{attNameUpper}()) {{
         element.append_attribute("{attNameLower}") = {converterWrite}(this->Get{attNameUpper}()).c_str();
         wroteAttribute = true;
     }}"""
@@ -629,6 +629,14 @@ def vrv_is_alternate_type(datatype: str) -> bool:
     return datatype in DATATYPES["alternates"]
 
 
+def vrv_is_cached_attribute(module: str, gp: str, att: str) -> bool:
+    """Return True if an attribute is marked as cached in DATATYPES."""
+    att_config = vrv_get_att_config(module, gp, att)
+    if not att_config:
+        return False
+    return att_config.get("cached", False)
+
+
 def vrv_get_att_config_type(module: str, gp: str, att: str) -> Optional[str]:
     """Return the configured attribute type for a module/group/attribute."""
     att_config = vrv_get_att_config(module, gp, att)
@@ -793,6 +801,12 @@ def create_att_classes(cpp_ns: str, schema, outdir: Path):
             writes: list = []
             checkers: list = []
 
+            is_cached_group = False
+            for att in atts:
+                if vrv_is_cached_attribute(module, gp, att):
+                    is_cached_group = True
+                    break
+
             for att in atts:
                 if "|" in att:
                     # we have a namespaced attribute
@@ -806,6 +820,17 @@ def create_att_classes(cpp_ns: str, schema, outdir: Path):
                 doc_str = create_docstr(schema.get_att_desc(att), indent=4)
                 attdefault, converters = vrv_get_att_default(schema.schema, module, gp, att)
 
+                cache_read = ""
+                cache_write = ""
+                if vrv_is_cached_attribute(module, gp, att):
+                    cache_read = f'this->SetCacheValue("{att_lower_name}", element.attribute("{att_lower_name}").value());\n        '
+                    cache_write = (
+                        f'if (this->HasCacheValue("{att_lower_name}")) {{\n'
+                        f'        element.append_attribute("{att_lower_name}") = this->GetCacheValue("{att_lower_name}").c_str();\n'
+                        f'        wroteAttribute = true;\n'
+                        f'    }} else '
+                    )
+
                 substrings = {
                     "attGroupNameUpper": schema.cc(schema.strpatt(gp)),
                     "attNameUpper": schema.cc(schema.strpatt(att)),
@@ -816,6 +841,9 @@ def create_att_classes(cpp_ns: str, schema, outdir: Path):
                     "attDefault": attdefault,
                     "converterRead": converters[0],
                     "converterWrite": converters[1],
+                    "attBaseClass": "AttCache" if is_cached_group else "Att",
+                    "cacheRead": cache_read,
+                    "cacheWrite": cache_write,
                 }
 
                 if len(methods) > 0:
@@ -843,6 +871,7 @@ def create_att_classes(cpp_ns: str, schema, outdir: Path):
 
             clsubstr = {
                 "attGroupNameUpper": schema.cc(schema.strpatt(gp)),
+                "attBaseClass": "AttCache" if is_cached_group else "Att",
                 "methods": "".join(methods),
                 "members": "".join(members),
                 "defaults": "".join(defaults),

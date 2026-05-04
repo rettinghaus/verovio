@@ -2637,7 +2637,7 @@ public:
 // AttHeight
 //----------------------------------------------------------------------------
 
-class AttHeight : public Att {
+class AttHeight : public AttCache {
 protected:
     AttHeight();
     ~AttHeight() = default;
@@ -8319,7 +8319,7 @@ public:
 // AttWidth
 //----------------------------------------------------------------------------
 
-class AttWidth : public Att {
+class AttWidth : public AttCache {
 protected:
     AttWidth();
     ~AttWidth() = default;

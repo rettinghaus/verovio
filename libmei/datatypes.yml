@@ -223,6 +223,12 @@ modules:
         att.articulation:
             artic:
                 type: data_ARTICULATION_List
+        att.height:
+            height:
+                cached: true
+        att.width:
+            width:
+                cached: true
         att.curvature:
             bulge:
                 type: data_BULGE

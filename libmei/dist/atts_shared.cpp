@@ -2291,7 +2291,7 @@ bool AttHandIdent::HasHand() const
 // AttHeight
 //----------------------------------------------------------------------------
 
-AttHeight::AttHeight() : Att()
+AttHeight::AttHeight() : AttCache()
 {
     this->ResetHeight();
 }
@@ -2305,6 +2305,7 @@ bool AttHeight::ReadHeight(pugi::xml_node element, bool removeAttr)
 {
     bool hasAttribute = false;
     if (element.attribute("height")) {
+        this->SetCacheValue("height", element.attribute("height").value());
         this->SetHeight(StrToMeasurementunsigned(element.attribute("height").value()));
         if (removeAttr) element.remove_attribute("height");
         hasAttribute = true;
@@ -2315,7 +2316,10 @@ bool AttHeight::ReadHeight(pugi::xml_node element, bool removeAttr)
 bool AttHeight::WriteHeight(pugi::xml_node element)
 {
     bool wroteAttribute = false;
-    if (this->HasHeight()) {
+    if (this->HasCacheValue("height")) {
+        element.append_attribute("height") = this->GetCacheValue("height").c_str();
+        wroteAttribute = true;
+    } else if (this->HasHeight()) {
         element.append_attribute("height") = MeasurementunsignedToStr(this->GetHeight()).c_str();
         wroteAttribute = true;
     }
@@ -7561,7 +7565,7 @@ bool AttWhitespace::HasSpace() const
 // AttWidth
 //----------------------------------------------------------------------------
 
-AttWidth::AttWidth() : Att()
+AttWidth::AttWidth() : AttCache()
 {
     this->ResetWidth();
 }
@@ -7575,6 +7579,7 @@ bool AttWidth::ReadWidth(pugi::xml_node element, bool removeAttr)
 {
     bool hasAttribute = false;
     if (element.attribute("width")) {
+        this->SetCacheValue("width", element.attribute("width").value());
         this->SetWidth(StrToMeasurementunsigned(element.attribute("width").value()));
         if (removeAttr) element.remove_attribute("width");
         hasAttribute = true;
@@ -7585,7 +7590,10 @@ bool AttWidth::ReadWidth(pugi::xml_node element, bool removeAttr)
 bool AttWidth::WriteWidth(pugi::xml_node element)
 {
     bool wroteAttribute = false;
-    if (this->HasWidth()) {
+    if (this->HasCacheValue("width")) {
+        element.append_attribute("width") = this->GetCacheValue("width").c_str();
+        wroteAttribute = true;
+    } else if (this->HasWidth()) {
         element.append_attribute("width") = MeasurementunsignedToStr(this->GetWidth()).c_str();
         wroteAttribute = true;
     }
