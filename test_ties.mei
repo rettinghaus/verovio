@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="6.0-dev">
+   <meiHead xml:id="m1hfibum">
+      <fileDesc xml:id="f1sg7k5s">
+         <titleStmt xml:id="t11bhnts">
+            <title />
+            <respStmt />
+         </titleStmt>
+         <pubStmt xml:id="p13et75o" />
+      </fileDesc>
+      <encodingDesc xml:id="e1s13jkr">
+         <appInfo xml:id="a18u6lpk">
+            <application xml:id="au4hnad" isodate="2026-05-06T18:00:42" version="6.2.0-dev-3a07c28">
+               <name xml:id="nb8eu0k">Verovio</name>
+               <p xml:id="p1ojj9jn">Transcoded from MusicXML</p>
+            </application>
+         </appInfo>
+      </encodingDesc>
+   </meiHead>
+   <music>
+      <body>
+         <mdiv xml:id="o1k5owkv">
+            <score xml:id="p1olii07">
+               <scoreDef xml:id="q1jv36qo">
+                  <staffGrp xml:id="scit0h5">
+                     <staffDef xml:id="P1" n="1" lines="5" ppq="1">
+                        <label xml:id="tadjbyt">Music</label>
+                        <clef xml:id="d1x3awx4" shape="G" line="2" />
+                        <keySig xml:id="e981wp2" sig="0" />
+                        <meterSig xml:id="f14tnz4h" count="4" unit="4" />
+                     </staffDef>
+                  </staffGrp>
+               </scoreDef>
+               <section xml:id="rflxet2">
+                  <expansion plist="#hxs0k10" xml:id="iwtqvr4" />
+                  <section xml:id="hxs0k10">
+                     <measure xml:id="gelj3cb" n="1">
+                        <staff xml:id="pjh5ww0" n="1">
+                           <layer xml:id="q4mo68q" n="1">
+                              <note xml:id="r198e971" dur.ppq="4" dur="1" oct="4" pname="c">
+                                 <accid xml:id="s14tltxw" />
+                              </note>
+                           </layer>
+                        </staff>
+                        <tie xml:id="ttqoejw" startid="#r198e971" endid="#f17i14df" />
+                     </measure>
+                     <measure xml:id="u2hazdi" n="1">
+                        <staff xml:id="d18anrwu" n="1">
+                           <layer xml:id="eyaewtk" n="1">
+                              <note xml:id="f17i14df" dur.ppq="4" dur="1" oct="4" pname="c">
+                                 <accid xml:id="g1d1k8p6" />
+                              </note>
+                           </layer>
+                        </staff>
+                     </measure>
+                  </section>
+               </section>
+            </score>
+         </mdiv>
+      </body>
+   </music>
+</mei>

@@ -67,27 +67,27 @@ class Trill;
 namespace musicxml {
 
     struct OpenSlur {
-        OpenSlur(const std::string &measureNum, short int number, curvature_CURVEDIR curvedir)
+        OpenSlur(int measureIndex, short int number, curvature_CURVEDIR curvedir)
         {
-            m_measureNum = measureNum;
+            m_measureIndex = measureIndex;
             m_number = number;
             m_curvedir = curvedir;
         }
 
-        std::string m_measureNum;
+        int m_measureIndex;
         short int m_number;
         curvature_CURVEDIR m_curvedir;
     };
 
     struct CloseSlur {
-        CloseSlur(const std::string &measureNum, short int number, curvature_CURVEDIR curvedir)
+        CloseSlur(int measureIndex, short int number, curvature_CURVEDIR curvedir)
         {
-            m_measureNum = measureNum;
+            m_measureIndex = measureIndex;
             m_number = number;
             m_curvedir = curvedir;
         }
 
-        std::string m_measureNum;
+        int m_measureIndex;
         short int m_number;
         curvature_CURVEDIR m_curvedir;
     };
@@ -218,10 +218,9 @@ namespace musicxml {
     };
 
     struct ClefChange {
-        ClefChange(const std::string &measureNum, Staff *staff, Layer *layer, Clef *clef, const int &scoreOnset,
-            bool afterBarline)
+        ClefChange(int measureIndex, Staff *staff, Layer *layer, Clef *clef, const int &scoreOnset, bool afterBarline)
         {
-            m_measureNum = measureNum;
+            m_measureIndex = measureIndex;
             m_staff = staff;
             m_layer = layer;
             m_clef = clef;
@@ -229,7 +228,7 @@ namespace musicxml {
             m_afterBarline = afterBarline;
         }
 
-        std::string m_measureNum;
+        int m_measureIndex;
         Staff *m_staff;
         Layer *m_layer;
         Clef *m_clef;
@@ -355,14 +354,14 @@ private:
      * @name Methods for reading the content of a MusicXML measure.
      */
     ///@{
-    void ReadMusicXmlAttributes(pugi::xml_node, Section *section, Measure *measure, const std::string &measureNum);
-    void ReadMusicXmlBackup(pugi::xml_node, Measure *measure, const std::string &measureNum);
-    void ReadMusicXmlBarLine(pugi::xml_node, Measure *measure, const std::string &measureNum);
+    void ReadMusicXmlAttributes(pugi::xml_node, Section *section, Measure *measure, int measureIndex);
+    void ReadMusicXmlBackup(pugi::xml_node, Measure *measure, int measureIndex);
+    void ReadMusicXmlBarLine(pugi::xml_node, Measure *measure, int measureIndex);
     void ReadMusicXmlDirection(
         pugi::xml_node, Measure *measure, const std::string &measureNum, const short int staffOffset, Section *section);
-    void ReadMusicXmlFigures(pugi::xml_node, Measure *measure, const std::string &measureNum);
-    void ReadMusicXmlForward(pugi::xml_node, Measure *measure, const std::string &measureNum);
-    void ReadMusicXmlHarmony(pugi::xml_node, Measure *measure, const std::string &measureNum);
+    void ReadMusicXmlFigures(pugi::xml_node, Measure *measure, int measureIndex);
+    void ReadMusicXmlForward(pugi::xml_node, Measure *measure, int measureIndex);
+    void ReadMusicXmlHarmony(pugi::xml_node, Measure *measure, int measureIndex);
     void ReadMusicXmlNote(
         pugi::xml_node, Measure *measure, const std::string &measureNum, const short int staffOffset, Section *section);
     void ReadMusicXmlPrint(pugi::xml_node, Section *section);
@@ -371,7 +370,7 @@ private:
     void ReadMusicXmlTupletStart(const pugi::xml_node &node, const pugi::xml_node &tupletStart, Layer *layer);
     void ReadMusicXmlBeamStart(const pugi::xml_node &node, const pugi::xml_node &beamStart, Layer *layer);
     void ReadMusicXMLMeterSig(const pugi::xml_node &node, Object *parent);
-    void ReadMusicXmlTies(const pugi::xml_node &node, Layer *layer, Note *note, const std::string &measureNum);
+    void ReadMusicXmlTies(const pugi::xml_node &node, Layer *layer, Note *note, int measureIndex);
     ///@}
 
     /**
@@ -485,8 +484,8 @@ private:
     ///@{
     void OpenTie(Note *note, Tie *tie, int layerNum);
     void CloseTie(Note *note, int layerNum);
-    void OpenSlur(Measure *measure, short int number, Slur *slur, curvature_CURVEDIR dir);
-    void CloseSlur(Measure *measure, short int number, LayerElement *element, curvature_CURVEDIR dir);
+    void OpenSlur(int measureIndex, short int number, Slur *slur, curvature_CURVEDIR dir);
+    void CloseSlur(int measureIndex, short int number, LayerElement *element, curvature_CURVEDIR dir);
     void CloseBeamSpan(Staff *staff, Layer *layer, LayerElement *element);
     void MatchTies(bool matchLayers);
     ///@}
@@ -688,7 +687,7 @@ private:
      * The stack of floating elements (tie, slur, etc.) to be added at the
      * end of each measure
      */
-    std::vector<std::pair<std::string, ControlElement *>> m_controlElements;
+    std::vector<std::pair<int, ControlElement *>> m_controlElements;
     /* stack of clef changes to be inserted to all layers of a given staff */
     std::deque<musicxml::ClefChange> m_clefChangeQueue;
     /* stack of new arpeggios that get more notes added. */

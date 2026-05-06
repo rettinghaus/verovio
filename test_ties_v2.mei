@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="6.0-dev">
+   <meiHead xml:id="m154xp7y">
+      <fileDesc xml:id="f1mdp1rq">
+         <titleStmt xml:id="t71lzyy">
+            <title />
+            <respStmt />
+         </titleStmt>
+         <pubStmt xml:id="pfho3fs" />
+      </fileDesc>
+      <encodingDesc xml:id="e8qm1tl">
+         <appInfo xml:id="a7c78d4">
+            <application xml:id="a19cv853" isodate="2026-05-06T18:01:30" version="6.2.0-dev-3a07c28">
+               <name xml:id="nrfotr9">Verovio</name>
+               <p xml:id="pr2nu0o">Transcoded from MusicXML</p>
+            </application>
+         </appInfo>
+      </encodingDesc>
+   </meiHead>
+   <music>
+      <body>
+         <mdiv xml:id="f1pgsp70">
+            <score xml:id="g1xuv6u1">
+               <scoreDef xml:id="hwdlx0k">
+                  <staffGrp xml:id="j1y0s0ko">
+                     <staffDef xml:id="P1" n="1" lines="5" ppq="1">
+                        <label xml:id="k147s8b7">Music</label>
+                        <clef xml:id="u7duww8" shape="G" line="2" />
+                        <keySig xml:id="v148ef19" sig="0" />
+                        <meterSig xml:id="w1kcfy7s" count="4" unit="4" />
+                     </staffDef>
+                  </staffGrp>
+               </scoreDef>
+               <section xml:id="i14fmcx0">
+                  <expansion plist="#w1il6itq" xml:id="x1jysup0" />
+                  <section xml:id="w1il6itq">
+                     <measure xml:id="x1kl9mkv" n="A">
+                        <staff xml:id="gb0wwym" n="1">
+                           <layer xml:id="h1pzp4l0" n="1">
+                              <mRest xml:id="i1ueqnfc" />
+                           </layer>
+                        </staff>
+                        <tie xml:id="i1gmem9f" startid="#gmvg4th" endid="#u2kfsv8" />
+                     </measure>
+                     <measure xml:id="j8iujps" n="B">
+                        <staff xml:id="s10yobq5" n="1">
+                           <layer xml:id="t6rdasx" n="1">
+                              <mRest xml:id="utr8cdh" />
+                           </layer>
+                        </staff>
+                     </measure>
+                     <measure xml:id="v210114" n="A">
+                        <staff xml:id="e1bh0bpv" n="1">
+                           <layer xml:id="f8tcmr" n="1">
+                              <note xml:id="gmvg4th" dur.ppq="4" dur="1" oct="4" pname="c">
+                                 <accid xml:id="h3643m" />
+                              </note>
+                           </layer>
+                        </staff>
+                     </measure>
+                     <measure xml:id="jqmludl" n="C">
+                        <staff xml:id="s17i03wi" n="1">
+                           <layer xml:id="t17c41mq" n="1">
+                              <note xml:id="u2kfsv8" dur.ppq="4" dur="1" oct="4" pname="c">
+                                 <accid xml:id="v1kv4uj1" />
+                              </note>
+                           </layer>
+                        </staff>
+                     </measure>
+                  </section>
+               </section>
+            </score>
+         </mdiv>
+      </body>
+   </music>
+</mei>
