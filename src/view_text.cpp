@@ -486,8 +486,6 @@ void View::DrawText(DeviceContext *dc, Text *text, TextDrawingParams &params)
     const Resources *resources = dc->GetResources();
     assert(resources);
 
-    dc->StartTextGraphic(text, "", text->GetID());
-
     resources->SelectTextFont(dc->GetFont()->GetWeight(), dc->GetFont()->GetStyle());
 
     if (params.m_explicitPosition) {
@@ -529,8 +527,6 @@ void View::DrawText(DeviceContext *dc, Text *text, TextDrawingParams &params)
     params.m_actualWidth = text->GetContentRight();
 
     resources->SelectTextFont(FONTWEIGHT_NONE, FONTSTYLE_NONE);
-
-    dc->EndTextGraphic(text, this);
 }
 
 void View::DrawGraphic(DeviceContext *dc, Graphic *graphic, TextDrawingParams &params, int staffSize, bool dimin)
