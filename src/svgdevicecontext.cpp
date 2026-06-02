@@ -304,14 +304,21 @@ void SvgDeviceContext::StartGraphic(
         AttTextRendition *att = dynamic_cast<AttTextRendition *>(object);
         assert(att);
         if (att->HasRend()) {
-            if (att->GetRend() == TEXTRENDITION_underline) {
+            data_TEXTRENDITION rend = att->GetRend();
+            if (rend == TEXTRENDITION_underline) {
                 style += "text-decoration:underline;";
             }
-            else if (att->GetRend() == TEXTRENDITION_line_through) {
+            else if (rend == TEXTRENDITION_line_through) {
                 style += "text-decoration:line-through;";
             }
-            else if (att->GetRend() == TEXTRENDITION_overline) {
+            else if (rend == TEXTRENDITION_overline) {
                 style += "text-decoration:overline;";
+            }
+            else if (rend == TEXTRENDITION_italic) {
+                style += "font-style:italic;";
+            }
+            else if (rend == TEXTRENDITION_bold) {
+                style += "font-weight:bold;";
             }
         }
     }
@@ -352,7 +359,6 @@ void SvgDeviceContext::StartGraphic(
             m_currentNode.append_attribute("xml:lang") = att->GetLang().c_str();
         }
     }
-
 
     if (object->HasAttClass(ATT_VISIBILITY)) {
         AttVisibility *att = dynamic_cast<AttVisibility *>(object);
@@ -416,14 +422,21 @@ void SvgDeviceContext::StartTextGraphic(Object *object, const std::string &gClas
         AttTextRendition *att = dynamic_cast<AttTextRendition *>(object);
         assert(att);
         if (att->HasRend()) {
-            if (att->GetRend() == TEXTRENDITION_underline) {
+            data_TEXTRENDITION rend = att->GetRend();
+            if (rend == TEXTRENDITION_underline) {
                 style += "text-decoration:underline;";
             }
-            else if (att->GetRend() == TEXTRENDITION_line_through) {
+            else if (rend == TEXTRENDITION_line_through) {
                 style += "text-decoration:line-through;";
             }
-            else if (att->GetRend() == TEXTRENDITION_overline) {
+            else if (rend == TEXTRENDITION_overline) {
                 style += "text-decoration:overline;";
+            }
+            else if (rend == TEXTRENDITION_italic) {
+                style += "font-style:italic;";
+            }
+            else if (rend == TEXTRENDITION_bold) {
+                style += "font-weight:bold;";
             }
         }
     }
@@ -443,14 +456,7 @@ void SvgDeviceContext::StartTextGraphic(Object *object, const std::string &gClas
         assert(att);
         if (att->HasSpace()) {
             m_currentNode.append_attribute("xml:space") = att->GetSpace().c_str();
-        }
-    }
-
-    if (!m_fontStack.empty() && (m_fontStack.top()->GetPointSize() != 0)) {
-        pugi::xpath_node sizeNode = m_currentNode.select_node("ancestor::*[@font-size][1]");
-        int currentPointSize = (sizeNode) ? sizeNode.node().attribute("font-size").as_int() : 0;
-        if (m_fontStack.top()->GetPointSize() != currentPointSize) {
-            m_currentNode.append_attribute("font-size") = StringFormat("%dpx", m_fontStack.top()->GetPointSize()).c_str();
+            ;
         }
     }
 }
@@ -1054,8 +1060,14 @@ void SvgDeviceContext::StartText(int x, int y, data_HORIZONTALALIGNMENT alignmen
 
     m_currentNode = m_currentNode.append_child("text");
     m_svgNodeStack.push_back(m_currentNode);
-    if (x != VRV_UNSET) m_currentNode.append_attribute("x") = x;
-    if (y != VRV_UNSET) m_currentNode.append_attribute("y") = y;
+    if (x != VRV_UNSET)
+        m_currentNode.append_attribute("x") = x;
+    else
+        m_currentNode.append_attribute("x") = 0;
+    if (y != VRV_UNSET)
+        m_currentNode.append_attribute("y") = y;
+    else
+        m_currentNode.append_attribute("y") = 0;
     // unless dx, dy have a value they don't need to be set
     // m_currentNode.append_attribute("dx") = 0;
     // m_currentNode.append_attribute("dy") = 0;
@@ -1146,96 +1158,80 @@ void SvgDeviceContext::DrawText(
         svgText.replace(svgText.size() - 1, 1, "\xC2\xA0");
     }
 
-    pugi::xpath_node fontNode = m_currentNode.select_node("ancestor-or-self::*[@font-family][1]");
-    std::string currentFaceName = (fontNode) ? fontNode.node().attribute("font-family").value() : "";
+    bool hasCoords = (x != VRV_UNSET) || (y != VRV_UNSET);
+
+    pugi::xpath_node fontNode
+        = m_currentNode.select_node("ancestor-or-self::*[@font-family or contains(@style, 'font-family')][1]");
+    std::string currentFaceName = "";
+    if (fontNode) {
+        if (fontNode.node().attribute("font-family"))
+            currentFaceName = fontNode.node().attribute("font-family").value();
+        else {
+            std::string style = fontNode.node().attribute("style").value();
+            size_t pos = style.find("font-family:");
+            if (pos != std::string::npos) {
+                size_t end = style.find(";", pos);
+                currentFaceName = style.substr(pos + 12, end - (pos + 12));
+            }
+        }
+    }
     std::string fontFaceName = m_fontStack.top()->GetFaceName();
 
-    pugi::xml_node textChild;
-    bool reuseNode = (std::string(m_currentNode.name()) == "tspan" && !m_currentNode.first_child() && (x == VRV_UNSET)
-        && (y == VRV_UNSET));
+    pugi::xpath_node sizeNode
+        = m_currentNode.select_node("ancestor-or-self::*[@font-size or contains(@style, 'font-size')][1]");
+    int currentPointSize = (sizeNode) ? sizeNode.node().attribute("font-size").as_int() : 0;
 
-    if (reuseNode) {
+    pugi::xml_node textChild;
+    if (std::string(m_currentNode.name()) == "tspan" && !hasCoords && (fontFaceName == currentFaceName)
+        && (m_fontStack.top()->GetPointSize() == currentPointSize) && !m_currentNode.child("tspan")) {
         textChild = m_currentNode;
+        textChild.append_child(pugi::node_pcdata).set_value(svgText.c_str());
     }
     else {
-        // Only create a new tspan if we have coordinates or if the font changes
-        if ((x != VRV_UNSET) || (y != VRV_UNSET) || (fontFaceName != currentFaceName)) {
-            textChild = AddChild("tspan");
-        }
-        else {
-            textChild = m_currentNode;
-        }
-    }
-    // We still add @xml:space (No: this seems to create problems with Safari)
-    // textChild.append_attribute("xml:space") = "preserve";
-    // Set the @font-family only if it is not the same as in the parent node
-    if (!fontFaceName.empty() && (fontFaceName != currentFaceName)) {
-        pugi::xml_attribute attr = textChild.attribute("font-family");
-        if (!attr) attr = textChild.append_attribute("font-family");
-        // Special case where we want to specifiy if the woff2 font needs to be included in the output
-        if (m_fontStack.top()->GetSmuflFont() != SMUFL_NONE) {
-            if (m_fontStack.top()->GetSmuflFont() == SMUFL_FONT_FALLBACK) {
-                this->VrvTextFontFallback();
-                attr = "Leipzig";
+        textChild = AddChild("tspan");
+        if (x != VRV_UNSET) textChild.append_attribute("x") = x;
+        if (y != VRV_UNSET) textChild.append_attribute("y") = y;
+
+        // Set the @font-family only if it is not the same as in the parent node
+        if (!fontFaceName.empty() && (fontFaceName != currentFaceName)) {
+            // Special case where we want to specifiy if the woff2 font needs to be included in the output
+            if (m_fontStack.top()->GetSmuflFont() != SMUFL_NONE) {
+                if (m_fontStack.top()->GetSmuflFont() == SMUFL_FONT_FALLBACK) {
+                    this->VrvTextFontFallback();
+                    textChild.append_attribute("font-family") = "Leipzig";
+                }
+                else {
+                    this->VrvTextFont();
+                    textChild.append_attribute("font-family") = m_fontStack.top()->GetFaceName().c_str();
+                }
             }
             else {
-                this->VrvTextFont();
-                attr = m_fontStack.top()->GetFaceName().c_str();
-            }
-            if (m_fontStack.top()->GetStyle() == FONTSTYLE_normal) {
-                pugi::xml_attribute styleAttr = textChild.attribute("font-style");
-                if (!styleAttr) styleAttr = textChild.append_attribute("font-style");
-                styleAttr = "normal";
+                textChild.append_attribute("font-family") = m_fontStack.top()->GetFaceName().c_str();
             }
         }
-        else {
-            attr = m_fontStack.top()->GetFaceName().c_str();
+        // Always set font-size if the ancestor has it set to 0px
+        if (m_fontStack.top()->GetPointSize() != 0
+            && (m_fontStack.top()->GetPointSize() != currentPointSize || currentPointSize == 0)) {
+            textChild.append_attribute("font-size") = StringFormat("%dpx", m_fontStack.top()->GetPointSize()).c_str();
         }
-    }
-    if (m_fontStack.top()->GetPointSize() != 0) {
-        pugi::xpath_node sizeNode = textChild.select_node("ancestor-or-self::*[@font-size][1]");
-        int currentPointSize = (sizeNode) ? sizeNode.node().attribute("font-size").as_int() : 0;
-        if (m_fontStack.top()->GetPointSize() != currentPointSize) {
-            pugi::xml_attribute attr = textChild.attribute("font-size");
-            if (!attr) attr = textChild.append_attribute("font-size");
-            attr = StringFormat("%dpx", m_fontStack.top()->GetPointSize()).c_str();
+        if (m_fontStack.top()->GetLetterSpacing() != 0.0) {
+            textChild.append_attribute("letter-spacing")
+                = StringFormat("%dpx", m_fontStack.top()->GetLetterSpacing()).c_str();
         }
-    }
-    if (m_fontStack.top()->GetLetterSpacing() != 0.0) {
-        pugi::xml_attribute attr = textChild.attribute("letter-spacing");
-        if (!attr) attr = textChild.append_attribute("letter-spacing");
-        attr = StringFormat("%dpx", m_fontStack.top()->GetLetterSpacing()).c_str();
-    }
-
-    if (textChild == m_currentNode) {
-        m_currentNode.append_child(pugi::node_pcdata).set_value(svgText.c_str());
-    }
-    else {
-        textChild.text().set(svgText.c_str());
+        textChild.append_child(pugi::node_pcdata).set_value(svgText.c_str());
     }
 
     if ((x != VRV_UNSET) && (y != VRV_UNSET) && (width != VRV_UNSET) && (height != VRV_UNSET) && (width != 0)
         && (height != 0)) {
-        pugi::xml_node g = m_currentNode.parent().parent();
+        pugi::xml_node g = m_currentNode.parent();
+        if (std::string(g.name()) != "g") g = m_currentNode;
         pugi::xml_node rectChild = g.append_child("rect");
         rectChild.append_attribute("class") = "sylTextRect";
-        rectChild.append_attribute("x") = StringFormat("%d", x).c_str();
-        rectChild.append_attribute("y") = StringFormat("%d", y).c_str();
-        rectChild.append_attribute("width") = StringFormat("%d", width).c_str();
-        rectChild.append_attribute("height") = StringFormat("%d", height).c_str();
+        rectChild.append_attribute("x") = x;
+        rectChild.append_attribute("y") = y;
+        rectChild.append_attribute("width") = width;
+        rectChild.append_attribute("height") = height;
         rectChild.append_attribute("opacity") = "0.0";
-    }
-    else {
-        if (x != VRV_UNSET) {
-            pugi::xml_attribute attr = textChild.attribute("x");
-            if (!attr) attr = textChild.append_attribute("x");
-            attr = StringFormat("%d", x).c_str();
-        }
-        if (y != VRV_UNSET) {
-            pugi::xml_attribute attr = textChild.attribute("y");
-            if (!attr) attr = textChild.append_attribute("y");
-            attr = StringFormat("%d", y).c_str();
-        }
     }
 }
 
