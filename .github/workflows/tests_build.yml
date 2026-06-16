@@ -62,55 +62,34 @@ jobs:
             rmdir "$root"
           fi
 
-      - name: Create directories, download repos and install packages
+      - name: Create directories, install dependencies, and fetch packages
         working-directory: ${{ github.workspace }}
         run: |
           set -euo pipefail
-          mkdir -p ${{ env.DEV_DIR }}
-          mkdir -p ${{ env.PR_DIR }}
-          mkdir -p ${{ env.TEMP_DIR }}/${{ env.DEV_DIR }}
-          mkdir -p ${{ env.TEMP_DIR }}/${{ env.PR_DIR }}
-          mkdir -p ${{ env.OUTPUT_DIR }}
-          ls -alh
-          ls -alh ${{ env.OUTPUT_DIR }}
+          mkdir -p ${{ env.DEV_DIR }} ${{ env.PR_DIR }} ${{ env.TEMP_DIR }}/${{ env.DEV_DIR }} ${{ env.TEMP_DIR }}/${{ env.PR_DIR }} ${{ env.OUTPUT_DIR }}
           sudo apt-get install wireguard
           sudo echo "${{ secrets.VPN_CONFIGURATION }}" > wg0.conf
           python3 -m venv .venv-dev
           python3 -m venv .venv-pr
-          .venv-dev/bin/python -m pip install --upgrade pip
-          .venv-pr/bin/python -m pip install --upgrade pip
-          .venv-dev/bin/python -m pip install build diffimg jsondiff lxml xmldiff cairosvg
-          .venv-pr/bin/python -m pip install build diffimg jsondiff lxml xmldiff cairosvg
+          .venv-dev/bin/pip install --upgrade pip build diffimg jsondiff lxml xmldiff cairosvg
+          .venv-pr/bin/pip install --upgrade pip build diffimg jsondiff lxml xmldiff cairosvg
 
           curl -L -o dev.zip https://github.com/${{ env.MAIN_REPO_OWNER }}/verovio/archive/refs/heads/develop.zip
-          unzip -q dev.zip -d ${{ env.DEV_DIR }}
           curl -L -o pr.zip https://github.com/${{ github.event.pull_request.head.repo.full_name }}/archive/${{ github.event.pull_request.head.sha }}.zip
-          unzip -q pr.zip -d ${{ env.PR_DIR }}
+          .venv-dev/bin/pip install dev.zip
+          .venv-pr/bin/pip install pr.zip
 
-          .venv-dev/bin/python -m pip install dev.zip
-          .venv-pr/bin/python -m pip install pr.zip
-
-          root=$(find ${{ env.DEV_DIR }} -maxdepth 1 -mindepth 1 -type d | head -n 1)
-          if [ -n "$root" ]; then
-            shopt -s dotglob
-            mv "$root"/* ${{ env.DEV_DIR }}/
-            rmdir "$root"
-          fi
-
-          root=$(find ${{ env.PR_DIR }} -maxdepth 1 -mindepth 1 -type d | head -n 1)
-          if [ -n "$root" ]; then
-            shopt -s dotglob
-            mv "$root"/* ${{ env.PR_DIR }}/
-            rmdir "$root"
-          fi
-
+          unzip -q dev.zip '*/doc/*' -d ${{ env.DEV_DIR }}
+          unzip -q pr.zip '*/doc/*' -d ${{ env.PR_DIR }}
           rm dev.zip pr.zip
 
-      - name: Install the Leipzig font
-        working-directory: ${{ github.workspace }}/${{ env.DEV_DIR }}/
-        run: |
-          sudo cp ./fonts/Leipzig/Leipzig.ttf /usr/local/share/fonts
-          sudo fc-cache -f -v
+          root=$(find ${{ env.DEV_DIR }} -maxdepth 1 -mindepth 1 -type d | head -n 1)
+          mv "$root/doc" ${{ env.DEV_DIR }}/
+          rm -rf "$root"
+
+          root=$(find ${{ env.PR_DIR }} -maxdepth 1 -mindepth 1 -type d | head -n 1)
+          mv "$root/doc" ${{ env.PR_DIR }}/
+          rm -rf "$root"
 
       - name: Build Python toolkit and run the tests for the dev branch
         working-directory: ${{ github.workspace }}/${{ env.DEV_DIR }}
