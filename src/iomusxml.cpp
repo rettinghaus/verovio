@@ -3924,8 +3924,13 @@ void MusicXmlInput::ReadMusicXmlNote(
         if (!m_ArpeggioStack.empty()) { // check existing arpeggios
             for (const auto &iter : m_ArpeggioStack) {
                 if (iter.second.m_arpegN == arpegN && onset == iter.second.m_timeStamp) {
+                    if (isTablature && note) {
+                        iter.first->GetPlistInterface()->AddRef("#" + note->GetID());
+                    }
                     // don't add other chord notes, because the chord is already referenced.
-                    if (!isChord) iter.first->GetPlistInterface()->AddRef("#" + element->GetID());
+                    else if (!isChord) {
+                        iter.first->GetPlistInterface()->AddRef("#" + element->GetID());
+                    }
                     added = true; // so that no new Arpeg gets created below
                     break;
                 }
@@ -3933,7 +3938,12 @@ void MusicXmlInput::ReadMusicXmlNote(
         }
         if (!added) {
             Arpeg *arpeggio = new Arpeg();
-            arpeggio->GetPlistInterface()->AddRef("#" + element->GetID());
+            if (isTablature && note) {
+                arpeggio->GetPlistInterface()->AddRef("#" + note->GetID());
+            }
+            else {
+                arpeggio->GetPlistInterface()->AddRef("#" + element->GetID());
+            }
             // color
             arpeggio->SetColor(xmlArpeggiate.node().attribute("color").as_string());
             // direction (up/down) and in MEI arrow
