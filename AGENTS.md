@@ -123,8 +123,7 @@ Run a targeted reproduction after behavior changes, and compare before/after out
 alone does not verify engraving, import/export, MIDI, or layout behavior. Report exactly which commands were run and any
 tests that were unavailable; do not claim a reproduction or test passed without running it.
 
-The main MEI regression corpus lives in the **separate** `rism-digital/verovio.org` repository (`gh-pages` branch, `_tests/`),
-not in a root-level test directory here. The test workflow also uses its `musicxmlTestSuite`. With that corpus and a Python
+The main MEI regression corpus lives in the **separate** `rism-digital/verovio-test-suite` repository. The test workflow also uses the W3C MusicXML test suite `w3c-cg/musicxmlTestSuite`. With that corpus and a Python
 binding built from the code being tested, `doc/test-suite.py` renders SVG/PNG and produces MIDI/timemap outputs:
 
 ```sh
