@@ -250,22 +250,20 @@ if(NOT MSVC)
     else()
         set(VRV_HARFBUZZ_OPT "-Os")
     endif()
-    set_source_files_properties(../external/harfbuzz/src/verovio-harfbuzz.cc PROPERTIES COMPILE_OPTIONS "${VRV_HARFBUZZ_OPT}")
+    # HarfBuzz promotes its own warnings from inside hb.hh, overriding command
+    # line controls on newer Clang. Keep the exception local to HarfBuzz.
+    set_property(SOURCE ../external/harfbuzz/src/verovio-harfbuzz.cc
+        APPEND PROPERTY COMPILE_DEFINITIONS "HB_NO_PRAGMA_GCC_DIAGNOSTIC")
+    set_property(SOURCE ../external/harfbuzz/src/verovio-harfbuzz.cc
+        APPEND PROPERTY COMPILE_OPTIONS "${VRV_HARFBUZZ_OPT};-w")
     set_source_files_properties(
         ../external/woff2/src/verovio-woff2.cc
         ../external/brotli/c/verovio-brotli.c
         PROPERTIES COMPILE_OPTIONS "-Os"
     )
-endif()
-
-if(EMSCRIPTEN)
-    # HarfBuzz promotes its own warnings from inside hb.hh, overriding command
-    # line controls on newer Clang. Keep the exception local to HarfBuzz.
+else()
     set_property(SOURCE ../external/harfbuzz/src/verovio-harfbuzz.cc
-        APPEND PROPERTY COMPILE_DEFINITIONS
-        "HB_NO_PRAGMA_GCC_DIAGNOSTIC_ERROR;HB_NO_PRAGMA_GCC_DIAGNOSTIC_WARNING")
-    set_property(SOURCE ../external/harfbuzz/src/verovio-harfbuzz.cc
-        APPEND PROPERTY COMPILE_OPTIONS "-Wno-unused-template;-Wno-format-pedantic")
+        APPEND PROPERTY COMPILE_OPTIONS "/w")
 endif()
 
 ##################
