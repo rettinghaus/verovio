@@ -2,10 +2,13 @@
 # build directory such as ./bindings/python.
 import argparse
 import json
+import multiprocessing
 import os
 import sys
 import xml.etree.ElementTree as ET
+from concurrent.futures import ProcessPoolExecutor
 from importlib import resources
+from pathlib import Path
 
 from cairosvg import svg2png
 
@@ -13,14 +16,13 @@ from cairosvg import svg2png
 sys.path.append('./verovio')
 import verovio
 
-ns = {'mei': 'http://www.music-encoding.org/ns/mei'}
+# Optional list for processing only listed test files:
+# files must be listed in a file passed with --shortlist, one per line (e.g. 'accid/accid-001.mei').
+MEI_NS = 'http://www.music-encoding.org/ns/mei'
+MEI_HEAD_TAG = f'{{{MEI_NS}}}meiHead'
+EXT_META_TAG = f'{{{MEI_NS}}}extMeta'
 
-# Optional list for processing only listed test files
-# Files must be listed in a file passed with --shortlist, one by line
-# Ex. 'accid/accid-001.mei'
-shortlist = []
-
-testOptions = {
+TEST_OPTIONS = {
     'adjustPageHeight': True,
     'breaks': 'auto',
     'pageHeight': 2970,
@@ -28,114 +30,129 @@ testOptions = {
     'header': 'none',
     'footer': 'none',
     'scale': 40,
-    'spacingStaff': 4
+    'spacingStaff': 4,
+    'xmlIdChecksum': True,
 }
+
+_worker_tk = None
+
+
+def _discover_resource_path() -> str:
+    source_tree_data = Path(__file__).resolve().parent.parent / 'data'
+    package_data = resources.files(verovio) / 'data'
+
+    # 1. Allow setting the resource path directly
+    if p := os.environ.get('VEROVIO_RESOURCE_PATH'):
+        return p
+    # 2. Try to auto-discover it from the package
+    if package_data.is_dir():
+        return str(package_data)
+    # 3. Try to discover it from the external source tree
+    if source_tree_data.is_dir():
+        return str(source_tree_data)
+
+    print('Could not discover resources path. Exiting.')
+    sys.exit(-1)
+
+
+def _init_worker(resource_path: str) -> None:
+    global _worker_tk
+    _worker_tk = verovio.toolkit(False)
+    _worker_tk.setResourcePath(resource_path)
+
+
+def _read_mei_options(mei_file: Path) -> dict:
+    for _, elem in ET.iterparse(mei_file, events=('end',)):
+        if elem.tag == EXT_META_TAG and elem.text and elem.text.strip():
+            return json.loads(elem.text)
+        if elem.tag == MEI_HEAD_TAG:
+            break
+        elem.clear()
+    return {}
+
+
+def _render_file(task: tuple[Path, Path]) -> str:
+    input_file, out_dir = task
+    tk = _worker_tk
+    assert tk is not None
+
+    options = TEST_OPTIONS
+    if input_file.suffix == '.mei':
+        if meta_options := _read_mei_options(input_file):
+            options = TEST_OPTIONS | meta_options
+
+    tk.setOptions(options)
+    tk.loadFile(str(input_file))
+
+    svg_string = tk.renderToSVG(1)
+    stem = input_file.stem
+    (out_dir / f'{stem}.svg').write_text(svg_string, encoding='utf-8')
+    svg2png(bytestring=svg_string, scale=2, write_to=str(out_dir / f'{stem}.png'))
+    tk.renderToTimemapFile(str(out_dir / f'{stem}.json'))
+    tk.renderToMIDIFile(str(out_dir / f'{stem}.mid'))
+    tk.resetOptions()
+    return input_file.name
+
+
+def _collect_input_files(test_suite_dir: Path, shortlist_path: str) -> list[Path]:
+    if shortlist_path:
+        print(shortlist_path)
+        shortlist = {
+            line.strip()
+            for line in Path(shortlist_path).read_text(encoding='utf-8').splitlines()
+            if line.strip()
+        }
+        for entry in sorted(shortlist):
+            print(f'File {entry} added to the shortlist')
+        return sorted(p for rel in shortlist if (p := test_suite_dir / rel).is_file())
+
+    # The round-trip runner renders musicxml-export fixtures before and after MusicXML conversion.
+    return sorted(
+        p
+        for p in test_suite_dir.glob('*/*')
+        if p.is_file()
+        and not p.name.startswith('.')
+        and not p.parent.name.startswith('.')
+        and p.parent.name != 'musicxml-export'
+    )
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('test_suite_dir')
     parser.add_argument('output_dir')
     parser.add_argument('--shortlist', nargs='?', default='')
+    parser.add_argument('-j', '--jobs', type=int, default=None, help='Number of worker processes')
     args = parser.parse_args()
 
-    # version of the toolkit
     tk = verovio.toolkit(False)
-    print(f"Verovio {tk.getVersion()}")
+    print(f'Verovio {tk.getVersion()}')
 
-    resource_path = None
-    source_tree_data = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "..", "data"
-    )
-    package_data = resources.files(verovio) / "data"
+    resource_path = _discover_resource_path()
+    print(f'Setting resource path to {resource_path}')
 
-    # 1. Allow setting the resource path directly
-    if p := os.environ.get("VEROVIO_RESOURCE_PATH"):
-        resource_path = p
-    # 2. Try to auto-discover it from the package
-    elif package_data.is_dir():
-        resource_path = str(package_data)
-    # 3. Try to discover it from the external source tree.
-    elif os.path.isdir(source_tree_data):
-        resource_path = source_tree_data
+    test_suite_dir = Path(args.test_suite_dir.replace(r'\ ', ' '))
+    output_dir = Path(args.output_dir.replace(r'\ ', ' '))
+    input_files = _collect_input_files(test_suite_dir, args.shortlist)
 
-    # If no resource path is found, exit with an error.
-    if resource_path is None:
-        print("Could not discover resources path. Exiting.")
-        sys.exit(-1)
+    for subdir in {p.parent.name for p in input_files}:
+        (output_dir / subdir).mkdir(parents=True, exist_ok=True)
 
-    print(f"Setting resource path to {resource_path}")
-    tk.setResourcePath(resource_path)
+    tasks = [(p, output_dir / p.parent.name) for p in input_files]
+    workers = args.jobs if args.jobs is not None else (os.cpu_count() or 1)
 
-    # look if we have a shortlist file and read it
-    if len(args.shortlist) > 0:
-        print(args.shortlist)
-        with open(args.shortlist) as f:
-            for line in f:
-                shortlist.append(line.strip('\n'))
-                print('File {} added to the shortlist'.format(line))
-
-    path1 = args.test_suite_dir.replace(r"\ ", " ")
-    path2 = args.output_dir.replace(r"\ ", " ")
-    dir1 = sorted(os.listdir(path1))
-    for item1 in dir1:
-        if item1.startswith('.'):
-            continue
-        if item1 == 'musicxml-export':
-            # The round-trip runner renders these fixtures before and after MusicXML conversion.
-            continue
-        if not (os.path.isdir(os.path.join(path1, item1))):
-            continue
-
-        # create the output directory if necessary
-        if not (os.path.isdir(os.path.join(path2, item1))):
-            os.mkdir(os.path.join(path2, item1))
-
-        dir2 = sorted(os.listdir(os.path.join(path1, item1)))
-        for item2 in dir2:
-            # skip directories
-            if not (os.path.isfile(os.path.join(path1, item1, item2))):
-                continue
-            # skip hidden files
-            if item2.startswith('.'):
-                continue
-
-            if shortlist and not (os.path.join(item1, item2) in shortlist):
-                continue
-
-            # reset the options
-            options = testOptions.copy()
-
-            # filenames (input MEI/XML and output SVG)
-            inputFile = os.path.join(path1, item1, item2)
-            options.update({"xmlIdChecksum": True})
-            print(f'Rendering {item2}')
-            name, ext = os.path.splitext(item2)
-            svgFile = os.path.join(path2, item1, name + '.svg')
-            pngFile = os.path.join(path2, item1, name + '.png')
-            timeMapFile = os.path.join(path2, item1, name + '.json')
-            midiFile = os.path.join(path2, item1, name + '.mid')
-
-            # parse the MEI file
-            if ext == '.mei':
-                tree = ET.parse(inputFile)
-                root = tree.getroot()
-                # try to get the extMeta tag and load the options if existing
-                meta = root.findtext(
-                    './/mei:meiHead/mei:extMeta', namespaces=ns)
-                if meta is not None and meta != '':
-                    # print(meta)
-                    metaOptions = json.loads(meta)
-                    options |= metaOptions
-
-            tk.setOptions(options)
-            tk.loadFile(inputFile)
-            # render to SVG
-            svgString = tk.renderToSVG(1)
-            ET.ElementTree(ET.fromstring(svgString)).write(svgFile)
-            svg2png(bytestring=svgString, scale=2, write_to=pngFile)
-            # create time map
-            tk.renderToTimemapFile(timeMapFile)
-            # create MIDI file
-            tk.renderToMIDIFile(midiFile)
-            tk.resetOptions()
-            options.clear()
+    if workers <= 1 or len(tasks) <= 1:
+        _worker_tk = tk
+        _worker_tk.setResourcePath(resource_path)
+        for task in tasks:
+            print(f'Rendering {_render_file(task)}')
+    else:
+        chunksize = max(1, min(8, len(tasks) // (workers * 2) or 1))
+        with ProcessPoolExecutor(
+            max_workers=workers,
+            mp_context=multiprocessing.get_context('spawn'),
+            initializer=_init_worker,
+            initargs=(resource_path,),
+        ) as executor:
+            for filename in executor.map(_render_file, tasks, chunksize=chunksize):
+                print(f'Rendering {filename}')
